@@ -36,7 +36,6 @@ function BoardItemDragStart(event) {
         itemType: itemType,
         itemId: networkObjectid
     }));
-    console.log(networkObjectid, itemType);
 }
 
 function showPcForm(id) {
