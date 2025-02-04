@@ -43,45 +43,50 @@ function ping( originIP, destinationIP ) {
 
     let response =  "";
 
+    //obtengo el origen y compruebo que exista y no esté duplicado
     const origin = document.querySelector(`[data-ip="${originIP}"]`);
     const allOrigins = document.querySelectorAll(`[data-ip="${originIP}"]`);
     
     if (!origin) {
-        return "IP no configurada.";
+        return "IP no configurada."; //early return para salirnos del codigo
     }
     
     if (allOrigins.length > 1) {
-        return "Error: Se encontró más de un elemento con la misma IP";
+        return "Error: Se encontró más de un elemento con la misma IP"; //early return para salirnos del codigo
     }
 
+    //obtengo el id del origen
     const originId = origin.id;
     const NetworkOriginObject = document.getElementById(originId);
 
-    //de ese origen obtengo el switch
+    //de ese origen obtengo el switch al que está conectado
     const switchIdentity = NetworkOriginObject.getAttribute("data-switch");
     const switchOriginObject = document.getElementById(switchIdentity);
 
-    //de ese switch obtengo las macs
+    //de ese switch obtengo la tabla de macs
     const macElements = switchOriginObject.querySelector("table").querySelectorAll(".mac-address");      
     let macs = [];
     for (let i = 0; i < macElements.length; i++) {
         macs.push(macElements[i].innerHTML);
     }
 
-    //por cada mac obtengo el puntero del objeto, y del objeto obtengo la ip
-
+    //por cada mac obtengo el puntero del elemento, y del elemento obtengo la ip
     for (let i = 0; i < macs.length; i++) {
         const mac = macs[i];
         const pc = document.querySelector(`[data-mac="${mac}"]`);
         const ip = pc.getAttribute("data-ip");
+        //compruebo si la ip es igual a la de destino
         if (destinationIP === ip) {
             response = `64 bytes from ${originIP}: icmp_seq=1 ttl=64 time=0.030 m`;
         }
     }
-
+    
+    //si no encuentro nada devuelvo un mensaje de error
     if (response === "") {
         response = `From ${originIP} icmp_seq=1 Destination Host Unreachable`;
     }
 
+    //finalmente devolvemos el mensaje
     return response;
+    
 }
