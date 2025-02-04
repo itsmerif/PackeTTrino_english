@@ -32,10 +32,16 @@ function createPcObject(x, y) {
 function BoardItemDragStart(event) {
     const networkObjectid = event.target.closest(".item-dropped").id;
     const itemType = "item-dropped";
+    const x = event.clientX;    
+    const y = event.clientY;
     event.dataTransfer.setData("json", JSON.stringify({
         itemType: itemType,
-        itemId: networkObjectid
+        itemId: networkObjectid,
+        originx: x,
+        originy: y
     }));
+
+    console.log(x,y);
 }
 
 function showPcForm(id) {

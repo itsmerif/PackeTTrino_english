@@ -36,10 +36,11 @@ function switchConn(event) {
         
         const itemType = JSON.parse(item).itemType;
         const itemId = JSON.parse(item).itemId;
+        const x1 = JSON.parse(item).originx;
+        const y1 = JSON.parse(item).originy;
 
         if (itemType === "item-dropped" && (itemId.startsWith("pc-") || itemId.startsWith("router-") || itemId.startsWith("server-"))) {
-            console.log(itemType, itemId);
-            console.log('valido')
+            createCableObject(x1, y1, event.clientX, event.clientY);
         }
 
     }
