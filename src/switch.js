@@ -9,7 +9,7 @@ function createSwitchObject(x, y) {
     networkObjectIcon.draggable = true;
     networkObject.appendChild(networkObjectIcon);
 
-    networkObject.id = `pc-${itemIndex}`;
+    networkObject.id = `switch-${itemIndex}`;
     networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
     networkObject.classList.add("item-dropped", "switch");
     networkObject.style.left = `${x}px`;

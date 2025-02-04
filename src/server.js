@@ -9,7 +9,7 @@ function createServerObject(x, y) {
     networkObjectIcon.draggable = true;
     networkObject.appendChild(networkObjectIcon);
 
-    networkObject.id = `pc-${itemIndex}`;
+    networkObject.id = `server-${itemIndex}`;
     networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
     networkObject.classList.add("item-dropped", "server");
     networkObject.style.left = `${x}px`;

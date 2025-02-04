@@ -9,7 +9,7 @@ function createRouterObject(x, y) {
     networkObjectIcon.draggable = true;
     networkObject.appendChild(networkObjectIcon);
 
-    networkObject.id = `pc-${itemIndex}`;
+    networkObject.id = `router-${itemIndex}`;
     networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
     networkObject.classList.add("item-dropped", "router");
     networkObject.style.left = `${x}px`;
