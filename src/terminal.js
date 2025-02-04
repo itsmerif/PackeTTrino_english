@@ -6,12 +6,15 @@ function sendCommand(event) {
     if (event.key === "Enter") {
 
         const input = event.target.value.trim();
+        const args = input.split(" ");
+        const command = args[0];
         let newoutput = "";
 
-        switch (input) {
+        switch (command) {
 
             case "ping":
-                newoutput = ping(dataId);
+                const ip = args[1] || "0.0.0.0";
+                newoutput = ping(dataId, ip);
                 break;
             case "ipconfig":
                 newoutput = ipconfig(dataId);
@@ -21,7 +24,7 @@ function sendCommand(event) {
                 document.querySelector(".pc-terminal").style.display = "none";
                 break;
             default:
-                newoutput = eval(input);
+                newoutput = "Command not found";
                 break;
         }
 
@@ -33,15 +36,4 @@ function clickTerminal(event) {
     const terminal = event.target.closest(".pc-terminal");
     const input = terminal.querySelector("input");
     input.focus();
-}
-
-function ping(originId) {
-    //obtengo el origen
-    const NetworkOriginObject = document.getElementById(originId);
-    //de ese origen obtengo el switch
-    const switchIdentity = NetworkOriginObject.getAttribute("data-switch");
-    const switchOriginObject = document.getElementById(switchIdentity);
-    //de ese switch obtengo las macs
-    const macs = switchOriginObject.querySelector("table").querySelectorAll(".mac-address");    
-    return Array.from(macs).map(mac => `<p>${mac.innerHTML}</p>`).join("<br>");
 }

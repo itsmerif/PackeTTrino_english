@@ -38,3 +38,40 @@ function ipconfig(id) {
         Dirección Física: ${mac}
     `;
 }
+
+function ping(originId, destinationIP) {
+
+    let response =  "";
+
+    //obtengo el origen
+    const NetworkOriginObject = document.getElementById(originId);
+    const originIp = NetworkOriginObject.getAttribute("data-ip");
+
+    //de ese origen obtengo el switch
+    const switchIdentity = NetworkOriginObject.getAttribute("data-switch");
+    const switchOriginObject = document.getElementById(switchIdentity);
+
+    //de ese switch obtengo las macs
+    const macElements = switchOriginObject.querySelector("table").querySelectorAll(".mac-address");      
+    let macs = [];
+    for (let i = 0; i < macElements.length; i++) {
+        macs.push(macElements[i].innerHTML);
+    }
+
+    //por cada mac obtengo el puntero del objeto, y del objeto obtengo la ip
+
+    for (let i = 0; i < macs.length; i++) {
+        const mac = macs[i];
+        const pc = document.querySelector(`[data-mac="${mac}"]`);
+        const ip = pc.getAttribute("data-ip");
+        if (destinationIP === ip) {
+            response = `64 bytes from ${originIp}: icmp_seq=1 ttl=64 time=0.030 m`;
+        }
+    }
+
+    if (response === "") {
+        response = `From ${originIp} icmp_seq=1 Destination Host Unreachable`;
+    }
+
+    return response;
+}
