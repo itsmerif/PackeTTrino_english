@@ -6,12 +6,16 @@ function createServerObject(x, y) {
 
     networkObjectIcon.src = "./assets/server.png";
     networkObjectIcon.alt = "server";
-    networkObjectIcon.draggable = false;
+    networkObjectIcon.draggable = true;
     networkObject.appendChild(networkObjectIcon);
 
+    networkObject.id = `pc-${itemIndex}`;
+    networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
     networkObject.classList.add("item-dropped", "server");
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
     board.appendChild(networkObject);
+
+    itemIndex++;
 
 }

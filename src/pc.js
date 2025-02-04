@@ -20,7 +20,7 @@ function createPcObject(x, y) {
 
     networkObject.addEventListener("click", () => showPcForm(networkObject.id));
     networkObject.addEventListener("contextmenu", event => showAdvancedOptions(event));
-    networkObject.addEventListener("dragstart", event => PcDragStart(event));
+    networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
 
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
@@ -29,13 +29,14 @@ function createPcObject(x, y) {
     itemIndex++;
 }
 
-function PcDragStart(event) {
+function BoardItemDragStart(event) {
     const networkObjectid = event.target.closest(".item-dropped").id;
     const itemType = "item-dropped";
     event.dataTransfer.setData("json", JSON.stringify({
         itemType: itemType,
         itemId: networkObjectid
     }));
+    console.log(networkObjectid, itemType);
 }
 
 function showPcForm(id) {
