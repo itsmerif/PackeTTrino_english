@@ -10,6 +10,7 @@ function createPcObject(x, y) {
     networkObject.setAttribute("data-network", "");
     networkObject.setAttribute("data-mac", getRandomMac());
     networkObject.setAttribute("data-gateway", "");
+    networkObject.setAttribute("data-switch", "");
 
     networkObject.innerHTML = `
         <img src="./assets/pc.png" alt="pc" draggable="true">

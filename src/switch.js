@@ -57,6 +57,7 @@ function switchConn(event) {
         if (itemType === "item-dropped" && (itemId.startsWith("pc-") || itemId.startsWith("router-") || itemId.startsWith("server-"))) {
             createCableObject(x1, y1, networkObject.style.left, networkObject.style.top);
             saveMac(event, mac);
+            document.getElementById(itemId).setAttribute("data-switch", networkObject.id);
         }
 
     }
@@ -83,7 +84,7 @@ function saveMac(event, mac) {
     newMac.innerHTML = `
         <tr>
             <td>1</td>
-            <td>${mac}</td>
+            <td class="mac-address">${mac}</td>
         </tr>`;
     networtTable.appendChild(newMac);
 }
