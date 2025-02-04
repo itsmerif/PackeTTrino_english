@@ -2,6 +2,7 @@ function sendCommand(event) {
 
     const terminal = event.target.closest('.pc-terminal');
     const dataId = terminal.dataset.id;
+    const originIP = document.getElementById(dataId).getAttribute("data-ip");
 
     if (event.key === "Enter") {
 
@@ -14,7 +15,7 @@ function sendCommand(event) {
 
             case "ping":
                 const ip = args[1] || "0.0.0.0";
-                newoutput = ping(dataId, ip);
+                newoutput = ping(originIP, ip);
                 break;
             case "ipconfig":
                 newoutput = ipconfig(dataId);

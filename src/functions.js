@@ -39,13 +39,13 @@ function ipconfig(id) {
     `;
 }
 
-function ping(originId, destinationIP) {
+function ping(originIP, destinationIP) {
 
     let response =  "";
 
-    //obtengo el origen
+    //obtengo el id del origen
+    const originId = document.querySelector(`[data-ip="${originIP}"]`).id;
     const NetworkOriginObject = document.getElementById(originId);
-    const originIp = NetworkOriginObject.getAttribute("data-ip");
 
     //de ese origen obtengo el switch
     const switchIdentity = NetworkOriginObject.getAttribute("data-switch");
@@ -65,12 +65,12 @@ function ping(originId, destinationIP) {
         const pc = document.querySelector(`[data-mac="${mac}"]`);
         const ip = pc.getAttribute("data-ip");
         if (destinationIP === ip) {
-            response = `64 bytes from ${originIp}: icmp_seq=1 ttl=64 time=0.030 m`;
+            response = `64 bytes from ${originIP}: icmp_seq=1 ttl=64 time=0.030 m`;
         }
     }
 
     if (response === "") {
-        response = `From ${originIp} icmp_seq=1 Destination Host Unreachable`;
+        response = `From ${originIP} icmp_seq=1 Destination Host Unreachable`;
     }
 
     return response;
