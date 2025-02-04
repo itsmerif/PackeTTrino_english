@@ -39,12 +39,22 @@ function ipconfig(id) {
     `;
 }
 
-function ping(originIP, destinationIP) {
+function ping( originIP, destinationIP ) {
 
     let response =  "";
 
-    //obtengo el id del origen
-    const originId = document.querySelector(`[data-ip="${originIP}"]`).id;
+    const origin = document.querySelector(`[data-ip="${originIP}"]`);
+    const allOrigins = document.querySelectorAll(`[data-ip="${originIP}"]`);
+    
+    if (!origin) {
+        return "IP no configurada.";
+    }
+    
+    if (allOrigins.length > 1) {
+        return "Error: Se encontró más de un elemento con la misma IP";
+    }
+
+    const originId = origin.id;
     const NetworkOriginObject = document.getElementById(originId);
 
     //de ese origen obtengo el switch
