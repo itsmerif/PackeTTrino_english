@@ -1,0 +1,42 @@
+.mac-table {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    flex-direction: column;
+    gap: 0px;
+    background-color: white;
+    padding: 20px;
+    padding-bottom: 7px;
+    box-shadow: 0px 0px 10px black;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.mac-table p {
+    font-size: 20px;
+}
+
+.mac-table table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid black;
+    box-sizing: border-box;
+}
+
+.mac-table table * {
+    box-sizing: border-box;
+    border: 1px solid black;
+    padding: 5px;
+}
+
+.mac-table table th {
+    background-color: rgb(223, 191, 12);
+}
+
+.mac-table button {
+    width: 50%;
+    margin: auto;
+    margin-top: 5px;
+}
