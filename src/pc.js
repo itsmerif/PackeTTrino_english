@@ -30,10 +30,11 @@ function createPcObject(x, y) {
 }
 
 function BoardItemDragStart(event) {
-    const networkObjectid = event.target.closest(".item-dropped").id;
+    const networkObject = event.target.closest(".item-dropped");
+    const networkObjectid = networkObject.id;
     const itemType = "item-dropped";
-    const x = event.clientX;    
-    const y = event.clientY;
+    const x = networkObject.style.left;   
+    const y = networkObject.style.top;
     event.dataTransfer.setData("json", JSON.stringify({
         itemType: itemType,
         itemId: networkObjectid,
