@@ -31,3 +31,8 @@
     height: 100%;
     z-index: 2;
 }
+
+.item-dropped img:hover {
+    filter: brightness(0.8);
+    cursor: pointer;
+}

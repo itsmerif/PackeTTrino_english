@@ -58,6 +58,10 @@ function switchConn(event) {
             createCableObject(x1, y1, networkObject.style.left, networkObject.style.top);
             saveMac(event, mac);
             document.getElementById(itemId).setAttribute("data-switch", networkObject.id);
+            networkObject.querySelector("img").draggable = false;
+            if (itemId.startsWith("pc-")) {
+                document.getElementById(itemId).querySelector("img").draggable = false;
+            }
         }
 
     }
