@@ -14,5 +14,9 @@
     {
         "name": "server",
         "image": "./assets/server2.png"
+    },
+    {
+        "name": "delete",
+        "image": "./assets/delete.png"
     }
 ]
