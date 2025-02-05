@@ -14,8 +14,18 @@ function createPcObject(x, y) {
 
     networkObject.innerHTML = `
         <img src="./assets/pc.png" alt="pc" draggable="true">
+        <article class="mac-table" onclick="event.stopPropagation()">
+            <table>
+                    <tr>
+                        <th>IP Address</th>
+                        <th>MAC Address</th>
+                    </tr>
+            </table>
+            <button onclick="closeARPTable(event)">Cerrar</button>
+        </article>
         <div class="advanced-options-modal">
             <button onclick="showTerminal(event)">Modo Terminal</button>
+            <button onclick="showARPTable(event)">Ver Tabla ARP</button>
         </div>
     `;
 
@@ -109,4 +119,20 @@ function showTerminal(event) {
     //ocultamos las opciones avanzadas
     const modal = networkObject.querySelector(".advanced-options-modal");
     modal.style.display = "none";
+}
+
+function showARPTable(event) {
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped");
+    const table = networkObject.querySelector(".mac-table");
+    const modal = networkObject.querySelector(".advanced-options-modal");
+    modal.style.display = "none";
+    table.style.display = "flex";
+}
+
+function closeARPTable(event) {
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped");
+    const table = networkObject.querySelector(".mac-table");
+    table.style.display = "none";
 }
