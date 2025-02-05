@@ -70,7 +70,6 @@ function BoardItemDragStart(event) {
         originy: y
     }));
 
-    console.log(x,y,ip,netmask,network,mac,gateway);
 }
 
 function showPcForm(id) {

@@ -33,7 +33,6 @@ function ping( originIP, destinationIP ) {
             for (let i = 0; i < macs.length; i++) { //ahora buscamos la mac en la tabla del switch al que está conectado
                 const mac = macs[i];
                 if (mac === macEncontrada) { //si la encontramos, bingo, existe la conexión
-                    console.log("1");
                     ping_s(originIP);
                     return `Haciendo ping a ${destinationIP} con 32 bytes de datos:\n\n`;
                 }
@@ -50,14 +49,12 @@ function ping( originIP, destinationIP ) {
         const ip = pc.getAttribute("data-ip");
         
         if (destinationIP === ip) { //bingo, hemos encontrado el equipo destino como uno de los equipos conectados al switch
-            console.log("2");
             addARPEntry(originId, destinationIP, mac);
             ping_s(originIP);
             return `Haciendo ping a ${destinationIP} con 32 bytes de datos:\n\n`;
         }
     }
     
-    console.log("3");
     ping_f(originIP); //si no hemos encontrado nada, damos el ping por fallido
     return `Haciendo ping a ${destinationIP} con 32 bytes de datos:\n\n`;
     
