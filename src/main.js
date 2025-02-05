@@ -6,6 +6,9 @@ let itemIndex = 0;
 
 function init() {
     getPanelItems();
+
+    //eventos
+    document.querySelector(".pc-terminal").addEventListener("keydown", stopPing);
 }
 
 function getPanelItems() {
@@ -22,4 +25,12 @@ function getPanelItems() {
                 panel.appendChild(itemElement);
             });
         });
+}
+
+function stopPing(event) {
+    if (event.ctrlKey && event.key === "c") {
+        event.preventDefault();
+        clearInterval(window.pingInterval);
+        document.querySelector(".terminal-output").innerHTML = "";
+    }
 }

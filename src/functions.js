@@ -77,7 +77,8 @@ function ping( originIP, destinationIP ) {
         const ip = pc.getAttribute("data-ip");
         //compruebo si la ip es igual a la de destino
         if (destinationIP === ip) {
-            response = `64 bytes from ${originIP}: icmp_seq=1 ttl=64 time=0.030 m`;
+            ping_s(originIP);
+            return `Haciendo ping a ${destinationIP} con 32 bytes de datos:\n\n`;
         }
     }
     
@@ -89,4 +90,13 @@ function ping( originIP, destinationIP ) {
     //finalmente devolvemos el mensaje
     return response;
     
+}
+
+function ping_s(origin) {
+
+    const terminalOutput = document.querySelector(".terminal-output");
+    window.pingInterval = setInterval(() => {
+        terminalOutput.innerHTML +=`64 bytes from ${origin}: icmp_seq=1 ttl=64 time=0.030 ms\n`;
+    }, 1000);
+
 }
