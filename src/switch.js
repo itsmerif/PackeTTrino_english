@@ -92,3 +92,16 @@ function saveMac(event, mac) {
         </tr>`;
     networtTable.appendChild(newMac);
 }
+
+function deleteMacEntry(switchId, mac) {
+    const switchObject = document.getElementById(switchId);
+    const table = switchObject.querySelector("table");
+    const tds = table.querySelectorAll("td");
+    for (let td of tds) {
+        if (td.innerHTML === mac) {
+            const tr = td.parentElement;
+            tr.remove();
+            break;
+        }
+    }
+}
