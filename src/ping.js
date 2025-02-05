@@ -1,12 +1,24 @@
 function ping( originIP, destinationIP ) {
 
+    const origin = document.querySelector(`[data-ip="${originIP}"]`);
+    const originId = origin.id;
+    const arpTable = getARPTable(originId);
+    const NetworkOriginObject = document.getElementById(originId);
+    const switchIdentity = NetworkOriginObject.getAttribute("data-switch");
+    const switchOriginObject = document.getElementById(switchIdentity);
+    const macElements = switchOriginObject.querySelector("table").querySelectorAll(".mac-address");
+    let macs = [];
+    for (let i = 0; i < macElements.length; i++) {
+        macs.push(macElements[i].innerHTML);
+    }
+
+    //compruebo que el equipo origen está configurado
+
     if (!originIP) {
         return "Error: IP no configurada.";
     }
 
-    const origin = document.querySelector(`[data-ip="${originIP}"]`);
-    const originId = origin.id;
-    const arpTable = getARPTable(originId);
+    //ahora buscamos la ip en la tabla ARP del equipo origen
 
     for (let i = 0; i < arpTable.length; i++) {
 
@@ -15,32 +27,38 @@ function ping( originIP, destinationIP ) {
         const ip = arpRow[0];
 
         if (ip === destinationIP) {
-            return `La IP ${ip} está en el MAC ${mac}`;
+
+            const macEncontrada = mac; //hemos encontrado la mac del equipo destino
+            
+            for (let i = 0; i < macs.length; i++) { //ahora buscamos la mac en la tabla del switch al que está conectado
+                const mac = macs[i];
+                if (mac === macEncontrada) { //si la encontramos, bingo, existe la conexión
+                    console.log("1");
+                    ping_s(originIP);
+                    return `Haciendo ping a ${destinationIP} con 32 bytes de datos:\n\n`;
+                }
+            }
+
         }
+
     }
 
-    const NetworkOriginObject = document.getElementById(originId);
-    const switchIdentity = NetworkOriginObject.getAttribute("data-switch");
-    const switchOriginObject = document.getElementById(switchIdentity);
+    for (let i = 0; i < macs.length; i++) { //si no está en la tabla ARP del equipo origen, mandamos al switch a mirar los equipos que están conectados al mismo
 
-    const macElements = switchOriginObject.querySelector("table").querySelectorAll(".mac-address"); 
-    let macs = [];
-    for (let i = 0; i < macElements.length; i++) {
-        macs.push(macElements[i].innerHTML);
-    }
-
-    for (let i = 0; i < macs.length; i++) {
         const mac = macs[i];
         const pc = document.querySelector(`[data-mac="${mac}"]`);
         const ip = pc.getAttribute("data-ip");
         
-        if (destinationIP === ip) {
+        if (destinationIP === ip) { //bingo, hemos encontrado el equipo destino como uno de los equipos conectados al switch
+            console.log("2");
+            addARPEntry(originId, destinationIP, mac);
             ping_s(originIP);
             return `Haciendo ping a ${destinationIP} con 32 bytes de datos:\n\n`;
         }
     }
     
-    ping_f(originIP);
+    console.log("3");
+    ping_f(originIP); //si no hemos encontrado nada, damos el ping por fallido
     return `Haciendo ping a ${destinationIP} con 32 bytes de datos:\n\n`;
     
 }

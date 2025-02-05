@@ -55,3 +55,10 @@ function getARPTable(id) {
     return matriz;
 
 }
+
+function addARPEntry(id, ip, mac) {
+    let tabla = document.getElementById(id).querySelector("table");
+    let newRow = tabla.insertRow();
+    newRow.insertCell().innerText = ip;
+    newRow.insertCell().innerText = mac;
+}
