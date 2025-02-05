@@ -1,4 +1,4 @@
-function getNetwork( ip, netmask) {
+function getNetwork(ip, netmask) {
     ip = ip.split('.'); //separamos cada octeto de la ip
     netmask = netmask.split('.'); //separamos cada octeto de la netmask
     let network = [];
@@ -11,15 +11,15 @@ function getNetwork( ip, netmask) {
 function getRandomMac() {
     //genero los 48 bits aleatorios
     let macString = "";
-    for (let i = 1; i <=48 ; i++) {
-        macString += Math.floor(Math.random()*2);
+    for (let i = 1; i <= 48; i++) {
+        macString += Math.floor(Math.random() * 2);
     }
     //separamos los bloques de 8 bits
-    let macBlocks = macString.match(/.{1,8}/g) || []; 
+    let macBlocks = macString.match(/.{1,8}/g) || [];
     //transformamos cada bloque en hexadecimal
     for (let i = 0; i < macBlocks.length; i++) {
         macBlocks[i] = (parseInt(macBlocks[i], 2).toString(16)).padStart(2, '0');
-    }   
+    }
     //unimos los bloques en una cadena
     macBlocks = macBlocks.join(':');
     return macBlocks;
@@ -37,4 +37,22 @@ function ipconfig(id) {
         Máscara de Red: ${netmask}
         Dirección Física: ${mac}
     `;
+}
+
+function getARPTable(id) {
+
+    let tabla = document.getElementById(id).querySelector("table");
+    let matriz = [];
+
+    for (let fila of tabla.rows) {
+        let filaArray = [];
+        for (let celda of fila.cells) {
+            filaArray.push(celda.innerText.trim());
+        }
+        matriz.push(filaArray);
+    }
+
+    console.log(matriz);
+    return "Mira la consola para ver el contenido de la tabla ARP";
+
 }

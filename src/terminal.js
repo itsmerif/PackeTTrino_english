@@ -20,6 +20,9 @@ function sendCommand(event) {
             case "ipconfig":
                 newoutput = ipconfig(dataId);
                 break;
+            case "arp":
+                newoutput = getARPTable(dataId);
+                break;
             case "exit":
                 event.target.value = "";
                 document.querySelector(".pc-terminal").style.display = "none";
