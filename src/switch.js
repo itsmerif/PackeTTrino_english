@@ -55,7 +55,7 @@ function switchConn(event) {
         const mac = JSON.parse(item).mac;
 
         if (itemType === "item-dropped" && (itemId.startsWith("pc-") || itemId.startsWith("router-") || itemId.startsWith("server-"))) {
-            createCableObject(x1, y1, networkObject.style.left, networkObject.style.top);
+            createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
             saveMac(event, mac);
             document.getElementById(itemId).setAttribute("data-switch", networkObject.id);
             networkObject.querySelector("img").draggable = false;
