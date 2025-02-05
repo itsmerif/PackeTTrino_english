@@ -1,19 +1,11 @@
 function ping( originIP, destinationIP ) {
 
-    //compruebo que la ip de origen esta configurada
     if (!originIP) {
-        return "IP no configurada.";
+        return "Error: IP no configurada.";
     }
 
-    //obtengo el origen y compruebo que exista y no esté duplicado
     const origin = document.querySelector(`[data-ip="${originIP}"]`);
-    const allOrigins = document.querySelectorAll(`[data-ip="${originIP}"]`);
-    
-    if (allOrigins.length > 1) { //si hay más de un origen con esa ip
-        return "Error: Se encontró más de un elemento con la misma IP";
-    }
-
-    const originId = origin.id;  //obtengo el id del origen
+    const originId = origin.id;
     
     //ahora toca mirar la tabla ARP del equipo origen
 
