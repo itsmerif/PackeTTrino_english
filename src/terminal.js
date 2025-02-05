@@ -5,7 +5,7 @@ function sendCommand(event) {
     const originIP = document.getElementById(dataId).getAttribute("data-ip");
 
     if (event.key === "Enter") {
-
+        window.clearInterval(window.pingInterval);
         const input = event.target.value.trim();
         const args = input.split(" ");
         const command = args[0];
