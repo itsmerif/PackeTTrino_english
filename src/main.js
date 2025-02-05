@@ -4,12 +4,17 @@ let itemIndex = 0;
 
 // funciones de inicio
 
-function init() {
-    getPanelItems();
-
-    //eventos
-    document.querySelector(".pc-terminal").addEventListener("keydown", stopPing);
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+async function init() {
+    getPanelItems();
+    await sleep(500);
+    document.querySelector(".pc-terminal").addEventListener("keydown", stopPing);
+    document.querySelector(".item.delete").addEventListener("click", deleteMouse);
+}
+
 
 function getPanelItems() {
     fetch("./components/panel-items.json")
@@ -32,5 +37,14 @@ function stopPing(event) {
         event.preventDefault();
         clearInterval(window.pingInterval);
         document.querySelector(".terminal-output").innerHTML = "";
+    }
+}
+
+function deleteMouse() {
+    let cursor = document.body.style.cursor;
+    if (cursor.includes("cTargetX")) {
+        document.body.style.cursor = "default";
+    } else {
+        document.body.style.cursor = "url('/assets/cTargetX.png'), auto";
     }
 }

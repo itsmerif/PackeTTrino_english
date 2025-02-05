@@ -10,22 +10,27 @@ function dropItem(event) {
     const y = event.clientY;
 
     if (itemType === "item") {
+
         switch (itemId) {
             case "pc":
                 createPcObject(x, y);
                 break;
             case "router":
-                createRouterObject(x, y);
+                //createRouterObject(x, y);
+                alert("Objeto en construcción");
                 break;
             case "switch":
                 createSwitchObject(x, y);
                 break;
             case "server":
-                createServerObject(x, y);
+                alert("Objeto en construcción");
+                //createServerObject(x, y);
                 break;
             default:
+                alert("Error: Tipo de objeto no reconocido");
                 break;
         }
+
     } else if (itemType === "item-dropped") {
         const networkObject = document.getElementById(itemId);
         networkObject.style.left = `${x}px`;
