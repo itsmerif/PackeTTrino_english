@@ -22,11 +22,11 @@
   <form class="pc-form" onsubmit="savePcSpecs(event); return false;" style="display: none;">
     <p id="form-item-id"></p>
     <label for="ip">IP:</label>
-    <input type="text" id="ip" name="ip" placeholder="192.168.1.1" required>
+    <input type="text" id="ip" name="ip" placeholder="192.168.1.1" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
     <label for="netmask">Netmask:</label>
-    <input type="text" id="netmask" name="netmask" placeholder="255.255.255.0" required>
+    <input type="text" id="netmask" name="netmask" placeholder="255.255.255.0" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
     <label for="gateway">Gateway:</label>
-    <input type="text" id="gateway" name="gateway" placeholder="192.168.1.1" required>
+    <input type="text" id="gateway" name="gateway" placeholder="192.168.1.1" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
     <button type="submit">Guardar</button>
   </form>
   
