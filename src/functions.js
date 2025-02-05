@@ -52,7 +52,6 @@ function getARPTable(id) {
         matriz.push(filaArray);
     }
 
-    console.log(matriz);
-    return "Mira la consola para ver el contenido de la tabla ARP";
+    return matriz;
 
 }

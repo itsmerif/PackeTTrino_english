@@ -21,12 +21,12 @@ function createPcObject(x, y) {
                         <th>MAC Address</th>
                     </tr>
                     <tr>
-                        <td>192.168.1.100</td>
-                        <td>00:00:00:00:00:00</td>
+                        <td>192.168.1.101</td>
+                        <td>mac1</td>
                     </tr>
                     <tr>
-                        <td>192.168.1.101</td>
-                        <td>00:00:00:00:00:00</td>
+                        <td>192.168.1.102</td>
+                        <td>mac2</td>
                     </tr>
             </table>
             <button onclick="closeARPTable(event)">Cerrar</button>

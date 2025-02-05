@@ -14,14 +14,22 @@ function ping( originIP, destinationIP ) {
     }
 
     const originId = origin.id;  //obtengo el id del origen
-    const NetworkOriginObject = document.getElementById(originId); //obtengo el elemento con ese id
-
     
     //ahora toca mirar la tabla ARP del equipo origen
-    const arpElements = NetworkOriginObject.querySelector("table").querySelectorAll(".arp-entry");   //de ese origen obtengo la tabla de arp
 
-   
+    const arpTable = getARPTable(originId);
+
+    for (let i = 0; i < arpTable.length; i++) {
+        const arpRow = arpTable[i];
+        const mac = arpRow[1];
+        const ip = arpRow[0];
+        if (ip === destinationIP) {
+            return `La IP ${ip} está en el MAC ${mac}`;
+        }
+    }
+
     //
+    const NetworkOriginObject = document.getElementById(originId); //obtengo el elemento con ese id
     const switchIdentity = NetworkOriginObject.getAttribute("data-switch");    //de ese origen obtengo el switch al que está conectado
     const switchOriginObject = document.getElementById(switchIdentity);
 
