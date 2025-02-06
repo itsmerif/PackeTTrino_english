@@ -100,22 +100,21 @@ async function pingOnlyVisual(originIP, destinationIP) {
         const ip = arpRow[0];
 
         if (ip === destinationIP) {
-            moveObject(NetworkOriginObject.style.left, NetworkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top); // Unicast al switch
+            moveObject(NetworkOriginObject.style.left, NetworkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast"); // Unicast al switch
             await waitForMove();
             const macEncontrada = mac; // Hemos encontrado la mac del equipo destino
             for (let i = 0; i < macs.length; i++) { // Ahora buscamos la mac en la tabla del switch
                 const mac = macs[i];
                 if (mac === macEncontrada) { // Si la encontramos, bingo, existe la conexión
                     const pc = document.querySelector(`[data-mac="${mac}"]`);
-                    moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top);
+                    moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top, "unicast");
                     return;
                 }
             }
         }
     }
 
-    moveObject(NetworkOriginObject.style.left, NetworkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top); // Broadcast al switch
-
+    moveObject(NetworkOriginObject.style.left, NetworkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "broadcast"); // Broadcast al switch
     await waitForMove();
 
     for (let i = 0; i < macs.length; i++) { // Si no está en la tabla ARP del equipo origen, mandamos al switch a mirar los equipos conectados
@@ -125,7 +124,7 @@ async function pingOnlyVisual(originIP, destinationIP) {
 
         if (destinationIP === ip) { // Bingo, hemos encontrado el equipo destino
             addARPEntry(originId, destinationIP, mac);
-            moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top);
+            moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top, "unicast");
             return;
         }
     }

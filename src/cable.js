@@ -51,7 +51,7 @@ function deleteCable(event) {
     cableObject.remove();
 }
 
-function moveObject(x1, y1, x2, y2) {
+function moveObject(x1, y1, x2, y2, type) {
 
     const svg = document.getElementById("svg-board");
     const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
@@ -63,7 +63,7 @@ function moveObject(x1, y1, x2, y2) {
     x2 = parseInt(x2.replace("px", ""));
     y2 = parseInt(y2.replace("px", ""));
 
-    img.setAttribute("href", "/assets/cAddPacket.png");
+    img.setAttribute("href",`/assets/${type}.png`);
     img.setAttribute("width", "50");
     img.setAttribute("height", "50");
     img.setAttribute("x", x1);
