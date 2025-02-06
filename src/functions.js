@@ -22,8 +22,8 @@ function getRandomMac() {
         macBlocks[i] = (parseInt(macBlocks[i], 2).toString(16)).padStart(2, '0');
     }
     //unimos los bloques en una cadena
-    macBlocks = macBlocks.join(':');
-    return macBlocks;
+    let mac = macBlocks.join(':');
+    return mac;
 }
 
 
