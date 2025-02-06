@@ -40,3 +40,7 @@
 .item-dropped:focus {
     outline: none;
 }
+
+circle:hover {
+    cursor: not-allowed;
+}

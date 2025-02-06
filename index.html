@@ -15,22 +15,27 @@
 <body onload="init()">
 
   <div id="root">
-    <section class="board" ondragover="dragOverBoard(event)" ondrop="dropItem(event)"></section>
+    <section class="board" ondragover="dragOverBoard(event)" ondrop="dropItem(event)">
+      <svg id="svg-board" rope-start="startId" rope-end="endId" preserveAspectRatio="none" width="100%" height="100%" style="position: absolute; top: 0; left: 0;"></svg>
+    </section>
     <section id="item-panel"></section>
   </div>
 
   <form class="pc-form" onsubmit="savePcSpecs(event); return false;" style="display: none;">
     <p id="form-item-id"></p>
     <label for="ip">IP:</label>
-    <input type="text" id="ip" name="ip" placeholder="192.168.1.1" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+    <input type="text" id="ip" name="ip" placeholder="192.168.1.1"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="netmask">Netmask:</label>
-    <input type="text" id="netmask" name="netmask" placeholder="255.255.255.0" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+    <input type="text" id="netmask" name="netmask" placeholder="255.255.255.0"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="gateway">Gateway:</label>
-    <input type="text" id="gateway" name="gateway" placeholder="192.168.1.1" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+    <input type="text" id="gateway" name="gateway" placeholder="192.168.1.1"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <button type="submit">Guardar</button>
   </form>
-  
-  <div class="pc-terminal" data-id= "" onclick="clickTerminal(event)" style="display: none;">
+
+  <div class="pc-terminal" data-id="" onclick="clickTerminal(event)" style="display: none;">
     <p>
       <span>C:\></span>
       <input type="text" onkeydown="sendCommand(event)" autofocus>
@@ -49,7 +54,7 @@
   <script src="./src/terminal.js"></script>
   <script src="./src/cable.js"></script>
   <script src="./src/ping.js"></script>
-  
+
 
 </body>
 

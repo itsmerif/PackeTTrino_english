@@ -1,45 +1,45 @@
 function createCableObject(x1, y1, x2, y2, start, end) {
 
-    const board = document.getElementsByClassName("board")[0];
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    const svg = document.getElementById("svg-board");
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    const x1Value = parseInt(x1.replace("px", ""));
+    const y1Value = parseInt(y1.replace("px", ""));
+    const x2Value = parseInt(x2.replace("px", ""));
+    const y2Value = parseInt(y2.replace("px", ""));
+    const midX = parseInt((x1Value + x2Value) / 2);
+    const midY = parseInt((y1Value + y2Value) / 2);
 
-    svg.addEventListener("click", deleteCableConnection);
-    svg.setAttribute("rope-start", start);
-    svg.setAttribute("rope-end", end);
-    svg.setAttribute("preserveAspectRatio", "none");
-    svg.setAttribute("width", "100%");
-    svg.setAttribute("height", "100%");
-    svg.setAttribute("style", "top: 0; left: 0;");
-    svg.setAttribute("class", "cable");
-
-    line.setAttribute("x1", x1);
-    line.setAttribute("y1", y1);
-    line.setAttribute("x2", x2);
-    line.setAttribute("y2", y2);
+    line.setAttribute("end-start", start);
+    line.setAttribute("end-end", end);
+    line.setAttribute("x1", x1Value);
+    line.setAttribute("y1", y1Value);
+    line.setAttribute("x2", x2Value);
+    line.setAttribute("y2", y2Value);
     line.setAttribute("stroke", "black");
     line.setAttribute("stroke-width", "5");
 
+    circle.addEventListener("click", deleteCable);
+    circle.setAttribute("cx", midX);
+    circle.setAttribute("cy", midY);
+    circle.setAttribute("r", "10");
+    circle.setAttribute("fill", "red");
+
     svg.appendChild(line);
-    board.appendChild(svg);
+    svg.appendChild(circle);
 
 }
 
 
-function deleteCableConnection(event) {
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (document.body.style.cursor.includes("cTargetX")) {
-        const cableObject = event.target.closest(".cable");
-        const pcObject = document.getElementById(cableObject.getAttribute("rope-start"));
-        const switchObject = document.getElementById(cableObject.getAttribute("rope-end"));
-        pcObject.setAttribute("data-switch", "");  //eliminamos la referencia al switch en el pc
-        deleteMacEntry(switchObject.id,pcObject.dataset.mac);
-        pcObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
-        switchObject.querySelector("img").draggable = true; //permitimos que el switch se pueda arrastrar
-        cableObject.remove();
-    }
-
+function deleteCable(event) {
+    const circle = event.target;
+    const cableObject = circle.previousElementSibling;
+    const pcObject = document.getElementById(cableObject.getAttribute("end-start"));
+    const switchObject = document.getElementById(cableObject.getAttribute("end-end"));
+    pcObject.setAttribute("data-switch", "");  //eliminamos la referencia al switch en el pc
+    deleteMacEntry(switchObject.id, pcObject.dataset.mac);
+    pcObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
+    switchObject.querySelector("img").draggable = true; //permitimos que el switch se pueda arrastrar
+    circle.remove();
+    cableObject.remove();
 }
