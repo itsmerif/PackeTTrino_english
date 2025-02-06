@@ -5,13 +5,17 @@ function createSwitchObject(x, y) {
     const networkObjectIcon = document.createElement("img");
     const networkObjectTable = document.createElement("article");
 
+    //switch grafico con icono
     networkObject.id = `switch-${itemIndex}`;
-
     networkObjectIcon.src = "./assets/switch.png";
     networkObjectIcon.alt = "switch";
     networkObjectIcon.draggable = true;
+    networkObject.classList.add("item-dropped", "switch");
+    networkObject.style.left = `${x}px`;
+    networkObject.style.top = `${y}px`;
     networkObject.appendChild(networkObjectIcon);
 
+    //tabla de macs
     networkObjectTable.classList.add("mac-table");
     networkObjectTable.innerHTML = `
             <table>
@@ -24,16 +28,14 @@ function createSwitchObject(x, y) {
 
     networkObject.appendChild(networkObjectTable);
 
+    //eventos
     networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
     networkObject.addEventListener("drop", switchConn);
     networkObject.addEventListener("click", showMacTable);
 
 
-    networkObject.classList.add("item-dropped", "switch");
-    networkObject.style.left = `${x}px`;
-    networkObject.style.top = `${y}px`;
+    //añadir el elemento al tablero y aumentar el indice global
     board.appendChild(networkObject);
-
     itemIndex++;
 
 }
