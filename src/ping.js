@@ -108,6 +108,10 @@ async function pingOnlyVisual(originIP, destinationIP) {
                 if (mac === macEncontrada) { // Si la encontramos, bingo, existe la conexión
                     const pc = document.querySelector(`[data-mac="${mac}"]`);
                     moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top, "unicast");
+                    await waitForMove();
+                    moveObject(pc.style.left, pc.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
+                    await waitForMove();
+                    moveObject(switchOriginObject.style.left, switchOriginObject.style.top,NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
                     return;
                 }
             }
@@ -125,6 +129,10 @@ async function pingOnlyVisual(originIP, destinationIP) {
         if (destinationIP === ip) { // Bingo, hemos encontrado el equipo destino
             addARPEntry(originId, destinationIP, mac);
             moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top, "unicast");
+            await waitForMove();
+            moveObject(pc.style.left, pc.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
+            await waitForMove();
+            moveObject(switchOriginObject.style.left, switchOriginObject.style.top,NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
             return;
         }
     }
