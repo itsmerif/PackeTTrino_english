@@ -12,7 +12,6 @@ async function init() {
     getPanelItems();
     await sleep(500);
     document.querySelector(".pc-terminal").addEventListener("keydown", stopPing);
-    document.querySelector(".item.delete").addEventListener("click", deleteMouse);
 }
 
 

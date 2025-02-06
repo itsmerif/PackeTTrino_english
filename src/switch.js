@@ -58,9 +58,9 @@ function switchConn(event) {
             createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
             saveMac(event, mac);
             document.getElementById(itemId).setAttribute("data-switch", networkObject.id);
-            networkObject.querySelector("img").draggable = false;
+            networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
             if (itemId.startsWith("pc-")) {
-                document.getElementById(itemId).querySelector("img").draggable = false;
+                document.getElementById(itemId).querySelector("img").draggable = true; //el pc no se puede arrastrar
             }
         }
 

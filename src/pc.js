@@ -32,6 +32,7 @@ function createPcObject(x, y) {
     networkObject.addEventListener("click", () => showPcForm(networkObject.id));
     networkObject.addEventListener("contextmenu", event => showAdvancedOptions(event));
     networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
+    networkObject.addEventListener("drag", dragConn);
 
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
@@ -134,4 +135,17 @@ function closeARPTable(event) {
     const networkObject = event.target.closest(".item-dropped");
     const table = networkObject.querySelector(".mac-table");
     table.style.display = "none";
+}
+
+function dragConn(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped");
+    if (networkObject.getAttribute("data-switch") !== "") {
+        const networkObjectId = networkObject.id;
+        console.log(networkObjectId);
+        const line = document.querySelector(`line[end-start="${networkObjectId}"]`);
+        line.setAttribute("x1", event.clientX);
+        line.setAttribute("y1", event.clientY);
+    }
 }
