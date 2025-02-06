@@ -16,8 +16,7 @@ function dropItem(event) {
                 createPcObject(x, y);
                 break;
             case "router":
-                //createRouterObject(x, y);
-                alert("Objeto en construcción");
+                createRouterObject(x, y);
                 break;
             case "switch":
                 createSwitchObject(x, y);
