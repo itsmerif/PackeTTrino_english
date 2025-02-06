@@ -6,6 +6,7 @@ function sendCommand(event) {
 
     if (event.key === "Enter") {
         window.clearInterval(window.pingInterval);
+        document.querySelector(".terminal-output").innerHTML = "";
         const input = event.target.value.trim();
         const args = input.split(" ");
         const command = args[0];
@@ -19,6 +20,7 @@ function sendCommand(event) {
                 break;
             case "ipconfig":
                 newoutput = ipconfig(dataId);
+                document.querySelector(".terminal-output").innerHTML = newoutput;
                 break;
             case "arp":
                 newoutput = getARPTable(dataId);
@@ -29,10 +31,9 @@ function sendCommand(event) {
                 break;
             default:
                 newoutput = "Command not found";
+                document.querySelector(".terminal-output").innerHTML = newoutput;
                 break;
         }
-
-        document.querySelector(".terminal-output").innerHTML = newoutput;
     }
 }
 

@@ -28,7 +28,6 @@ function createCableObject(x1, y1, x2, y2, start, end) {
     svg.appendChild(line);
     svg.appendChild(circle);
 
-    moveObject(x1Value, y1Value, x2Value, y2Value);
 
 }
 
@@ -53,8 +52,17 @@ function deleteCable(event) {
 }
 
 function moveObject(x1, y1, x2, y2) {
+
     const svg = document.getElementById("svg-board");
     const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
+
+    //convertimos la entrada a numeros
+
+    x1 = parseInt(x1.replace("px", ""));
+    y1 = parseInt(y1.replace("px", ""));
+    x2 = parseInt(x2.replace("px", ""));
+    y2 = parseInt(y2.replace("px", ""));
+
     img.setAttribute("href", "/assets/cAddPacket.png");
     img.setAttribute("width", "50");
     img.setAttribute("height", "50");
@@ -65,7 +73,7 @@ function moveObject(x1, y1, x2, y2) {
 
     function animateMove(time) {
         if (!startTime) startTime = time;
-        const progress = (time - startTime) / 2000;
+        const progress = (time - startTime) / 1000;
         const currentX = x1 + (x2 - x1) * progress;
         const currentY = y1 + (y2 - y1) * progress;
         img.setAttribute("x", currentX);
