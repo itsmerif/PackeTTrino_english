@@ -28,8 +28,6 @@ function createCableObject(x1, y1, x2, y2, start, end) {
     svg.appendChild(line);
     svg.appendChild(circle);
 
-    moveObject(x1Value, y1Value, x2Value, y2Value);
-
 }
 
 

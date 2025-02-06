@@ -1,18 +1,27 @@
 [
     {
         "name": "pc",
-        "image": "./assets/pc2.png"
+        "image": "./assets/pc2.png",
+        "draggable": true
     },
     {
         "name": "router",
-        "image": "./assets/router2.png"
+        "image": "./assets/router2.png",
+        "draggable": true
     },
     {
         "name": "switch",
-        "image": "./assets/switch2.png"
+        "image": "./assets/switch2.png",
+        "draggable": true
     },
     {
         "name": "server",
-        "image": "./assets/server2.png"
+        "image": "./assets/server2.png",
+        "draggable": true
+    },
+    {
+        "name": "ping",
+        "image": "./assets/message.png",
+        "draggable": false
     }
 ]

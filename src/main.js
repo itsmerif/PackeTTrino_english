@@ -23,9 +23,9 @@ function getPanelItems() {
             data.forEach(item => {
                 const itemElement = document.createElement("article");
                 itemElement.classList.add("item", item.name);
-                itemElement.draggable = true;
+                itemElement.draggable = item.draggable;
                 itemElement.ondragstart = dragStart;
-                itemElement.innerHTML = `<img src="${item.image}" alt="${item.name}" />`;
+                itemElement.innerHTML = `<img src="${item.image}" alt="${item.name}" draggable="${item.draggable}" />`;
                 panel.appendChild(itemElement);
             });
         });
