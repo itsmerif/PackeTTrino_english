@@ -44,7 +44,3 @@
 circle:hover {
     cursor: pointer;
 }
-
-.board * {
-    border: 1px solid black;
-}

@@ -60,7 +60,7 @@ function switchConn(event) {
             document.getElementById(itemId).setAttribute("data-switch", networkObject.id);
             networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
             if (itemId.startsWith("pc-")) {
-                document.getElementById(itemId).querySelector("img").draggable = true; //el pc no se puede arrastrar
+                document.getElementById(itemId).querySelector("img").draggable = false; //el pc no se puede arrastrar
             }
         }
 

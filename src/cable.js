@@ -10,7 +10,6 @@ function createCableObject(x1, y1, x2, y2, start, end) {
     const midX = parseInt((x1Value + x2Value) / 2);
     const midY = parseInt((y1Value + y2Value) / 2);
 
-    line.addEventListener("dragover", (event) => event.preventDefault());
     line.setAttribute("end-start", start);
     line.setAttribute("end-end", end);
     line.setAttribute("x1", x1Value);

@@ -32,7 +32,7 @@ function createPcObject(x, y) {
     networkObject.addEventListener("click", () => showPcForm(networkObject.id));
     networkObject.addEventListener("contextmenu", event => showAdvancedOptions(event));
     networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
-    networkObject.addEventListener("drag", dragConn);
+    //networkObject.addEventListener("drag", dragConn);
 
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
