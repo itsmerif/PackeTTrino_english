@@ -36,3 +36,7 @@
     filter: brightness(0.8);
     cursor: pointer;
 }
+
+.item-dropped:focus {
+    outline: none;
+}
