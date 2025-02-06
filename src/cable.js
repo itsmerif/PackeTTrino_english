@@ -32,14 +32,20 @@ function createCableObject(x1, y1, x2, y2, start, end) {
 
 
 function deleteCable(event) {
+
     const circle = event.target;
     const cableObject = circle.previousElementSibling;
     const pcObject = document.getElementById(cableObject.getAttribute("end-start"));
     const switchObject = document.getElementById(cableObject.getAttribute("end-end"));
+    
     pcObject.setAttribute("data-switch", "");  //eliminamos la referencia al switch en el pc
-    deleteMacEntry(switchObject.id, pcObject.dataset.mac);
+    deleteMacEntry(switchObject.id, pcObject.dataset.mac); //eliminamos la entrada en la tabla MAC del switch
     pcObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
-    switchObject.querySelector("img").draggable = true; //permitimos que el switch se pueda arrastrar
+
+    if (isMacTableEmpty(switchObject.id)) {
+        switchObject.querySelector("img").draggable = true; //permitimos que el switch se pueda arrastrar
+    }
+
     circle.remove();
     cableObject.remove();
 }

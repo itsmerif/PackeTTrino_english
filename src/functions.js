@@ -62,3 +62,24 @@ function addARPEntry(id, ip, mac) {
     newRow.insertCell().innerText = ip;
     newRow.insertCell().innerText = mac;
 }
+
+function isMacTableEmpty(id) {
+
+    let tabla = document.getElementById(id).querySelector("table");
+    let matriz = [];
+
+    for (let fila of tabla.rows) {
+        let filaArray = [];
+        for (let celda of fila.cells) {
+            filaArray.push(celda.innerText.trim());
+        }
+        matriz.push(filaArray);
+    }
+
+    if (matriz.length === 1) {
+        return true;
+    }else {
+        return false;
+    }
+
+}
