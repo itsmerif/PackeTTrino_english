@@ -28,6 +28,8 @@ function createCableObject(x1, y1, x2, y2, start, end) {
     svg.appendChild(line);
     svg.appendChild(circle);
 
+    moveObject(x1Value, y1Value, x2Value, y2Value);
+
 }
 
 
@@ -48,4 +50,30 @@ function deleteCable(event) {
 
     circle.remove();
     cableObject.remove();
+}
+
+function moveObject(x1, y1, x2, y2) {
+    const svg = document.getElementById("svg-board");
+    const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
+    img.setAttribute("href", "/assets/cAddPacket.png");
+    img.setAttribute("width", "50");
+    img.setAttribute("height", "50");
+    img.setAttribute("x", x1);
+    img.setAttribute("y", y1); 
+    svg.appendChild(img);
+    let startTime;
+
+    function animateMove(time) {
+        if (!startTime) startTime = time;
+        const progress = (time - startTime) / 2000;
+        const currentX = x1 + (x2 - x1) * progress;
+        const currentY = y1 + (y2 - y1) * progress;
+        img.setAttribute("x", currentX);
+        img.setAttribute("y", currentY);
+        if (progress < 1) {
+            requestAnimationFrame(animateMove);
+        }
+    }
+
+    requestAnimationFrame(animateMove);
 }
