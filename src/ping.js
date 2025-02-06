@@ -17,8 +17,10 @@ async function ping(originIP, destinationIP) {
     }
 
     // Compruebo que el equipo origen está configurado
+
     if (!originIP) {
-        return "Error: IP no configurada.";
+        ping_f(originIP);
+        return;
     }
 
     // si el origen y el destino es el mismo, es un loopback
@@ -29,6 +31,7 @@ async function ping(originIP, destinationIP) {
     }
 
     // Buscamos la IP en la tabla ARP del equipo origen
+
     for (let i = 0; i < arpTable.length; i++) {
         const arpRow = arpTable[i];
         const mac = arpRow[1];
@@ -53,7 +56,7 @@ async function ping(originIP, destinationIP) {
         const ip = pc.getAttribute("data-ip");
 
         if (destinationIP === ip) { // Bingo, hemos encontrado el equipo destino
-            addARPEntry(originId, destinationIP, mac);ñ
+            addARPEntry(originId, destinationIP, mac);
             ping_s(originIP);
             return;
         }
