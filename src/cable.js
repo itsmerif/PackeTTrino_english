@@ -28,6 +28,8 @@ function createCableObject(x1, y1, x2, y2, start, end) {
     svg.appendChild(line);
     svg.appendChild(circle);
 
+    moveObject(x1Value, y1Value, x2Value, y2Value);
+
 }
 
 
@@ -70,6 +72,8 @@ function moveObject(x1, y1, x2, y2) {
         img.setAttribute("y", currentY);
         if (progress < 1) {
             requestAnimationFrame(animateMove);
+        } else {
+            svg.removeChild(img);
         }
     }
 
