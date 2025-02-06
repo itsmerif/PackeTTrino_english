@@ -25,7 +25,6 @@ function createRouterObject(x, y) {
                 <tr>
                     <th>Destination</th>
                     <th>Netmask</th>
-                    <th>Gateway</th>
                     <th>Next Hop</th>
                 </tr>
             </table>
