@@ -12,6 +12,7 @@ async function init() {
     getPanelItems();
     await sleep(500);
     document.querySelector(".pc-terminal").addEventListener("keydown", stopPing);
+    document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm);
 }
 
 
@@ -53,4 +54,14 @@ function pingSim() {
     const ip1 = form.ip1.value;
     const ip2 = form.ip2.value;
     pingOnlyVisual(ip1, ip2);
+}
+
+function showPingForm(event) {
+    const form = document.querySelector(".ping-form");
+    if ( form.style.display === "none") {
+        form.style.display = "flex";
+        form.ip1.focus();
+    } else {
+        form.style.display = "none";
+    }
 }

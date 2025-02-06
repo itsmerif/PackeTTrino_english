@@ -22,5 +22,11 @@
         "image": "./assets/server2.png",
         "draggable": true,
         "size": "100%"
+    },
+    {
+        "name": "ping",
+        "image": "./assets/bus.png",
+        "draggable": false,
+        "size": "100%"
     }
 ]
