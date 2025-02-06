@@ -53,7 +53,10 @@ function clickTerminal(event) {
 function checkIpRouting(id, args) {
 
     //sintaxis del comando: ip route <add|del> <destination> <netmask> via <nexthop>
-    //                      0    1       2           3           4      5     6
+
+    if (!id.includes("router-")) {
+        return "Error: Este comando solo puede ser ejecutado desde un router.";
+    }
 
     if (args.length < 7) {
         return 'Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [nexthop]';
@@ -69,17 +72,16 @@ function checkIpRouting(id, args) {
 
 }
 
-function addRoutingEntry(id, destination, netmask, nexthop) {
-
-    const networkObject = document.getElementById(id);
-    const table = networkObject.querySelector("table");
-    const newRow = document.createElement("tr");
-    newRow.innerHTML = `
-        <tr>
-            <td>${destination}</td>
-            <td>${netmask}</td>
-            <td>${nexthop}</td>
-        </tr>`;
-    table.appendChild(newRow);
-
+function ipconfig(id) {
+    const pc = document.getElementById(id);
+    const ip = pc.getAttribute("data-ip");
+    const netmask = pc.getAttribute("data-netmask");
+    const gateway = pc.getAttribute("data-gateway");
+    const mac = pc.getAttribute("data-mac");
+    return `
+        Dirección IP: ${ip}
+        Puerta de Enlace: ${gateway}
+        Máscara de Red: ${netmask}
+        Dirección Física: ${mac}
+    `;
 }

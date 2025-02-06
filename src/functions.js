@@ -1,4 +1,5 @@
 function getNetwork(ip, netmask) {
+
     ip = ip.split('.'); //separamos cada octeto de la ip
     netmask = netmask.split('.'); //separamos cada octeto de la netmask
     let network = [];
@@ -25,19 +26,6 @@ function getRandomMac() {
     return macBlocks;
 }
 
-function ipconfig(id) {
-    const pc = document.getElementById(id);
-    const ip = pc.getAttribute("data-ip");
-    const netmask = pc.getAttribute("data-netmask");
-    const gateway = pc.getAttribute("data-gateway");
-    const mac = pc.getAttribute("data-mac");
-    return `
-        Dirección IP: ${ip}
-        Puerta de Enlace: ${gateway}
-        Máscara de Red: ${netmask}
-        Dirección Física: ${mac}
-    `;
-}
 
 function getARPTable(id) {
 
@@ -57,10 +45,27 @@ function getARPTable(id) {
 }
 
 function addARPEntry(id, ip, mac) {
+
     let tabla = document.getElementById(id).querySelector("table");
     let newRow = tabla.insertRow();
     newRow.insertCell().innerText = ip;
     newRow.insertCell().innerText = mac;
+
+}
+
+function addRoutingEntry(id, destination, netmask, nexthop) {
+
+    const networkObject = document.getElementById(id);
+    const table = networkObject.querySelector("table");
+    const newRow = document.createElement("tr");
+    newRow.innerHTML = `
+        <tr>
+            <td>${destination}</td>
+            <td>${netmask}</td>
+            <td>${nexthop}</td>
+        </tr>`;
+    table.appendChild(newRow);
+
 }
 
 function isMacTableEmpty(id) {
