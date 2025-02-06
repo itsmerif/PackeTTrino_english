@@ -121,18 +121,25 @@ async function pingOnlyVisual(originIP, destinationIP) {
     moveObject(NetworkOriginObject.style.left, NetworkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "broadcast"); // Broadcast al switch
     await waitForMove();
 
-    for (let i = 0; i < macs.length; i++) { // Si no está en la tabla ARP del equipo origen, mandamos al switch a mirar los equipos conectados
+    //el switch ahora realiza un broadcast a todos los equipos conectados
+
+    for (let i = 0; i < macs.length; i++) { 
+        const mac = macs[i];
+        const pc = document.querySelector(`[data-mac="${mac}"]`);
+        moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top, "broadcast");
+    }
+    
+    await waitForMove(); //esperamos a que el switch haga el broadcast a todos los equipos conectados
+    
+    for (let i = 0; i < macs.length; i++) {
         const mac = macs[i];
         const pc = document.querySelector(`[data-mac="${mac}"]`);
         const ip = pc.getAttribute("data-ip");
-
         if (destinationIP === ip) { // Bingo, hemos encontrado el equipo destino
             addARPEntry(originId, destinationIP, mac);
-            moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top, "unicast");
-            await waitForMove();
             moveObject(pc.style.left, pc.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
             await waitForMove();
-            moveObject(switchOriginObject.style.left, switchOriginObject.style.top,NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
+            moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
             return;
         }
     }
