@@ -3,6 +3,7 @@ function waitForMove() {
 }
 
 async function ping(originIP, destinationIP) {
+
     const origin = document.querySelector(`[data-ip="${originIP}"]`);
     const originId = origin.id;
     const arpTable = getARPTable(originId);
@@ -20,6 +21,13 @@ async function ping(originIP, destinationIP) {
         return "Error: IP no configurada.";
     }
 
+    // si el origen y el destino es el mismo, es un loopback
+
+    if (originIP === destinationIP) {
+        ping_s(originIP);
+        return;
+    }
+
     // Buscamos la IP en la tabla ARP del equipo origen
     for (let i = 0; i < arpTable.length; i++) {
         const arpRow = arpTable[i];
@@ -27,14 +35,11 @@ async function ping(originIP, destinationIP) {
         const ip = arpRow[0];
 
         if (ip === destinationIP) {
-            moveObject(NetworkOriginObject.style.left, NetworkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top); // Unicast al switch
-            await waitForMove();
             const macEncontrada = mac; // Hemos encontrado la mac del equipo destino
             for (let i = 0; i < macs.length; i++) { // Ahora buscamos la mac en la tabla del switch
                 const mac = macs[i];
                 if (mac === macEncontrada) { // Si la encontramos, bingo, existe la conexión
                     const pc = document.querySelector(`[data-mac="${mac}"]`);
-                    moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top);
                     ping_s(originIP);
                     return;
                 }
@@ -42,18 +47,13 @@ async function ping(originIP, destinationIP) {
         }
     }
 
-    moveObject(NetworkOriginObject.style.left, NetworkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top); // Broadcast al switch
-
-    await waitForMove();
-
     for (let i = 0; i < macs.length; i++) { // Si no está en la tabla ARP del equipo origen, mandamos al switch a mirar los equipos conectados
         const mac = macs[i];
         const pc = document.querySelector(`[data-mac="${mac}"]`);
         const ip = pc.getAttribute("data-ip");
 
         if (destinationIP === ip) { // Bingo, hemos encontrado el equipo destino
-            addARPEntry(originId, destinationIP, mac);
-            moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top);
+            addARPEntry(originId, destinationIP, mac);ñ
             ping_s(originIP);
             return;
         }
@@ -64,6 +64,7 @@ async function ping(originIP, destinationIP) {
 }
 
 async function pingOnlyVisual(originIP, destinationIP) {
+
     const origin = document.querySelector(`[data-ip="${originIP}"]`);
     const originId = origin.id;
     const arpTable = getARPTable(originId);
@@ -77,11 +78,19 @@ async function pingOnlyVisual(originIP, destinationIP) {
     }
 
     // Compruebo que el equipo origen está configurado
+
     if (!originIP) {
-        return "Error: IP no configurada.";
+        return;
+    }
+
+    // si el origen y el destino es el mismo, es un loopback
+
+    if (originIP === destinationIP) {
+        return;
     }
 
     // Buscamos la IP en la tabla ARP del equipo origen
+
     for (let i = 0; i < arpTable.length; i++) {
         const arpRow = arpTable[i];
         const mac = arpRow[1];
@@ -126,7 +135,7 @@ function ping_s(origin) {
     const terminalOutput = document.querySelector(".terminal-output");
     let seq = 1;
     window.pingInterval = setInterval(() => {
-        terminalOutput.innerHTML +=`64 bytes from ${origin}: icmp_seq=${seq} ttl=64 time=0.030 ms\n`;
+        terminalOutput.innerHTML += `64 bytes from ${origin}: icmp_seq=${seq} ttl=64 time=0.030 ms\n`;
         seq++;
     }, 1000);
 
@@ -137,7 +146,7 @@ function ping_f(origin) {
     const terminalOutput = document.querySelector(".terminal-output");
     let seq = 1;
     window.pingInterval = setInterval(() => {
-        terminalOutput.innerHTML +=`From ${origin} icmp_seq=${seq} Destination Host Unreachable\n`;
+        terminalOutput.innerHTML += `From ${origin} icmp_seq=${seq} Destination Host Unreachable\n`;
         seq++;
     }, 1000);
 
