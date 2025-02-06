@@ -44,6 +44,16 @@
     <div class="terminal-output"></div>
   </div>
 
+  <form class="ping-form" onsubmit="pingSim(); return false;">
+    <label for="ip1">Origen</label>
+    <input type="text" id="ip1" name="ip1" placeholder="192.168.1.1"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+    <label for="ip2">Destino</label>
+    <input type="text" id="ip2" name="ip2" placeholder="192.168.1.1"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+    <input type="submit" value="Hacer Ping">
+  </form>
+
   <script src="./src/main.js"></script>
   <script src="./src/board.js"></script>
   <script src="./src/panel.js"></script>
