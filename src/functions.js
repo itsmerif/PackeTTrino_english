@@ -109,7 +109,7 @@ function isMacTableEmpty(id) {
 
 
 function getRouterIp(routerId, switchId) {
-    console.log(routerId, switchId);
+    
     const router = document.getElementById(routerId);
     let ip = "";
 
