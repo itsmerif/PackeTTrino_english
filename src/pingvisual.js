@@ -177,6 +177,8 @@ async function pingOnlyVisual(originIP, destinationIP) {
                 moveObject(networkObject.style.left, networkObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
                 await waitForMove();
                 moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
+                await waitForMove();
+                pingOnlyVisual(originIP, destinationIP);
                 return;
             }
         }
