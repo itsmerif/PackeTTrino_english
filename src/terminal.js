@@ -66,7 +66,13 @@ function checkIpRouting(id, args) {
         return 'Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [nexthop]';
     }
 
-    addRoutingEntry(id, args[3], args[4], args[6]);
+    if (args[2] === "add") {
+        addRoutingEntry(id, args[3], args[4], args[6]);
+    }
+
+    if (args[2] === "del") {
+        removeRoutingEntry(id, args[3], args[4], args[6]);
+    }
 
     return "Comando ip route ejecutado correctamente";
 

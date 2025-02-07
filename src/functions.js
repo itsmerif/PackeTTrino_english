@@ -68,6 +68,23 @@ function addRoutingEntry(id, destination, netmask, nexthop) {
 
 }
 
+function removeRoutingEntry(id, destination, netmask, nexthop) {
+
+    const networkObject = document.getElementById(id);
+    const table = networkObject.querySelector("table");
+    const rows = table.querySelectorAll("tr");
+
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.querySelectorAll("td");
+
+        if (cells[0].innerHTML === destination && cells[1].innerHTML === netmask && cells[2].innerHTML === nexthop) {
+            table.removeChild(row);
+        }
+    }
+
+}
+
 function isMacTableEmpty(id) {
 
     let tabla = document.getElementById(id).querySelector("table");
