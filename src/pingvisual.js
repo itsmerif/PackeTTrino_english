@@ -19,16 +19,10 @@ async function pingOnlyVisual(originIP, destinationIP) {
     const origin = document.querySelector(`[data-ip="${originIP}"]`);
     const originId = origin.id;
     const originNetmask = origin.getAttribute("data-netmask");
-    const arpTable = getARPTable(originId);
     const NetworkOriginObject = document.getElementById(originId);
     const NetworkOriginObjectMac = NetworkOriginObject.getAttribute("data-mac");
     const switchIdentity = NetworkOriginObject.getAttribute("data-switch");
     const switchOriginObject = document.getElementById(switchIdentity);
-    const macElements = switchOriginObject.querySelector("table").querySelectorAll(".mac-address");
-    let macs = [];
-    for (let i = 0; i < macElements.length; i++) {
-        macs.push(macElements[i].innerHTML);
-    }
 
     if (getNetwork(originIP, originNetmask) === getNetwork(destinationIP, originNetmask)) {     //si el destino y origen están en la misma red
 
@@ -115,7 +109,6 @@ async function pingOnlyVisual(originIP, destinationIP) {
             
             const mac = isIpInNetwork(switchOriginObject.id, NetworkOriginObjectGateway);
             const networkObject = document.querySelector(`[data-mac="${mac}"]`);
-
             addARPEntry(originId, NetworkOriginObjectGateway, mac);
             moveObject(networkObject.style.left, networkObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
             await waitForMove();
