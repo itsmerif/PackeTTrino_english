@@ -7,10 +7,14 @@ function createRouterObject(x, y) {
     const networkObjectAdvancedOptions = document.createElement("div");
 
     //router grafico con icono
+
     networkObject.classList.add("item-dropped", "router");
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
     networkObject.setAttribute("data-mac", getRandomMac());
+    networkObject.setAttribute("data-enp0s3", "");
+    networkObject.setAttribute("data-enp0s8", "");
+    networkObject.setAttribute("data-enp0s9", "");
     networkObject.id = `router-${itemIndex}`;
     networkObjectIcon.src = "./assets/router.png";
     networkObjectIcon.alt = "router";
@@ -36,12 +40,12 @@ function createRouterObject(x, y) {
 
     networkObjectAdvancedOptions.classList.add("advanced-options-modal");
     networkObjectAdvancedOptions.innerHTML = `
-        <button onclick="showTerminal(event)">Modo Terminal</button>`;
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showRoutingTable(event)">Ver Tabla de Enrutamiento</button>`;
     networkObject.appendChild(networkObjectAdvancedOptions);
 
     //eventos
     networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
-    networkObject.addEventListener("click", showRoutingTable);
     networkObject.addEventListener("contextmenu", event => showAdvancedOptionsRouter(event));
 
     //añadir el elemento al tablero y aumentar el indice global
@@ -54,6 +58,7 @@ function showRoutingTable(event) {
     event.stopPropagation();
     const networkObject = event.target.closest(".item-dropped");
     const table = networkObject.querySelector(".mac-table");
+    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
     table.style.display = "flex";
 }
 
