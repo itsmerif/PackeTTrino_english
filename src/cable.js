@@ -40,10 +40,14 @@ function deleteCable(event) {
     const switchObject = document.getElementById(cableObject.getAttribute("end-end"));
     
     if (NetworkObject.id.startsWith("pc-")) {
+
         NetworkObject.setAttribute("data-switch", "");  //eliminamos la referencia al switch en el pc
+        NetworkObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
+        
     }
     
     if (NetworkObject.id.startsWith("router-")) {
+
         if (NetworkObject.getAttribute("data-switch-enp0s3") === switchObject.id) {
             NetworkObject.setAttribute("data-switch-enp0s3", "");
         }
@@ -53,10 +57,12 @@ function deleteCable(event) {
         if (NetworkObject.getAttribute("data-switch-enp0s9") === switchObject.id) {
             NetworkObject.setAttribute("data-switch-enp0s9", "");
         }
+
+        NetworkObject.querySelector("img").draggable = true; //permitimos que el routerse pueda arrastrar
+
     }
 
     deleteMacEntry(switchObject.id, NetworkObject.dataset.mac); //eliminamos la entrada en la tabla MAC del switch
-    NetworkObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
 
     if (isMacTableEmpty(switchObject.id)) {
         switchObject.querySelector("img").draggable = true; //permitimos que el switch se pueda arrastrar
