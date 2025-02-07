@@ -36,12 +36,27 @@ function deleteCable(event) {
 
     const circle = event.target;
     const cableObject = circle.previousElementSibling;
-    const pcObject = document.getElementById(cableObject.getAttribute("end-start"));
+    const NetworkObject = document.getElementById(cableObject.getAttribute("end-start"));
     const switchObject = document.getElementById(cableObject.getAttribute("end-end"));
     
-    pcObject.setAttribute("data-switch", "");  //eliminamos la referencia al switch en el pc
-    deleteMacEntry(switchObject.id, pcObject.dataset.mac); //eliminamos la entrada en la tabla MAC del switch
-    pcObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
+    if (NetworkObject.id.startsWith("pc-")) {
+        NetworkObject.setAttribute("data-switch", "");  //eliminamos la referencia al switch en el pc
+    }
+    
+    if (NetworkObject.id.startsWith("router-")) {
+        if (NetworkObject.getAttribute("data-switch-enp0s3") === switchObject.id) {
+            NetworkObject.setAttribute("data-switch-enp0s3", "");
+        }
+        if (NetworkObject.getAttribute("data-switch-enp0s8") === switchObject.id) {
+            NetworkObject.setAttribute("data-switch-enp0s8", "");
+        }
+        if (NetworkObject.getAttribute("data-switch-enp0s9") === switchObject.id) {
+            NetworkObject.setAttribute("data-switch-enp0s9", "");
+        }
+    }
+
+    deleteMacEntry(switchObject.id, NetworkObject.dataset.mac); //eliminamos la entrada en la tabla MAC del switch
+    NetworkObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
 
     if (isMacTableEmpty(switchObject.id)) {
         switchObject.querySelector("img").draggable = true; //permitimos que el switch se pueda arrastrar

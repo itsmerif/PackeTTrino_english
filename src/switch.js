@@ -56,16 +56,45 @@ function switchConn(event) {
         const y1 = JSON.parse(item).originy; //obtengo el y del elemento origen
         const mac = JSON.parse(item).mac;
 
-        if (itemType === "item-dropped" && (itemId.startsWith("pc-") || itemId.startsWith("router-") || itemId.startsWith("server-"))) {
+        if (itemType === "item-dropped" && (itemId.startsWith("pc-") || itemId.startsWith("server-"))) {
+
             createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
             saveMac(event, mac);
             document.getElementById(itemId).setAttribute("data-switch", networkObject.id);
             networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
-            if (itemId.startsWith("pc-")) {
-                document.getElementById(itemId).querySelector("img").draggable = false; //el pc no se puede arrastrar
-            }
+            document.getElementById(itemId).querySelector("img").draggable = false; //el pc no se puede arrastrar
+
         }
 
+        if (itemType === "item-dropped" && itemId.startsWith("router-")) {
+
+            const routerObject = document.getElementById(itemId);
+            const enp0s3Conn = routerObject.getAttribute("data-switch-enp0s3");
+            const enp0s8Conn = routerObject.getAttribute("data-switch-enp0s8");
+            const enp0s9Conn = routerObject.getAttribute("data-switch-enp0s9");
+
+            if (enp0s3Conn === "") {
+
+                createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
+                saveMac(event, mac);
+                document.getElementById(itemId).setAttribute("data-switch-enp0s3", networkObject.id);
+
+            }else if (enp0s8Conn === "") {
+
+                createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
+                saveMac(event, mac);
+                document.getElementById(itemId).setAttribute("data-switch-enp0s8", networkObject.id);
+
+            }else if (enp0s9Conn === "") {
+
+                createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
+                saveMac(event, mac);
+                document.getElementById(itemId).setAttribute("data-switch-enp0s9", networkObject.id);
+                routerObject.querySelector("img").draggable = false; //el router ya no se puede arrastrar
+                
+            }
+
+        }
     }
 }
 
