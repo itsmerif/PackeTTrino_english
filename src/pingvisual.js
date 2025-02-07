@@ -129,13 +129,9 @@ async function pingOnlyVisual(originIP, destinationIP) {
 
                     const mac = macs[i];
 
-                    if (mac === macEncontrada) { // Si la encontramos, bingo, existe la conexión
-                        const pc = document.querySelector(`[data-mac="${mac}"]`);
-                        moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top, "unicast");
-                        await waitForMove();
-                        moveObject(pc.style.left, pc.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
-                        await waitForMove();
-                        moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");                       
+                    if (mac === macEncontrada) { // Si la encontramos, bingo, existe la conexión con la puerta de enlace
+                        const NetworkGatewayObject = document.querySelector(`[data-mac="${mac}"]`);
+                        moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkGatewayObject.style.left, NetworkGatewayObject.style.top, "unicast");                     
                         return;
                     }
                 }
