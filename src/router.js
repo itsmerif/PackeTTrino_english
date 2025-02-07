@@ -45,9 +45,11 @@ function createRouterObject(x, y) {
                     <th>Destination</th>
                     <th>Netmask</th>
                     <th>Gateway</th>
+                    <th>Interface</th>
                     <th>Next Hop</th>
                 </tr>
                 <tr>
+                    <td> - </td>
                     <td> - </td>
                     <td> - </td>
                     <td> - </td>
@@ -57,9 +59,11 @@ function createRouterObject(x, y) {
                     <td> - </td>
                     <td> - </td>
                     <td> - </td>
+                    <td> - </td>
                     <td> 0.0.0.0 </td>
                 </tr>
                 <tr>
+                    <td> - </td>
                     <td> - </td>
                     <td> - </td>
                     <td> - </td>
@@ -165,9 +169,9 @@ function saveRouterSpecs(event) {
     const rows = routingTable.querySelectorAll("tr");
 
     const interfaces = [
-        { ip: newIpEnp0s3, netmask: newNetmaskEnp0s3 },
-        { ip: newIpEnp0s8, netmask: newNetmaskEnp0s8 },
-        { ip: newIpEnp0s9, netmask: newNetmaskEnp0s9 }
+        { ip: newIpEnp0s3, netmask: newNetmaskEnp0s3, interface: "enp0s3" },
+        { ip: newIpEnp0s8, netmask: newNetmaskEnp0s8, interface: "enp0s8" },
+        { ip: newIpEnp0s9, netmask: newNetmaskEnp0s9, interface: "enp0s9" }
     ];
 
     interfaces.forEach((iface, index) => {
@@ -176,6 +180,7 @@ function saveRouterSpecs(event) {
         cells[0].innerHTML = getNetwork(iface.ip, iface.netmask);
         cells[1].innerHTML = iface.netmask;
         cells[2].innerHTML = iface.ip;
+        cells[3].innerHTML = iface.interface;
     });
 
     form.style.display = "none";
