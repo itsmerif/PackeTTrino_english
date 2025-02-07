@@ -1,13 +1,10 @@
-function waitForMove() {
-    return new Promise(resolve => setTimeout(resolve, 1000)); // espera de 1 segundo
-}
-
-async function ping(originIP, destinationIP) {
+function ping(originIP, destinationIP) {
 
     const origin = document.querySelector(`[data-ip="${originIP}"]`);
     const originId = origin.id;
     const arpTable = getARPTable(originId);
     const NetworkOriginObject = document.getElementById(originId);
+    const NetworkOriginObjectMac = NetworkOriginObject.getAttribute("data-mac");
     const switchIdentity = NetworkOriginObject.getAttribute("data-switch");
     const switchOriginObject = document.getElementById(switchIdentity);
     const macElements = switchOriginObject.querySelector("table").querySelectorAll(".mac-address");
@@ -42,7 +39,6 @@ async function ping(originIP, destinationIP) {
             for (let i = 0; i < macs.length; i++) { // Ahora buscamos la mac en la tabla del switch
                 const mac = macs[i];
                 if (mac === macEncontrada) { // Si la encontramos, bingo, existe la conexión
-                    const pc = document.querySelector(`[data-mac="${mac}"]`);
                     ping_s(originIP);
                     return;
                 }
@@ -50,10 +46,24 @@ async function ping(originIP, destinationIP) {
         }
     }
 
-    for (let i = 0; i < macs.length; i++) { // Si no está en la tabla ARP del equipo origen, mandamos al switch a mirar los equipos conectados
+    //si no está en la tabla ARP del equipo origen, mandamos al switch a mirar los equipos conectados
+
+    for (let i = 0; i < macs.length; i++) {
+
         const mac = macs[i];
-        const pc = document.querySelector(`[data-mac="${mac}"]`);
-        const ip = pc.getAttribute("data-ip");
+        const networkObject = document.querySelector(`[data-mac="${mac}"]`);
+        const networkObjectId = networkObject.id;
+        let ip = "";
+
+        if (networkObjectId.startsWith("pc-") || networkObjectId.startsWith("server-")) {
+
+            ip = networkObject.getAttribute("data-ip");
+
+        } else if (networkObjectId.startsWith("router-")) {
+
+            ip = getRouterIp(networkObjectId, switchIdentity);
+            
+        }
 
         if (destinationIP === ip) { // Bingo, hemos encontrado el equipo destino
             addARPEntry(originId, destinationIP, mac);
@@ -61,8 +71,8 @@ async function ping(originIP, destinationIP) {
             return;
         }
     }
-
-    ping_f(originIP); // Si no hemos encontrado nada, damos el ping por fallido
+    
+    ping_f(originIP); //si no hemos encontrado nada, damos el ping por fallido
     return;
 }
 

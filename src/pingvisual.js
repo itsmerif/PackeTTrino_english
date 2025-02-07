@@ -1,3 +1,7 @@
+function waitForMove() {
+    return new Promise(resolve => setTimeout(resolve, 1000)); // espera de 1 segundo
+}
+
 async function pingOnlyVisual(originIP, destinationIP) {
 
     const origin = document.querySelector(`[data-ip="${originIP}"]`);
