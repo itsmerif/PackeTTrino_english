@@ -40,6 +40,8 @@ function sendCommand(event) {
                 document.querySelector(".terminal-output").innerHTML = newoutput;
                 break;
         }
+
+        event.target.value = ""; //limpiamos la entrada
     }
 }
 
@@ -79,6 +81,11 @@ function checkIpRouting(id, args) {
 }
 
 function ipconfig(id) {
+    
+    if (!id.includes("pc-")) {
+        return "Error: Este comando solo puede ser ejecutado desde un pc.";
+    }
+
     const pc = document.getElementById(id);
     const ip = pc.getAttribute("data-ip");
     const netmask = pc.getAttribute("data-netmask");

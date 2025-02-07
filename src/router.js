@@ -75,14 +75,14 @@ function createRouterObject(x, y) {
     networkObjectAdvancedOptions.classList.add("advanced-options-modal");
     networkObjectAdvancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showRoutingTable(event)">Ver Tabla de Enrutamiento</button>`;
+        <button onclick="showRouterSpecs(event)"> Configurar Interfaces de Red </button>`;
     networkObject.appendChild(networkObjectAdvancedOptions);
 
     //eventos
 
     networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
     networkObject.addEventListener("contextmenu", event => showAdvancedOptionsRouter(event));
-    networkObject.addEventListener("click", showRouterSpecs);
+    networkObject.addEventListener("click", event => showRoutingTable(event));
     networkObjectTable.addEventListener("click", (event) => event.stopPropagation());
 
     //añadir el elemento al tablero y aumentar el indice global
@@ -96,7 +96,6 @@ function showRoutingTable(event) {
     event.stopPropagation();
     const networkObject = event.target.closest(".item-dropped");
     const table = networkObject.querySelector(".mac-table");
-    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
     table.style.display = "flex";
 }
 
@@ -117,6 +116,7 @@ function showAdvancedOptionsRouter(event) {
 
 function showRouterSpecs(event) {
     event.stopPropagation();
+    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
     const networkObject = event.target.closest(".item-dropped");
     const form = document.querySelector(".router-form");
     const ipEnp0s3 = networkObject.getAttribute("ip-enp0s3");

@@ -62,6 +62,7 @@ function addRoutingEntry(id, destination, netmask, nexthop) {
         <tr>
             <td>${destination}</td>
             <td>${netmask}</td>
+            <td> - </td>
             <td>${nexthop}</td>
         </tr>`;
     table.appendChild(newRow);
