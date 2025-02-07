@@ -131,7 +131,9 @@ async function pingOnlyVisual(originIP, destinationIP) {
 
                     if (mac === macEncontrada) { // Si la encontramos, bingo, existe la conexión con la puerta de enlace
                         const NetworkGatewayObject = document.querySelector(`[data-mac="${mac}"]`);
-                        moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkGatewayObject.style.left, NetworkGatewayObject.style.top, "unicast");                     
+                        moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkGatewayObject.style.left, NetworkGatewayObject.style.top, "unicast");
+                        await waitForMove();
+                        routing(networkObject.id, originIP, destinationIP);
                         return;
                     }
                 }
