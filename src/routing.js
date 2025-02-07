@@ -19,7 +19,6 @@ async function routing(originId, originIP, destinationIP, routerId) {
 
             const interface = cells[3].innerHTML;
             const dataSwitchString = "data-switch-" + interface;
-            console.log(interface);
             const gateway = cells[2].innerHTML;
             const switchIdentity = routerObject.getAttribute(dataSwitchString);
             const switchObject = document.getElementById(switchIdentity);

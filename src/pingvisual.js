@@ -32,8 +32,6 @@ async function pingOnlyVisual(originIP, destinationIP) {
 
     if (getNetwork(originIP, originNetmask) === getNetwork(destinationIP, originNetmask)) {     //si el destino y origen están en la misma red
 
-        // Buscamos la IP en la tabla ARP del equipo origen
-
         if (isIpInARPTable(originId, destinationIP)) { // si el equipo destino está en la tabla ARP del equipo origen
 
             const macEncontrada = isIpInARPTable(originId, destinationIP); // Hemos encontrado la mac del equipo destino
@@ -59,21 +57,25 @@ async function pingOnlyVisual(originIP, destinationIP) {
         await waitForMove();
 
         broadcastSwitch(switchIdentity, NetworkOriginObjectMac); //el switch ahora realiza un broadcast a todos los equipos conectados, excluyendo al equipo origen
-        await waitForMove(); //esperamos a que el switch haga el broadcast a todos los equipos conectados
+        await waitForMove();
 
         if (isIpInNetwork(switchOriginObject.id, destinationIP)) { // Si el equipo destino está en la red del switch
+
             const mac = isIpInNetwork(switchOriginObject.id, destinationIP);
             const networkObject = document.querySelector(`[data-mac="${mac}"]`);
             addARPEntry(originId, destinationIP, mac);
             moveObject(networkObject.style.left, networkObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
             await waitForMove();
             moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
-            return;            
+            return;
+
         }
 
         return;
 
-    } else { //no está en la misma red, usamos el gateway predeterminado
+    } else {
+
+        //no está en la misma red, usamos el gateway predeterminado
 
         const NetworkOriginObjectGateway = NetworkOriginObject.getAttribute("data-gateway");
 
@@ -83,32 +85,21 @@ async function pingOnlyVisual(originIP, destinationIP) {
 
         //buscamos la ip del gateway en la tabla arp del equipo origen
 
-        for (let i = 0; i < arpTable.length; i++) {
+        if (isIpInARPTable(originId, NetworkOriginObjectGateway)) { //hemos encontrado la ip del gateway en la tabla arp del equipo origen
 
-            const arpRow = arpTable[i];
-            const mac = arpRow[1];
-            const ip = arpRow[0];
+            const macEncontrada = isIpInARPTable(originId, NetworkOriginObjectGateway); //obtenemos la mac de la puerta de enlace
 
-            if (ip === NetworkOriginObjectGateway) { //hemos encontrado la ip del gateway en la tabla arp del equipo origen
+            moveObject(NetworkOriginObject.style.left, NetworkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast"); // Unicast al switch
+            await waitForMove();
 
-                moveObject(NetworkOriginObject.style.left, NetworkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast"); // Unicast al switch
+            if (isMacInMACTable(switchIdentity, macEncontrada)) { // Si la mac existe en la tabla del switch
 
+                const NetworkGatewayObject = document.querySelector(`[data-mac="${macEncontrada}"]`);
+                moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkGatewayObject.style.left, NetworkGatewayObject.style.top, "unicast");
                 await waitForMove();
+                routing(originId, originIP, destinationIP, NetworkGatewayObject.id); //enviamos la petición de enrutamiento
+                return;
 
-                const macEncontrada = mac; // Hemos encontrado la mac del equipo destino
-
-                for (let i = 0; i < macs.length; i++) { // Ahora buscamos la mac en la tabla del switch
-
-                    const mac = macs[i];
-
-                    if (mac === macEncontrada) { // Si la encontramos, bingo, existe la conexión con la puerta de enlace
-                        const NetworkGatewayObject = document.querySelector(`[data-mac="${mac}"]`);
-                        moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkGatewayObject.style.left, NetworkGatewayObject.style.top, "unicast");
-                        await waitForMove();
-                        routing(originId, originIP, destinationIP, NetworkGatewayObject.id); //enviamos la petición de ruteado
-                        return;
-                    }
-                }
             }
         }
 
@@ -117,45 +108,24 @@ async function pingOnlyVisual(originIP, destinationIP) {
         moveObject(NetworkOriginObject.style.left, NetworkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "broadcast"); // Broadcast al switch
         await waitForMove();
 
-        for (let i = 0; i < macs.length; i++) {
-            const mac = macs[i];
-            const pc = document.querySelector(`[data-mac="${mac}"]`);
-            if (mac !== NetworkOriginObjectMac) { //no inunda el puerto de origen
-                moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top, "broadcast");
-            }
-        }
+        broadcastSwitch(switchIdentity, NetworkOriginObjectMac); //el switch ahora realiza un broadcast a todos los equipos conectados, excluyendo al equipo origen
+        await waitForMove();
 
-        await waitForMove(); //esperamos a que el switch haga el broadcast a todos los equipos conectados
-
-        for (let i = 0; i < macs.length; i++) {
-
-            const mac = macs[i];
+        if (isIpInNetwork(switchOriginObject.id, NetworkOriginObjectGateway)) { // Si el equipo destino está en la red del switch
+            
+            const mac = isIpInNetwork(switchOriginObject.id, NetworkOriginObjectGateway);
             const networkObject = document.querySelector(`[data-mac="${mac}"]`);
-            const networkObjectId = networkObject.id;
-            let ip = "";
 
-            if (networkObjectId.startsWith("pc-") || networkObjectId.startsWith("server-")) {
+            addARPEntry(originId, NetworkOriginObjectGateway, mac);
+            moveObject(networkObject.style.left, networkObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
+            await waitForMove();
+            moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
+            await waitForMove();
+            pingOnlyVisual(originIP, destinationIP);
+            return;
 
-                ip = networkObject.getAttribute("data-ip");
-
-            } else if (networkObjectId.startsWith("router-")) {
-
-                ip = getRouterIp(networkObjectId, switchIdentity);
-
-            }
-
-            if (NetworkOriginObjectGateway === ip) { // Bingo, hemos encontrado la puerta de enlace predeterminada
-                addARPEntry(originId, NetworkOriginObjectGateway, mac);
-                moveObject(networkObject.style.left, networkObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
-                await waitForMove();
-                moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
-                await waitForMove();
-                pingOnlyVisual(originIP, destinationIP);
-                return;
-            }
         }
 
     }
-
 
 }
