@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="./styles/panel.css">
   <link rel="stylesheet" href="./styles/pc.css">
   <link rel="stylesheet" href="./styles/switch.css">
+  <link rel="stylesheet" href="./styles/router.css">
 </head>
 
 <body onload="init()">
@@ -32,6 +33,26 @@
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="gateway">Gateway:</label>
     <input type="text" id="gateway" name="gateway" placeholder="192.168.1.1"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <button type="submit">Guardar</button>
+  </form>
+
+  <form class="router-form" onsubmit="saveRouterSpecs(event); return false;" style="display: none;">
+    <p id="form-router-item-id"></p>
+    <label for="ip-enp0s3">Enp0s3:</label>
+    <input type="text" id="ip-enp0s3" name="ip-enp0s3" placeholder="192.168.1.1"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" name="netmask-enp0s3" id="netmask-enp0s3" placeholder="255.255.255.0"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <label for="ip-enp0s8">Enp0s8:</label>
+    <input type="text" id="ip-enp0s8" name="ip-enp0s8" placeholder="192.168.1.1"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" name="netmask-enp0s8" id="netmask-enp0s8" placeholder="255.255.255.0"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <label for="ip-enp0s9">Enp0s9:</label>
+    <input type="text" id="ip-enp0s9" name="ip-enp0s9" placeholder="192.168.1.1"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" name="netmask-enp0s9" id="netmask-enp0s9" placeholder="255.255.255.0"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <button type="submit">Guardar</button>
   </form>

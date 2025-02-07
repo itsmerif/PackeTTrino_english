@@ -33,36 +33,36 @@ img {
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
-   }
-   
-   .ping-form label {
+}
+
+.ping-form label {
     font-weight: 500;
     color: #374151;
     margin-bottom: 4px;
-   }
-   
-   .ping-form input {
+}
+
+.ping-form input {
     width: 100%;
     padding: 12px;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     transition: border-color 0.2s ease;
-   }
+}
 
-   .ping-form input[type="submit"] {
+.ping-form input[type="submit"] {
     background-color: #6366f1;
     color: #ffffff;
     border: none;
     cursor: pointer;
     width: 50%;
-   }
+}
 
-   .ping-form input[type="submit"]:hover {
+.ping-form input[type="submit"]:hover {
     background-color: #4f46e5;
-   }
-   
-   .ping-form input:focus {
+}
+
+.ping-form input:focus {
     outline: none;
     border-color: #6366f1;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-   }
+}

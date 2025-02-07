@@ -6,20 +6,35 @@ function createRouterObject(x, y) {
     const networkObjectTable = document.createElement("article");
     const networkObjectAdvancedOptions = document.createElement("div");
 
-    //router grafico con icono
+    //características generales
 
+    networkObject.id = `router-${itemIndex}`;
     networkObject.classList.add("item-dropped", "router");
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
     networkObject.setAttribute("data-mac", getRandomMac());
-    networkObject.setAttribute("data-enp0s3", "");
-    networkObject.setAttribute("data-enp0s8", "");
-    networkObject.setAttribute("data-enp0s9", "");
-    networkObject.id = `router-${itemIndex}`;
+
+    //icono
+
     networkObjectIcon.src = "./assets/router.png";
     networkObjectIcon.alt = "router";
     networkObjectIcon.draggable = true;
     networkObject.appendChild(networkObjectIcon);
+
+    //direcciones ip de cada interfaz del router
+
+    networkObject.setAttribute("ip-enp0s3", "");
+    networkObject.setAttribute("netmask-enp0s3", "");
+    networkObject.setAttribute("ip-enp0s8", "");
+    networkObject.setAttribute("netmask-enp0s8", "");
+    networkObject.setAttribute("ip-enp0s9", "");
+    networkObject.setAttribute("netmask-enp0s9", "");
+
+    //switches a los que está conectado el router en cada interfaz
+
+    networkObject.setAttribute("data-switch-enp0s3", "");
+    networkObject.setAttribute("data-switch-enp0s8", "");
+    networkObject.setAttribute("data-switch-enp0s9", "");
 
     //tabla de enrutamiento
 
@@ -45,10 +60,13 @@ function createRouterObject(x, y) {
     networkObject.appendChild(networkObjectAdvancedOptions);
 
     //eventos
+
     networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
     networkObject.addEventListener("contextmenu", event => showAdvancedOptionsRouter(event));
+    networkObject.addEventListener("click", showRouterSpecs);
 
     //añadir el elemento al tablero y aumentar el indice global
+    
     board.appendChild(networkObject);
     itemIndex++;
 
@@ -75,4 +93,46 @@ function showAdvancedOptionsRouter(event) {
     const networkObject = event.target.closest(".item-dropped")
     const modal = networkObject.querySelector(".advanced-options-modal");
     modal.style.display = "flex";
+}
+
+function showRouterSpecs(event) {
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped");
+    const form = document.querySelector(".router-form");
+    const ipEnp0s3 = networkObject.getAttribute("ip-enp0s3");
+    const ipEnp0s8 = networkObject.getAttribute("ip-enp0s8");
+    const ipEnp0s9 = networkObject.getAttribute("ip-enp0s9");
+    const netmaskEnp0s3 = networkObject.getAttribute("netmask-enp0s3");
+    const netmaskEnp0s8 = networkObject.getAttribute("netmask-enp0s8");
+    const netmaskEnp0s9 = networkObject.getAttribute("netmask-enp0s9");
+    form.querySelector("#ip-enp0s3").value = ipEnp0s3;
+    form.querySelector("#ip-enp0s8").value = ipEnp0s8;
+    form.querySelector("#ip-enp0s9").value = ipEnp0s9;
+    form.querySelector("#netmask-enp0s3").value = netmaskEnp0s3;
+    form.querySelector("#netmask-enp0s8").value = netmaskEnp0s8;
+    form.querySelector("#netmask-enp0s9").value = netmaskEnp0s9;
+    document.getElementById("form-router-item-id").innerHTML = networkObject.id;
+    form.style.display = "flex";
+}
+
+function saveRouterSpecs(event) {
+    event.preventDefault();
+    const form = document.querySelector(".router-form");
+    const networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
+    const newIpEnp0s3 = document.querySelector(".router-form #ip-enp0s3").value;
+    const newIpEnp0s8 = document.querySelector(".router-form #ip-enp0s8").value;
+    const newIpEnp0s9 = document.querySelector(".router-form #ip-enp0s9").value;
+    const newNetmaskEnp0s3 = document.querySelector(".router-form #netmask-enp0s3").value;
+    const newNetmaskEnp0s8 = document.querySelector(".router-form #netmask-enp0s8").value;
+    const newNetmaskEnp0s9 = document.querySelector(".router-form #netmask-enp0s9").value;
+    networkObject.setAttribute("ip-enp0s3", newIpEnp0s3);
+    networkObject.setAttribute("ip-enp0s8", newIpEnp0s8);
+    networkObject.setAttribute("ip-enp0s9", newIpEnp0s9);
+    networkObject.setAttribute("netmask-enp0s3", newNetmaskEnp0s3);
+    networkObject.setAttribute("netmask-enp0s8", newNetmaskEnp0s8);
+    networkObject.setAttribute("netmask-enp0s9", newNetmaskEnp0s9);
+    networkObject.setAttribute("data-switch-enp0s3", "");
+    networkObject.setAttribute("data-switch-enp0s8", "");
+    networkObject.setAttribute("data-switch-enp0s9", "");
+    form.style.display = "none";
 }
