@@ -44,7 +44,26 @@ function createRouterObject(x, y) {
                 <tr>
                     <th>Destination</th>
                     <th>Netmask</th>
+                    <th>Gateway</th>
                     <th>Next Hop</th>
+                </tr>
+                <tr>
+                    <td> - </td>
+                    <td> - </td>
+                    <td> - </td>
+                    <td> 0.0.0.0</td>
+                </tr>
+                <tr>
+                    <td> - </td>
+                    <td> - </td>
+                    <td> - </td>
+                    <td> 0.0.0.0</td>
+                </tr>
+                <tr>
+                    <td> - </td>
+                    <td> - </td>
+                    <td> - </td>
+                    <td> 0.0.0.0</td>
                 </tr>
             </table>
             <button onclick="closeRoutingTable(event)">Cerrar</button>`;
@@ -64,9 +83,10 @@ function createRouterObject(x, y) {
     networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
     networkObject.addEventListener("contextmenu", event => showAdvancedOptionsRouter(event));
     networkObject.addEventListener("click", showRouterSpecs);
+    networkObjectTable.addEventListener("click", (event) => event.stopPropagation());
 
     //añadir el elemento al tablero y aumentar el indice global
-    
+
     board.appendChild(networkObject);
     itemIndex++;
 
@@ -116,20 +136,47 @@ function showRouterSpecs(event) {
 }
 
 function saveRouterSpecs(event) {
+
     event.preventDefault();
     const form = document.querySelector(".router-form");
     const networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
+
+    //obtenemos los valores del formulario  
+
     const newIpEnp0s3 = document.querySelector(".router-form #ip-enp0s3").value;
     const newIpEnp0s8 = document.querySelector(".router-form #ip-enp0s8").value;
     const newIpEnp0s9 = document.querySelector(".router-form #ip-enp0s9").value;
     const newNetmaskEnp0s3 = document.querySelector(".router-form #netmask-enp0s3").value;
     const newNetmaskEnp0s8 = document.querySelector(".router-form #netmask-enp0s8").value;
     const newNetmaskEnp0s9 = document.querySelector(".router-form #netmask-enp0s9").value;
+
+    //guardamos los nuevos atributos en el router
+
     networkObject.setAttribute("ip-enp0s3", newIpEnp0s3);
     networkObject.setAttribute("ip-enp0s8", newIpEnp0s8);
     networkObject.setAttribute("ip-enp0s9", newIpEnp0s9);
     networkObject.setAttribute("netmask-enp0s3", newNetmaskEnp0s3);
     networkObject.setAttribute("netmask-enp0s8", newNetmaskEnp0s8);
     networkObject.setAttribute("netmask-enp0s9", newNetmaskEnp0s9);
+
+    //generamos nuevas reglas de conexion directa en la tabla de enrutamiento
+
+    const routingTable = networkObject.querySelector("table");
+    const rows = routingTable.querySelectorAll("tr");
+
+    const interfaces = [
+        { ip: newIpEnp0s3, netmask: newNetmaskEnp0s3 },
+        { ip: newIpEnp0s8, netmask: newNetmaskEnp0s8 },
+        { ip: newIpEnp0s9, netmask: newNetmaskEnp0s9 }
+    ];
+
+    interfaces.forEach((iface, index) => {
+        const row = rows[index + 1];
+        const cells = row.querySelectorAll("td");
+        cells[0].innerHTML = getNetwork(iface.ip, iface.netmask);
+        cells[1].innerHTML = iface.netmask;
+        cells[2].innerHTML = iface.ip;
+    });
+
     form.style.display = "none";
 }
