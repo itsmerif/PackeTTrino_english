@@ -133,7 +133,7 @@ async function pingOnlyVisual(originIP, destinationIP) {
                         const NetworkGatewayObject = document.querySelector(`[data-mac="${mac}"]`);
                         moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkGatewayObject.style.left, NetworkGatewayObject.style.top, "unicast");
                         await waitForMove();
-                        routing(networkObject.id, originIP, destinationIP);
+                        routing(originId, originIP, destinationIP); //enviamos la petición de ruteado
                         return;
                     }
                 }
