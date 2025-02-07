@@ -4,6 +4,7 @@ async function pingOnlyVisual(originIP, destinationIP) {
     const originId = origin.id;
     const arpTable = getARPTable(originId);
     const NetworkOriginObject = document.getElementById(originId);
+    const NetworkOriginObjectMac = NetworkOriginObject.getAttribute("data-mac");
     const switchIdentity = NetworkOriginObject.getAttribute("data-switch");
     const switchOriginObject = document.getElementById(switchIdentity);
     const macElements = switchOriginObject.querySelector("table").querySelectorAll(".mac-address");
@@ -58,7 +59,9 @@ async function pingOnlyVisual(originIP, destinationIP) {
     for (let i = 0; i < macs.length; i++) { 
         const mac = macs[i];
         const pc = document.querySelector(`[data-mac="${mac}"]`);
-        moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top, "broadcast");
+        if (mac !== NetworkOriginObjectMac) { //no inunda el puerto de origen
+            moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top, "broadcast");
+        }
     }
     
     await waitForMove(); //esperamos a que el switch haga el broadcast a todos los equipos conectados
