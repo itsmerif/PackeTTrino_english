@@ -67,12 +67,25 @@ async function pingOnlyVisual(originIP, destinationIP) {
     await waitForMove(); //esperamos a que el switch haga el broadcast a todos los equipos conectados
     
     for (let i = 0; i < macs.length; i++) {
+
         const mac = macs[i];
-        const pc = document.querySelector(`[data-mac="${mac}"]`);
-        const ip = pc.getAttribute("data-ip");
+        const networkObject = document.querySelector(`[data-mac="${mac}"]`);
+        const networkObjectId = networkObject.id;
+        let ip = "";
+
+        if (networkObjectId.startsWith("pc-") || networkObjectId.startsWith("server-")) {
+
+            ip = networkObject.getAttribute("data-ip");
+
+        } else if (networkObjectId.startsWith("router-")) {
+
+            ip = getRouterIp(networkObjectId, switchIdentity);
+            
+        }
+
         if (destinationIP === ip) { // Bingo, hemos encontrado el equipo destino
             addARPEntry(originId, destinationIP, mac);
-            moveObject(pc.style.left, pc.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
+            moveObject(networkObject.style.left, networkObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
             await waitForMove();
             moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
             return;

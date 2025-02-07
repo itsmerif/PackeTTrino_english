@@ -131,8 +131,5 @@ function saveRouterSpecs(event) {
     networkObject.setAttribute("netmask-enp0s3", newNetmaskEnp0s3);
     networkObject.setAttribute("netmask-enp0s8", newNetmaskEnp0s8);
     networkObject.setAttribute("netmask-enp0s9", newNetmaskEnp0s9);
-    networkObject.setAttribute("data-switch-enp0s3", "");
-    networkObject.setAttribute("data-switch-enp0s8", "");
-    networkObject.setAttribute("data-switch-enp0s9", "");
     form.style.display = "none";
 }

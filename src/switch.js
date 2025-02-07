@@ -78,12 +78,14 @@ function switchConn(event) {
                 createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
                 saveMac(event, mac);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s3", networkObject.id);
+                networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
 
             }else if (enp0s8Conn === "") {
 
                 createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
                 saveMac(event, mac);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s8", networkObject.id);
+                networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
 
             }else if (enp0s9Conn === "") {
 
@@ -91,6 +93,7 @@ function switchConn(event) {
                 saveMac(event, mac);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s9", networkObject.id);
                 routerObject.querySelector("img").draggable = false; //el router ya no se puede arrastrar
+                networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
                 
             }
 

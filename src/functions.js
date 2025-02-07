@@ -105,3 +105,21 @@ function isMacTableEmpty(id) {
     }
 
 }
+
+
+function getRouterIp(routerId, switchId) {
+    console.log(routerId, switchId);
+    const router = document.getElementById(routerId);
+    let ip = "";
+
+    if (router.getAttribute("data-switch-enp0s3") === switchId) {
+        ip = router.getAttribute("ip-enp0s3");
+    } else if (router.getAttribute("data-switch-enp0s8") === switchId) {
+        ip = router.getAttribute("ip-enp0s8");
+    } else if (router.getAttribute("data-switch-enp0s9") === switchId) {
+        ip = router.getAttribute("ip-enp0s9");
+    }
+
+    return ip;
+
+}
