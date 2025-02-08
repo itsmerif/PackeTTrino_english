@@ -19,7 +19,6 @@ function ping(originIP, destinationIP) {
     const originNetmask = origin.getAttribute("data-netmask");
     const NetworkOriginObject = document.getElementById(originId);
     const switchOriginObjectId = NetworkOriginObject.getAttribute("data-switch");
-    const switchOriginObject = document.getElementById(switchOriginObjectId);
     const originObjectMac = NetworkOriginObject.getAttribute("data-mac");
 
     if (getNetwork(originIP, originNetmask) === getNetwork(destinationIP, originNetmask)) {     //si el destino y origen están en la misma red

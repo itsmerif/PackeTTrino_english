@@ -72,7 +72,7 @@ function deleteCable(event) {
     cableObject.remove();
 }
 
-function moveObject(x1, y1, x2, y2, type) {
+function movePacket(x1, y1, x2, y2, type) {
 
     const svg = document.getElementById("svg-board");
     const img = document.createElementNS("http://www.w3.org/2000/svg", "image");

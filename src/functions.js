@@ -165,26 +165,6 @@ function isMacInMACTable(switchObjectId, macAddress) {
 
 }
 
-function broadcastSwitch(switchObjectId, macToExclude) {
-
-    const macs = getMACTable(switchObjectId);
-    const switchOriginObject = document.getElementById(switchObjectId);
-
-    for (let i = 0; i < macs.length; i++) {
-
-        const mac = macs[i];
-
-        const networkObject = document.querySelector(`[data-mac="${mac}"]`);
-
-        if (mac !== macToExclude) { //no inunda el puerto de origen
-
-            moveObject(switchOriginObject.style.left, switchOriginObject.style.top, networkObject.style.left, networkObject.style.top, "broadcast");
-
-        }
-    }
-
-}
-
 function getRoutingTable(routerObjectId) {
 
     const routerObject = document.getElementById(routerObjectId);
@@ -310,4 +290,23 @@ function isIpInNetwork(switchObjectId, ipAddress) {
     }
 
     return false;
+}
+
+function broadcastSwitch(switchObjectId, excludeId) {
+
+    const switchObject = document.getElementById(switchObjectId);
+    const devices = getDeviceTable(switchObjectId);
+
+    for (let i = 0; i < devices.length; i++) {
+
+        if (devices[i] !== excludeId) {
+
+            const networkObject = document.getElementById(devices[i]);
+            const x = networkObject.style.left;
+            const y = networkObject.style.top;
+            movePacket(switchObject.style.left, switchObject.style.top, x, y, "broadcast");
+        
+        }
+    }
+
 }
