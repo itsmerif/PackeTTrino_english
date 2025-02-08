@@ -16,7 +16,7 @@
 <body onload="init()">
 
   <div id="root">
-    <section class="board" ondragover="dragOverBoard(event)" ondrop="dropItem(event)">
+    <section class="board" ondragover="dragOverBoard(event)" ondrop="dropItem(event)" onclick="closeAllModals()">
       <svg ondragover="dragOverBoard(event)" id="svg-board" rope-start="startId" rope-end="endId" 
       preserveAspectRatio="none" width="100%" height="100%" style="position: absolute; top: 0; left: 0;" ></svg>
     </section>
