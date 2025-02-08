@@ -62,7 +62,7 @@ function deleteCable(event) {
 
     }
 
-    deleteMacEntry(switchObject.id, NetworkObject.dataset.mac); //eliminamos la entrada en la tabla MAC del switch
+    deleteMacEntry(switchObject.id, cableObject.getAttribute("end-start")); //eliminamos la entrada en la tabla MAC del switch
 
     if (isMacTableEmpty(switchObject.id)) {
         switchObject.querySelector("img").draggable = true; //permitimos que el switch se pueda arrastrar

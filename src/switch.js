@@ -132,14 +132,16 @@ function saveConn(event, itemdId) {
     macTable.appendChild(newMac);
 }
 
-function deleteMacEntry(switchId, mac) {
+function deleteMacEntry(switchId, networkObjectId) {
     const switchObject = document.getElementById(switchId);
     const table = switchObject.querySelector("table");
     const tds = table.querySelectorAll("td");
-    for (let td of tds) {
-        if (td.innerHTML === mac) {
-            const tr = td.parentElement;
-            tr.remove();
+
+    for (let i = 0; i < tds.length; i++) {
+        const td = tds[i];
+        if (td.innerHTML === networkObjectId) {
+            const tr = td.parentElement; //obtenemos el elemento padre
+            tr.remove(); //eliminamos la entrada
             break;
         }
     }
