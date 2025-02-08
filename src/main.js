@@ -53,7 +53,7 @@ function pingSim() {
     const form = document.querySelector(".ping-form");
     const ip1 = form.ip1.value;
     const ip2 = form.ip2.value;
-    pingOnlyVisual(ip1, ip2);
+    ping(ip1, ip2, true);
 }
 
 function showPingForm(event) {
