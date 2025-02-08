@@ -35,6 +35,7 @@ async function routing(originId, originIP, destinationIP, routerId) {
 async function switchResolve(originId, originIP, destinationIP, gateway, routerId, switchId) {
 
     const routerObject = document.getElementById(routerId);
+    
     //1) obtenemos la tabla de direcciones fisicas del switch
 
     const switchObject = document.getElementById(switchId);

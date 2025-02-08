@@ -105,7 +105,7 @@ async function pingOnlyVisual(originIP, destinationIP) {
         broadcastSwitch(switchIdentity, NetworkOriginObjectMac); //el switch ahora realiza un broadcast a todos los equipos conectados, excluyendo al equipo origen
         await waitForMove();
 
-        if (isIpInNetwork(switchOriginObject.id, NetworkOriginObjectGateway)) { // Si el equipo destino está en la red del switch
+        if (isIpInNetwork(switchOriginObject.id, NetworkOriginObjectGateway)) { // buscamos la puerta de enlace en la red del switch
             
             const mac = isIpInNetwork(switchOriginObject.id, NetworkOriginObjectGateway);
             const networkObject = document.querySelector(`[data-mac="${mac}"]`);

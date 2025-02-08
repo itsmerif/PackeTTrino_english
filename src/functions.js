@@ -26,9 +26,9 @@ function getRandomMac() {
     return mac;
 }
 
-function getARPTable(id) {
+function getARPTable(networkObjectId) {
 
-    let tabla = document.getElementById(id).querySelector("table");
+    let tabla = document.getElementById(networkObjectId).querySelector("table");
     let matriz = [];
 
     for (let fila of tabla.rows) {
@@ -43,9 +43,9 @@ function getARPTable(id) {
 
 }
 
-function getMACTable(id) {
+function getMACTable(switchObjectId) {
 
-    const switchOriginObject = document.getElementById(id);
+    const switchOriginObject = document.getElementById(switchObjectId);
 
     const macElements = switchOriginObject.querySelector("table").querySelectorAll(".mac-address");
 
@@ -59,18 +59,18 @@ function getMACTable(id) {
 
 }
 
-function addARPEntry(id, ip, mac) {
+function addARPEntry(networkObjectId, ip, mac) {
 
-    let tabla = document.getElementById(id).querySelector("table");
+    let tabla = document.getElementById(networkObjectId).querySelector("table");
     let newRow = tabla.insertRow();
     newRow.insertCell().innerText = ip;
     newRow.insertCell().innerText = mac;
 
 }
 
-function addRoutingEntry(id, destination, netmask, nexthop) {
+function addRoutingEntry(routerObjectId, destination, netmask, nexthop) {
 
-    const networkObject = document.getElementById(id);
+    const networkObject = document.getElementById(routerObjectId);
     const table = networkObject.querySelector("table");
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
@@ -84,9 +84,9 @@ function addRoutingEntry(id, destination, netmask, nexthop) {
 
 }
 
-function removeRoutingEntry(id, destination, netmask, nexthop) {
+function removeRoutingEntry(routerObjectId, destination, netmask, nexthop) {
 
-    const networkObject = document.getElementById(id);
+    const networkObject = document.getElementById(routerObjectId);
     const table = networkObject.querySelector("table");
     const rows = table.querySelectorAll("tr");
 
@@ -101,9 +101,9 @@ function removeRoutingEntry(id, destination, netmask, nexthop) {
 
 }
 
-function isMacTableEmpty(id) {
+function isMacTableEmpty(switchObjectId) {
 
-    let tabla = document.getElementById(id).querySelector("table");
+    let tabla = document.getElementById(switchObjectId).querySelector("table");
     let matriz = [];
 
     for (let fila of tabla.rows) {
@@ -122,17 +122,23 @@ function isMacTableEmpty(id) {
 
 }
 
-function getRouterIp(routerId, switchId) {
+function getRouterIp(routerObjectId, switchObjectId) {
     
-    const router = document.getElementById(routerId);
+    const router = document.getElementById(routerObjectId);
     let ip = "";
 
-    if (router.getAttribute("data-switch-enp0s3") === switchId) {
+    if (router.getAttribute("data-switch-enp0s3") === switchObjectId) {
+
         ip = router.getAttribute("ip-enp0s3");
-    } else if (router.getAttribute("data-switch-enp0s8") === switchId) {
+
+    } else if (router.getAttribute("data-switch-enp0s8") === switchObjectId) {
+
         ip = router.getAttribute("ip-enp0s8");
-    } else if (router.getAttribute("data-switch-enp0s9") === switchId) {
+
+    } else if (router.getAttribute("data-switch-enp0s9") === switchObjectId) {
+
         ip = router.getAttribute("ip-enp0s9");
+        
     }
 
     return ip;
@@ -157,9 +163,9 @@ function isIpInARPTable(networkObjectId, ipAddress) {
 
 }
 
-function isMacInMACTable(switchId, macAddress) {
+function isMacInMACTable(switchObjectId, macAddress) {
 
-    const macs = getMACTable(switchId);
+    const macs = getMACTable(switchObjectId);
 
     for (let i = 0; i < macs.length; i++) {
 
@@ -175,9 +181,9 @@ function isMacInMACTable(switchId, macAddress) {
 
 }
 
-function isIpInNetwork(switchId, ipAddress) {
+function isIpInNetwork(switchObjectId, ipAddress) {
 
-    const macs = getMACTable(switchId); //obtengo la tabla de macs de ese switch
+    const macs = getMACTable(switchObjectId); //obtengo la tabla de macs de ese switch
 
     for (let i = 0; i < macs.length; i++) {
 
@@ -197,7 +203,7 @@ function isIpInNetwork(switchId, ipAddress) {
 
         } else if (networkObjectId.startsWith("router-")) {
 
-            const networkObjectIp = getRouterIp(networkObjectId, switchId);
+            const networkObjectIp = getRouterIp(networkObjectId, switchObjectId);
 
             if (networkObjectIp === ipAddress) {
 
@@ -212,10 +218,10 @@ function isIpInNetwork(switchId, ipAddress) {
     return false;
 }
 
-function broadcastSwitch(switchId, excludeMac) {
+function broadcastSwitch(switchObjectId, macToExclude) {
 
-    const macs = getMACTable(switchId);
-    const switchOriginObject = document.getElementById(switchId);
+    const macs = getMACTable(switchObjectId);
+    const switchOriginObject = document.getElementById(switchObjectId);
 
     for (let i = 0; i < macs.length; i++) {
 
@@ -223,7 +229,7 @@ function broadcastSwitch(switchId, excludeMac) {
 
         const networkObject = document.querySelector(`[data-mac="${mac}"]`);
 
-        if (mac !== excludeMac) { //no inunda el puerto de origen
+        if (mac !== macToExclude) { //no inunda el puerto de origen
 
             moveObject(switchOriginObject.style.left, switchOriginObject.style.top, networkObject.style.left, networkObject.style.top, "broadcast");
 
