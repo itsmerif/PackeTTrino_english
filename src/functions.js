@@ -175,10 +175,17 @@ function getRoutingTable(routerObjectId) {
 
 }
 
-function ipCheck(networkObjectId, ip) {
+function ipCheck(switchObjectId,networkObjectId, ip) {
 
     const networkObject = document.getElementById(networkObjectId);
-    const networkObjectIp = networkObject.getAttribute("data-ip");
+    let networkObjectIp = "";
+
+    if (networkObjectId.startsWith("pc-") || networkObjectId.startsWith("server-")) {
+        networkObjectIp = networkObject.getAttribute("data-ip");
+    }
+    if (networkObjectId.startsWith("router-")) {
+        networkObjectIp = getRouterIp(networkObjectId, switchObjectId);
+    }
 
     if (networkObjectIp === ip) {
         return true;
@@ -281,7 +288,15 @@ function isIpInNetwork(switchObjectId, ipAddress) {
 
         const networkObject = document.getElementById(devices[i]);
         const mac = networkObject.getAttribute("data-mac");
-        const ip = networkObject.getAttribute("data-ip");
+        let ip = "";
+
+        if (devices[i].startsWith("pc-") || devices[i].startsWith("server-")) {
+            ip = networkObject.getAttribute("data-ip");
+        }
+
+        if (devices[i].startsWith("router-")) {
+            ip = getRouterIp(devices[i], switchObjectId);
+        }
 
         if (ip === ipAddress) {
             return [ devices[i], mac ];

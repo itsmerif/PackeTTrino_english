@@ -114,7 +114,7 @@ async function ping(originIP, destinationIP, visual = false) {
             return;
         }
 
-        if (!ipCheck(networkDestinationObjectId, destinationIP)) { //si la ip de destino del paquete no coincide con la ip del equipo, se da por fallido
+        if (!ipCheck(switchOriginObjectId, networkDestinationObjectId, destinationIP)) { //si la ip de destino del paquete no coincide con la ip del equipo, se da por fallido
             if (!visual) ping_f(originIP);
             return;
         }
