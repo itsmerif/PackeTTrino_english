@@ -5,14 +5,19 @@ function createSwitchObject(x, y) {
     const networkObjectIcon = document.createElement("img");
     const networkObjectTable = document.createElement("article");
 
-    //switch grafico con icono
+    //caracteristicas generales
+
     networkObject.id = `switch-${itemIndex}`;
-    networkObjectIcon.src = "./assets/switch.png";
-    networkObjectIcon.alt = "switch";
-    networkObjectIcon.draggable = true;
     networkObject.classList.add("item-dropped", "switch");
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
+    networkObject.setAttribute("data-mac", getRandomMac());
+
+    //switch grafico con icono
+
+    networkObjectIcon.src = "./assets/switch.png";
+    networkObjectIcon.alt = "switch";
+    networkObjectIcon.draggable = true;
     networkObject.appendChild(networkObjectIcon);
 
     //tabla de macs
@@ -20,7 +25,7 @@ function createSwitchObject(x, y) {
     networkObjectTable.innerHTML = `
             <table>
                 <tr>
-                    <th>Port</th>
+                    <th>Device</th>
                     <th>MAC Address</th>
                 </tr>
             </table>
@@ -59,7 +64,7 @@ function switchConn(event) {
         if (itemType === "item-dropped" && (itemId.startsWith("pc-") || itemId.startsWith("server-"))) {
 
             createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
-            saveMac(event, mac);
+            saveConn(event, itemId);
             document.getElementById(itemId).setAttribute("data-switch", networkObject.id);
             networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
             document.getElementById(itemId).querySelector("img").draggable = false; //el pc no se puede arrastrar
@@ -76,21 +81,21 @@ function switchConn(event) {
             if (enp0s3Conn === "") {
 
                 createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
-                saveMac(event, mac);
+                saveConn(event, itemId);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s3", networkObject.id);
                 networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
 
             }else if (enp0s8Conn === "") {
 
                 createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
-                saveMac(event, mac);
+                saveConn(event, itemId);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s8", networkObject.id);
                 networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
 
             }else if (enp0s9Conn === "") {
 
                 createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
-                saveMac(event, mac);
+                saveConn(event, itemId);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s9", networkObject.id);
                 routerObject.querySelector("img").draggable = false; //el router ya no se puede arrastrar
                 networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
@@ -115,16 +120,16 @@ function closeMacTable(event) {
     table.style.display = "none";
 }
 
-function saveMac(event, mac) {
-    const networkObject = event.target.closest(".item-dropped");
-    const networtTable = networkObject.querySelector("table");
+function saveConn(event, itemdId) {
+    const switchObject = event.target.closest(".item-dropped");
+    const macTable = switchObject.querySelector("table");
     const newMac = document.createElement("tr");
     newMac.innerHTML = `
         <tr>
-            <td>1</td>
-            <td class="mac-address">${mac}</td>
+            <td class="device-name">${itemdId}</td>
+            <td class="mac-address"></td>
         </tr>`;
-    networtTable.appendChild(newMac);
+    macTable.appendChild(newMac);
 }
 
 function deleteMacEntry(switchId, mac) {
@@ -138,4 +143,21 @@ function deleteMacEntry(switchId, mac) {
             break;
         }
     }
+}
+
+function saveMac(switchObjectId, networkObjectId, newMac) {
+
+    const switchObject = document.getElementById(switchObjectId);
+    const macTable = switchObject.querySelector("table");
+    const rows = macTable.querySelectorAll("tr");
+
+    for (let i = 1; i < rows.length; i++) { //empezamos por el primer elemento, ya que el primero es el header
+        const row = rows[i];
+        const cells = row.querySelectorAll("td");
+        if (cells[0].innerHTML === networkObjectId) {
+            cells[1].innerHTML = newMac;
+            break;
+        }
+    }
+
 }

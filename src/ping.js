@@ -18,66 +18,78 @@ function ping(originIP, destinationIP) {
     const originId = origin.id;
     const originNetmask = origin.getAttribute("data-netmask");
     const NetworkOriginObject = document.getElementById(originId);
-    const switchIdentity = NetworkOriginObject.getAttribute("data-switch");
-    const switchOriginObject = document.getElementById(switchIdentity);
+    const switchOriginObjectId = NetworkOriginObject.getAttribute("data-switch");
+    const switchOriginObject = document.getElementById(switchOriginObjectId);
+    const originObjectMac = NetworkOriginObject.getAttribute("data-mac");
 
     if (getNetwork(originIP, originNetmask) === getNetwork(destinationIP, originNetmask)) {     //si el destino y origen están en la misma red
 
-        if (isIpInARPTable(originId, destinationIP)) { // si el equipo destino está en la tabla ARP del equipo origen
+        if (!isIpInARPTable(originId, destinationIP)) { //el equipo destino NO está en la tabla ARP del equipo origen
 
-            const macEncontrada = isIpInARPTable(originId, destinationIP); // Hemos encontrado la mac del equipo destino
+            //el pc envia una trama broadcast al swich
 
-            //enviamos una trama unicast al switch con esa mac de destino
+            saveMac(switchOriginObjectId, originId, originObjectMac); //si el origen no es conocido para el switch, añadimos la mac al switch
 
-            if (isMacInMACTable(switchIdentity, macEncontrada)) { //la mac existe en la tabla del switch. el switch envia una trama unicast al destino.
+            //ahora el switch satura los puertos y los equipos conectados comprueban si su IP es la  IP de destino del paquete
 
-                //por la estructura de nuestro codigo, la comprobacion interna en el destino de la MAC es innecesaria
-                //ya que si la mac existe en la tabla del switch, entonces el destino debe estar CONECTADO a la tabla del switch
-
-                //a nivel de red, debemos comprobar que la ip de destino es la del equipo
-
-                if (ipCheck(macEncontrada, destinationIP)) {
-
-                    ping_s(originIP);
-                    return;
-
-                } else {
-
-                    ping_f(originIP);
-                    return;
-
-                }
-
-            } else { //no existe la mac en la tabla del switch
-
-                //de nuevo, por la estructura de nuestro codigo, si no existe la mac en la tabla del switch, entonces el destino NO ESTÁ CONECTADO a la tabla del switch,
-                //y por tanto el ping debe fallar
-
+            if (!isIpInNetwork(switchOriginObjectId, destinationIP)) { //ninguno de los equipos acepta la trama y se da por fallido
                 ping_f(originIP);
                 return;
-
             }
 
-        } else { //el destino no está en la tabla ARP del equipo origen
+            //bingo, tenemos una respuesta confirmando su mac
 
-            //el pc envia una trama broadcast al swich, y esté a su vez reenvía la trama broadcast a cada equipo conectado
-            //internamente, cada equipo comprueba si la IP destino coincide con la suya
+            const networkDestinationObjectId = isIpInNetwork(switchOriginObjectId, destinationIP)[0]; //recuperamos el id del equipo que nos devuelve la respuesta
+            const networkDestinationObjectmac = isIpInNetwork(switchOriginObjectId, destinationIP)[1]; //recuperamos la mac del equipo que nos devuelve la respuesta
 
-            if (isIpInNetwork(switchOriginObject.id, destinationIP)) { //bingo, uno de los equipos acepta la trama y se da por exitoso
+            saveMac(switchOriginObjectId, networkDestinationObjectId, networkDestinationObjectmac); //añadimos la mac al switch del destino si no estaba ya
 
-                const destinationMac = isIpInNetwork(switchOriginObject.id, destinationIP);
-                addARPEntry(originId, destinationIP, destinationMac); //agregamos una nueva entrada a la tabla ARP del equipo origen
-                ping_s(originIP);
-                return;
+            addARPEntry(originId, destinationIP, networkDestinationObjectmac); //añadimos la ip y mac al switch del origen
 
-            } else { //ninguno de los equipos acepta la trama y se da por fallido
-
-                ping_f(originIP);
-                return;
-
-            }
+            ping_s(originIP); 
+            return;
 
         }
+
+        //el equipo destino está en la tabla ARP del equipo origen
+
+        const destinationMac = isIpInARPTable(originId, destinationIP); // Hemos encontrado la mac del equipo destino. Enviamos una trama unicast al switch con esa mac de destino
+        saveMac(switchOriginObjectId, originId, originObjectMac); //si el origen no es conocido para el switch, añadimos la mac al switch
+
+        if (!isMacInMACTable(switchOriginObjectId, destinationMac)) { //la mac de destino NO existe en la tabla del switch
+
+            //ahora el switch satura todos los puertos e intenta encontrar la mac de destino
+
+            if (!isMacinNetwork(switchOriginObjectId, destinationMac)) { //ninguno de los equipos acepta la trama y se da por fallido
+                ping_f(originIP);
+                return;
+            }
+
+            //bingo, uno de los equipos nos devuelva una respuesta confirmando su mac
+            const networkDestinationObjectId = isMacinNetwork(switchOriginObjectId, destinationMac); //recuperamos el id del equipo que nos devuelve la respuesta
+            saveMac(switchOriginObjectId, networkDestinationObjectId, destinationMac); //añadimos la mac al switch
+            ping_s(originIP);
+            return;
+            
+        }
+
+        //la mac de destino existe en la tabla del switch. el switch envia una trama unicast al destino.         
+        //una vez que llega al equipo, debemos hacer comprobaciones a nivel de enlace de datos y de red
+
+        const networkDestinationObjectId = getDeviceFromMac(switchOriginObjectId, destinationMac);
+
+        if (!macCheck(networkDestinationObjectId, destinationMac)) { //si la mac de destino en la trama no coincide con la mac del equipo, se da por fallido
+            ping_f(originIP);
+            return;
+        }
+
+        if (!ipCheck(networkDestinationObjectId, destinationIP)) { //si la ip de destino del paquete no coincide con la ip del equipo, se da por fallido
+            ping_f(originIP);
+            return;
+        }
+
+        ping_s(originIP); //si todo sale bien, se da por exitoso
+        return;
 
     }
 }

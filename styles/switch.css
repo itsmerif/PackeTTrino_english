@@ -16,6 +16,7 @@
     opacity: 0;
     animation: fadeIn 0.3s ease forwards;
     border: 1px solid #ddd;
+    min-width: 200px;
 }
 
 @keyframes fadeIn {
