@@ -41,7 +41,6 @@ function sendCommand(event) {
                 break;
         }
 
-        event.target.value = ""; //limpiamos la entrada
     }
 }
 

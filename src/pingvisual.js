@@ -36,11 +36,11 @@ async function pingOnlyVisual(originIP, destinationIP) {
             if (isMacInMACTable(switchIdentity, macEncontrada)) { // Si la mac existe en la tabla del switch
 
                 const pc = document.querySelector(`[data-mac="${macEncontrada}"]`);
-                moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top, "unicast");
+                moveObject(switchOriginObject.style.left, switchOriginObject.style.top, pc.style.left, pc.style.top, "unicast"); //unicast del switch al destino
                 await waitForMove();
-                moveObject(pc.style.left, pc.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
+                moveObject(pc.style.left, pc.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast"); //unicast del destino al switch
                 await waitForMove();
-                moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
+                moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast"); //unicast del switch al equipo origen
                 return;
 
             }
@@ -91,7 +91,9 @@ async function pingOnlyVisual(originIP, destinationIP) {
                 const NetworkGatewayObject = document.querySelector(`[data-mac="${macEncontrada}"]`);
                 moveObject(switchOriginObject.style.left, switchOriginObject.style.top, NetworkGatewayObject.style.left, NetworkGatewayObject.style.top, "unicast");
                 await waitForMove();
-                routing(originId, originIP, destinationIP, NetworkGatewayObject.id); //enviamos la petición de enrutamiento
+                
+                ////EVIL INCOGNITA 
+                
                 return;
 
             }

@@ -1,18 +1,5 @@
 function ping(originIP, destinationIP) {
 
-    const origin = document.querySelector(`[data-ip="${originIP}"]`);
-    const originId = origin.id;
-    const arpTable = getARPTable(originId);
-    const NetworkOriginObject = document.getElementById(originId);
-    const NetworkOriginObjectMac = NetworkOriginObject.getAttribute("data-mac");
-    const switchIdentity = NetworkOriginObject.getAttribute("data-switch");
-    const switchOriginObject = document.getElementById(switchIdentity);
-    const macElements = switchOriginObject.querySelector("table").querySelectorAll(".mac-address");
-    let macs = [];
-    for (let i = 0; i < macElements.length; i++) {
-        macs.push(macElements[i].innerHTML);
-    }
-
     // Compruebo que el equipo origen está configurado
 
     if (!originIP) {
@@ -27,53 +14,72 @@ function ping(originIP, destinationIP) {
         return;
     }
 
-    // Buscamos la IP en la tabla ARP del equipo origen
+    const origin = document.querySelector(`[data-ip="${originIP}"]`);
+    const originId = origin.id;
+    const originNetmask = origin.getAttribute("data-netmask");
+    const NetworkOriginObject = document.getElementById(originId);
+    const switchIdentity = NetworkOriginObject.getAttribute("data-switch");
+    const switchOriginObject = document.getElementById(switchIdentity);
 
-    for (let i = 0; i < arpTable.length; i++) {
-        const arpRow = arpTable[i];
-        const mac = arpRow[1];
-        const ip = arpRow[0];
+    if (getNetwork(originIP, originNetmask) === getNetwork(destinationIP, originNetmask)) {     //si el destino y origen están en la misma red
 
-        if (ip === destinationIP) {
-            const macEncontrada = mac; // Hemos encontrado la mac del equipo destino
-            for (let i = 0; i < macs.length; i++) { // Ahora buscamos la mac en la tabla del switch
-                const mac = macs[i];
-                if (mac === macEncontrada) { // Si la encontramos, bingo, existe la conexión
+        if (isIpInARPTable(originId, destinationIP)) { // si el equipo destino está en la tabla ARP del equipo origen
+
+            const macEncontrada = isIpInARPTable(originId, destinationIP); // Hemos encontrado la mac del equipo destino
+
+            //enviamos una trama unicast al switch con esa mac de destino
+
+            if (isMacInMACTable(switchIdentity, macEncontrada)) { //la mac existe en la tabla del switch. el switch envia una trama unicast al destino.
+
+                //por la estructura de nuestro codigo, la comprobacion interna en el destino de la MAC es innecesaria
+                //ya que si la mac existe en la tabla del switch, entonces el destino debe estar CONECTADO a la tabla del switch
+
+                //a nivel de red, debemos comprobar que la ip de destino es la del equipo
+
+                if (ipCheck(macEncontrada, destinationIP)) {
+
                     ping_s(originIP);
                     return;
+
+                } else {
+
+                    ping_f(originIP);
+                    return;
+
                 }
+
+            } else { //no existe la mac en la tabla del switch
+
+                //de nuevo, por la estructura de nuestro codigo, si no existe la mac en la tabla del switch, entonces el destino NO ESTÁ CONECTADO a la tabla del switch,
+                //y por tanto el ping debe fallar
+
+                ping_f(originIP);
+                return;
+
             }
+
+        } else { //el destino no está en la tabla ARP del equipo origen
+
+            //el pc envia una trama broadcast al swich, y esté a su vez reenvía la trama broadcast a cada equipo conectado
+            //internamente, cada equipo comprueba si la IP destino coincide con la suya
+
+            if (isIpInNetwork(switchOriginObject.id, destinationIP)) { //bingo, uno de los equipos acepta la trama y se da por exitoso
+
+                const destinationMac = isIpInNetwork(switchOriginObject.id, destinationIP);
+                addARPEntry(originId, destinationIP, destinationMac); //agregamos una nueva entrada a la tabla ARP del equipo origen
+                ping_s(originIP);
+                return;
+
+            } else { //ninguno de los equipos acepta la trama y se da por fallido
+
+                ping_f(originIP);
+                return;
+
+            }
+
         }
+
     }
-
-    //si no está en la tabla ARP del equipo origen, mandamos al switch a mirar los equipos conectados
-
-    for (let i = 0; i < macs.length; i++) {
-
-        const mac = macs[i];
-        const networkObject = document.querySelector(`[data-mac="${mac}"]`);
-        const networkObjectId = networkObject.id;
-        let ip = "";
-
-        if (networkObjectId.startsWith("pc-") || networkObjectId.startsWith("server-")) {
-
-            ip = networkObject.getAttribute("data-ip");
-
-        } else if (networkObjectId.startsWith("router-")) {
-
-            ip = getRouterIp(networkObjectId, switchIdentity);
-            
-        }
-
-        if (destinationIP === ip) { // Bingo, hemos encontrado el equipo destino
-            addARPEntry(originId, destinationIP, mac);
-            ping_s(originIP);
-            return;
-        }
-    }
-    
-    ping_f(originIP); //si no hemos encontrado nada, damos el ping por fallido
-    return;
 }
 
 function ping_s(origin) {

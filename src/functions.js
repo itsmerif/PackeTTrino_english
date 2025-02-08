@@ -237,3 +237,26 @@ function broadcastSwitch(switchObjectId, macToExclude) {
     }
 
 }
+
+function getRoutingTable(routerObjectId) {
+
+    const routerObject = document.getElementById(routerObjectId);
+    const table = routerObject.querySelector("table");
+    const rows = table.querySelectorAll("tr");
+
+    return Array.from(rows).slice(1);
+
+}
+
+function ipCheck(mac, ip) {
+
+    const networkObject = document.querySelector(`[data-mac="${mac}"]`);
+    const networkObjectIp = networkObject.getAttribute("data-ip");
+
+    if (networkObjectIp === ip) {
+        return true;
+    }
+
+    return false;
+
+}
