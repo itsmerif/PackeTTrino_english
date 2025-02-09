@@ -11,10 +11,9 @@ function sleep(ms) {
 async function init() {
     getPanelItems();
     await sleep(500);
-    document.querySelector(".pc-terminal").addEventListener("keydown", stopPing);
+    document.querySelector(".pc-terminal").addEventListener("keydown", terminalKeyboard);
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm);
 }
-
 
 function getPanelItems() {
     fetch("./components/panel-items.json")
@@ -32,11 +31,18 @@ function getPanelItems() {
         });
 }
 
-function stopPing(event) {
+function terminalKeyboard(event) {
     if (event.ctrlKey && event.key === "c") {
         event.preventDefault();
         clearInterval(window.pingInterval);
         document.querySelector(".terminal-output").innerHTML = "";
+    }
+
+    if (event.key === "Escape") {
+        event.preventDefault();
+        document.querySelector(".pc-terminal").style.display = "none";
+        document.querySelector(".terminal-output").innerHTML = "";
+        document.querySelector(".pc-terminal").querySelector("input").value = "";
     }
 }
 
