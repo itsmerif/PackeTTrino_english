@@ -39,19 +39,34 @@ async function routing(networkOriginObjectId, networkOriginObjectIp, destination
             let cells = row.querySelectorAll("td");
             let ruleNetwork = cells[0].innerHTML;
             let ruleNetmask = cells[1].innerHTML;
-            let ruleInterface = cells[3].innerHTML;
 
             if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) { //le red destino coincide con la red de la regla de conexion directa, solo falta enviar la trama
 
+                let ruleInterface = cells[3].innerHTML;
+                let nexthop = cells[4].innerHTML; //siguiente salto
                 const switchId = routerObject.getAttribute("data-switch-" + ruleInterface);
                 const switchObject = document.getElementById(switchId); //obtengo el switch que conecta a la interfaz
 
-                if (visual) {
+                if (visual) {  //enviamos el paquete por la interfaz
                     movePacket(routerObject.style.left, routerObject.style.top, switchObject.style.left, switchObject.style.top, "unicast");
                     await waitForMove();
                 }
 
-                return;
+                if (!isIpInNetwork(switchId, nexthop)) { //la direccion Ip del nexthop no esta en la red del switch`, se da por fallido
+                    if (!visual) ping_f(networkOriginObjectIp);
+                    return;
+                }
+
+                const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0]; //hemos encontrado el router que reenviara el paquete
+                const nexthopObject = document.getElementById(nexthopObjectId); //obtenemos el objeto del router
+
+                if (visual) {  //enviamos el paquete al router
+                    movePacket(switchObject.style.left, switchObject.style.top, nexthopObject.style.left, nexthopObject.style.top, "unicast");
+                    await waitForMove();
+                }
+
+                routing(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId, visual); //llamamos a la funcion recursiva para enviar el paquete por el siguiente salto
+                return; 
             }
 
         }
