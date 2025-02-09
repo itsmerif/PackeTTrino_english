@@ -99,12 +99,12 @@ function ipconfig(id) {
 }
 
 function dragTerminal(event) {
-    event.preventDefault();
 
+    event.preventDefault();
     const terminal = event.target.closest(".pc-terminal");
-    const rect = terminal.getBoundingClientRect();
-    const offsetX = event.clientX - rect.left;
-    const offsetY = event.clientY - rect.top;
+    let rect = terminal.getBoundingClientRect();
+    let offsetX = event.clientX - rect.left;
+    let offsetY = event.clientY - rect.top;
 
     terminal.style.left = `${rect.left}px`;
     terminal.style.top = `${rect.top}px`;
@@ -112,11 +112,10 @@ function dragTerminal(event) {
     terminal.style.position = 'fixed';
 
     function moveTerminal(moveEvent) {
-        const x = moveEvent.clientX - offsetX;
-        const y = moveEvent.clientY - offsetY;
-        const maxX = window.innerWidth - terminal.offsetWidth;
-        const maxY = window.innerHeight - terminal.offsetHeight;
-
+        let x = moveEvent.clientX - offsetX;
+        let y = moveEvent.clientY - offsetY;
+        let maxX = window.innerWidth - terminal.offsetWidth;
+        let maxY = window.innerHeight - terminal.offsetHeight;
         terminal.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
         terminal.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
     }
@@ -130,4 +129,5 @@ function dragTerminal(event) {
 
     document.addEventListener('mousemove', moveTerminal);
     document.addEventListener('mouseup', stopDragging);
+    
 }
