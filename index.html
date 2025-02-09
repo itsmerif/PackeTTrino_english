@@ -58,8 +58,7 @@
     <button type="submit">Guardar</button>
   </form>
 
-  <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;"
-    onmousedown="dragTerminal(event)">
+  <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;" onmousedown="dragTerminal(event)">
     <p>
       <span>C:\></span>
       <input type="text" onkeydown="sendCommand(event)" autofocus>
@@ -67,7 +66,7 @@
     <div class="terminal-output"></div>
   </div>
 
-  <form class="ping-form" onsubmit="pingSim(); return false;" style="display: none;">
+  <form class="ping-form" onsubmit="pingSim(); return false;" style="display: none;" onmousedown="dragPingForm(event)">
     <label for="ip1">Origen</label>
     <input type="text" id="ip1" name="ip1" placeholder="192.168.1.1"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>

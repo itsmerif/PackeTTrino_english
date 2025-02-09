@@ -32,7 +32,7 @@ img {
     gap: 16px;
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .ping-form label {
