@@ -14,17 +14,29 @@ async function routing(networkOriginObjectId, networkOriginObjectIp, destination
         let ruleNetmask = cells[1].innerHTML;
         let ruleInterface = cells[3].innerHTML;
 
-        if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) { //le red destino coincide con la red de la regla de conexion directa, solo falta enviar la trama
+        if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) { //la red destino coincide con la red de la regla de conexion directa, solo falta enviar la trama
 
             const switchId = routerObject.getAttribute("data-switch-" + ruleInterface); 
             const switchObject = document.getElementById(switchId); //obtengo el switch que conecta a la interfaz
 
-            if (visual) {
+            if (visual) { //enviamos un unicast del router al switch
                 movePacket(routerObject.style.left, routerObject.style.top, switchObject.style.left, switchObject.style.top, "unicast");
                 await waitForMove();
             }
 
+            //ahora el switch debe resolver el paquete
+
+            if (visual) broadcastSwitch(switchId, routerObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+
+            if (!isIpInNetwork(switchId, destinationIP)) { //ninguno de los equipos acepta la trama y se da por fallido
+                if (!visual) ping_f(networkOriginObjectIp);
+                return;
+            }
+
+            //bingo, un equipo acepta la trama y se da por exitoso
+            if (!visual) ping_s(networkOriginObjectIp);
             return;
+            
         }
 
     }

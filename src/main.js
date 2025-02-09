@@ -13,6 +13,7 @@ async function init() {
     await sleep(500);
     document.querySelector(".pc-terminal").addEventListener("keydown", terminalKeyboard);
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm);
+    removePropagationPingform()
 }
 
 function getPanelItems() {
@@ -62,9 +63,9 @@ function pingSim() {
     ping(ip1, ip2, true);
 }
 
-function showPingForm(event) {
+function showPingForm() {
     const form = document.querySelector(".ping-form");
-    if ( form.style.display === "none") {
+    if (form.style.display === "none") {
         form.style.display = "flex";
         form.ip1.focus();
     } else {
@@ -76,5 +77,15 @@ function closeAllModals() {
     const modals = document.querySelectorAll(".advanced-options-modal");
     for (let i = 0; i < modals.length; i++) {
         modals[i].style.display = "none";
+    }
+}
+
+function removePropagationPingform() {
+    const form = document.querySelector(".ping-form");
+    const inputs = form.querySelectorAll("input");
+    for (let i = 0; i < inputs.length; i++) {
+        inputs[i].addEventListener("mousedown", event => {
+            event.stopPropagation()
+        });
     }
 }
