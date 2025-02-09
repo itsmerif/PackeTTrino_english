@@ -8,8 +8,7 @@ function createTextObject(x, y) {
     textObject.classList.add("text-annotation");
     textObject.style.left = `${x}px`;
     textObject.style.top = `${y}px`;
-    textObject.draggable = true;
-    textObject.addEventListener("dragstart", event => BoardItemDragStartText(event));
+    textObject.addEventListener("mousedown", dragText);
 
     input.type = "text";
     input.addEventListener("input", autoExtendText);
@@ -37,34 +36,30 @@ function autoExtendText() {
     container.style.marginLeft = `-${newWidth/2}px`;
 }
 
-function BoardItemDragStartText(event) {
+function dragText(event) {
+    event.preventDefault();
+    const text = event.target.closest(".text-annotation");
+    let rect = text.getBoundingClientRect();
+    let offsetX = event.clientX - rect.left - rect.width / 2;
+    let offsetY = event.clientY - rect.top - rect.height / 2;
+    text.style.position = 'absolute';
 
-    const textObject = event.target.closest(".text-annotation");
-    
-    //obtengo TODOS los datos del elemento
+    function moveText(moveEvent) {
+        let x = moveEvent.clientX - offsetX;
+        let y = moveEvent.clientY - offsetY;
+        let maxX = window.innerWidth - text.offsetWidth;
+        let maxY = window.innerHeight - text.offsetHeight;
+        text.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+        text.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+    }
 
-    const textObjectid = textObject.id;
-    const ip = textObject.getAttribute("data-ip");
-    const netmask = textObject.getAttribute("data-netmask");
-    const network = textObject.getAttribute("data-network");
-    const mac = textObject.getAttribute("data-mac");
-    const gateway = textObject.getAttribute("data-gateway");
-    const itemType = "item-dropped";
-    const x = textObject.style.left;   
-    const y = textObject.style.top;
-    
-    //los transformamos en un string
+    function stopDragging() {
+        document.removeEventListener('mousemove', moveText);
+        document.removeEventListener('mouseup', stopDragging);
+        const input = text.querySelector('input');
+        if (input) input.focus();
+    }
 
-    event.dataTransfer.setData("json", JSON.stringify({
-        itemType: itemType,
-        itemId: textObjectid,
-        ip: ip,
-        netmask: netmask,
-        network: network,
-        mac: mac,
-        gateway: gateway,
-        originx: x,
-        originy: y
-    }));
-
+    document.addEventListener('mousemove', moveText);
+    document.addEventListener('mouseup', stopDragging);
 }

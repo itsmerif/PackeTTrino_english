@@ -50,7 +50,6 @@ function clickTerminal(event) {
     input.focus();
 }
 
-
 function checkIpRouting(id, args) {
 
     //sintaxis del comando: ip route <add|del> <destination> <netmask> via <interfaz> <nexthop>
