@@ -40,38 +40,6 @@ function createPcObject(x, y) {
     itemIndex++;
 }
 
-function BoardItemDragStart(event) {
-
-    const networkObject = event.target.closest(".item-dropped");
-    
-    //obtengo TODOS los datos del elemento
-
-    const networkObjectid = networkObject.id;
-    const ip = networkObject.getAttribute("data-ip");
-    const netmask = networkObject.getAttribute("data-netmask");
-    const network = networkObject.getAttribute("data-network");
-    const mac = networkObject.getAttribute("data-mac");
-    const gateway = networkObject.getAttribute("data-gateway");
-    const itemType = "item-dropped";
-    const x = networkObject.style.left;   
-    const y = networkObject.style.top;
-    
-    //los transformamos en un string
-
-    event.dataTransfer.setData("json", JSON.stringify({
-        itemType: itemType,
-        itemId: networkObjectid,
-        ip: ip,
-        netmask: netmask,
-        network: network,
-        mac: mac,
-        gateway: gateway,
-        originx: x,
-        originy: y
-    }));
-
-}
-
 function showPcForm(id) {
     const networkObject = document.getElementById(id);
     const ip = networkObject.getAttribute("data-ip");

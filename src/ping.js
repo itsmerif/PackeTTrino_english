@@ -206,7 +206,6 @@ async function ping(originIP, destinationIP, visual = false) {
 
 }
 
-
 function ping_s(origin) {
 
     const terminalOutput = document.querySelector(".terminal-output");

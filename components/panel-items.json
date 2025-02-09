@@ -28,5 +28,12 @@
         "image": "./assets/bus.png",
         "draggable": false,
         "size": "100%"
+    },
+    {
+        "name": "text",
+        "image": "./assets/txt.png",
+        "draggable": true,
+        "size": "80%"
     }
+
 ]

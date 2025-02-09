@@ -40,7 +40,7 @@ async function routing(networkOriginObjectId, networkOriginObjectIp, destination
             let ruleNetwork = cells[0].innerHTML;
             let ruleNetmask = cells[1].innerHTML;
 
-            if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) { //le red destino coincide con la red de la regla de conexion directa, solo falta enviar la trama
+            if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) { //le red destino coincide con la red de la regla remota
 
                 let ruleInterface = cells[3].innerHTML;
                 let nexthop = cells[4].innerHTML; //siguiente salto
@@ -52,7 +52,7 @@ async function routing(networkOriginObjectId, networkOriginObjectIp, destination
                     await waitForMove();
                 }
 
-                if (!isIpInNetwork(switchId, nexthop)) { //la direccion Ip del nexthop no esta en la red del switch`, se da por fallido
+                if (!isIpInNetwork(switchId, nexthop)) { //la direccion Ip del nexthop no esta en la red del switch, se da por fallido
                     if (!visual) ping_f(networkOriginObjectIp);
                     return;
                 }
@@ -90,7 +90,22 @@ async function routing(networkOriginObjectId, networkOriginObjectIp, destination
             await waitForMove();
         }
 
+        if (!isIpInNetwork(switchId, nexthop)) { //la direccion Ip del nexthop no esta en la red del switch, se da por fallido
+            if (!visual) ping_f(networkOriginObjectIp);
+            return;
+        }
+
+        const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0]; //hemos encontrado el router que reenviara el paquete
+        const nexthopObject = document.getElementById(nexthopObjectId); //obtenemos el objeto del router
+
+        if (visual) {  //enviamos el paquete al router
+            movePacket(switchObject.style.left, switchObject.style.top, nexthopObject.style.left, nexthopObject.style.top, "unicast");
+            await waitForMove();
+        }
+
+        routing(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId, visual); //llamamos a la funcion recursiva para enviar el paquete por el siguiente salto
         return;
+        
     }
 
     //se da por fallido
