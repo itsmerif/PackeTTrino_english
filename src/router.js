@@ -29,7 +29,6 @@ function createRouterObject(x, y) {
     networkObject.setAttribute("netmask-enp0s8", "");
     networkObject.setAttribute("ip-enp0s9", "");
     networkObject.setAttribute("netmask-enp0s9", "");
-    networkObject.setAttribute("default-gateway", "");
 
     //switches a los que está conectado el router en cada interfaz
 
@@ -75,7 +74,7 @@ function createRouterObject(x, y) {
                     <td> 0.0.0.0 </td>
                     <td></td>
                     <td></td>
-                    <td> 0.0.0.0 </td>
+                    <td></td>
                 </tr>
             </table>
             <button onclick="closeRoutingTable(event)">Cerrar</button>`;
@@ -161,7 +160,6 @@ function saveRouterSpecs(event) {
     const newNetmaskEnp0s3 = document.querySelector(".router-form #netmask-enp0s3").value;
     const newNetmaskEnp0s8 = document.querySelector(".router-form #netmask-enp0s8").value;
     const newNetmaskEnp0s9 = document.querySelector(".router-form #netmask-enp0s9").value;
-    const newDefaultGateway = document.getElementById("default-gateway-form").value;
 
     //guardamos los nuevos atributos en el router
 
@@ -171,7 +169,6 @@ function saveRouterSpecs(event) {
     networkObject.setAttribute("netmask-enp0s3", newNetmaskEnp0s3);
     networkObject.setAttribute("netmask-enp0s8", newNetmaskEnp0s8);
     networkObject.setAttribute("netmask-enp0s9", newNetmaskEnp0s9);
-    networkObject.setAttribute("default-gateway", newDefaultGateway);
 
     //generamos nuevas reglas de conexion directa en la tabla de enrutamiento
 
@@ -187,29 +184,12 @@ function saveRouterSpecs(event) {
     interfaces.forEach((iface, index) => {
         const row = rows[index + 1];
         const cells = row.querySelectorAll("td");
-        cells[0].innerHTML = getNetwork(iface.ip, iface.netmask);
+        if (getNetwork(iface.ip, iface.netmask) !== "0.0.0.0") cells[0].innerHTML = getNetwork(iface.ip, iface.netmask);
         cells[1].innerHTML = iface.netmask;
         cells[2].innerHTML = iface.ip;
         cells[3].innerHTML = iface.interface;
     });
 
-    //añado la regla de enrutamiento por defecto, en la fila 4 de la tabla
-    
-    const row4 = rows[4]; //el header es la fila 0
-    const cells4 = row4.querySelectorAll("td");
-
-    if (newDefaultGateway === "enp0s3") {
-        cells4[2].innerHTML = newIpEnp0s3;
-        cells4[3].innerHTML = "enp0s3";
-    } else if (newDefaultGateway === "enp0s8") {
-        cells4[2].innerHTML = newIpEnp0s8;
-        cells4[3].innerHTML = "enp0s8";
-    } else if (newDefaultGateway === "enp0s9") {
-        cells4[2].innerHTML = newIpEnp0s9;
-        cells4[3].innerHTML = "enp0s9";
-    }
-
-    //oculto el formulario de configuración de interfaces de red
     form.style.display = "none";
 }
 
@@ -217,18 +197,32 @@ function addRoutingEntry(routerObjectId, destination, netmask, interface, nextho
 
     const networkObject = document.getElementById(routerObjectId);
     const table = networkObject.querySelector("table");
-    const newRow = document.createElement("tr");
-    const gateway = networkObject.getAttribute("ip-" + interface);
 
-    newRow.innerHTML = `
-        <tr>
-            <td>${destination}</td>
-            <td>${netmask}</td>
-            <td>${gateway}</td>
-            <td>${interface}</td>
-            <td>${nexthop}</td>
-        </tr>`;
-    table.appendChild(newRow);
+    if (destination !== "0.0.0.0") { //añadimos una nueva regla
+
+        const newRow = document.createElement("tr");
+        const gateway = networkObject.getAttribute("ip-" + interface);
+        newRow.innerHTML = `
+            <tr>
+                <td>${destination}</td>
+                <td>${netmask}</td>
+                <td>${gateway}</td>
+                <td>${interface}</td>
+                <td>${nexthop}</td>
+            </tr>`;
+        table.appendChild(newRow);
+
+    } else { //editamos la regla por defecto
+
+        const rows = table.querySelectorAll("tr");
+        const defaultRule = rows[4];
+        const cells = defaultRule.querySelectorAll("td");
+        const gateway = networkObject.getAttribute("ip-" + interface);
+        cells[2].innerHTML = gateway;
+        cells[3].innerHTML = interface;
+        cells[4].innerHTML = nexthop;
+
+    }
 
 }
 
