@@ -140,7 +140,9 @@ async function ping(originIP, destinationIP, visual = false) {
         }
 
         if (!isIpInARPTable(originId, defaultGateway)) { // la ip de la puerta de enlace no está en la tabla ARP del origen. la descubrimos primero
-            ping(originIP, defaultGateway, visual);
+            await ping(originIP, defaultGateway, visual); //llama a la funcion de nuevo
+            await waitForMove();
+            await ping(originIP, destinationIP, visual); //reiniciamos la llamada ahora con la tabla de arp actualizada
             return;
         }
 
