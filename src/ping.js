@@ -129,6 +129,12 @@ async function ping(originIP, destinationIP, visual = false) {
         }
 
     }
+
+    if (getNetwork(originIP, originNetmask) !== getNetwork(destinationIP, originNetmask)) {     //si el destino y origen están en diferentes redes
+
+
+
+    }
 }
 
 
