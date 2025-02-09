@@ -72,6 +72,12 @@
     box-shadow: 0px 0px 10px black;
     z-index: 2;
     overflow-y: auto;
+    transition: none;
+}
+
+.pc-terminal.dragging {
+    transform: none;
+    transition: none;
 }
 
 .advanced-options-modal {

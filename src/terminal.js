@@ -97,3 +97,37 @@ function ipconfig(id) {
         Dirección Física: ${mac}
     `;
 }
+
+function dragTerminal(event) {
+    event.preventDefault();
+
+    const terminal = event.target.closest(".pc-terminal");
+    const rect = terminal.getBoundingClientRect();
+    const offsetX = event.clientX - rect.left;
+    const offsetY = event.clientY - rect.top;
+
+    terminal.style.left = `${rect.left}px`;
+    terminal.style.top = `${rect.top}px`;
+    terminal.style.transform = 'none';
+    terminal.style.position = 'fixed';
+
+    function moveTerminal(moveEvent) {
+        const x = moveEvent.clientX - offsetX;
+        const y = moveEvent.clientY - offsetY;
+        const maxX = window.innerWidth - terminal.offsetWidth;
+        const maxY = window.innerHeight - terminal.offsetHeight;
+
+        terminal.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+        terminal.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+    }
+
+    function stopDragging() {
+        document.removeEventListener('mousemove', moveTerminal);
+        document.removeEventListener('mouseup', stopDragging);
+        const input = terminal.querySelector('input');
+        if (input) input.focus();
+    }
+
+    document.addEventListener('mousemove', moveTerminal);
+    document.addEventListener('mouseup', stopDragging);
+}
