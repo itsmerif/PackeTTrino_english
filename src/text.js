@@ -45,6 +45,7 @@ function dragText(event) {
     text.style.position = 'absolute';
 
     function moveText(moveEvent) {
+        document.body.style.cursor = "none";
         let x = moveEvent.clientX - offsetX;
         let y = moveEvent.clientY - offsetY;
         let maxX = window.innerWidth - text.offsetWidth;
@@ -58,6 +59,7 @@ function dragText(event) {
         document.removeEventListener('mouseup', stopDragging);
         const input = text.querySelector('input');
         if (input) input.focus();
+        document.body.style.cursor = "default";
     }
 
     document.addEventListener('mousemove', moveText);
