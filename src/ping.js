@@ -1,5 +1,5 @@
 async function ping(originIP, destinationIP, visual = false) {
-    
+
     // Compruebo que el equipo origen está configurado
 
     if (!originIP) {
@@ -28,7 +28,7 @@ async function ping(originIP, destinationIP, visual = false) {
 
             if (visual) {
                 //el pc envia una trama broadcast al swich
-                movePacket(NetworkOriginObject.style.left, NetworkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "broadcast"); 
+                movePacket(NetworkOriginObject.style.left, NetworkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "broadcast");
                 await waitForMove();
             }
 
@@ -36,7 +36,7 @@ async function ping(originIP, destinationIP, visual = false) {
 
             if (visual) {
                 //ahora el switch satura los puertos y los equipos conectados comprueban si su IP es la  IP de destino del paquete
-                broadcastSwitch(switchOriginObjectId, originId );
+                broadcastSwitch(switchOriginObjectId, originId);
                 await waitForMove();
             }
 
@@ -53,12 +53,12 @@ async function ping(originIP, destinationIP, visual = false) {
             addARPEntry(originId, destinationIP, networkDestinationObjectmac); //añadimos la ip y mac al switch del origen
 
             if (visual) {
-                movePacket(networkDestinationObject.style.left, networkDestinationObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast"); 
+                movePacket(networkDestinationObject.style.left, networkDestinationObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
                 await waitForMove();
 
-                movePacket(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast"); 
+                movePacket(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
             } else {
-                ping_s(originIP); 
+                ping_s(originIP);
             }
 
             return;
@@ -74,7 +74,7 @@ async function ping(originIP, destinationIP, visual = false) {
         }
 
         saveMac(switchOriginObjectId, originId, originObjectMac); //si el origen no es conocido para el switch, añadimos la mac al switch
- 
+
         if (!isMacInMACTable(switchOriginObjectId, destinationMac)) { //la mac de destino NO existe en la tabla del switch
 
             //ahora el switch satura todos los puertos e intenta encontrar la mac de destino
@@ -123,18 +123,87 @@ async function ping(originIP, destinationIP, visual = false) {
             movePacket(networkDestinationObject.style.left, networkDestinationObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
             await waitForMove();
             movePacket(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
-        }else {
+        } else {
             ping_s(originIP); //si todo sale bien, se da por exitoso
+            return;
+        }
+
+    } else {
+
+        //el destino no está en la misma red
+
+        const defaultGateway = NetworkOriginObject.getAttribute("data-gateway"); //obtenemos la puerta de enlace
+
+        if (!defaultGateway) { //no existe una puerta de enlace en el origen, damos por fallido
+            if (!visual) ping_f(originIP);
+            return;
+        }
+
+        if (!isIpInARPTable(originId, defaultGateway)) { // la ip de la puerta de enlace no está en la tabla ARP del origen. la descubrimos primero
+            ping(originIP, defaultGateway, visual);
+            return;
+        }
+
+        //la ip de la puerta de enlace está en la tabla ARP del origen
+
+        const defaultGatewayMac = isIpInARPTable(originId, defaultGateway); // Hemos encontrado la mac del equipo destino. Enviamos una trama unicast al switch con esa mac de destino
+
+        if (visual) {
+            movePacket(NetworkOriginObject.style.left, NetworkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
+            await waitForMove();
+        }
+        
+        saveMac(switchOriginObjectId, originId, originObjectMac); //si el origen no es conocido para el switch, añadimos la mac al switch
+
+        if (!isMacInMACTable(switchOriginObjectId, defaultGatewayMac)) { //la mac de destino NO existe en la tabla del switch
+
+            //ahora el switch satura todos los puertos e intenta encontrar la mac de destino
+
+            if (visual) {
+                broadcastSwitch(switchOriginObjectId, originId);
+                await waitForMove();
+            }
+
+            if (!isMacinNetwork(switchOriginObjectId, defaultGatewayMac)) { //ninguno de los equipos acepta la trama y se da por fallido
+                if (!visual) ping_f(originIP);
+                return;
+            }
+
+            //bingo, uno de los equipos nos devuelva una respuesta confirmando su mac
+
+            const networkDestinationObjectId = isMacinNetwork(switchOriginObjectId, defaultGatewayMac);
+            const networkDestinationObject = document.getElementById(networkDestinationObjectId);
+
+            saveMac(switchOriginObjectId, networkDestinationObjectId, defaultGatewayMac); //añadimos la mac al switch
+
+            if (visual) {
+                movePacket(networkDestinationObject.style.left, networkDestinationObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
+                await waitForMove();
+                movePacket(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
+                return;
+            } else {
+                ping_s(originIP);
+                return;
+            }
+
+
+        }
+
+        //la mac de destino existe en la tabla del switch. el switch envia una trama unicast al destino.
+
+        const networkDestinationObjectId = getDeviceFromMac(switchOriginObjectId, defaultGatewayMac);
+        const networkDestinationObject = document.getElementById(networkDestinationObjectId);
+
+        if (visual) {
+            movePacket(switchOriginObject.style.left, switchOriginObject.style.top, networkDestinationObject.style.left, networkDestinationObject.style.top, "unicast");
+            await waitForMove();
+            routing(originId, originIP, destinationIP, networkDestinationObjectId, visual);
             return;
         }
 
     }
 
-    if (getNetwork(originIP, originNetmask) !== getNetwork(destinationIP, originNetmask)) {     //si el destino y origen están en diferentes redes
 
-
-
-    }
 }
 
 

@@ -13,7 +13,6 @@ async function init() {
     await sleep(500);
     document.querySelector(".pc-terminal").addEventListener("keydown", stopPing);
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm);
-    document.getElementById("board").addEventListener("dragover", dragOverBoard);
 }
 
 

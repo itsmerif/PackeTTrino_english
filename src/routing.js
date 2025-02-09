@@ -1,36 +1,86 @@
-function Routing(routerObjectId, networkObjectOriginId, originIP, destinationIP) {
+async function routing(networkOriginObjectId, networkOriginObjectIp, destinationIP, routerObjectId, visual = false) {
 
-    const routerObject = document.getElementById(routerObjectId);
-    const rules = getRoutingTable(routerObjectId);
+    const routerObject = document.getElementById(routerObjectId); //obtenemos el router
+    const routingTable = routerObject.querySelector("table"); //obtenemos la tabla de enrutamiento
+    const rows = routingTable.querySelectorAll("tr"); //obtenemos las filas de la tabla
 
     //reglas de conexion directa
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 1; i <=3 ; i++) {
 
-        let rule = rules[i];
-        let cells = rule.querySelectorAll("td");
-        let destinationNetwork = cells[0].innerHTML;
-        let destinationNetmask = cells[1].innerHTML;
+        let row = rows[i];
+        let cells = row.querySelectorAll("td");
+        let ruleNetwork = cells[0].innerHTML;
+        let ruleNetmask = cells[1].innerHTML;
+        let ruleInterface = cells[3].innerHTML;
 
-        if (destinationNetwork === getNetwork(destinationIP, destinationNetmask)) { //coincide con una regla de conexion directa
-            const interface = cells[3].innerHTML;
-            const switchObjectId = getSwitchFromRouter(routerObjectId, interface);
-            if ( isIpInNetwork(switchObjectId, destinationIP) ) { //el destino está en la red del switch
-                ping_s(originIP);
-                return;
+        if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) { //le red destino coincide con la red de la regla de conexion directa, solo falta enviar la trama
+
+            const switchId = routerObject.getAttribute("data-switch-" + ruleInterface); 
+            const switchObject = document.getElementById(switchId); //obtengo el switch que conecta a la interfaz
+
+            if (visual) {
+                movePacket(routerObject.style.left, routerObject.style.top, switchObject.style.left, switchObject.style.top, "unicast");
+                await waitForMove();
             }
+
+            return;
         }
 
     }
 
-}
+    //reglas remotas -> de la fila 5 a la ultima
 
-function getSwitchFromRouter(routerObjectId, interface) {
+    if (rows.length > 4) { // hay reglas remotas
 
-    const routerObject = document.getElementById(routerObjectId);
-    const dataSwitchString = "data-switch-" + interface;
-    const switchIdentity = routerObject.getAttribute(dataSwitchString);
+        for (let i = 4; i < rows.length; i++) {
 
-    return switchIdentity;
+            let row = rows[i];
+            let cells = row.querySelectorAll("td");
+            let ruleNetwork = cells[0].innerHTML;
+            let ruleNetmask = cells[1].innerHTML;
+            let ruleInterface = cells[3].innerHTML;
+
+            if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) { //le red destino coincide con la red de la regla de conexion directa, solo falta enviar la trama
+
+                const switchId = routerObject.getAttribute("data-switch-" + ruleInterface);
+                const switchObject = document.getElementById(switchId); //obtengo el switch que conecta a la interfaz
+
+                if (visual) {
+                    movePacket(routerObject.style.left, routerObject.style.top, switchObject.style.left, switchObject.style.top, "unicast");
+                    await waitForMove();
+                }
+
+                return;
+            }
+
+        }
+        
+    }
+
+    //ultimo recurso, miramos la regla por defecto -> en la fila 4
+
+    let row = rows[4];
+    let cells = row.querySelectorAll("td");
+    let gateway = cells[2].innerHTML;
+
+    if (gateway !== "") { //se ha configurado la regla por defecto
+
+        let ruleInterface = cells[3].innerHTML;
+        const switchId = routerObject.getAttribute("data-switch-" + ruleInterface);
+        const switchObject = document.getElementById(switchId); //obtengo el switch que conecta a la interfaz
+
+        if (visual) {
+            movePacket(routerObject.style.left, routerObject.style.top, switchObject.style.left, switchObject.style.top, "unicast");
+            await waitForMove();
+        }
+
+        return;
+    }
+
+    //se da por fallido
+
+    if (!visual) ping_f(networkOriginObjectIp);
+    return;
 
 }

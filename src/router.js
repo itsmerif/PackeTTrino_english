@@ -212,3 +212,39 @@ function saveRouterSpecs(event) {
     //oculto el formulario de configuración de interfaces de red
     form.style.display = "none";
 }
+
+function addRoutingEntry(routerObjectId, destination, netmask, interface, nexthop) {
+
+    const networkObject = document.getElementById(routerObjectId);
+    const table = networkObject.querySelector("table");
+    const newRow = document.createElement("tr");
+    const gateway = networkObject.getAttribute("ip-" + interface);
+
+    newRow.innerHTML = `
+        <tr>
+            <td>${destination}</td>
+            <td>${netmask}</td>
+            <td>${gateway}</td>
+            <td>${interface}</td>
+            <td>${nexthop}</td>
+        </tr>`;
+    table.appendChild(newRow);
+
+}
+
+function removeRoutingEntry(routerObjectId, destination, netmask, nexthop) {
+
+    const networkObject = document.getElementById(routerObjectId);
+    const table = networkObject.querySelector("table");
+    const rows = table.querySelectorAll("tr");
+
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.querySelectorAll("td");
+
+        if (cells[0].innerHTML === destination && cells[1].innerHTML === netmask && cells[2].innerHTML === nexthop) {
+            table.removeChild(row);
+        }
+    }
+
+}
