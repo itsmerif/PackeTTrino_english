@@ -82,6 +82,7 @@ async function routing(networkOriginObjectId, networkOriginObjectIp, destination
     if (gateway !== "") { //se ha configurado la regla por defecto
 
         let ruleInterface = cells[3].innerHTML;
+        let nexthop = cells[4].innerHTML;
         const switchId = routerObject.getAttribute("data-switch-" + ruleInterface);
         const switchObject = document.getElementById(switchId); //obtengo el switch que conecta a la interfaz
 
