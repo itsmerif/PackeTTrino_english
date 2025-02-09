@@ -197,7 +197,7 @@ async function ping(originIP, destinationIP, visual = false) {
         if (visual) {
             movePacket(switchOriginObject.style.left, switchOriginObject.style.top, networkDestinationObject.style.left, networkDestinationObject.style.top, "unicast");
             await waitForMove();
-            routing(originId, originIP, destinationIP, networkDestinationObjectId, visual);
+            await routing(originId, originIP, destinationIP, networkDestinationObjectId, visual);
             return;
         }
 

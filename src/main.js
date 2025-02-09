@@ -56,11 +56,16 @@ function deleteMouse() {
     }
 }
 
-function pingSim() {
+async function pingSim() {
     const form = document.querySelector(".ping-form");
     const ip1 = form.ip1.value;
     const ip2 = form.ip2.value;
-    ping(ip1, ip2, true);
+    try {
+        await ping(ip1, ip2, true);
+        await ping(ip2, ip1, true);
+    } catch (error) {
+        console.error("Error durante el ping:", error);
+    }
 }
 
 function showPingForm() {

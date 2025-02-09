@@ -26,7 +26,8 @@ async function routing(networkOriginObjectId, networkOriginObjectIp, destination
 
             //ahora el switch debe resolver el paquete
 
-            if (visual) broadcastSwitch(switchId, routerObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+            //if (visual) broadcastSwitch(switchId, routerObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+            //await waitForMove();
 
             if (!isIpInNetwork(switchId, destinationIP)) { //ninguno de los equipos acepta la trama y se da por fallido
                 if (!visual) ping_f(networkOriginObjectIp);
@@ -34,9 +35,19 @@ async function routing(networkOriginObjectId, networkOriginObjectIp, destination
             }
 
             //bingo, un equipo acepta la trama y se da por exitoso
-            if (!visual) ping_s(networkOriginObjectIp);
+
+            const networkDestinationObjectId = isIpInNetwork(switchId, destinationIP)[0];
+            const networkDestinationObject = document.getElementById(networkDestinationObjectId);
+
+            if (visual) {
+                movePacket(switchObject.style.left, switchObject.style.top, networkDestinationObject.style.left, networkDestinationObject.style.top, "unicast");
+                await waitForMove();
+            } else {
+                ping_s(networkOriginObjectIp);
+            }
+
             return;
-            
+
         }
 
     }
@@ -77,7 +88,7 @@ async function routing(networkOriginObjectId, networkOriginObjectIp, destination
                     await waitForMove();
                 }
 
-                routing(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId, visual); //llamamos a la funcion recursiva para enviar el paquete por el siguiente salto
+                await routing(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId, visual); //llamamos a la funcion recursiva para enviar el paquete por el siguiente salto
                 return; 
             }
 
@@ -116,7 +127,7 @@ async function routing(networkOriginObjectId, networkOriginObjectIp, destination
             await waitForMove();
         }
 
-        routing(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId, visual); //llamamos a la funcion recursiva para enviar el paquete por el siguiente salto
+        await routing(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId, visual); //llamamos a la funcion recursiva para enviar el paquete por el siguiente salto
         return;
         
     }
