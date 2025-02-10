@@ -121,6 +121,7 @@ function loadState() {
         const contenido = event.target.result;
         document.querySelector(".board").innerHTML = contenido;
         setNewIndex();
+        setTextContents();
     };
     lector.readAsText(archivo); 
 }
@@ -146,4 +147,16 @@ function setNewIndex() {
     }
 
     itemIndex = Math.max(...indexes) + 1;
+}
+
+
+function setTextContents() {
+
+    const itemsText = document.querySelectorAll(".text-annotation");
+
+    for (let i = 0; i < itemsText.length; i++) {
+        let text = itemsText[i].getAttribute("data-text");
+        let input = itemsText[i].querySelector("input");
+        input.value = text;
+    }
 }

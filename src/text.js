@@ -20,6 +20,7 @@ function createTextObject(x, y) {
     input.type = "text";
     input.setAttribute("oninput", "autoExtendText.call(this)");
     textObject.setAttribute("oncontextmenu", "showAdvancedOptionsText(event)");
+    textObject.setAttribute("data-text", "");
 
     textObject.appendChild(input);
 
@@ -38,6 +39,7 @@ function showAdvancedOptionsText(event) {
 function autoExtendText() {
     const container = this.parentElement;
     const input = container.querySelector("input");
+    const content = input.value;
     const temp = document.createElement('span');
     temp.style.visibility = 'hidden';
     temp.style.position = 'absolute';
@@ -50,6 +52,7 @@ function autoExtendText() {
     const newWidth = Math.max(40, width + 20);
     container.style.width = `${newWidth}px`;
     container.style.marginLeft = `-${newWidth/2}px`;
+    container.setAttribute("data-text", content);
 }
 
 function dragText(event) {
