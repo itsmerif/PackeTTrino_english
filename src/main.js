@@ -94,3 +94,17 @@ function removePropagationPingform() {
         });
     }
 }
+
+function downloadState() {
+    const elemento = document.querySelector(".board");
+    const contenidoHTML = elemento.innerHTML;
+    const blob = new Blob([contenidoHTML], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const enlace = document.createElement("a");
+    enlace.href = url;
+    enlace.download = "contenido.html"; // Nombre del archivo
+    document.body.appendChild(enlace);
+    enlace.click();
+    document.body.removeChild(enlace);
+    URL.revokeObjectURL(url); // Liberar el objeto URL
+}

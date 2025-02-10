@@ -1,5 +1,4 @@
 function createPcObject(x, y) {
-
     const board = document.querySelector(".board");
     const networkObject = document.createElement("article");
 
@@ -16,10 +15,10 @@ function createPcObject(x, y) {
         <img src="./assets/pc.png" alt="pc" draggable="true">
         <article class="mac-table" onclick="event.stopPropagation()">
             <table>
-                    <tr>
-                        <th>IP Address</th>
-                        <th>MAC Address</th>
-                    </tr>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
             </table>
             <button onclick="closeARPTable(event)">Cerrar</button>
         </article>
@@ -30,16 +29,17 @@ function createPcObject(x, y) {
         </div>
     `;
 
-    networkObject.addEventListener("click", () => showPcForm(networkObject.id));
-    networkObject.addEventListener("contextmenu", event => showAdvancedOptions(event));
-    networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
+    networkObject.setAttribute("onclick", "showPcForm('" + networkObject.id + "')");
+    networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
+    networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
 
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
-    
+
     board.appendChild(networkObject);
     itemIndex++;
 }
+
 
 function showPcForm(id) {
     const networkObject = document.getElementById(id);

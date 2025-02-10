@@ -42,10 +42,11 @@ function createSwitchObject(x, y) {
     networkObject.appendChild(networkObjectAdvancedOptions);
 
     //eventos
-    networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
-    networkObject.addEventListener("drop", switchConn);
-    networkObject.addEventListener("click", showMacTable);
-    networkObject.addEventListener("contextmenu", event => showAdvancedOptionsSwitch(event));
+    
+    networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
+    networkObject.setAttribute("ondrop", "switchConn(event)");
+    networkObject.setAttribute("onclick", "showMacTable(event)");
+    networkObject.setAttribute("oncontextmenu", "showAdvancedOptionsSwitch(event)");
 
 
     //añadir el elemento al tablero y aumentar el indice global

@@ -14,11 +14,24 @@ async function ping(originIP, destinationIP, visual = false) {
         return;
     }
 
+
     const origin = document.querySelector(`[data-ip="${originIP}"]`);
+
+    if (!origin) { //no existe un elemento con esa ip
+        if (!visual) ping_f(originIP);
+        return;
+    }
+
     const originId = origin.id;
     const originNetmask = origin.getAttribute("data-netmask");
     const NetworkOriginObject = document.getElementById(originId);
     const switchOriginObjectId = NetworkOriginObject.getAttribute("data-switch");
+ 
+    if (!switchOriginObjectId){ //el pc no está conectado a ningún switch
+        if (!visual) ping_f(originIP);
+        return
+    }
+
     const switchOriginObject = document.getElementById(switchOriginObjectId);
     const originObjectMac = NetworkOriginObject.getAttribute("data-mac");
 
@@ -50,14 +63,10 @@ async function ping(originIP, destinationIP, visual = false) {
             const networkDestinationObject = document.getElementById(networkDestinationObjectId);
 
             saveMac(switchOriginObjectId, networkDestinationObjectId, networkDestinationObjectmac); //añadimos la mac al switch del destino si no estaba ya
-            addARPEntry(originId, destinationIP, networkDestinationObjectmac); //añadimos la ip y mac al switch del origen
+            addARPEntry(originId, destinationIP, networkDestinationObjectmac); //añadimos la ip y mac al equipo origen
+            addARPEntry(networkDestinationObjectId, originIP, originObjectMac); //añadimos la ip y mac al equipo destino
 
-            if (visual) {
-                movePacket(networkDestinationObject.style.left, networkDestinationObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
-                await waitForMove();
-
-                movePacket(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
-            } else {
+            if (!visual) {
                 ping_s(originIP);
             }
 
@@ -119,14 +128,11 @@ async function ping(originIP, destinationIP, visual = false) {
             return;
         }
 
-        if (visual) {
-            movePacket(networkDestinationObject.style.left, networkDestinationObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
-            await waitForMove();
-            movePacket(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
-        } else {
+        if (!visual) {
             ping_s(originIP); //si todo sale bien, se da por exitoso
-            return;
         }
+
+        return;
 
     } else {
 

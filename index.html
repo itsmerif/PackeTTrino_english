@@ -23,7 +23,9 @@
       <svg ondragover="dragOverBoard(event)" id="svg-board" rope-start="startId" rope-end="endId"
         preserveAspectRatio="none" width="100%" height="100%" style="position: absolute; top: 0; left: 0;"></svg>
     </section>
-    <section id="item-panel"></section>
+    <section id="item-panel">
+      <button onclick="downloadState()"> Descargar Sesion </button>
+    </section>
   </div>
 
   <form class="pc-form" onsubmit="savePcSpecs(event); return false;" style="display: none;">

@@ -92,10 +92,10 @@ function createRouterObject(x, y) {
 
     //eventos
 
-    networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
-    networkObject.addEventListener("contextmenu", event => showAdvancedOptionsRouter(event));
-    networkObject.addEventListener("click", event => showRoutingTable(event));
-    networkObjectTable.addEventListener("click", (event) => event.stopPropagation());
+    networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
+    networkObject.setAttribute("oncontextmenu", "showAdvancedOptionsRouter(event)");
+    networkObject.setAttribute("onclick", "showRoutingTable(event)");
+    networkObjectTable.setAttribute("onclick", "event.stopPropagation()");
 
     //añadir el elemento al tablero y aumentar el indice global
 
