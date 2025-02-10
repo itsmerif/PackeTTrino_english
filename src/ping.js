@@ -62,9 +62,12 @@ async function ping(originIP, destinationIP, visual = false) {
             const [networkDestinationObjectId, networkDestinationObjectmac] = isIpInNetwork(switchOriginObjectId, destinationIP);
             const networkDestinationObject = document.getElementById(networkDestinationObjectId);
 
+            movePacket(networkDestinationObject.style.left, networkDestinationObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
+            await waitForMove();
+            movePacket(switchOriginObject.style.left, switchOriginObject.style.top, NetworkOriginObject.style.left, NetworkOriginObject.style.top, "unicast");
+
             saveMac(switchOriginObjectId, networkDestinationObjectId, networkDestinationObjectmac); //añadimos la mac al switch del destino si no estaba ya
             addARPEntry(originId, destinationIP, networkDestinationObjectmac); //añadimos la ip y mac al equipo origen
-            addARPEntry(networkDestinationObjectId, originIP, originObjectMac); //añadimos la ip y mac al equipo destino
 
             if (!visual) {
                 ping_s(originIP);
