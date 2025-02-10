@@ -108,3 +108,18 @@ function downloadState() {
     document.body.removeChild(enlace);
     URL.revokeObjectURL(url); // Liberar el objeto URL
 }
+
+function loadState() {
+    const archivoInput = document.getElementById("fileInput");
+    if (archivoInput.files.length === 0) {
+        alert("Por favor, selecciona un archivo.");
+        return;
+    }
+    const archivo = archivoInput.files[0];
+    const lector = new FileReader();
+    lector.onload = function (event) {
+        const contenido = event.target.result;  // Contenido del archivo HTML
+        document.querySelector(".board").innerHTML = contenido;
+    };
+    lector.readAsText(archivo);  // Leer el archivo como texto
+}

@@ -14,16 +14,17 @@ function createTextObject(x, y) {
     textObject.classList.add("text-annotation");
     textObject.style.left = `${x}px`;
     textObject.style.top = `${y}px`;
-    textObject.addEventListener("mousedown", dragText);
 
+
+    textObject.setAttribute("onmousedown", "dragText(event)");
     input.type = "text";
-    input.addEventListener("input", autoExtendText);
-    textObject.addEventListener("contextmenu", event => showAdvancedOptionsText(event));
+    input.setAttribute("oninput", "autoExtendText.call(this)");
+    textObject.setAttribute("oncontextmenu", "showAdvancedOptionsText(event)");
+
     textObject.appendChild(input);
 
     board.appendChild(textObject);
     itemIndex++;
-
 }
 
 function showAdvancedOptionsText(event) {
