@@ -29,23 +29,7 @@ async function routing(networkOriginObjectId, networkOriginObjectIp, destination
             //if (visual) broadcastSwitch(switchId, routerObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
             //await waitForMove();
 
-            if (!isIpInNetwork(switchId, destinationIP)) { //ninguno de los equipos acepta la trama y se da por fallido
-                if (!visual) ping_f(networkOriginObjectIp);
-                return;
-            }
-
-            //bingo, un equipo acepta la trama y se da por exitoso
-
-            const networkDestinationObjectId = isIpInNetwork(switchId, destinationIP)[0];
-            const networkDestinationObject = document.getElementById(networkDestinationObjectId);
-
-            if (visual) {
-                movePacket(switchObject.style.left, switchObject.style.top, networkDestinationObject.style.left, networkDestinationObject.style.top, "unicast");
-                await waitForMove();
-            } else {
-                ping_s(networkOriginObjectIp);
-            }
-
+            await switchResolve(networkOriginObjectIp, switchId, destinationIP, visual);
             return;
 
         }
@@ -136,5 +120,29 @@ async function routing(networkOriginObjectId, networkOriginObjectIp, destination
 
     if (!visual) ping_f(networkOriginObjectIp);
     return;
+
+}
+
+
+async function switchResolve(networkOriginObjectIp, switchId, destinationIP, visual = false) {
+
+    const switchObject = document.getElementById(switchId); //obtengo el switch
+
+    if (!isIpInNetwork(switchId, destinationIP)) { //ninguno de los equipos acepta la trama y se da por fallido
+        if (!visual) ping_f(networkOriginObjectIp);
+        return;
+    }
+
+    //bingo, un equipo acepta la trama y se da por exitoso
+
+    const networkDestinationObjectId = isIpInNetwork(switchId, destinationIP)[0];
+    const networkDestinationObject = document.getElementById(networkDestinationObjectId);
+
+    if (visual) {
+        movePacket(switchObject.style.left, switchObject.style.top, networkDestinationObject.style.left, networkDestinationObject.style.top, "unicast");
+        await waitForMove();
+    } else {
+        ping_s(networkOriginObjectIp);
+    }
 
 }
