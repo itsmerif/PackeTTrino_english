@@ -118,8 +118,32 @@ function loadState() {
     const archivo = archivoInput.files[0];
     const lector = new FileReader();
     lector.onload = function (event) {
-        const contenido = event.target.result;  // Contenido del archivo HTML
+        const contenido = event.target.result;
         document.querySelector(".board").innerHTML = contenido;
+        setNewIndex();
     };
-    lector.readAsText(archivo);  // Leer el archivo como texto
+    lector.readAsText(archivo); 
+}
+
+function setNewIndex() {
+
+    const itemsDropped = document.querySelectorAll(".item-dropped");
+    const itemsText = document.querySelectorAll(".text-annotation");
+    let indexes = [];
+
+    //obtenemos dropped items
+    for (let i = 0; i < itemsDropped.length; i++) {
+        let itemid = itemsDropped[i].id;
+        let itemindex = itemid.split("-")[1];
+        indexes.push(itemindex);
+    }
+    
+    //obtenemos text items
+    for (let i = 0; i < itemsText.length; i++) {
+        let itemid = itemsText[i].id;
+        let itemindex = itemid.split("-")[1];
+        indexes.push(itemindex);
+    }
+
+    itemIndex = Math.max(...indexes) + 1;
 }
