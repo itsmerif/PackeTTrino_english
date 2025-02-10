@@ -3,6 +3,12 @@ function createTextObject(x, y) {
     const board = document.querySelector(".board");
     const textObject = document.createElement("article");
     const input = document.createElement("input");
+    const advancedOptions = document.createElement("div");
+
+    advancedOptions.classList.add("advanced-options-modal");
+    advancedOptions.innerHTML = `<button onclick="deleteItem(event)">Eliminar</button>`;
+
+    textObject.appendChild(advancedOptions);
 
     textObject.id = "text-" + itemIndex;
     textObject.classList.add("text-annotation");
@@ -12,11 +18,20 @@ function createTextObject(x, y) {
 
     input.type = "text";
     input.addEventListener("input", autoExtendText);
+    textObject.addEventListener("contextmenu", event => showAdvancedOptionsText(event));
     textObject.appendChild(input);
 
     board.appendChild(textObject);
     itemIndex++;
 
+}
+
+function showAdvancedOptionsText(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const textObject = event.target.closest(".text-annotation");
+    const modal = textObject.querySelector(".advanced-options-modal");
+    modal.style.display = "flex";
 }
 
 function autoExtendText() {

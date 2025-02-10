@@ -74,7 +74,14 @@ function dropItem(event) {
 }
 
 function deleteItem(event) {
+    
     event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
+
+    let networkObject = event.target.closest(".item-dropped");
+
+    if (!networkObject) {
+        networkObject = event.target.closest(".text-annotation");
+    }
+
     networkObject.remove();
 }
