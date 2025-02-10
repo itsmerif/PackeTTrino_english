@@ -26,6 +26,7 @@ function createPcObject(x, y) {
         <div class="advanced-options-modal">
             <button onclick="showTerminal(event)">Modo Terminal</button>
             <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+            <button onclick="deleteItem(event)">Eliminar</button>
         </div>
     `;
 

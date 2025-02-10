@@ -86,7 +86,8 @@ function createRouterObject(x, y) {
     networkObjectAdvancedOptions.classList.add("advanced-options-modal");
     networkObjectAdvancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showRouterSpecs(event)"> Configurar Interfaces de Red </button>`;
+        <button onclick="showRouterSpecs(event)"> Configurar Interfaces de Red </button>
+        <button onclick="deleteItem(event)">Eliminar</button>`;
     networkObject.appendChild(networkObjectAdvancedOptions);
 
     //eventos

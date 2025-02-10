@@ -13,7 +13,7 @@ async function init() {
     await sleep(500);
     document.querySelector(".pc-terminal").addEventListener("keydown", terminalKeyboard);
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm);
-    removePropagationPingform()
+    removePropagationPingform();
 }
 
 function getPanelItems() {

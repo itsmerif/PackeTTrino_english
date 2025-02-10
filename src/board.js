@@ -72,3 +72,9 @@ function dropItem(event) {
         networkObject.style.top = `${y}px`;
     }
 }
+
+function deleteItem(event) {
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped");
+    networkObject.remove();
+}

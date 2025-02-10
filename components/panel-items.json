@@ -33,7 +33,6 @@
         "name": "text",
         "image": "./assets/txt.png",
         "draggable": true,
-        "size": "80%"
+        "size": "100%"
     }
-
 ]

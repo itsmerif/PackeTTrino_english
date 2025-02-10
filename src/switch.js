@@ -4,6 +4,7 @@ function createSwitchObject(x, y) {
     const networkObject = document.createElement("article");
     const networkObjectIcon = document.createElement("img");
     const networkObjectTable = document.createElement("article");
+    const networkObjectAdvancedOptions = document.createElement("div");
 
     //caracteristicas generales
 
@@ -21,6 +22,7 @@ function createSwitchObject(x, y) {
     networkObject.appendChild(networkObjectIcon);
 
     //tabla de macs
+
     networkObjectTable.classList.add("mac-table");
     networkObjectTable.innerHTML = `
             <table>
@@ -33,16 +35,31 @@ function createSwitchObject(x, y) {
 
     networkObject.appendChild(networkObjectTable);
 
+    //opciones avanzadas
+
+    networkObjectAdvancedOptions.classList.add("advanced-options-modal");
+    networkObjectAdvancedOptions.innerHTML = `<button onclick="deleteItem(event)">Eliminar</button>`;
+    networkObject.appendChild(networkObjectAdvancedOptions);
+
     //eventos
     networkObject.addEventListener("dragstart", event => BoardItemDragStart(event));
     networkObject.addEventListener("drop", switchConn);
     networkObject.addEventListener("click", showMacTable);
+    networkObject.addEventListener("contextmenu", event => showAdvancedOptionsSwitch(event));
 
 
     //añadir el elemento al tablero y aumentar el indice global
     board.appendChild(networkObject);
     itemIndex++;
 
+}
+
+function showAdvancedOptionsSwitch(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped")
+    const modal = networkObject.querySelector(".advanced-options-modal");
+    modal.style.display = "flex";
 }
 
 function switchConn(event) {
@@ -85,21 +102,21 @@ function switchConn(event) {
                 document.getElementById(itemId).setAttribute("data-switch-enp0s3", networkObject.id);
                 networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
 
-            }else if (enp0s8Conn === "") {
+            } else if (enp0s8Conn === "") {
 
                 createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
                 saveConn(event, itemId);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s8", networkObject.id);
                 networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
 
-            }else if (enp0s9Conn === "") {
+            } else if (enp0s9Conn === "") {
 
                 createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
                 saveConn(event, itemId);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s9", networkObject.id);
                 routerObject.querySelector("img").draggable = false; //el router ya no se puede arrastrar
                 networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
-                
+
             }
 
         }
