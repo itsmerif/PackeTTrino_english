@@ -35,15 +35,14 @@
 
   <form class="pc-form" onsubmit="savePcSpecs(event); return false;" style="display: none;">
     <p id="form-item-id"></p>
+    <label for="dhcp">Obtener una dirección IP automática (DHCP):</label>
+    <input type="checkbox" id="dhcp" name="dhcp">
     <label for="ip">IP:</label>
-    <input type="text" id="ip" name="ip" placeholder="192.168.1.1"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="ip" name="ip" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="netmask">Netmask:</label>
-    <input type="text" id="netmask" name="netmask" placeholder="255.255.255.0"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="netmask" name="netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="gateway">Gateway:</label>
-    <input type="text" id="gateway" name="gateway" placeholder="192.168.1.1"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="gateway" name="gateway" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <button type="submit">Guardar</button>
   </form>
 
@@ -104,7 +103,6 @@
     <input type="submit" value="Hacer Ping">
   </form>
 
-
   <script src="./src/main.js"></script>
   <script src="./src/board.js"></script>
   <script src="./src/panel.js"></script>
@@ -118,7 +116,6 @@
   <script src="./src/ping.js"></script>
   <script src="./src/routing.js"></script>
   <script src="./src/text.js"></script>
-
 
 </body>
 

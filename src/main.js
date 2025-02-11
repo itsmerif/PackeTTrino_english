@@ -13,6 +13,7 @@ async function init() {
     await sleep(500);
     document.querySelector(".pc-terminal").addEventListener("keydown", terminalKeyboard);
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm);
+    document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm);
     removePropagationPingform();
 }
 
