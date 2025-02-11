@@ -161,3 +161,18 @@ function setTextContents() {
         input.value = text;
     }
 }
+
+function showTerminal(event) {
+
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped");
+
+    //mostramos el terminal usando el id del elemento
+    const terminal = document.querySelector(".pc-terminal");
+    terminal.setAttribute("data-id", networkObject.id);
+    terminal.style.display = "block";
+
+    //ocultamos las opciones avanzadas
+    const modal = networkObject.querySelector(".advanced-options-modal");
+    modal.style.display = "none";
+}

@@ -1,0 +1,82 @@
+.routing-table {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    flex-direction: column;
+    gap: 0px;
+    background-color: white;
+    padding: 20px;
+    padding-bottom: 7px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    text-align: center;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+    border: 1px solid #ddd;
+    min-width: 220px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.routing-table p {
+    font-size: 20px;
+    margin: 0 0 15px 0;
+    color: #333;
+    font-weight: 500;
+}
+
+.routing-table table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.routing-table table * {
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    padding: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.routing-table table th {
+    background-color: rgb(223, 191, 12);
+    color: #333;
+    font-weight: 600;
+}
+
+.routing-table table tr:hover {
+    background-color: #f9f5d7;
+}
+
+.routing-table button {
+    width: 50%;
+    margin: auto;
+    margin-top: 12px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: rgb(223, 191, 12);
+    color: #333;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.routing-table button:hover {
+    background-color: rgb(203, 171, 0);
+    box-shadow: 0 2px 8px #ddd;
+}

@@ -3,7 +3,8 @@ function createRouterObject(x, y) {
     const board = document.querySelector(".board");
     const networkObject = document.createElement("article");
     const networkObjectIcon = document.createElement("img");
-    const networkObjectTable = document.createElement("article");
+    const networkObjectArpTable = document.createElement("article");
+    const networkObjectRoutingTable = document.createElement("article");
     const networkObjectAdvancedOptions = document.createElement("div");
 
     //características generales
@@ -36,10 +37,24 @@ function createRouterObject(x, y) {
     networkObject.setAttribute("data-switch-enp0s8", "");
     networkObject.setAttribute("data-switch-enp0s9", "");
 
+    //tabla de arp
+
+    networkObjectArpTable.classList.add("arp-table");
+    networkObjectArpTable.innerHTML = `
+        <table>
+            <tr>
+                <th>IP Address</th>
+                <th>MAC Address</th>
+            </tr>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>`;
+    
+    networkObject.appendChild(networkObjectArpTable);
+
     //tabla de enrutamiento
 
-    networkObjectTable.classList.add("mac-table");
-    networkObjectTable.innerHTML = `
+    networkObjectRoutingTable.classList.add("routing-table");
+    networkObjectRoutingTable.innerHTML = `
             <table>
                 <tr>
                     <th>Destination</th>
@@ -79,7 +94,7 @@ function createRouterObject(x, y) {
             </table>
             <button onclick="closeRoutingTable(event)">Cerrar</button>`;
 
-    networkObject.appendChild(networkObjectTable);
+    networkObject.appendChild(networkObjectRoutingTable);
 
     //opciones avanzadas
 
@@ -87,6 +102,7 @@ function createRouterObject(x, y) {
     networkObjectAdvancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
         <button onclick="showRouterSpecs(event)"> Configurar Interfaces de Red </button>
+        <button onclick="showRouterARPTable(event)">Ver Tabla ARP</button>
         <button onclick="deleteItem(event)">Eliminar</button>`;
     networkObject.appendChild(networkObjectAdvancedOptions);
 
@@ -95,7 +111,7 @@ function createRouterObject(x, y) {
     networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
     networkObject.setAttribute("oncontextmenu", "showAdvancedOptionsRouter(event)");
     networkObject.setAttribute("onclick", "showRoutingTable(event)");
-    networkObjectTable.setAttribute("onclick", "event.stopPropagation()");
+    networkObjectRoutingTable.setAttribute("onclick", "event.stopPropagation()");
 
     //añadir el elemento al tablero y aumentar el indice global
 
@@ -107,14 +123,14 @@ function createRouterObject(x, y) {
 function showRoutingTable(event) {
     event.stopPropagation();
     const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".mac-table");
+    const table = networkObject.querySelector(".routing-table");
     table.style.display = "flex";
 }
 
 function closeRoutingTable(event) {
     event.stopPropagation();
     const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".mac-table");
+    const table = networkObject.querySelector(".routing-table");
     table.style.display = "none";
 }
 
@@ -147,6 +163,15 @@ function showRouterSpecs(event) {
     form.style.display = "flex";
 }
 
+function showRouterARPTable(event) {
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped");
+    const table = networkObject.querySelector(".arp-table");
+    const modal = networkObject.querySelector(".advanced-options-modal");
+    modal.style.display = "none";
+    table.style.display = "flex";
+}
+
 function saveRouterSpecs(event) {
 
     event.preventDefault();
@@ -173,7 +198,7 @@ function saveRouterSpecs(event) {
 
     //generamos nuevas reglas de conexion directa en la tabla de enrutamiento
 
-    const routingTable = networkObject.querySelector("table");
+    const routingTable = networkObject.querySelector(".routing-table").querySelector("table");
     const rows = routingTable.querySelectorAll("tr");
 
     const interfaces = [
@@ -192,54 +217,4 @@ function saveRouterSpecs(event) {
     });
 
     form.style.display = "none";
-}
-
-function addRoutingEntry(routerObjectId, destination, netmask, interface, nexthop) {
-
-    const networkObject = document.getElementById(routerObjectId);
-    const table = networkObject.querySelector("table");
-
-    if (destination !== "0.0.0.0") { //añadimos una nueva regla
-
-        const newRow = document.createElement("tr");
-        const gateway = networkObject.getAttribute("ip-" + interface);
-        newRow.innerHTML = `
-            <tr>
-                <td>${destination}</td>
-                <td>${netmask}</td>
-                <td>${gateway}</td>
-                <td>${interface}</td>
-                <td>${nexthop}</td>
-            </tr>`;
-        table.appendChild(newRow);
-
-    } else { //editamos la regla por defecto
-
-        const rows = table.querySelectorAll("tr");
-        const defaultRule = rows[4];
-        const cells = defaultRule.querySelectorAll("td");
-        const gateway = networkObject.getAttribute("ip-" + interface);
-        cells[2].innerHTML = gateway;
-        cells[3].innerHTML = interface;
-        cells[4].innerHTML = nexthop;
-
-    }
-
-}
-
-function removeRoutingEntry(routerObjectId, destination, netmask, nexthop) {
-
-    const networkObject = document.getElementById(routerObjectId);
-    const table = networkObject.querySelector("table");
-    const rows = table.querySelectorAll("tr");
-
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
-        const cells = row.querySelectorAll("td");
-
-        if (cells[0].innerHTML === destination && cells[1].innerHTML === netmask && cells[2].innerHTML === nexthop) {
-            table.removeChild(row);
-        }
-    }
-
 }

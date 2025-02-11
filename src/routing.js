@@ -1,7 +1,7 @@
 async function routing(networkOriginObjectId, networkOriginObjectIp, destinationIP, routerObjectId, visual = false) {
 
     const routerObject = document.getElementById(routerObjectId); //obtenemos el router
-    const routingTable = routerObject.querySelector("table"); //obtenemos la tabla de enrutamiento
+    const routingTable = routerObject.querySelector(".routing-table").querySelector("table"); //obtenemos la tabla de enrutamiento
     const rows = routingTable.querySelectorAll("tr"); //obtenemos las filas de la tabla
 
     //reglas de conexion directa

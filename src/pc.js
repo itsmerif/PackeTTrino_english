@@ -14,7 +14,7 @@ function createPcObject(x, y) {
 
     networkObject.innerHTML = `
         <img src="./assets/pc.png" alt="pc" draggable="true">
-        <article class="mac-table" onclick="event.stopPropagation()">
+        <article class="arp-table" onclick="event.stopPropagation()">
             <table>
                 <tr>
                     <th>IP Address</th>
@@ -85,25 +85,10 @@ function showAdvancedOptions(event) {
     modal.style.display = "flex";
 }
 
-function showTerminal(event) {
-
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-
-    //mostramos el terminal usando el id del elemento
-    const terminal = document.querySelector(".pc-terminal");
-    terminal.setAttribute("data-id", networkObject.id);
-    terminal.style.display = "block";
-
-    //ocultamos las opciones avanzadas
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    modal.style.display = "none";
-}
-
 function showARPTable(event) {
     event.stopPropagation();
     const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".mac-table");
+    const table = networkObject.querySelector(".arp-table");
     const modal = networkObject.querySelector(".advanced-options-modal");
     modal.style.display = "none";
     table.style.display = "flex";
@@ -112,7 +97,7 @@ function showARPTable(event) {
 function closeARPTable(event) {
     event.stopPropagation();
     const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".mac-table");
+    const table = networkObject.querySelector(".arp-table");
     table.style.display = "none";
 }
 
