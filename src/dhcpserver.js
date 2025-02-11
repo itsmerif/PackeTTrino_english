@@ -6,7 +6,8 @@ function createDhcpServerObject(x, y) {
     const networkObject = document.createElement("article");
     const networkObjectIcon = document.createElement("img");
     const advancedOptions = document.createElement("div");
-    const networkObjectTable = document.createElement("article");
+    const networkObjectArpTable = document.createElement("article");
+    const networkObjectDhcpTable = document.createElement("article");
 
 
     //caracteristicas generales
@@ -37,17 +38,30 @@ function createDhcpServerObject(x, y) {
     advancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
         <button onclick="showDhcpSpecs(event)"> Configurar DHCP </button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
         <button onclick="deleteItem(event)">Eliminar</button>
     `;
 
     networkObject.appendChild(advancedOptions);
 
+    //tabla de arp
+
+    networkObjectArpTable.classList.add("arp-table");
+    networkObjectArpTable.innerHTML = `
+        <table>
+            <tr>
+                <th>IP Address</th>
+                <th>MAC Address</th>
+            </tr>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>`;
+    
+    networkObject.appendChild(networkObjectArpTable);
+
     //tabla de alquileres
 
-    //tabla de enrutamiento
-
-    networkObjectTable.classList.add("mac-table");
-    networkObjectTable.innerHTML = `
+    networkObjectDhcpTable.classList.add("dhcp-table");
+    networkObjectDhcpTable.innerHTML = `
                 <table>
                     <tr>
                         <th>IP</th>
@@ -56,15 +70,15 @@ function createDhcpServerObject(x, y) {
                         <th>Lease Time</th>
                     </tr>
                 </table>
-                <button onclick="closeRoutingTable(event)">Cerrar</button>`;
+                <button onclick="closeDhcpTable(event)">Cerrar</button>`;
 
-    networkObject.appendChild(networkObjectTable);
+    networkObject.appendChild(networkObjectDhcpTable);
 
     //eventos
 
     networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
     networkObject.setAttribute("oncontextmenu", "showAdvancedOptionsDHCP(event)");
-    networkObject.setAttribute("onclick", "showLeasesTable(event)");
+    networkObject.setAttribute("onclick", "showDhcpTable(event)");
 
     board.appendChild(networkObject);
     itemIndex++;
@@ -79,11 +93,18 @@ function showAdvancedOptionsDHCP(event) {
     modal.style.display = "flex";
 }
 
-function showLeasesTable(event) {
+function showDhcpTable(event) {
     event.stopPropagation();
     const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".mac-table");
+    const table = networkObject.querySelector(".dhcp-table");
     table.style.display = "flex";
+}
+
+function closeDhcpTable(event) {
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped");
+    const table = networkObject.querySelector(".dhcp-table");
+    table.style.display = "none";
 }
 
 function showDhcpSpecs(event) { 
