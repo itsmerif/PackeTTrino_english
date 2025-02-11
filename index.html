@@ -67,13 +67,23 @@
     <button type="submit">Guardar</button>
   </form>
 
-  <form class="dchp-form">
+  <form class="dhcp-form" onsubmit="saveDhcpSpecs(event); return false;" style="display: none;">
+    <p id="form-dhcp-item-id"></p>
     <label for="ip-dhcp">IP:</label>
     <input type="text" id="ip-dhcp" name="ip-dhcp" placeholder="192.168.1.1"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="netmask-dhcp">Netmask:</label>
     <input type="text" id="netmask-dhcp" name="netmask-dhcp" placeholder="255.255.255.0"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <label for="gateway-dhcp">Gateway:</label>
+    <input type="text" id="gateway-dhcp" name="gateway-dhcp" placeholder="192.168.1.1"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <label for="range-start">Rango:</label>
+    <input type="text" id="range-start" name="range-start" placeholder="192.168.1.100"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="range-end" name="range-end" placeholder="192.168.1.200"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <button type="submit">Guardar</button>
   </form>
 
   <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;" onmousedown="dragTerminal(event)">

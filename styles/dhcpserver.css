@@ -1,16 +1,55 @@
 .dhcp-form {
-    position: fixed;
-    top: 50%;
+    position: absolute;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 300px;
-    height: 200px;
     background-color: white;
-    border-radius: 5px;
     box-shadow: 0px 0px 10px black;
+    padding: 30px;
+    border-radius: 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 10;
+    gap: 15px;
+}
+
+.dhcp-form input, select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.dhcp-form input:focus {
+    outline: none;
+    border-color: #666;
+}
+
+.dhcp-form button {
+    width: 50%;
+    padding: 10px;
+    background-color: rgb(223, 191, 12);
+    border: none;
+    border-radius: 4px;
+    color: #333;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.dhcp-form button:hover {
+    background-color: rgb(203, 171, 0);
+}
+
+.dhcp-form label {
+    align-self: flex-start;
+    font-weight: 500;
+    color: #333;
+}
+
+.dhcp-form p {
+    text-transform: uppercase;
+    font-weight: bolder;
 }
