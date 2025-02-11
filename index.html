@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="./styles/annotation.css">
   <link rel="stylesheet" href="./styles/terminal.css">
   <link rel="stylesheet" href="./styles/advancedoptions.css">
+  <link rel="stylesheet" href="./styles/dhcpserver.css">
 </head>
 
 <body onload="init()">
@@ -66,6 +67,15 @@
     <button type="submit">Guardar</button>
   </form>
 
+  <form class="dchp-form">
+    <label for="ip-dhcp">IP:</label>
+    <input type="text" id="ip-dhcp" name="ip-dhcp" placeholder="192.168.1.1"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <label for="netmask-dhcp">Netmask:</label>
+    <input type="text" id="netmask-dhcp" name="netmask-dhcp" placeholder="255.255.255.0"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+  </form>
+
   <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;" onmousedown="dragTerminal(event)">
     <p>
       <span>C:\></span>
@@ -85,7 +95,6 @@
   </form>
 
 
-
   <script src="./src/main.js"></script>
   <script src="./src/board.js"></script>
   <script src="./src/panel.js"></script>
@@ -93,7 +102,7 @@
   <script src="./src/functions.js"></script>
   <script src="./src/router.js"></script>
   <script src="./src/switch.js"></script>
-  <script src="./src/server.js"></script>
+  <script src="./src/dhcpserver.js"></script>
   <script src="./src/terminal.js"></script>
   <script src="./src/cable.js"></script>
   <script src="./src/ping.js"></script>

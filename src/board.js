@@ -53,9 +53,8 @@ function dropItem(event) {
             case "switch":
                 createSwitchObject(x, y);
                 break;
-            case "server":
-                alert("Objeto en construcción");
-                //createServerObject(x, y);
+            case "dhcpserver":
+                createDhcpServerObject(x, y);
                 break;
             case "text":
                 //alert("Objeto en construcción");

@@ -18,8 +18,14 @@
         "size": "100%"
     },
     {
-        "name": "server",
-        "image": "./assets/server2.png",
+        "name": "dhcpserver",
+        "image": "./assets/dhcp.png",
+        "draggable": true,
+        "size": "100%"
+    },
+    {
+        "name": "dnsserver",
+        "image": "./assets/dns.png",
         "draggable": true,
         "size": "100%"
     },
