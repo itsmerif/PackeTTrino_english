@@ -90,7 +90,6 @@ img {
 }
 
 .file-options button:hover {
-    transform: translateY(-2px);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -121,7 +120,6 @@ img {
     cursor: pointer;
     margin-right: 12px;
     transition: background 0.2s;
-    content: "Seleccionar archivo";
 }
 
 .file-options input[type="file"]::file-selector-button:hover {
