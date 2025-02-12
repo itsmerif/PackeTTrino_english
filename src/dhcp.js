@@ -1,4 +1,4 @@
-async function dhcp(networkObjectId, destinationIP, visual = false) {
+async function dhcp(networkObjectId, visual = false) {
 
     const networkObject = document.getElementById(networkObjectId); //obtenemos el elemento
 
@@ -47,13 +47,13 @@ async function dhcp(networkObjectId, destinationIP, visual = false) {
     //realizamos todos los procesos
 
     const newIp = getRandomIpfromDhcp(serverObject.id);
-    addDhcpEntry(serverObject.id, newIp, networkObject.getAttribute("data-mac"), networkObject.id);
+    addDhcpEntry(serverObject.id, newIp, networkObject.getAttribute("data-mac"), networkObject.id); //añadimos la entrada a la tabla dhcp
+    addARPEntry(networkObject.id, serverObject.getAttribute("data-ip"), serverObject.getAttribute("data-mac")); //añadimos la ip y mac al equipo origen
+    addARPEntry(serverObject.id, newIp, networkObject.getAttribute("data-mac")); //añadimos la ip y mac al equipo destino
     networkObject.setAttribute("data-ip", newIp);
     networkObject.setAttribute("data-netmask", serverObject.getAttribute("data-netmask"));
     networkObject.setAttribute("data-network", serverObject.getAttribute("data-network"));
     networkObject.setAttribute("data-gateway", serverObject.getAttribute("data-gateway"));
-
-    await ping(newIp, destinationIP, visual);
 
 }
 

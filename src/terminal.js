@@ -35,6 +35,11 @@ function sendCommand(event) {
                 newoutput = checkIpRouting(dataId, args);
                 document.querySelector(".terminal-output").innerHTML = newoutput;
                 break;
+            case "dhcp":
+                dhcp(dataId, false);
+                newoutput = ipconfig(dataId);
+                document.querySelector(".terminal-output").innerHTML = newoutput;
+                break;
             default:
                 newoutput = "Command not found";
                 document.querySelector(".terminal-output").innerHTML = newoutput;

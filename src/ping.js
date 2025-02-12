@@ -3,14 +3,8 @@ async function ping(originIP, destinationIP, visual = false, originObjectId = nu
     // Compruebo que el equipo origen está configurado
 
     if (!originIP) {
-
-        if (!originObjectId) { //NO estamos haciendo ping desde la terminal
-            return;
-        }
-
-        dhcp(originObjectId, destinationIP, visual);
+        if (!visual) ping_f(originIP);
         return;
-
     }
 
     // si el origen y el destino es el mismo, es un loopback
