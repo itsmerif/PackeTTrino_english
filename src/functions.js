@@ -26,6 +26,34 @@ function getRandomMac() {
     return mac;
 }
 
+function ipToBinary(ip) {
+
+    let blocks = ip.split(".");
+    let blocksBinary = [];
+
+    for (let i = 0; i<blocks.length; i++) {
+        blocksBinary[i] = parseInt(blocks[i]).toString(2).padStart(8,"0");
+    }
+
+    let ipBinary = blocksBinary.join('')
+
+    return ipBinary
+}
+
+function binaryToIp(binary) {
+
+    let blocks = binary.match(/.{8}/g);
+    let blocksIp = [];
+
+    for (let i=0; i<blocks.length; i++) {
+        blocksIp[i] = parseInt(blocks[i],2).toString(10)
+    }
+
+    let ip = blocksIp.join(".")
+
+    return ip
+}
+
 function getARPTable(networkObjectId) {
 
     let tabla = document.getElementById(networkObjectId).querySelector(".arp-table").querySelector("table");
