@@ -82,7 +82,7 @@ function checkIpRouting(id, args) {
 }
 
 function ipconfig(id) {
-    
+
     if (id.includes("router-")) {
         return "Error: Este comando solo puede ser ejecutado desde un pc.";
     }
@@ -131,7 +131,7 @@ function dragTerminal(event) {
 
     document.addEventListener('mousemove', moveTerminal);
     document.addEventListener('mouseup', stopDragging);
-    
+
 }
 
 function terminalMessage(message) {
@@ -145,22 +145,27 @@ function terminalMessage(message) {
 
 function checkDhcp(dataId, args) {
 
-    //ya sé que el primer argumente es dhcp
+    //ya sé que el primer argumento es dhcp
 
-    if (args.length !== 2) {
-        terminalMessage ("Error: Sintaxis: dhcp [ -release | -renew ]");
+    if (args.length > 3 || args.length < 2) {
+        terminalMessage("Error: Sintaxis: dhcp [ -release | -renew ] [ -visual ]");
         return;
     }
 
-    if (args[1] === "-release") { //llamada al protocolo de liberación
+    if (args[1] === "-release") { //llamada al protocolo de liberación de ip
         releaseDhcp(dataId);
         return;
     }
 
-    if (args[1] === "-renew") { //llamada normal al protocolo
+    if (args[1] === "-renew" && args[2] === "-visual") {
         dhcp(dataId, true);
         return;
     }
 
-    terminalMessage ("Error: Sintaxis: dhcp [ -release | -renew ]");
+    if (args[1] === "-renew" && args.length === 2) {
+        dhcp(dataId, false);
+        return;
+    }
+
+    terminalMessage("Error: Sintaxis: dhcp [ -release | -renew ] [ -visual ]");
 } 
