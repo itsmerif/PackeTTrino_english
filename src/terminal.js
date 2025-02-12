@@ -36,7 +36,7 @@ function sendCommand(event) {
                 document.querySelector(".terminal-output").innerHTML = newoutput;
                 break;
             case "dhcp":
-                dhcp(dataId, true);
+                checkDhcp(dataId, args);
                 break;
             default:
                 newoutput = "Command not found";
@@ -142,3 +142,25 @@ function terminalMessage(message) {
     terminal.scrollTop = output.scrollHeight;
 
 }
+
+function checkDhcp(dataId, args) {
+
+    //ya sé que el primer argumente es dhcp
+
+    if (args.length !== 2) {
+        terminalMessage ("Error: Sintaxis: dhcp [ -release | -renew ]");
+        return;
+    }
+
+    if (args[1] === "-release") { //llamada al protocolo de liberación
+        releaseDhcp(dataId);
+        return;
+    }
+
+    if (args[1] === "-renew") { //llamada normal al protocolo
+        dhcp(dataId, true);
+        return;
+    }
+
+    terminalMessage ("Error: Sintaxis: dhcp [ -release | -renew ]");
+} 

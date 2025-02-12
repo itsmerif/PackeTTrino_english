@@ -7,11 +7,6 @@ async function dhcp(networkObjectId, visual = false) {
         return;
     }
 
-    if (networkObject.getAttribute("data-ip") !== "") { //ya tiene una ip asignada
-        terminalMessage("Error: La red ya tiene una ip asignada. Primero debes ejectuar dhcp -release.");
-        return;
-    }
-
     const switchObjectId = networkObject.getAttribute("data-switch"); //obtenemos el id del switch al que está conectado
     const switchObject = document.getElementById(switchObjectId); //obtenemos el switch
 
@@ -68,6 +63,7 @@ async function dhcp(networkObjectId, visual = false) {
             networkObject.setAttribute("data-netmask", serverObject.getAttribute("data-netmask"));
             networkObject.setAttribute("data-network", serverObject.getAttribute("data-network"));
             networkObject.setAttribute("data-gateway", serverObject.getAttribute("data-gateway"));
+            networkObject.setAttribute("data-dhcp-server", serverObject.id);
 
             //el servidor responde con DHCPACK
 
@@ -165,4 +161,43 @@ function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
         </tr>`;
     table.appendChild(newRow);
 
+}
+
+function releaseDhcp(networkObjectId) {
+
+    const networkObject = document.getElementById(networkObjectId); //obtenemos el elemento
+
+    if (networkObject.getAttribute("data-dhcp") === "false") { //no esta configurado para dhcp
+        terminalMessage("Error: Este equipo no tiene DHCP activado");
+        return;
+    }
+
+    const networkObjectIp = networkObject.getAttribute("data-ip"); //obtenemos la ip del equipo
+
+    //ahora hacemos dos cosas -> le borramos la ip al equipo
+
+    networkObject.setAttribute("data-ip", "");
+    networkObject.setAttribute("data-netmask", "");
+    networkObject.setAttribute("data-network", "");
+    networkObject.setAttribute("data-gateway", "");
+
+    //borramos la entrada en la tabla dhcp
+
+    const serverObjectId = networkObject.getAttribute("data-dhcp-server");
+    const serverObject = document.getElementById(serverObjectId);
+    const table = serverObject.querySelector(".dhcp-table").querySelector("table");
+    const rows = table.querySelectorAll("tr");
+
+    for (let i = 1; i < rows.length; i++) { // empezamos por la segunda fila
+        let row = rows[i]; // fila
+        let cells = row.querySelectorAll("td");
+        let ip = cells[0].textContent.trim();
+    
+        if (networkObjectIp.trim() === ip) {
+            row.remove();
+            terminalMessage("IP " + ip + " liberada");
+            break;
+        }
+    }
+    
 }
