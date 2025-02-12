@@ -150,7 +150,6 @@ function setNewIndex() {
     itemIndex = Math.max(...indexes) + 1;
 }
 
-
 function setTextContents() {
 
     const itemsText = document.querySelectorAll(".text-annotation");
@@ -175,4 +174,47 @@ function showTerminal(event) {
     //ocultamos las opciones avanzadas
     const modal = networkObject.querySelector(".advanced-options-modal");
     modal.style.display = "none";
+}
+
+function minimizeTerminal() {
+    const terminal = document.querySelector(".pc-terminal");
+    if (!terminal) return;
+
+    // Obtener el tamaño de la ventana y la terminal
+    const rect = terminal.getBoundingClientRect();
+    const originalWidth = rect.width;
+    const originalHeight = rect.height;
+
+    // Calcular el nuevo tamaño (30%)
+    const targetWidth = originalWidth*0.3;
+    const targetHeight = originalHeight*0.3;
+    const windowHeight = window.innerHeight;
+
+    // Aplicar animación con transición
+    terminal.style.transition = "all 1s ease-in-out";
+    terminal.style.width = `${targetWidth}px`;
+    terminal.style.height = `${targetHeight}px`;
+
+    // Mover a la esquina inferior derecha
+    terminal.style.top = `${windowHeight - targetHeight}px`;
+    terminal.style.left = "100%";
+    terminal.style.transform = "translate(-100%, 0)";
+
+}
+
+function maximizeTerminal() {
+    const terminal = document.querySelector(".pc-terminal");
+    if (!terminal) return;
+
+    // Aplicar animación con transición
+    terminal.style.transition = "all 1s ease-in-out";
+
+    // Restaurar tamaño original
+    terminal.style.width = "1000px";
+    terminal.style.height = "500px";
+
+    // Restaurar posición original (centrado)
+    terminal.style.top = "40%";
+    terminal.style.left = "50%";
+    terminal.style.transform = "translate(-50%, -50%)";
 }

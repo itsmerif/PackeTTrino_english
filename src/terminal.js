@@ -143,7 +143,7 @@ function terminalMessage(message) {
 
 }
 
-function checkDhcp(dataId, args) {
+async function checkDhcp(dataId, args) {
 
     //ya sé que el primer argumento es dhcp
 
@@ -158,7 +158,10 @@ function checkDhcp(dataId, args) {
     }
 
     if (args[1] === "-renew" && args[2] === "-visual") {
-        dhcp(dataId, true);
+        minimizeTerminal();
+        await waitForMove();
+        await dhcp(dataId, true);
+        maximizeTerminal();
         return;
     }
 
