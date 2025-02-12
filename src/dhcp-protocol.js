@@ -19,41 +19,54 @@ async function dhcp(networkObjectId, visual = false) {
         await waitForMove();
     }
 
-    if (!isDHCPinNetwork(switchObjectId)) { //no hay un servidor DHCP en la red
+    if (!isDHCPinNetwork(switchObjectId)) { //no hay un servidor DHCP o agente de retransmision en la red
         if (!visual) ping_f("0.0.0.0");
         return;
     }
 
-    const serverObjectId = isDHCPinNetwork(switchObjectId); //obtenemos el id del servidor DHCP
-    const serverObject = document.getElementById(serverObjectId); //obtenemos el servidor DHCP
+    const [serverObjectId, type] = isDHCPinNetwork(switchObjectId); //obtenemos el id del servidor DHCP o agente
+    const serverObject = document.getElementById(serverObjectId); //obtenemos el servidor DHCP o agente
 
-    if (visual) { //el server envia por broadcast DHCPOFFER
-        movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "offer");
-        await waitForMove();
-        broadcastSwitch(switchObjectId, serverObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
-        await waitForMove();
-        //el equipo responde con DHCPREQUEST
-        movePacket(networkObject.style.left, networkObject.style.top, switchObject.style.left, switchObject.style.top, "request");
-        await waitForMove();
-        broadcastSwitch(switchObjectId, networkObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
-        await waitForMove();
-        //el servidor responde con DHCPACK
-        movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "ack");
-        await waitForMove();
-        movePacket(switchObject.style.left, switchObject.style.top, networkObject.style.left, networkObject.style.top, "ack");
-        await waitForMove();
-    }
+    if (type === "server") { //se trata de un servidor dhcp en la misma red
+
+        if (visual) { //el server envia por broadcast DHCPOFFER
+            movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "offer");
+            await waitForMove();
+            broadcastSwitch(switchObjectId, serverObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+            await waitForMove();
+            //el equipo responde con DHCPREQUEST
+            movePacket(networkObject.style.left, networkObject.style.top, switchObject.style.left, switchObject.style.top, "request");
+            await waitForMove();
+            broadcastSwitch(switchObjectId, networkObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+            await waitForMove();
+            //el servidor responde con DHCPACK
+            movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "ack");
+            await waitForMove();
+            movePacket(switchObject.style.left, switchObject.style.top, networkObject.style.left, networkObject.style.top, "ack");
+            await waitForMove();
+        }
+        
+        //realizamos todos los procesos
+
+        const newIp = getRandomIpfromDhcp(serverObject.id);
+        addDhcpEntry(serverObject.id, newIp, networkObject.getAttribute("data-mac"), networkObject.id); //añadimos la entrada a la tabla dhcp
+        addARPEntry(networkObject.id, serverObject.getAttribute("data-ip"), serverObject.getAttribute("data-mac")); //añadimos la ip y mac al equipo origen
+        addARPEntry(serverObject.id, newIp, networkObject.getAttribute("data-mac")); //añadimos la ip y mac al equipo destino
+        networkObject.setAttribute("data-ip", newIp);
+        networkObject.setAttribute("data-netmask", serverObject.getAttribute("data-netmask"));
+        networkObject.setAttribute("data-network", serverObject.getAttribute("data-network"));
+        networkObject.setAttribute("data-gateway", serverObject.getAttribute("data-gateway"));
     
-    //realizamos todos los procesos
+    } else { //se trata de un agente de retransmision
 
-    const newIp = getRandomIpfromDhcp(serverObject.id);
-    addDhcpEntry(serverObject.id, newIp, networkObject.getAttribute("data-mac"), networkObject.id); //añadimos la entrada a la tabla dhcp
-    addARPEntry(networkObject.id, serverObject.getAttribute("data-ip"), serverObject.getAttribute("data-mac")); //añadimos la ip y mac al equipo origen
-    addARPEntry(serverObject.id, newIp, networkObject.getAttribute("data-mac")); //añadimos la ip y mac al equipo destino
-    networkObject.setAttribute("data-ip", newIp);
-    networkObject.setAttribute("data-netmask", serverObject.getAttribute("data-netmask"));
-    networkObject.setAttribute("data-network", serverObject.getAttribute("data-network"));
-    networkObject.setAttribute("data-gateway", serverObject.getAttribute("data-gateway"));
+        const mainServer = serverObject.getAttribute("data-main-server"); //direccion ip del servidor dhcp principal
+        await ping(serverObject.getAttribute("data-ip"), mainServer, visual); //llamamos a la funcion de ping
+        await ping(mainServer, serverObject.getAttribute("data-ip"), visual); //llamamos a la funcion de ping
+        await movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "broadcast"); //se mueve el paquete de broadcast
+        await waitForMove();
+        await movePacket(switchObject.style.left, switchObject.style.top, networkObject.style.left, networkObject.style.top, "broadcast"); //se mueve el paquete de broadcast
+
+    }
 
 }
 

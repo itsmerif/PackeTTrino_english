@@ -332,8 +332,12 @@ function isDHCPinNetwork(switchObjectId) {
         const cells = row.querySelectorAll("td");
         const networkObjectId = cells[0].innerHTML; //dispositivo conectado
 
-        if (networkObjectId.startsWith("server-")) {
-            return networkObjectId;
+        if (networkObjectId.startsWith("server-dhcp-relay-")) { //devolvemos el id identificandolo como agente de retransmision
+            return [networkObjectId, "relay"];
+        }
+
+        if (networkObjectId.startsWith("server-")) { //devolvemos el id identificandolo como servidor
+            return [networkObjectId, "server"];
         }
 
     }

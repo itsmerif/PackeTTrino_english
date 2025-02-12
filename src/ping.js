@@ -1,4 +1,4 @@
-async function ping(originIP, destinationIP, visual = false, originObjectId = null) {
+async function ping(originIP, destinationIP, visual = false) {
 
     // Compruebo que el equipo origen está configurado
 

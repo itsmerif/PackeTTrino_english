@@ -36,7 +36,7 @@ function sendCommand(event) {
                 document.querySelector(".terminal-output").innerHTML = newoutput;
                 break;
             case "dhcp":
-                dhcp(dataId, false);
+                dhcp(dataId, true);
                 newoutput = ipconfig(dataId);
                 document.querySelector(".terminal-output").innerHTML = newoutput;
                 break;
