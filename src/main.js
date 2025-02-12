@@ -217,4 +217,8 @@ function maximizeTerminal() {
     terminal.style.top = "40%";
     terminal.style.left = "50%";
     terminal.style.transform = "translate(-50%, -50%)";
+
+    setTimeout(() => {
+        terminal.style.transition = "none";
+    }, 1000);
 }
