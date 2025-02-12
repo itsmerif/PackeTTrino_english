@@ -57,7 +57,6 @@ function dropItem(event) {
                 createDhcpServerObject(x, y);
                 break;
             case "text":
-                //alert("Objeto en construcción");
                 createTextObject(x, y);
                 break;
             default:

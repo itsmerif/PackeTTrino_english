@@ -17,7 +17,7 @@ function createRouterObject(x, y) {
 
     //icono
 
-    networkObjectIcon.src = "./assets/router.png";
+    networkObjectIcon.src = "./assets/board/router.png";
     networkObjectIcon.alt = "router";
     networkObjectIcon.draggable = true;
     networkObject.appendChild(networkObjectIcon);

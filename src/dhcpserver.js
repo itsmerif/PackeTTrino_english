@@ -27,7 +27,7 @@ function createDhcpServerObject(x, y) {
 
     //server grafico
 
-    networkObjectIcon.src = "./assets/server.png";
+    networkObjectIcon.src = "./assets/board/server.png";
     networkObjectIcon.alt = "server";
     networkObjectIcon.draggable = true;
     networkObject.appendChild(networkObjectIcon);

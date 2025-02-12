@@ -16,7 +16,7 @@ function createSwitchObject(x, y) {
 
     //switch grafico con icono
 
-    networkObjectIcon.src = "./assets/switch.png";
+    networkObjectIcon.src = "./assets/board/switch.png";
     networkObjectIcon.alt = "switch";
     networkObjectIcon.draggable = true;
     networkObject.appendChild(networkObjectIcon);

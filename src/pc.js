@@ -13,7 +13,7 @@ function createPcObject(x, y) {
     networkObject.setAttribute("data-dhcp", false);
 
     networkObject.innerHTML = `
-        <img src="./assets/pc.png" alt="pc" draggable="true">
+        <img src="./assets/board/pc.png" alt="pc" draggable="true">
         <article class="arp-table" onclick="event.stopPropagation()">
             <table>
                 <tr>

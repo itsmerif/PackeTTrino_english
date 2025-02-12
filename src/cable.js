@@ -91,7 +91,7 @@ function movePacket(x1, y1, x2, y2, type) {
     x2 = parseInt(x2.replace("px", ""));
     y2 = parseInt(y2.replace("px", ""));
 
-    img.setAttribute("href",`/assets/${type}.png`);
+    img.setAttribute("href",`/assets/packets/${type}.png`);
     img.setAttribute("width", "50");
     img.setAttribute("height", "50");
     img.setAttribute("x", x1);

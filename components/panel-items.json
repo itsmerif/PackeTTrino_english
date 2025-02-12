@@ -1,43 +1,43 @@
 [
     {
         "name": "pc",
-        "image": "./assets/pc2.png",
+        "image": "./assets/panel/pc2.png",
         "draggable": true,
         "size": "100%"
     },
     {
         "name": "router",
-        "image": "./assets/router2.png",
+        "image": "./assets/panel/router2.png",
         "draggable": true,
         "size": "100%"
     },
     {
         "name": "switch",
-        "image": "./assets/switch2.png",
+        "image": "./assets/panel/switch2.png",
         "draggable": true,
         "size": "100%"
     },
     {
         "name": "dhcpserver",
-        "image": "./assets/dhcp.png",
+        "image": "./assets/panel/dhcp.png",
         "draggable": true,
         "size": "100%"
     },
     {
         "name": "dnsserver",
-        "image": "./assets/dns.png",
+        "image": "./assets/panel/dns.png",
         "draggable": true,
         "size": "100%"
     },
     {
         "name": "ping",
-        "image": "./assets/bus.png",
+        "image": "./assets/panel/bus.png",
         "draggable": false,
         "size": "100%"
     },
     {
         "name": "text",
-        "image": "./assets/txt.png",
+        "image": "./assets/panel/txt.png",
         "draggable": true,
         "size": "100%"
     }
