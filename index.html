@@ -89,6 +89,19 @@
     <button type="submit">Guardar</button>
   </form>
 
+  <form class="dhcp-relay-form" onsubmit="saveDhcpRelaySpecs(event); return false;" style="display: none;">
+    <p id="form-dhcp-relay-item-id"></p>
+    <label for="ip-relay">IP:</label>
+    <input type="text" id="ip-relay" name="ip-relay" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <label for="netmask-relay">Netmask:</label>
+    <input type="text" id="netmask-relay" name="netmask-relay" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <label for="gateway-relay">Gateway:</label>
+    <input type="text" id="gateway-relay" name="gateway-relay" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <label for="main-server">Servidor DHCP Principal:</label>
+    <input type="text" id="main-server" name="main-server" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <button type="submit">Guardar</button>
+  </form>
+
   <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;" onmousedown="dragTerminal(event)">
     <p>
       <span>C:\></span>

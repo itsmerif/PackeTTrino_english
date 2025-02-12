@@ -85,7 +85,7 @@ function checkIpRouting(id, args) {
 
 function ipconfig(id) {
     
-    if (!id.includes("pc-")) {
+    if (id.includes("router-")) {
         return "Error: Este comando solo puede ser ejecutado desde un pc.";
     }
 
