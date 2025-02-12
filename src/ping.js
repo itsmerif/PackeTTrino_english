@@ -1,10 +1,16 @@
-async function ping(originIP, destinationIP, visual = false) {
+async function ping(originIP, destinationIP, visual = false, originObjectId = null) {
 
     // Compruebo que el equipo origen está configurado
 
     if (!originIP) {
-        if (!visual) ping_f(originIP);
+
+        if (!originObjectId) { //NO estamos haciendo ping desde la terminal
+            return;
+        }
+
+        dhcp(originObjectId, destinationIP, visual);
         return;
+
     }
 
     // si el origen y el destino es el mismo, es un loopback
@@ -68,6 +74,7 @@ async function ping(originIP, destinationIP, visual = false) {
 
             saveMac(switchOriginObjectId, networkDestinationObjectId, networkDestinationObjectmac); //añadimos la mac al switch del destino si no estaba ya
             addARPEntry(originId, destinationIP, networkDestinationObjectmac); //añadimos la ip y mac al equipo origen
+            addARPEntry(networkDestinationObjectId, originIP, originObjectMac); //añadimos la ip y mac al equipo destino
 
             if (!visual) {
                 ping_s(originIP);

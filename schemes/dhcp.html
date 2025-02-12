@@ -1,0 +1,249 @@
+<svg ondragover="dragOverBoard(event)" id="svg-board" rope-start="startId" rope-end="endId" preserveAspectRatio="none"
+    width="100%" height="100%" style="position: absolute; top: 0; left: 0;">
+    <line end-start="server-1" end-end="switch-2" x1="520" y1="330" x2="848" y2="329" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="684" cy="329" r="10" fill="red"></circle>
+    <line end-start="pc-0" end-end="switch-2" x1="1236" y1="328" x2="848" y2="329" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="1042" cy="328" r="10" fill="red"></circle>
+    <line end-start="pc-3" end-end="switch-2" x1="698" y1="538" x2="848" y2="329" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="773" cy="433" r="10" fill="red"></circle>
+    <line end-start="pc-4" end-end="switch-2" x1="699" y1="159" x2="848" y2="329" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="773" cy="244" r="10" fill="red"></circle>
+    <line end-start="pc-5" end-end="switch-2" x1="1076" y1="556" x2="848" y2="329" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="962" cy="442" r="10" fill="red"></circle>
+    <line end-start="pc-6" end-end="switch-2" x1="1098" y1="153" x2="848" y2="329" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="973" cy="241" r="10" fill="red"></circle>
+</svg>
+<article id="pc-0" class="item-dropped pc" data-ip="192.168.1.168" data-netmask="255.255.255.0"
+    data-network="192.168.1.0" data-mac="6b:d1:81:2c:30:f6" data-gateway="192.168.1.1" data-switch="switch-2"
+    data-dhcp="true" onclick="showPcForm('pc-0')" oncontextmenu="showAdvancedOptions(event)"
+    ondragstart="BoardItemDragStart(event)" style="left: 1236px; top: 328px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+                <tr>
+                    <td>192.168.1.189</td>
+                    <td>1b:e5:ad:6b:80:c7</td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="server-1" class="item-dropped dhcp-server" data-ip="192.168.1.2" data-netmask="255.255.255.0"
+    data-network="" data-mac="74:38:27:9b:18:ec" data-gateway="192.168.1.1" data-switch="switch-2"
+    data-range-start="192.168.1.100" data-range-end="192.168.1.200" ondragstart="BoardItemDragStart(event)"
+    oncontextmenu="showAdvancedOptionsDHCP(event)" onclick="showDhcpTable(event)" style="left: 520px; top: 330px;"><img
+        src="./assets/board/server.png" alt="server" draggable="false">
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showDhcpSpecs(event)"> Configurar DHCP </button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+    <article class="arp-table">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <article class="dhcp-table" style="display: none;">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP</th>
+                    <th>MAC</th>
+                    <th>Hostname</th>
+                    <th>Lease Time</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeDhcpTable(event)">Cerrar</button>
+    </article>
+</article>
+<article id="switch-2" class="item-dropped switch" data-mac="c0:e8:25:a2:f3:aa" ondragstart="BoardItemDragStart(event)"
+    ondrop="switchConn(event)" onclick="showMacTable(event)" oncontextmenu="showAdvancedOptionsSwitch(event)"
+    style="left: 848px; top: 329px;"><img src="./assets/board/switch.png" alt="switch" draggable="false">
+    <article class="mac-table" style="display: none;">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Device</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+
+                    <td class="device-name">server-1</td>
+                    <td class="mac-address"></td>
+                </tr>
+                <tr>
+
+                    <td class="device-name">pc-0</td>
+                    <td class="mac-address">6b:d1:81:2c:30:f6</td>
+                </tr>
+                <tr>
+
+                    <td class="device-name">pc-3</td>
+                    <td class="mac-address">1b:e5:ad:6b:80:c7</td>
+                </tr>
+                <tr>
+
+                    <td class="device-name">pc-4</td>
+                    <td class="mac-address"></td>
+                </tr>
+                <tr>
+
+                    <td class="device-name">pc-5</td>
+                    <td class="mac-address">c5:3e:b9:d0:79:5c</td>
+                </tr>
+                <tr>
+
+                    <td class="device-name">pc-6</td>
+                    <td class="mac-address"></td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeMacTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="pc-3" class="item-dropped pc" data-ip="192.168.1.189" data-netmask="255.255.255.0"
+    data-network="192.168.1.0" data-mac="1b:e5:ad:6b:80:c7" data-gateway="192.168.1.1" data-switch="switch-2"
+    data-dhcp="true" onclick="showPcForm('pc-3')" oncontextmenu="showAdvancedOptions(event)"
+    ondragstart="BoardItemDragStart(event)" style="left: 698px; top: 538px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+                <tr>
+                    <td>192.168.1.168</td>
+                    <td>6b:d1:81:2c:30:f6</td>
+                </tr>
+                <tr>
+                    <td>192.168.1.187</td>
+                    <td>c5:3e:b9:d0:79:5c</td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="pc-4" class="item-dropped pc" data-ip="" data-netmask="" data-network="0.0.0.0"
+    data-mac="62:71:e8:da:1d:d9" data-gateway="" data-switch="switch-2" data-dhcp="true" onclick="showPcForm('pc-4')"
+    oncontextmenu="showAdvancedOptions(event)" ondragstart="BoardItemDragStart(event)" style="left: 699px; top: 159px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="pc-5" class="item-dropped pc" data-ip="192.168.1.187" data-netmask="255.255.255.0"
+    data-network="192.168.1.0" data-mac="c5:3e:b9:d0:79:5c" data-gateway="192.168.1.1" data-switch="switch-2"
+    data-dhcp="true" onclick="showPcForm('pc-5')" oncontextmenu="showAdvancedOptions(event)"
+    ondragstart="BoardItemDragStart(event)" style="left: 1076px; top: 556px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+                <tr>
+                    <td>192.168.1.189</td>
+                    <td>1b:e5:ad:6b:80:c7</td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="pc-6" class="item-dropped pc" data-ip="" data-netmask="" data-network="0.0.0.0"
+    data-mac="19:41:fc:2c:21:08" data-gateway="" data-switch="switch-2" data-dhcp="true" onclick="showPcForm('pc-6')"
+    oncontextmenu="showAdvancedOptions(event)" ondragstart="BoardItemDragStart(event)"
+    style="left: 1098px; top: 153px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="text-8" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text="pc-0"
+    style="left: 1237px; top: 250px; position: absolute; width: 49.1875px; margin-left: -24.5938px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-9" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text="pc-3"
+    style="left: 694px; top: 581px; position: absolute; width: 49.1875px; margin-left: -24.5938px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-10" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text="pc-5"
+    style="left: 1078px; top: 603px; position: absolute; width: 49.1875px; margin-left: -24.5938px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>

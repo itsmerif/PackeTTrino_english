@@ -18,7 +18,7 @@ function sendCommand(event) {
 
             case "ping":
                 const destinationIP = args[1] || "0.0.0.0";
-                newoutput = ping(originIP, destinationIP, false);
+                newoutput = ping(originIP, destinationIP, false, dataId);
                 break;
             case "ipconfig":
                 newoutput = ipconfig(dataId);

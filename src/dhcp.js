@@ -1,6 +1,12 @@
-async function dhcp(networkObjectId, visual = false) {
+async function dhcp(networkObjectId, destinationIP, visual = false) {
 
     const networkObject = document.getElementById(networkObjectId); //obtenemos el elemento
+
+    if (networkObject.getAttribute("data-dhcp") === "false") {
+        if (!visual) ping_f("0.0.0.0");
+        return;
+    }
+
     const switchObjectId = networkObject.getAttribute("data-switch"); //obtenemos el id del switch al que está conectado
     const switchObject = document.getElementById(switchObjectId); //obtenemos el switch
 
@@ -9,12 +15,12 @@ async function dhcp(networkObjectId, visual = false) {
     if (visual) {
         movePacket(networkObject.style.left, networkObject.style.top, switchObject.style.left, switchObject.style.top, "discover");
         await waitForMove();
+        broadcastSwitch(switchObjectId, networkObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+        await waitForMove();
     }
 
-    broadcastSwitch(switchObjectId, networkObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
-    await waitForMove();
-
     if (!isDHCPinNetwork(switchObjectId)) { //no hay un servidor DHCP en la red
+        if (!visual) ping_f("0.0.0.0");
         return;
     }
 
@@ -24,22 +30,14 @@ async function dhcp(networkObjectId, visual = false) {
     if (visual) { //el server envia por broadcast DHCPOFFER
         movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "offer");
         await waitForMove();
-    }
-
-    broadcastSwitch(switchObjectId, serverObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
-    await waitForMove();
-
-    if (visual) { 
-
+        broadcastSwitch(switchObjectId, serverObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+        await waitForMove();
         //el equipo responde con DHCPREQUEST
-
         movePacket(networkObject.style.left, networkObject.style.top, switchObject.style.left, switchObject.style.top, "request");
         await waitForMove();
         broadcastSwitch(switchObjectId, networkObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
         await waitForMove();
-
         //el servidor responde con DHCPACK
-
         movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "ack");
         await waitForMove();
         movePacket(switchObject.style.left, switchObject.style.top, networkObject.style.left, networkObject.style.top, "ack");
@@ -54,6 +52,8 @@ async function dhcp(networkObjectId, visual = false) {
     networkObject.setAttribute("data-netmask", serverObject.getAttribute("data-netmask"));
     networkObject.setAttribute("data-network", serverObject.getAttribute("data-network"));
     networkObject.setAttribute("data-gateway", serverObject.getAttribute("data-gateway"));
+
+    await ping(newIp, destinationIP, visual);
 
 }
 
