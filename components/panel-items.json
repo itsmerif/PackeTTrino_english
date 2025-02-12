@@ -24,6 +24,12 @@
         "size": "100%"
     },
     {
+        "name": "dhcprelay",
+        "image": "./assets/panel/dhcprelay.png",
+        "draggable": true,
+        "size": "100%"
+    },
+    {
         "name": "dnsserver",
         "image": "./assets/panel/dns.png",
         "draggable": true,

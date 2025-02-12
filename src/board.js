@@ -56,6 +56,13 @@ function dropItem(event) {
             case "dhcpserver":
                 createDhcpServerObject(x, y);
                 break;
+            case "dhcprelay":
+                createDhcpRelayObject(x, y);
+                break;
+            case "dnsserver":
+                //createDnsServerObject(x, y);
+                alert("El servidor DNS no esta implementado todavía");
+                break;
             case "text":
                 createTextObject(x, y);
                 break;
