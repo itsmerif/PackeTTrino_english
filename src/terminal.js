@@ -37,8 +37,6 @@ function sendCommand(event) {
                 break;
             case "dhcp":
                 dhcp(dataId, true);
-                newoutput = ipconfig(dataId);
-                document.querySelector(".terminal-output").innerHTML = newoutput;
                 break;
             default:
                 newoutput = "Command not found";
@@ -134,4 +132,13 @@ function dragTerminal(event) {
     document.addEventListener('mousemove', moveTerminal);
     document.addEventListener('mouseup', stopDragging);
     
+}
+
+function terminalMessage(message) {
+
+    const terminal = document.querySelector(".pc-terminal");
+    const output = document.querySelector(".terminal-output");
+    output.innerHTML += `<p class="terminal-message">${message}</p>`;
+    terminal.scrollTop = output.scrollHeight;
+
 }
