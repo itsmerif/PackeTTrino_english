@@ -342,3 +342,24 @@ function removeRoutingEntry(routerObjectId, destination, netmask, nexthop) {
     }
 
 }
+
+function isDHCPinNetwork(switchObjectId) {
+
+    const switchObject = document.getElementById(switchObjectId);
+    const macTable = switchObject.querySelector("table");
+    const rows = macTable.querySelectorAll("tr");
+
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.querySelectorAll("td");
+        const networkObjectId = cells[0].innerHTML; //dispositivo conectado
+
+        if (networkObjectId.startsWith("server-")) {
+            return networkObjectId;
+        }
+
+    }
+    
+    return false;
+
+}

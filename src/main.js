@@ -176,3 +176,8 @@ function showTerminal(event) {
     const modal = networkObject.querySelector(".advanced-options-modal");
     modal.style.display = "none";
 }
+
+function testDHCP() {
+    const networkObjectId = document.getElementById("input-dhcp").value;
+    dhcp(networkObjectId, true);
+}
