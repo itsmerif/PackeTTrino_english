@@ -76,11 +76,54 @@ async function dhcp(networkObjectId, visual = false) {
 
     } else { //se trata de un agente de retransmision
 
-        terminalMessage("DHCP RELAY AGENT from " + serverObject.getAttribute("data-ip"));
         const mainServer = serverObject.getAttribute("data-main-server"); //direccion ip del servidor dhcp principal
-        terminalMessage("DHCPDISCOVER to " + mainServer);
+        const mainServerObject = document.querySelector(`[data-ip="${mainServer}"]`); //obtenemos el puntero al servidor dhcp principal  (TODO: hacer un getElementById)
+
         await ping(serverObject.getAttribute("data-ip"), mainServer, visual); //enviamos un paquete al servidor dhcp principal
-        await ping(mainServer, serverObject.getAttribute("data-ip"), visual); //el dhcp envia una offer al agente
+
+        const newIp = getRandomIpfromDhcp(mainServerObject.id); //la ip que ofrece el servidor
+
+        await ping(mainServer, serverObject.getAttribute("data-ip"), visual); //oferta del servidor al agente
+
+        if (visual) {
+
+            movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "broadcast");
+            await waitForMove();
+    
+            broadcastSwitch(switchObjectId, serverObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+            await waitForMove();
+    
+        }
+
+        terminalMessage("DHCPOFFER from " + mainServer + " on " + newIp); //offer del servidor dhcp principal
+        terminalMessage("DHCPREQUEST to 255.255.255.255 on " + newIp); //request del agente
+
+        if (visual) {
+            movePacket(networkObject.style.left, networkObject.style.top, switchObject.style.left, switchObject.style.top, "discover");
+            await waitForMove();
+            broadcastSwitch(switchObjectId, networkObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+            await waitForMove();
+        }
+
+        await ping(serverObject.getAttribute("data-ip"), mainServer, visual); //request al servidor
+        await ping(mainServer, serverObject.getAttribute("data-ip"), visual); //ack al agente
+
+        if (visual) {
+            movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "unicast");
+            await waitForMove();
+            movePacket(switchObject.style.left, switchObject.style.top, networkObject.style.left, networkObject.style.top, "unicast");
+            await waitForMove();
+        }
+
+        terminalMessage("DHCPACK from " + mainServer + " on " + newIp);
+
+        addDhcpEntry(mainServerObject.id, newIp, networkObject.getAttribute("data-mac"), networkObject.id);
+        networkObject.setAttribute("data-ip", newIp);
+        networkObject.setAttribute("data-netmask", serverObject.getAttribute("data-netmask"));
+        networkObject.setAttribute("data-network", serverObject.getAttribute("data-network"));
+        networkObject.setAttribute("data-gateway", serverObject.getAttribute("data-gateway"));
+        networkObject.setAttribute("data-dhcp-server", serverObject.id);
+
     }
 
 }
