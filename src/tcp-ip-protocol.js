@@ -1,16 +1,19 @@
-function sendPacket(originIP, destinationIP) {
+function sendPacket(originIP, destinationIP, trace = []) {
+
+    trace.push(originIP);
 
     if (!originIP || !destinationIP) {
         throw new Error("No se ha configurado el origen o el destino");
     }
 
     if (originIP === destinationIP) {
+        console.log("Paquete recibido. Saltos:", trace);
         return;
     }
 
     const origin = document.querySelector(`[data-ip="${originIP}"]`);
 
-    if (!origin) { 
+    if (!origin) {
         throw new Error("El origen no existe");
     }
 
@@ -18,109 +21,99 @@ function sendPacket(originIP, destinationIP) {
     const originNetmask = origin.getAttribute("data-netmask");
     const NetworkOriginObject = document.getElementById(originId);
     const switchOriginObjectId = NetworkOriginObject.getAttribute("data-switch");
- 
-    if (!switchOriginObjectId){ //el pc no está conectado a ningún switch
-        throw new Error("No se ha detectado ninguna conexión.")
+
+    if (!switchOriginObjectId) {
+        throw new Error("No se ha detectado ninguna conexión.");
     }
 
     const originObjectMac = NetworkOriginObject.getAttribute("data-mac");
 
-    if (getNetwork(originIP, originNetmask) === getNetwork(destinationIP, originNetmask)) {     //si el destino y origen están en la misma red
+    if (getNetwork(originIP, originNetmask) === getNetwork(destinationIP, originNetmask)) {
 
-        if (!isIpInARPTable(originId, destinationIP)) { //el equipo destino NO está en la tabla ARP del equipo origen
+        if (!isIpInARPTable(originId, destinationIP)) {
+            saveMac(switchOriginObjectId, originId, originObjectMac);
 
-            saveMac(switchOriginObjectId, originId, originObjectMac); //si el origen no es conocido para el switch, añadimos la mac al switch
-
-            if (!isIpInNetwork(switchOriginObjectId, destinationIP)) { //ninguno de los equipos acepta la trama y se da por fallido
+            if (!isIpInNetwork(switchOriginObjectId, destinationIP)) {
                 throw new Error("Ningún equipo de la red tiene esa IP.");
             }
 
             const [networkDestinationObjectId, networkDestinationObjectmac] = isIpInNetwork(switchOriginObjectId, destinationIP);
-            saveMac(switchOriginObjectId, networkDestinationObjectId, networkDestinationObjectmac); //añadimos la mac al switch del destino si no estaba ya
-            addARPEntry(originId, destinationIP, networkDestinationObjectmac); //añadimos la ip y mac al equipo origen
-            addARPEntry(networkDestinationObjectId, originIP, originObjectMac); //añadimos la ip y mac al equipo destino
+            saveMac(switchOriginObjectId, networkDestinationObjectId, networkDestinationObjectmac);
+            addARPEntry(originId, destinationIP, networkDestinationObjectmac);
+            addARPEntry(networkDestinationObjectId, originIP, originObjectMac);
+
+            console.log("Paquete recibido. Saltos:", trace);
             return;
         }
 
-        //el equipo destino está en la tabla ARP del equipo origen
+        const destinationMac = isIpInARPTable(originId, destinationIP);
+        saveMac(switchOriginObjectId, originId, originObjectMac);
 
-        const destinationMac = isIpInARPTable(originId, destinationIP); // Hemos encontrado la mac del equipo destino.
-        saveMac(switchOriginObjectId, originId, originObjectMac); //si el origen no es conocido para el switch, añadimos la mac al switch
-
-        if (!isMacInMACTable(switchOriginObjectId, destinationMac)) { //la mac de destino NO existe en la tabla del switch
+        if (!isMacInMACTable(switchOriginObjectId, destinationMac)) {
 
             if (!isMacinNetwork(switchOriginObjectId, destinationMac)) {
                 throw new Error("La MAC de destino no existe en la red");
             }
 
-            //bingo, uno de los equipos nos devuelva una respuesta confirmando su mac
             const networkDestinationObjectId = isMacinNetwork(switchOriginObjectId, destinationMac);
 
-            if (!ipCheck(switchOriginObjectId, networkDestinationObjectId, destinationIP)) { //si la ip de destino del paquete no coincide con la ip del equipo, se da por fallido
+            if (!ipCheck(switchOriginObjectId, networkDestinationObjectId, destinationIP)) {
                 throw new Error("La IP de destino no coincide con la IP del equipo destino.");
             }
 
-            saveMac(switchOriginObjectId, networkDestinationObjectId, destinationMac); //añadimos la mac al switch
+            saveMac(switchOriginObjectId, networkDestinationObjectId, destinationMac);
             addARPEntry(networkDestinationObjectId, originIP, originObjectMac);
 
+            console.log("Paquete recibido. Saltos:", trace);
             return;
         }
-
-        //la mac de destino existe en la tabla del switch. el switch envia una trama unicast al destino.
 
         const networkDestinationObjectId = getDeviceFromMac(switchOriginObjectId, destinationMac);
 
-        //una vez que llega al equipo, debemos hacer comprobaciones a nivel de enlace de datos y de red
-
-        if (!macCheck(networkDestinationObjectId, destinationMac)) { //si la mac de destino en la trama no coincide con la mac del equipo, se da por fallido
+        if (!macCheck(networkDestinationObjectId, destinationMac)) {
             throw new Error("La MAC de destino no coincide con la MAC del equipo destino.");
         }
 
-        if (!ipCheck(switchOriginObjectId, networkDestinationObjectId, destinationIP)) { //si la ip de destino del paquete no coincide con la ip del equipo, se da por fallido
+        if (!ipCheck(switchOriginObjectId, networkDestinationObjectId, destinationIP)) {
             throw new Error("La IP de destino no coincide con la IP del equipo destino.");
         }
 
+        console.log("Paquete recibido. Saltos:", trace);
         return;
 
     } else {
+        
+        const defaultGateway = NetworkOriginObject.getAttribute("data-gateway");
 
-        //el destino no está en la misma red
-
-        const defaultGateway = NetworkOriginObject.getAttribute("data-gateway"); //obtenemos la puerta de enlace
-
-        if (!defaultGateway) { //no existe una puerta de enlace en el origen, damos por fallido
+        if (!defaultGateway) {
             throw new Error("No existe una puerta de enlace en el origen");
         }
 
-        if (!isIpInARPTable(originId, defaultGateway)) { // la ip de la puerta de enlace no está en la tabla ARP del origen. la descubrimos primero
-            sendPacket(originIP, defaultGateway); //llama a la funcion de nuevo
-            sendPacket(originIP, destinationIP); //reiniciamos la llamada ahora con la tabla de arp actualizada
+        if (!isIpInARPTable(originId, defaultGateway)) {
+            sendPacket(originIP, defaultGateway, trace);
+            sendPacket(originIP, destinationIP, trace);
             return;
         }
 
-        //la ip de la puerta de enlace está en la tabla ARP del origen
-
-        const defaultGatewayMac = isIpInARPTable(originId, defaultGateway); // Hemos encontrado la mac del equipo destino. Enviamos una trama unicast al switch con esa mac de destino    
-        saveMac(switchOriginObjectId, originId, originObjectMac); //si el origen no es conocido para el switch, añadimos la mac al switch
-
+        trace.push(defaultGateway);     
+        const defaultGatewayMac = isIpInARPTable(originId, defaultGateway);
+        saveMac(switchOriginObjectId, originId, originObjectMac);
         const networkDestinationObjectId = getDeviceFromMac(switchOriginObjectId, defaultGatewayMac);
-        routingPacket(originId, originIP, destinationIP, networkDestinationObjectId);
+        routingPacket(originId, originIP, destinationIP, networkDestinationObjectId, trace);
         return;
-        
     }
-
-
 }
 
-function routingPacket(networkOriginObjectId, networkOriginObjectIp, destinationIP, routerObjectId) {
 
-    const routerObject = document.getElementById(routerObjectId); //obtenemos el router
-    const routingTable = routerObject.querySelector(".routing-table").querySelector("table"); //obtenemos la tabla de enrutamiento
-    const rows = routingTable.querySelectorAll("tr"); //obtenemos las filas de la tabla
+function routingPacket(networkOriginObjectId, networkOriginObjectIp, destinationIP, routerObjectId, trace) {
 
-    //reglas de conexion directa
+    const routerObject = document.getElementById(routerObjectId);
+    const routingTable = routerObject.querySelector(".routing-table").querySelector("table");
+    const rows = routingTable.querySelectorAll("tr");
 
-    for (let i = 1; i <=3 ; i++) {
+    // Reglas de conexion directa
+
+    for (let i = 1; i <= 3; i++) {
 
         let row = rows[i];
         let cells = row.querySelectorAll("td");
@@ -128,74 +121,67 @@ function routingPacket(networkOriginObjectId, networkOriginObjectIp, destination
         let ruleNetmask = cells[1].innerHTML;
         let ruleInterface = cells[3].innerHTML;
 
-        if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) { //la red destino coincide con la red de la regla de conexion directa, solo falta enviar la trama
+        if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) {
+            const switchId = routerObject.getAttribute("data-switch-" + ruleInterface);
 
-            const switchId = routerObject.getAttribute("data-switch-" + ruleInterface); 
-
-            if (!isIpInNetwork(switchId, destinationIP)) { //ninguno de los equipos acepta la trama y se da por fallido
+            if (!isIpInNetwork(switchId, destinationIP)) {
                 throw new Error("Ningún equipo de la red tiene esa IP.");
             }
 
+            trace.push(destinationIP);
+            console.log("Paquete recibido. Saltos:", trace);
             return;
         }
-
     }
 
-    //reglas remotas -> de la fila 5 a la ultima
+    // Reglas remotas -> de la fila 5 a la ultima
 
-    if (rows.length > 4) { // hay reglas remotas
+    if (rows.length > 4) {
 
         for (let i = 4; i < rows.length; i++) {
-
             let row = rows[i];
             let cells = row.querySelectorAll("td");
             let ruleNetwork = cells[0].innerHTML;
             let ruleNetmask = cells[1].innerHTML;
 
-            if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) { //le red destino coincide con la red de la regla remota
-
+            if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) {
                 let ruleInterface = cells[3].innerHTML;
-                let nexthop = cells[4].innerHTML; //siguiente salto
+                let nexthop = cells[4].innerHTML;
                 const switchId = routerObject.getAttribute("data-switch-" + ruleInterface);
 
-                if (!isIpInNetwork(switchId, nexthop)) { //la direccion Ip del nexthop no esta en la red del switch, se da por fallido
-                    throw new Error(`La dirección ${nexthop} no se encuentra en la red.`)
+                if (!isIpInNetwork(switchId, nexthop)) {
+                    throw new Error(`La dirección ${nexthop} no se encuentra en la red.`);
                 }
 
-                const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0]; //hemos encontrado el router que reenviara el paquete
-                routingPacket(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId); //llamamos a la funcion recursiva para enviar el paquete por el siguiente salto
-                return; 
+                const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
+                trace.push(nexthop);
+                routingPacket(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId, trace);
+                return;
             }
-
         }
-        
     }
 
-    //ultimo recurso, miramos la regla por defecto -> en la fila 4
+    // Ultimo recurso, miramos la regla por defecto -> en la fila 4
 
     let row = rows[4];
     let cells = row.querySelectorAll("td");
     let gateway = cells[2].innerHTML;
 
-    if (gateway !== "") { //se ha configurado la regla por defecto
-
+    if (gateway !== "") {
         let ruleInterface = cells[3].innerHTML;
         let nexthop = cells[4].innerHTML;
         const switchId = routerObject.getAttribute("data-switch-" + ruleInterface);
 
-        if (!isIpInNetwork(switchId, nexthop)) { //la direccion Ip del nexthop no esta en la red del switch, se da por fallido
-            throw new Error(`La dirección ${nexthop} no se encuentra en la red.`)
+        if (!isIpInNetwork(switchId, nexthop)) {
+            throw new Error(`La dirección ${nexthop} no se encuentra en la red.`);
         }
 
-        const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0]; //hemos encontrado el router que reenviara el paquete
-
-        routingPacket(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId); //llamamos a la funcion recursiva para enviar el paquete por el siguiente salto
+        const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
+        trace.push(nexthop);
+        routingPacket(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId, trace);
         return;
-        
     }
 
-    //se da por fallido
-
-    throw new Error("No existe regla para enrutar el paquete en " + routerObjectId)
-
+    console.log("Saltos:", trace);
+    throw new Error("No existe regla para enrutar el paquete en " + routerObjectId);
 }
