@@ -103,25 +103,6 @@ function command_Ip(id, args) {
 
 }
 
-function ipconfig(id) {
-
-    if (id.includes("router-")) {
-        return "Error: Este comando solo puede ser ejecutado desde un pc.";
-    }
-
-    const pc = document.getElementById(id);
-    const ip = pc.getAttribute("data-ip");
-    const netmask = pc.getAttribute("data-netmask");
-    const gateway = pc.getAttribute("data-gateway");
-    const mac = pc.getAttribute("data-mac");
-    return `
-        Dirección IP: ${ip}
-        Puerta de Enlace: ${gateway}
-        Máscara de Red: ${netmask}
-        Dirección Física: ${mac}
-    `;
-}
-
 function dragTerminal(event) {
 
     event.preventDefault();
