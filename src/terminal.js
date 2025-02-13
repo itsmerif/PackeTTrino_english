@@ -73,15 +73,18 @@ function command_Ip(id, args) {
     if (args[1] === "route") { //añadir reglas de enrutamiento, solo puede ser ejecutado desde un router
 
         if (!id.includes("router-")) {
-            return "Error: Este comando solo puede ser ejecutado desde un router.";
+            terminalMessage('Error: Este comando solo puede ser ejecutado desde un router.');
+            return;
         }
 
         if (args.length < 8) {
-            return 'Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]';
+            terminalMessage('Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]');
+            return;
         }
 
         if (args[2] !== "add" && args[2] !== "del" || args[5] !== "via") {
-            return 'Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]';
+            terminalMessage('Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]');
+            return;
         }
 
         if (args[2] === "add") {
@@ -92,7 +95,7 @@ function command_Ip(id, args) {
             removeRoutingEntry(id, args[3], args[4], args[6], args[7]);
         }
 
-        return "Comando ip route ejecutado correctamente";
+        terminalMessage('Comando ip route ejecutado correctamente');
 
     }
 
