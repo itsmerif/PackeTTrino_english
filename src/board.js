@@ -78,15 +78,16 @@ function dropItem(event) {
     }
 }
 
-function deleteItem(event) {
-    
+function deleteItem(event) {    
     event.stopPropagation();
-
-    let networkObject = event.target.closest(".item-dropped");
-
-    if (!networkObject) {
-        networkObject = event.target.closest(".text-annotation");
+    let networkObject = event.target.closest(".item-dropped") || event.target.closest(".text-annotation");
+    if (!networkObject.id.startsWith("router-")) {
+        if (!networkObject.getAttribute("data-switch")) {
+            networkObject.remove();
+        }
+    }else {
+        if (!networkObject.getAttribute("data-switch-enp0s3") && !networkObject.getAttribute("data-switch-enp0s8") && !networkObject.getAttribute("data-switch-enp0s9")) {
+            networkObject.remove();
+        }
     }
-
-    networkObject.remove();
 }
