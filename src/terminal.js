@@ -47,6 +47,49 @@ function clickTerminal(event) {
     input.focus();
 }
 
+function dragTerminal(event) {
+
+    event.preventDefault();
+    const terminal = event.target.closest(".pc-terminal");
+    let rect = terminal.getBoundingClientRect();
+    let offsetX = event.clientX - rect.left;
+    let offsetY = event.clientY - rect.top;
+
+    terminal.style.left = `${rect.left}px`;
+    terminal.style.top = `${rect.top}px`;
+    terminal.style.transform = 'none';
+    terminal.style.position = 'fixed';
+
+    function moveTerminal(moveEvent) {
+        let x = moveEvent.clientX - offsetX;
+        let y = moveEvent.clientY - offsetY;
+        let maxX = window.innerWidth - terminal.offsetWidth;
+        let maxY = window.innerHeight - terminal.offsetHeight;
+        terminal.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+        terminal.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+    }
+
+    function stopDragging() {
+        document.removeEventListener('mousemove', moveTerminal);
+        document.removeEventListener('mouseup', stopDragging);
+        const input = terminal.querySelector('input');
+        if (input) input.focus();
+    }
+
+    document.addEventListener('mousemove', moveTerminal);
+    document.addEventListener('mouseup', stopDragging);
+
+}
+
+function terminalMessage(message) {
+
+    const terminal = document.querySelector(".pc-terminal");
+    const output = document.querySelector(".terminal-output");
+    output.innerHTML += `<p class="terminal-message">${message}</p>`;
+    terminal.scrollTop = output.scrollHeight;
+
+}
+
 function command_Ip(id, args) {
 
     if (args[1] === "a") { //mostramos la informacion del equipo, solo puede ser ejecutado desde un pc
@@ -88,60 +131,18 @@ function command_Ip(id, args) {
 
         if (args[2] === "add") {
             addRoutingEntry(id, args[3], args[4], args[6], args[7]);
+            terminalMessage('Comando ip route ejecutado correctamente');
+            return;
         }
 
         if (args[2] === "del") {
             removeRoutingEntry(id, args[3], args[4], args[6], args[7]);
+            terminalMessage('Comando ip route ejecutado correctamente');
+            return;
         }
-
-        terminalMessage('Comando ip route ejecutado correctamente');
-
     }
 
     terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
-
-}
-
-function dragTerminal(event) {
-
-    event.preventDefault();
-    const terminal = event.target.closest(".pc-terminal");
-    let rect = terminal.getBoundingClientRect();
-    let offsetX = event.clientX - rect.left;
-    let offsetY = event.clientY - rect.top;
-
-    terminal.style.left = `${rect.left}px`;
-    terminal.style.top = `${rect.top}px`;
-    terminal.style.transform = 'none';
-    terminal.style.position = 'fixed';
-
-    function moveTerminal(moveEvent) {
-        let x = moveEvent.clientX - offsetX;
-        let y = moveEvent.clientY - offsetY;
-        let maxX = window.innerWidth - terminal.offsetWidth;
-        let maxY = window.innerHeight - terminal.offsetHeight;
-        terminal.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
-        terminal.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
-    }
-
-    function stopDragging() {
-        document.removeEventListener('mousemove', moveTerminal);
-        document.removeEventListener('mouseup', stopDragging);
-        const input = terminal.querySelector('input');
-        if (input) input.focus();
-    }
-
-    document.addEventListener('mousemove', moveTerminal);
-    document.addEventListener('mouseup', stopDragging);
-
-}
-
-function terminalMessage(message) {
-
-    const terminal = document.querySelector(".pc-terminal");
-    const output = document.querySelector(".terminal-output");
-    output.innerHTML += `<p class="terminal-message">${message}</p>`;
-    terminal.scrollTop = output.scrollHeight;
 
 }
 

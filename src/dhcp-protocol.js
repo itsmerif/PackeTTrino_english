@@ -12,7 +12,7 @@ async function dhcp(networkObjectId, visual = false) {
 
     //primero el equipo realiza un broadcast con DHCPDISCOVER
 
-    terminalMessage("DHCPDISCOVER a 255.255.255.255");
+    terminalMessage("DHCPDISCOVER to 255.255.255.255");
 
     if (visual) {
         movePacket(networkObject.style.left, networkObject.style.top, switchObject.style.left, switchObject.style.top, "discover");
@@ -22,7 +22,7 @@ async function dhcp(networkObjectId, visual = false) {
     }
 
     if (!isDHCPinNetwork(switchObjectId)) { //no hay un servidor DHCP o agente de retransmision en la red
-        if (!visual) ping_f("0.0.0.0");
+        terminalMessage("No DHCPOFFERS received.");
         return;
     }
 
@@ -42,8 +42,8 @@ async function dhcp(networkObjectId, visual = false) {
             await waitForMove();
         }
 
-        terminalMessage("DHCPOFFER de " + serverObject.getAttribute("data-ip") + " con oferta de " + newIp); //el servidor responde con DHCPOFFER
-        terminalMessage("DHCPREQUEST a " + serverObject.getAttribute("data-ip") + " de " + newIp); //el equipo responde con DHCPREQUEST
+        terminalMessage("DHCPOFFER from " + serverObject.getAttribute("data-ip") + " on " + newIp); //el servidor responde con DHCPOFFER
+        terminalMessage("DHCPREQUEST to 255.255.255.255 on " + newIp); //el equipo responde con DHCPREQUEST
 
         if (visual) {
             movePacket(networkObject.style.left, networkObject.style.top, switchObject.style.left, switchObject.style.top, "request");
@@ -72,17 +72,15 @@ async function dhcp(networkObjectId, visual = false) {
             await waitForMove();
         }
 
-        terminalMessage("DHCPACK obtenida. IP asignada: " + newIp);
+        terminalMessage("DHCPACK from " + serverObject.getAttribute("data-ip") + " on" + newIp);
 
     } else { //se trata de un agente de retransmision
 
+        terminalMessage("DHCP RELAY AGENT from " + serverObject.getAttribute("data-ip"));
         const mainServer = serverObject.getAttribute("data-main-server"); //direccion ip del servidor dhcp principal
-        await ping(serverObject.getAttribute("data-ip"), mainServer, visual); //llamamos a la funcion de ping
-        await ping(mainServer, serverObject.getAttribute("data-ip"), visual); //llamamos a la funcion de ping
-        await movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "broadcast"); //se mueve el paquete de broadcast
-        await waitForMove();
-        await movePacket(switchObject.style.left, switchObject.style.top, networkObject.style.left, networkObject.style.top, "broadcast"); //se mueve el paquete de broadcast
-
+        terminalMessage("DHCPDISCOVER to " + mainServer);
+        await ping(serverObject.getAttribute("data-ip"), mainServer, visual); //enviamos un paquete al servidor dhcp principal
+        await ping(mainServer, serverObject.getAttribute("data-ip"), visual); //el dhcp envia una offer al agente
     }
 
 }

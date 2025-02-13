@@ -29,7 +29,7 @@ async function ping(originIP, destinationIP, visual = false) {
  
     if (!switchOriginObjectId){ //el pc no está conectado a ningún switch
         if (!visual) ping_f(originIP);
-        return
+        return;
     }
 
     const switchOriginObject = document.getElementById(switchOriginObjectId);
