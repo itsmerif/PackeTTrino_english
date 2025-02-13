@@ -128,27 +128,28 @@ function loadState() {
 }
 
 function setNewIndex() {
-
     const itemsDropped = document.querySelectorAll(".item-dropped");
     const itemsText = document.querySelectorAll(".text-annotation");
     let indexes = [];
 
-    //obtenemos dropped items
-    for (let i = 0; i < itemsDropped.length; i++) {
-        let itemid = itemsDropped[i].id;
-        let itemindex = itemid.split("-")[1];
-        indexes.push(itemindex);
-    }
-    
-    //obtenemos text items
-    for (let i = 0; i < itemsText.length; i++) {
-        let itemid = itemsText[i].id;
-        let itemindex = itemid.split("-")[1];
-        indexes.push(itemindex);
-    }
+    itemsDropped.forEach(item => {
+        let itemid = item.id;
+        console.log(itemid);
+        let itemindex = parseInt(itemid.split("-")[1]);
+        if (!isNaN(itemindex)) indexes.push(itemindex);
+    });
 
-    itemIndex = Math.max(...indexes) + 1;
+    itemsText.forEach(item => {
+        let itemid = item.id;
+        console.log(itemid);
+        let itemindex = parseInt(itemid.split("-")[1]);
+        if (!isNaN(itemindex)) indexes.push(itemindex);
+    });
+
+    itemIndex = indexes.length > 0 ? Math.max(...indexes) + 1 : 1;
+
 }
+
 
 function setTextContents() {
 
