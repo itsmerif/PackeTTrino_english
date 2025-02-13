@@ -111,7 +111,7 @@ async function dhcp(networkObjectId, visual = false) {
         if (visual) {
             movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "unicast");
             await waitForMove();
-            movePacket(switchObject.style.left, switchObject.style.top, networkObject.style.left, networkObject.style.top, "unicast");
+            movePacket(switchObject.style.left, switchObject.style.top, networkObject.style.left, networkObject.style.top, "ack");
             await waitForMove();
         }
 
