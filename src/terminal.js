@@ -20,10 +20,6 @@ function sendCommand(event) {
                 const destinationIP = args[1] || "0.0.0.0";
                 newoutput = ping(originIP, destinationIP, false, dataId);
                 break;
-            case "ipconfig":
-                newoutput = ipconfig(dataId);
-                document.querySelector(".terminal-output").innerHTML = newoutput;
-                break;
             case "arp":
                 newoutput = getARPTable(dataId);
                 break;
@@ -32,8 +28,7 @@ function sendCommand(event) {
                 document.querySelector(".pc-terminal").style.display = "none";
                 break;
             case "ip":
-                newoutput = checkIpRouting(dataId, args);
-                document.querySelector(".terminal-output").innerHTML = newoutput;
+                command_Ip(dataId, args);
                 break;
             case "dhcp":
                 checkDhcp(dataId, args);
@@ -53,31 +48,53 @@ function clickTerminal(event) {
     input.focus();
 }
 
-function checkIpRouting(id, args) {
+function command_Ip(id, args) {
 
-    //sintaxis del comando: ip route <add|del> <destination> <netmask> via <interfaz> <nexthop>
+    if (args[1] === "a") { //mostramos la informacion del equipo, solo puede ser ejecutado desde un pc
+        
+        if (id.includes("router-")) {
+            return "Error: Este comando solo puede ser ejecutado desde un pc.";
+        }
 
-    if (!id.includes("router-")) {
-        return "Error: Este comando solo puede ser ejecutado desde un router.";
+        const pc = document.getElementById(id);
+        const ip = pc.getAttribute("data-ip");
+        const netmask = pc.getAttribute("data-netmask");
+        const gateway = pc.getAttribute("data-gateway");
+        const mac = pc.getAttribute("data-mac");
+        
+        terminalMessage(`Dirección IP: ${ip}
+        Puerta de Enlace: ${gateway}
+        Máscara de Red: ${netmask}
+        Dirección Física: ${mac}`);
+
+        return;
     }
 
-    if (args.length < 8) {
-        return 'Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]';
-    }
+    if (args[1] === "route") { //añadir reglas de enrutamiento, solo puede ser ejecutado desde un router
 
-    if (args[1] !== "route" || args[2] !== "add" && args[2] !== "del" || args[5] !== "via") {
-        return 'Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]';
-    }
+        if (!id.includes("router-")) {
+            return "Error: Este comando solo puede ser ejecutado desde un router.";
+        }
 
-    if (args[2] === "add") {
-        addRoutingEntry(id, args[3], args[4], args[6], args[7]);
-    }
+        if (args.length < 8) {
+            return 'Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]';
+        }
 
-    if (args[2] === "del") {
-        removeRoutingEntry(id, args[3], args[4], args[6], args[7]);
-    }
+        if (args[1] !== "route" || args[2] !== "add" && args[2] !== "del" || args[5] !== "via") {
+            return 'Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]';
+        }
 
-    return "Comando ip route ejecutado correctamente";
+        if (args[2] === "add") {
+            addRoutingEntry(id, args[3], args[4], args[6], args[7]);
+        }
+
+        if (args[2] === "del") {
+            removeRoutingEntry(id, args[3], args[4], args[6], args[7]);
+        }
+
+        return "Comando ip route ejecutado correctamente";
+
+    }
 
 }
 
