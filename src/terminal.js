@@ -17,8 +17,7 @@ function sendCommand(event) {
         switch (command) {
 
             case "ping":
-                const destinationIP = args[1] || "0.0.0.0";
-                newoutput = ping(originIP, destinationIP, false, dataId);
+                command_Ping(dataId, args, originIP);
                 break;
             case "arp":
                 newoutput = getARPTable(dataId);
@@ -31,7 +30,7 @@ function sendCommand(event) {
                 command_Ip(dataId, args);
                 break;
             case "dhcp":
-                checkDhcp(dataId, args);
+                command_Dchp(dataId, args);
                 break;
             default:
                 newoutput = "Command not found";
@@ -146,7 +145,7 @@ function terminalMessage(message) {
 
 }
 
-async function checkDhcp(dataId, args) {
+async function command_Dchp(dataId, args) {
 
     //ya sé que el primer argumento es dhcp
 
@@ -174,4 +173,48 @@ async function checkDhcp(dataId, args) {
     }
 
     terminalMessage("Error: Sintaxis: dhcp [ -release | -renew ] [ -visual ]");
-} 
+}
+
+async function command_Ping(dataId, args, originIP) {
+
+    if (dataId.includes("router-")) { //por ahora solo se puede hacer ping desde un pc
+        terminalMessage("Error: Este comando solo puede ser ejecutado desde un pc.");
+        return;
+    }
+
+    if (args.length > 3 || args.length < 2) {
+        terminalMessage("Error: Sintaxis: ping <ip> [-visual]");
+        return;
+    }
+
+    const destinationIP = args[1] || "0.0.0.0";
+
+    if (args.length === 2) { //modo NO visual
+
+        if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
+            terminalMessage("Error: La IP de destino introducida no es válida.");
+            return;
+        }
+
+        ping(originIP, destinationIP, false);
+        return;
+    }
+
+    if (args.length === 3 && args[2] === "-visual") { //modo visual
+
+        if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
+            terminalMessage("Error: La IP de destino introducida no es válida.");
+            return;
+        }
+
+        minimizeTerminal();
+        await waitForMove();
+        await ping(originIP,destinationIP, true);
+        maximizeTerminal();
+        return;
+    }
+
+    terminalMessage("Error: Sintaxis: ping <ip> [-visual]");
+    return;
+
+}
