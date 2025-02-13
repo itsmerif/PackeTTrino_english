@@ -80,7 +80,7 @@ function command_Ip(id, args) {
             return 'Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]';
         }
 
-        if (args[1] !== "route" || args[2] !== "add" && args[2] !== "del" || args[5] !== "via") {
+        if (args[2] !== "add" && args[2] !== "del" || args[5] !== "via") {
             return 'Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]';
         }
 
