@@ -3,7 +3,7 @@ async function dhcp(networkObjectId, visual = false) {
     const networkObject = document.getElementById(networkObjectId); //obtenemos el elemento
 
     if (networkObject.getAttribute("data-dhcp") === "false") { //no esta configurado para dhcp
-        if (!visual) ping_f("0.0.0.0");
+        terminalMessage("Error: Equipo no configurado para asignación automática de dirección IP.")
         return;
     }
 

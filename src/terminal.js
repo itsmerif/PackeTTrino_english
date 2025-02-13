@@ -32,6 +32,9 @@ function sendCommand(event) {
             case "dhcp":
                 command_Dchp(dataId, args);
                 break;
+            case "tcp":
+                command_Tcp(args, originIP);
+                break;
             default:
                 newoutput = "Command not found";
                 document.querySelector(".terminal-output").innerHTML = newoutput;
@@ -218,4 +221,14 @@ async function command_Ping(dataId, args, originIP) {
     terminalMessage("Error: Sintaxis: ping <ip> [-visual]");
     return;
 
+}
+
+function command_Tcp(args, originIP) {
+    try {
+        sendPacket(originIP, args[1]); 
+        ping_s(originIP);
+    } catch (error) {
+        console.log(error.message);
+        ping_f(originIP);
+    }
 }

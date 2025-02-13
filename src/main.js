@@ -34,6 +34,7 @@ function getPanelItems() {
 }
 
 function terminalKeyboard(event) {
+
     if (event.ctrlKey && event.key === "c") {
         event.preventDefault();
         clearInterval(window.pingInterval);
@@ -42,6 +43,7 @@ function terminalKeyboard(event) {
 
     if (event.key === "Escape") {
         event.preventDefault();
+        clearInterval(window.pingInterval);
         document.querySelector(".pc-terminal").style.display = "none";
         document.querySelector(".terminal-output").innerHTML = "";
         document.querySelector(".pc-terminal").querySelector("input").value = "";

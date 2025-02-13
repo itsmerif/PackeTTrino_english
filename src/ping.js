@@ -222,22 +222,24 @@ async function ping(originIP, destinationIP, visual = false) {
 function ping_s(origin) {
 
     const terminalOutput = document.querySelector(".terminal-output");
-    let seq = 1;
+    terminalOutput.innerHTML += `64 bytes from ${origin}: icmp_seq=1 ttl=64 time=0.030 ms\n`
+    let seq = 2;
     window.pingInterval = setInterval(() => {
         terminalOutput.innerHTML += `64 bytes from ${origin}: icmp_seq=${seq} ttl=64 time=0.030 ms\n`;
         seq++;
-    }, 1000);
+    }, 500);
 
 }
 
 function ping_f(origin) {
 
     const terminalOutput = document.querySelector(".terminal-output");
-    let seq = 1;
+    terminalOutput.innerHTML += `From ${origin} icmp_seq=1 Destination Host Unreachable\n`
+    let seq = 2;
     window.pingInterval = setInterval(() => {
         terminalOutput.innerHTML += `From ${origin} icmp_seq=${seq} Destination Host Unreachable\n`;
         seq++;
-    }, 1000);
+    }, 500);
 
 }
 
