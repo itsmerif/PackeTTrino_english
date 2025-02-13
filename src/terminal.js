@@ -78,12 +78,12 @@ function command_Ip(id, args) {
         }
 
         if (args.length < 8) {
-            terminalMessage('Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]');
+            terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
             return;
         }
 
         if (args[2] !== "add" && args[2] !== "del" || args[5] !== "via") {
-            terminalMessage('Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]');
+            terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
             return;
         }
 
@@ -98,6 +98,8 @@ function command_Ip(id, args) {
         terminalMessage('Comando ip route ejecutado correctamente');
 
     }
+
+    terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
 
 }
 
