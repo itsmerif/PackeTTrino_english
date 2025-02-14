@@ -6,7 +6,10 @@ function sendPacket(packet, trace = []) {
     trace.push(originIP);
 
     if (!originIP || !destinationIP) {
-        throw new Error("No se ha configurado el origen o el destino");
+        throw {
+            "message": "No se ha configurado el origen o no hay destino",
+            "trace": trace
+        }
     }
 
     if (originIP === destinationIP) {
@@ -16,7 +19,10 @@ function sendPacket(packet, trace = []) {
     const origin = document.querySelector(`[data-ip="${originIP}"]`);
 
     if (!origin) {
-        throw new Error("El origen no existe");
+        throw {
+            "message": "El origen no existe",
+            "trace": trace
+        }
     }
 
     const originId = origin.id;
@@ -25,7 +31,10 @@ function sendPacket(packet, trace = []) {
     const switchOriginObjectId = NetworkOriginObject.getAttribute("data-switch");
 
     if (!switchOriginObjectId) {
-        throw new Error("No se ha detectado ninguna conexión.");
+        throw {
+            "message": "No se ha detectado ninguna conexión.",
+            "trace": trace
+        }
     }
 
     const originObjectMac = NetworkOriginObject.getAttribute("data-mac");
@@ -36,11 +45,14 @@ function sendPacket(packet, trace = []) {
             saveMac(switchOriginObjectId, originId, originObjectMac);
 
             if (!isIpInNetwork(switchOriginObjectId, destinationIP)) {
-                throw new Error("Ningún equipo de la red tiene esa IP.");
+                throw {
+                    "message": "Ningún equipo de la red tiene esa IP.",
+                    "trace": trace
+                }
             }
 
             const [networkDestinationObjectId, networkDestinationObjectmac] = isIpInNetwork(switchOriginObjectId, destinationIP);
-            addARPEntry(networkDestinationObjectId, originIP, originObjectMac); 
+            addARPEntry(networkDestinationObjectId, originIP, originObjectMac);
             saveMac(switchOriginObjectId, networkDestinationObjectId, networkDestinationObjectmac);
             addARPEntry(originId, destinationIP, networkDestinationObjectmac);
             trace.push(destinationIP);
@@ -62,7 +74,10 @@ function sendPacket(packet, trace = []) {
             const networkDestinationObjectId = isMacinNetwork(switchOriginObjectId, destinationMac);
 
             if (!ipCheck(switchOriginObjectId, networkDestinationObjectId, destinationIP)) {
-                throw new Error("La IP de destino no coincide con la IP del equipo destino.");
+                throw {
+                    "message": "La IP de destino no coincide con la IP del equipo destino.",
+                    "trace": trace
+                }
             }
 
             saveMac(switchOriginObjectId, networkDestinationObjectId, destinationMac);
@@ -74,21 +89,30 @@ function sendPacket(packet, trace = []) {
         const networkDestinationObjectId = getDeviceFromMac(switchOriginObjectId, destinationMac);
 
         if (!macCheck(networkDestinationObjectId, destinationMac)) {
-            throw new Error("La MAC de destino no coincide con la MAC del equipo destino.");
+            throw {
+                "message": "La MAC de destino no coincide con la MAC del equipo destino.",
+                "trace": trace
+            }
         }
 
         if (!ipCheck(switchOriginObjectId, networkDestinationObjectId, destinationIP)) {
-            throw new Error("La IP de destino no coincide con la IP del equipo destino.");
+            throw {
+                "message": "La IP de destino no coincide con la IP del equipo destino.",
+                "trace": trace
+            }
         }
 
         return trace;
 
     } else {
-        
+
         const defaultGateway = NetworkOriginObject.getAttribute("data-gateway");
 
         if (!defaultGateway) {
-            throw new Error("No existe una puerta de enlace en el origen");
+            throw {
+                "message": "No existe una puerta de enlace en el origen",
+                "trace": trace
+            }
         }
 
         if (!isIpInARPTable(originId, defaultGateway)) {
@@ -104,7 +128,7 @@ function sendPacket(packet, trace = []) {
             return;
         }
 
-        trace.push(defaultGateway);     
+        trace.push(defaultGateway);
         packet.ttl = packet.ttl - 1; //no tengo que comprobar si es igual a cero, ya que es el salto a la puerta de enlace
         console.log(packet.ttl);
         const defaultGatewayMac = isIpInARPTable(originId, defaultGateway);
@@ -137,13 +161,22 @@ function routingPacket(packet, routerObjectId, trace) {
             const switchId = routerObject.getAttribute("data-switch-" + ruleInterface);
 
             if (!isIpInNetwork(switchId, destinationIP)) {
-                throw new Error("Ningún equipo de la red tiene esa IP.");
+                throw {
+                    "message": "Ningún equipo de la red tiene esa IP.",
+                    "trace": trace
+                }
             }
 
             trace.push(destinationIP);
-            packet.ttl = packet.ttl - 1;
-            console.log(packet.ttl);
-            if (packet.ttl === 0) throw new Error("El TTL del paquete ha llegado a cero.");
+            packet.ttl = packet.ttl - 1;;
+
+            if (packet.ttl === 0) {
+                throw {
+                    "message": "El TTL del paquete ha llegado a cero.",
+                    "trace": trace
+                }
+            }
+
             return trace;
         }
     }
@@ -164,14 +197,23 @@ function routingPacket(packet, routerObjectId, trace) {
                 const switchId = routerObject.getAttribute("data-switch-" + ruleInterface);
 
                 if (!isIpInNetwork(switchId, nexthop)) {
-                    throw new Error(`La dirección ${nexthop} no se encuentra en la red.`);
+                    throw {
+                        "message": `La dirección ${nexthop} no se encuentra en la red.`,
+                        "trace": trace
+                    }
                 }
 
                 const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
                 trace.push(nexthop);
                 packet.ttl = packet.ttl - 1;
-                console.log(packet.ttl);
-                if (packet.ttl === 0) throw new Error("El TTL del paquete ha llegado a cero.");
+
+                if (packet.ttl === 0) {
+                    throw {
+                        "message": "El TTL del paquete ha llegado a cero.",
+                        "trace": trace
+                    }
+                }
+
                 routingPacket(packet, nexthopObjectId, trace);
                 return trace;
             }
@@ -190,20 +232,30 @@ function routingPacket(packet, routerObjectId, trace) {
         const switchId = routerObject.getAttribute("data-switch-" + ruleInterface);
 
         if (!isIpInNetwork(switchId, nexthop)) {
-            throw new Error(`La dirección ${nexthop} no se encuentra en la red.`);
+            throw {
+                "message": `La dirección ${nexthop} no se encuentra en la red.`,
+                "trace": trace
+            }
         }
 
         const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
 
         trace.push(nexthop);
         packet.ttl = packet.ttl - 1;
-        console.log(packet.ttl);
 
-        if (packet.ttl === 0) throw new Error("El TTL del paquete ha llegado a cero.");
+        if (packet.ttl === 0) {
+            throw {
+                "message": "El TTL del paquete ha llegado a cero.",
+                "trace": trace
+            }
+        }
 
         routingPacket(packet, nexthopObjectId, trace);
         return trace;
     }
 
-    throw new Error("No existe regla para enrutar el paquete en " + routerObjectId);
+    throw {
+        "message": "No existe regla para enrutar el paquete en " + routerObjectId,
+        "trace": trace
+    }
 }

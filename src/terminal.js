@@ -250,7 +250,16 @@ function command_Traceroute(args, originIP) {
 
     } catch (error) {
 
+        let trace = error.trace;
+        let hop = 1;
+
+        for (let i = 0; i < trace.length - 1; i++) {
+            let text = hop + ". " + trace[i].padEnd(15) + " " + trace[i + 1];
+            terminalMessage(text);
+            hop++;
+        }
+
         terminalMessage(error.message);
-        
     }
+
 }
