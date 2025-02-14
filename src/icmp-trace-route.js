@@ -1,7 +1,3 @@
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 async function command_Traceroute(args, originIP) {
     
     if (args.length > 3) {
@@ -31,7 +27,7 @@ async function command_Traceroute(args, originIP) {
             let text = hop + ". " + trace[i].padEnd(15) + " " + trace[i + 1];
             terminalMessage(text);
             hop++;
-            await sleep(500); // Espera 500ms antes de mostrar el siguiente salto
+            await sleep(500);
         }
 
     } catch (error) {
@@ -57,4 +53,8 @@ async function command_Traceroute(args, originIP) {
         }, 500);
 
     }
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }

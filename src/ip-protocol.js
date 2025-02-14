@@ -16,19 +16,11 @@ function sendPacket(packet, trace = []) {
         return trace;
     }
 
-    const origin = document.querySelector(`[data-ip="${originIP}"]`);
-
-    if (!origin) {
-        throw {
-            "message": "El origen no existe",
-            "trace": trace
-        }
-    }
-
-    const originId = origin.id;
-    const originNetmask = origin.getAttribute("data-netmask");
-    const NetworkOriginObject = document.getElementById(originId);
-    const switchOriginObjectId = NetworkOriginObject.getAttribute("data-switch");
+    const networkOriginObject = document.querySelector(`[data-ip="${originIP}"]`);
+    const networkOriginObjectId = networkOriginObject.id;
+    const networkOriginObjectNetmask = networkOriginObject.getAttribute("data-netmask");
+    const networkOriginObjectMac = networkOriginObject.getAttribute("data-mac");
+    const switchOriginObjectId = networkOriginObject.getAttribute("data-switch");
 
     if (!switchOriginObjectId) {
         throw {
@@ -37,12 +29,10 @@ function sendPacket(packet, trace = []) {
         }
     }
 
-    const originObjectMac = NetworkOriginObject.getAttribute("data-mac");
+    if (getNetwork(originIP, networkOriginObjectNetmask) === getNetwork(destinationIP, networkOriginObjectNetmask)) {
 
-    if (getNetwork(originIP, originNetmask) === getNetwork(destinationIP, originNetmask)) {
-
-        if (!isIpInARPTable(originId, destinationIP)) {
-            saveMac(switchOriginObjectId, originId, originObjectMac);
+        if (!isIpInARPTable(networkOriginObjectId, destinationIP)) {
+            saveMac(switchOriginObjectId, networkOriginObjectId, networkOriginObjectMac);
 
             if (!isIpInNetwork(switchOriginObjectId, destinationIP)) {
                 throw {
@@ -52,21 +42,21 @@ function sendPacket(packet, trace = []) {
             }
 
             const [networkDestinationObjectId, networkDestinationObjectmac] = isIpInNetwork(switchOriginObjectId, destinationIP);
-            addARPEntry(networkDestinationObjectId, originIP, originObjectMac);
+            addARPEntry(networkDestinationObjectId, originIP, networkOriginObjectMac);
             saveMac(switchOriginObjectId, networkDestinationObjectId, networkDestinationObjectmac);
-            addARPEntry(originId, destinationIP, networkDestinationObjectmac);
+            addARPEntry(networkOriginObjectId, destinationIP, networkDestinationObjectmac);
             trace.push(destinationIP);
             return trace;
         }
 
-        const destinationMac = isIpInARPTable(originId, destinationIP);
-        saveMac(switchOriginObjectId, originId, originObjectMac);
+        const destinationMac = isIpInARPTable(networkOriginObjectId, destinationIP);
+        saveMac(switchOriginObjectId, networkOriginObjectId, networkOriginObjectMac);
 
         if (!isMacInMACTable(switchOriginObjectId, destinationMac)) { //no esta la mac en la tabla del switch, hacemos broadcast a todos los equipos conectados
 
             if (!isMacinNetwork(switchOriginObjectId, destinationMac)) { //ninguno de los equipos acepta la trama y se da por fallido
                 //como el equipo origen tenía esta ip con esa mac en su tabla arp, se debe borrar y hacer de nuevo una solicitud arp
-                delARPEntry(originId, destinationIP);
+                delARPEntry(networkOriginObjectId, destinationIP);
                 sendPacket(packet, trace);
                 return trace;
             }
@@ -81,7 +71,7 @@ function sendPacket(packet, trace = []) {
             }
 
             saveMac(switchOriginObjectId, networkDestinationObjectId, destinationMac);
-            addARPEntry(networkDestinationObjectId, originIP, originObjectMac);
+            addARPEntry(networkDestinationObjectId, originIP, networkOriginObjectMac);
 
             return trace;
         }
@@ -106,7 +96,7 @@ function sendPacket(packet, trace = []) {
 
     } else {
 
-        const defaultGateway = NetworkOriginObject.getAttribute("data-gateway");
+        const defaultGateway = networkOriginObject.getAttribute("data-gateway");
 
         if (!defaultGateway) {
             throw {
@@ -115,7 +105,7 @@ function sendPacket(packet, trace = []) {
             }
         }
 
-        if (!isIpInARPTable(originId, defaultGateway)) {
+        if (!isIpInARPTable(networkOriginObjectId, defaultGateway)) {
 
             const arpRequest = {
                 origin: packet.origin,
@@ -131,8 +121,8 @@ function sendPacket(packet, trace = []) {
         trace.push(defaultGateway);
         packet.ttl = packet.ttl - 1; //no tengo que comprobar si es igual a cero, ya que es el salto a la puerta de enlace
         console.log(packet.ttl);
-        const defaultGatewayMac = isIpInARPTable(originId, defaultGateway);
-        saveMac(switchOriginObjectId, originId, originObjectMac);
+        const defaultGatewayMac = isIpInARPTable(networkOriginObjectId, defaultGateway);
+        saveMac(switchOriginObjectId, networkOriginObjectId, networkOriginObjectMac);
         const networkDestinationObjectId = getDeviceFromMac(switchOriginObjectId, defaultGatewayMac);
         routingPacket(packet, networkDestinationObjectId, trace);
         return trace;
@@ -254,6 +244,8 @@ function routingPacket(packet, routerObjectId, trace) {
         return trace;
     }
 
+    //si no se puede enrutar, lanzamos una excepción
+    
     throw {
         "message": "No existe regla para enrutar el paquete en " + routerObjectId,
         "trace": trace
