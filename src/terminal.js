@@ -35,6 +35,9 @@ function sendCommand(event) {
             case "tcp":
                 command_Tcp(args, originIP);
                 break;
+            case "traceroute":
+                command_Traceroute(args, originIP);
+                break;
             default:
                 newoutput = "Command not found";
                 document.querySelector(".terminal-output").innerHTML = newoutput;
@@ -231,4 +234,15 @@ function command_Tcp(args, originIP) {
         console.log(error.message);
         ping_f(originIP);
     }
+}
+
+function command_Traceroute(args, originIP) {
+
+    try {
+        let trace = sendPacket(originIP, args[1]);
+        terminalMessage(trace);
+    } catch (error) {
+        terminalMessage(error.message);
+    }
+
 }

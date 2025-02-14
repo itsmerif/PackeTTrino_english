@@ -8,7 +8,7 @@ function sendPacket(originIP, destinationIP, trace = []) {
 
     if (originIP === destinationIP) {
         console.log("Paquete recibido. Saltos:", trace);
-        return;
+        return trace;
     }
 
     const origin = document.querySelector(`[data-ip="${originIP}"]`);
@@ -41,9 +41,7 @@ function sendPacket(originIP, destinationIP, trace = []) {
             saveMac(switchOriginObjectId, networkDestinationObjectId, networkDestinationObjectmac);
             addARPEntry(originId, destinationIP, networkDestinationObjectmac);
             addARPEntry(networkDestinationObjectId, originIP, originObjectMac);
-
-            console.log("Paquete recibido. Saltos:", trace);
-            return;
+            return trace;
         }
 
         const destinationMac = isIpInARPTable(originId, destinationIP);
@@ -64,8 +62,7 @@ function sendPacket(originIP, destinationIP, trace = []) {
             saveMac(switchOriginObjectId, networkDestinationObjectId, destinationMac);
             addARPEntry(networkDestinationObjectId, originIP, originObjectMac);
 
-            console.log("Paquete recibido. Saltos:", trace);
-            return;
+            return trace;
         }
 
         const networkDestinationObjectId = getDeviceFromMac(switchOriginObjectId, destinationMac);
@@ -78,8 +75,7 @@ function sendPacket(originIP, destinationIP, trace = []) {
             throw new Error("La IP de destino no coincide con la IP del equipo destino.");
         }
 
-        console.log("Paquete recibido. Saltos:", trace);
-        return;
+        return trace;
 
     } else {
         
@@ -92,7 +88,7 @@ function sendPacket(originIP, destinationIP, trace = []) {
         if (!isIpInARPTable(originId, defaultGateway)) {
             sendPacket(originIP, defaultGateway, trace);
             sendPacket(originIP, destinationIP, trace);
-            return;
+            return trace;
         }
 
         trace.push(defaultGateway);     
@@ -100,7 +96,7 @@ function sendPacket(originIP, destinationIP, trace = []) {
         saveMac(switchOriginObjectId, originId, originObjectMac);
         const networkDestinationObjectId = getDeviceFromMac(switchOriginObjectId, defaultGatewayMac);
         routingPacket(originId, originIP, destinationIP, networkDestinationObjectId, trace);
-        return;
+        return trace;
     }
 }
 
@@ -130,7 +126,7 @@ function routingPacket(networkOriginObjectId, networkOriginObjectIp, destination
 
             trace.push(destinationIP);
             console.log("Paquete recibido. Saltos:", trace);
-            return;
+            return trace;
         }
     }
 
@@ -156,7 +152,7 @@ function routingPacket(networkOriginObjectId, networkOriginObjectIp, destination
                 const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
                 trace.push(nexthop);
                 routingPacket(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId, trace);
-                return;
+                return trace;
             }
         }
     }
@@ -179,9 +175,8 @@ function routingPacket(networkOriginObjectId, networkOriginObjectIp, destination
         const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
         trace.push(nexthop);
         routingPacket(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId, trace);
-        return;
+        return trace;
     }
 
-    console.log("Saltos:", trace);
     throw new Error("No existe regla para enrutar el paquete en " + routerObjectId);
 }
