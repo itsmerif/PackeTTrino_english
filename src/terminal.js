@@ -201,7 +201,7 @@ async function command_Ping(dataId, args, originIP) {
     }
 
     //genero el paquete
-    
+
     const packet = {
         origin: originIP,
         destination: args[1],
@@ -227,16 +227,30 @@ function command_Tcp(args, originIP) {
 }
 
 function command_Traceroute(args, originIP) {
+
+    const packet = {
+        origin: originIP,
+        destination: args[1],
+        protocol: "icmp",
+        ttl: 64,
+        type: "echo-request",
+        code: 0
+    };
+
     try {
-        let trace = sendPacket(originIP, args[1]);
-        console.log(trace);
+
+        let trace = sendPacket(packet);
         let hop = 1;
+
         for (let i = 0; i < trace.length - 1; i++) {
             let text = hop + ". " + trace[i].padEnd(15) + " " + trace[i + 1];
             terminalMessage(text);
             hop++;
         }
+
     } catch (error) {
+
         terminalMessage(error.message);
+        
     }
 }
