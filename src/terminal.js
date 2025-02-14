@@ -88,18 +88,21 @@ function dragTerminal(event) {
 }
 
 function terminalMessage(message) {
-
     const terminal = document.querySelector(".pc-terminal");
     const output = document.querySelector(".terminal-output");
-    output.innerHTML += `<p class="terminal-message">${message}</p>`;
-    terminal.scrollTop = output.scrollHeight;
 
+    const messageElement = document.createElement("p");
+    messageElement.className = "terminal-message";
+    messageElement.textContent = message;
+
+    output.appendChild(messageElement);
+    terminal.scrollTop = output.scrollHeight;
 }
 
 function command_Ip(id, args) {
 
     if (args[1] === "a") { //mostramos la informacion del equipo, solo puede ser ejecutado desde un pc
-        
+
         if (id.includes("router-")) {
             return "Error: Este comando solo puede ser ejecutado desde un pc.";
         }
@@ -109,7 +112,7 @@ function command_Ip(id, args) {
         const netmask = pc.getAttribute("data-netmask");
         const gateway = pc.getAttribute("data-gateway");
         const mac = pc.getAttribute("data-mac");
-        
+
         terminalMessage(`Dirección IP: ${ip}
         Puerta de Enlace: ${gateway}
         Máscara de Red: ${netmask}
@@ -216,7 +219,7 @@ async function command_Ping(dataId, args, originIP) {
 
         minimizeTerminal();
         await waitForMove();
-        await ping(originIP,destinationIP, true);
+        await ping(originIP, destinationIP, true);
         maximizeTerminal();
         return;
     }
@@ -228,7 +231,7 @@ async function command_Ping(dataId, args, originIP) {
 
 function command_Tcp(args, originIP) {
     try {
-        sendPacket(originIP, args[1]); 
+        sendPacket(originIP, args[1]);
         ping_s(originIP);
     } catch (error) {
         console.log(error.message);
@@ -237,12 +240,16 @@ function command_Tcp(args, originIP) {
 }
 
 function command_Traceroute(args, originIP) {
-
     try {
         let trace = sendPacket(originIP, args[1]);
-        terminalMessage(trace);
+        let hop = 1;
+        for (let i = 0; i < trace.length - 1; i++) {
+            let text = hop + ". " + trace[i].toString().padEnd(15) + " " + trace[i + 1].toString();
+            terminalMessage(text);
+            hop++;
+        }
     } catch (error) {
         terminalMessage(error.message);
     }
-
 }
+

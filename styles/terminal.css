@@ -38,8 +38,7 @@
 }
 
 .terminal-output {
-    white-space: pre-line;
-    box-sizing: border-box;
+    white-space: pre-wrap;
     box-sizing: border-box;
     padding-top: 0px;
     padding-bottom: 0px;
