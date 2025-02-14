@@ -315,7 +315,7 @@ function isIpInNetwork(switchObjectId, ipAddress) {
     return false;
 }
 
-function broadcastSwitch(switchObjectId, excludeId) {
+async function broadcastSwitch(switchObjectId, excludeId) {
 
     const switchObject = document.getElementById(switchObjectId);
     const devices = getDeviceTable(switchObjectId);

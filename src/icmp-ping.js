@@ -5,8 +5,8 @@ function command_Ping(dataId, args, originIP) {
         return;
     }
 
-    if (args.length !== 2) {
-        terminalMessage("Error: Sintaxis: ping <ip>");
+    if (args.length > 3 || args.length < 2) {
+        terminalMessage("Error: Sintaxis: ping <ip> [-visual]");
         return;
     }
 
@@ -25,6 +25,11 @@ function command_Ping(dataId, args, originIP) {
         type: "echo-request",
         code: 0
     };
+
+    if (args[2] === "-visual") {
+        pingVisual(packet);
+        return;
+    }
 
     ping(packet);
     return;
@@ -87,4 +92,11 @@ function ping_f(origin) {
         seq++;
     }, 500);
 
+}
+
+async function pingVisual(packet) {
+    minimizeTerminal();
+    await waitForMove();
+    await sendPacketVisual(packet);
+    maximizeTerminal();
 }

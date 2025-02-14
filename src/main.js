@@ -176,7 +176,7 @@ function showTerminal(event) {
     modal.style.display = "none";
 }
 
-function minimizeTerminal() {
+async function minimizeTerminal() {
     const terminal = document.querySelector(".pc-terminal");
     if (!terminal) return;
 
@@ -202,7 +202,7 @@ function minimizeTerminal() {
 
 }
 
-function maximizeTerminal() {
+async function maximizeTerminal() {
     const terminal = document.querySelector(".pc-terminal");
     if (!terminal) return;
 
