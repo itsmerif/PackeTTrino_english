@@ -190,39 +190,28 @@ async function command_Ping(dataId, args, originIP) {
         return;
     }
 
-    if (args.length > 3 || args.length < 2) {
+    if (args.length !== 2) {
         terminalMessage("Error: Sintaxis: ping <ip> [-visual]");
         return;
     }
 
-    const destinationIP = args[1] || "0.0.0.0";
-
-    if (args.length === 2) { //modo NO visual
-
-        if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
-            terminalMessage("Error: La IP de destino introducida no es válida.");
-            return;
-        }
-
-        ping(originIP, destinationIP);
+    if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
+        terminalMessage("Error: La IP de destino introducida no es válida.");
         return;
     }
 
-    if (args.length === 3 && args[2] === "-visual") { //modo visual
+    //genero el paquete
+    
+    const packet = {
+        origin: originIP,
+        destination: args[1],
+        protocol: "icmp",
+        ttl: 64,
+        type: "echo-request",
+        code: 0
+    };
 
-        if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
-            terminalMessage("Error: La IP de destino introducida no es válida.");
-            return;
-        }
-
-        minimizeTerminal();
-        await waitForMove();
-        await ping(originIP, destinationIP, true);
-        maximizeTerminal();
-        return;
-    }
-
-    terminalMessage("Error: Sintaxis: ping <ip> [-visual]");
+    ping(packet);
     return;
 
 }

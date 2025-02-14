@@ -1,14 +1,15 @@
-function sendPacket(originIP, destinationIP, trace = []) {
+function sendPacket(packet, trace = []) {
+
+    const originIP = packet.origin;
+    const destinationIP = packet.destination;
 
     trace.push(originIP);
-
 
     if (!originIP || !destinationIP) {
         throw new Error("No se ha configurado el origen o el destino");
     }
 
     if (originIP === destinationIP) {
-        console.log("Paquete recibido. Saltos:", trace);
         return trace;
     }
 
@@ -54,7 +55,7 @@ function sendPacket(originIP, destinationIP, trace = []) {
             if (!isMacinNetwork(switchOriginObjectId, destinationMac)) { //ninguno de los equipos acepta la trama y se da por fallido
                 //como el equipo origen tenía esta ip con esa mac en su tabla arp, se debe borrar y hacer de nuevo una solicitud arp
                 delARPEntry(originId, destinationIP);
-                sendPacket(originIP, destinationIP);
+                sendPacket(packet, trace);
                 return trace;
             }
 
@@ -91,23 +92,33 @@ function sendPacket(originIP, destinationIP, trace = []) {
         }
 
         if (!isIpInARPTable(originId, defaultGateway)) {
-            sendPacket(originIP, defaultGateway, trace);
-            sendPacket(originIP, destinationIP, trace);
-            return trace;
+
+            const arpRequest = {
+                origin: packet.origin,
+                destination: defaultGateway,
+                protocol: "arp"
+            }
+
+            sendPacket(arpRequest);
+            sendPacket(packet);
+            return;
         }
 
         trace.push(defaultGateway);     
+        packet.ttl = packet.ttl - 1; //no tengo que comprobar si es igual a cero, ya que es el salto a la puerta de enlace
+        console.log(packet.ttl);
         const defaultGatewayMac = isIpInARPTable(originId, defaultGateway);
         saveMac(switchOriginObjectId, originId, originObjectMac);
         const networkDestinationObjectId = getDeviceFromMac(switchOriginObjectId, defaultGatewayMac);
-        routingPacket(originId, originIP, destinationIP, networkDestinationObjectId, trace);
+        routingPacket(packet, networkDestinationObjectId, trace);
         return trace;
     }
 }
 
 
-function routingPacket(networkOriginObjectId, networkOriginObjectIp, destinationIP, routerObjectId, trace) {
+function routingPacket(packet, routerObjectId, trace) {
 
+    const destinationIP = packet.destination;
     const routerObject = document.getElementById(routerObjectId);
     const routingTable = routerObject.querySelector(".routing-table").querySelector("table");
     const rows = routingTable.querySelectorAll("tr");
@@ -121,8 +132,8 @@ function routingPacket(networkOriginObjectId, networkOriginObjectIp, destination
         let ruleNetwork = cells[0].innerHTML;
         let ruleNetmask = cells[1].innerHTML;
         let ruleInterface = cells[3].innerHTML;
-
         if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) {
+
             const switchId = routerObject.getAttribute("data-switch-" + ruleInterface);
 
             if (!isIpInNetwork(switchId, destinationIP)) {
@@ -130,6 +141,9 @@ function routingPacket(networkOriginObjectId, networkOriginObjectIp, destination
             }
 
             trace.push(destinationIP);
+            packet.ttl = packet.ttl - 1;
+            console.log(packet.ttl);
+            if (packet.ttl === 0) throw new Error("El TTL del paquete ha llegado a cero.");
             return trace;
         }
     }
@@ -155,7 +169,10 @@ function routingPacket(networkOriginObjectId, networkOriginObjectIp, destination
 
                 const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
                 trace.push(nexthop);
-                routingPacket(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId, trace);
+                packet.ttl = packet.ttl - 1;
+                console.log(packet.ttl);
+                if (packet.ttl === 0) throw new Error("El TTL del paquete ha llegado a cero.");
+                routingPacket(packet, nexthopObjectId, trace);
                 return trace;
             }
         }
@@ -177,8 +194,14 @@ function routingPacket(networkOriginObjectId, networkOriginObjectIp, destination
         }
 
         const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
+
         trace.push(nexthop);
-        routingPacket(networkOriginObjectId, networkOriginObjectIp, destinationIP, nexthopObjectId, trace);
+        packet.ttl = packet.ttl - 1;
+        console.log(packet.ttl);
+
+        if (packet.ttl === 0) throw new Error("El TTL del paquete ha llegado a cero.");
+
+        routingPacket(packet, nexthopObjectId, trace);
         return trace;
     }
 

@@ -1,25 +1,34 @@
-function ping(originIP, destinationIP) {
+function ping(packet) {
 
     try {
 
-        sendPacket(originIP, destinationIP); //echo request
+        sendPacket(packet); //echo request
 
-        try {
+        try { //si sale bien, pedimos la respuesta
 
-            sendPacket(destinationIP, originIP); //echo reply
-            ping_s(originIP);
+            const newpacket = {
+                origin: packet.destination,
+                destination: packet.origin,
+                protocol: "icmp",
+                ttl: 64,
+                type: "echo-reply",
+                code: 0
+            }
+
+            sendPacket(newpacket); //echo reply
+            ping_s(packet.origin);
 
         }catch (error) {
 
             console.log("vuelta: " + error);
-            ping_f(originIP);
+            ping_f(packet.origin);
 
         }
 
     } catch (error) {
 
         console.log("ida: " + error);
-        ping_f(originIP);
+        ping_f(packet.origin);
 
     }
 
