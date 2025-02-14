@@ -45,6 +45,11 @@ function command_Traceroute(args, originIP) {
             hop++;
         }
 
+        window.pingInterval = setInterval(() => {
+            terminalMessage(hop + ". " + "*".padEnd(15) + " *");
+            hop++;
+        }, 500);
+
     }
 
 }

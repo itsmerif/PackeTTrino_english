@@ -53,14 +53,12 @@ function ping(packet) {
 
         }catch (error) {
 
-            console.log("vuelta: " + error);
             ping_f(packet.origin);
 
         }
 
     } catch (error) {
 
-        console.log("ida: " + error);
         ping_f(packet.origin);
 
     }
