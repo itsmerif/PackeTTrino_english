@@ -258,4 +258,5 @@ function routingPacket(packet, routerObjectId, trace) {
         "message": "No existe regla para enrutar el paquete en " + routerObjectId,
         "trace": trace
     }
+    
 }
