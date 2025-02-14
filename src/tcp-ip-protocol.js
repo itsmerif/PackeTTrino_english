@@ -2,6 +2,7 @@ function sendPacket(originIP, destinationIP, trace = []) {
 
     trace.push(originIP);
 
+
     if (!originIP || !destinationIP) {
         throw new Error("No se ha configurado el origen o el destino");
     }
@@ -38,19 +39,23 @@ function sendPacket(originIP, destinationIP, trace = []) {
             }
 
             const [networkDestinationObjectId, networkDestinationObjectmac] = isIpInNetwork(switchOriginObjectId, destinationIP);
+            addARPEntry(networkDestinationObjectId, originIP, originObjectMac); 
             saveMac(switchOriginObjectId, networkDestinationObjectId, networkDestinationObjectmac);
             addARPEntry(originId, destinationIP, networkDestinationObjectmac);
-            addARPEntry(networkDestinationObjectId, originIP, originObjectMac);
+            trace.push(destinationIP);
             return trace;
         }
 
         const destinationMac = isIpInARPTable(originId, destinationIP);
         saveMac(switchOriginObjectId, originId, originObjectMac);
 
-        if (!isMacInMACTable(switchOriginObjectId, destinationMac)) {
+        if (!isMacInMACTable(switchOriginObjectId, destinationMac)) { //no esta la mac en la tabla del switch, hacemos broadcast a todos los equipos conectados
 
-            if (!isMacinNetwork(switchOriginObjectId, destinationMac)) {
-                throw new Error("La MAC de destino no existe en la red");
+            if (!isMacinNetwork(switchOriginObjectId, destinationMac)) { //ninguno de los equipos acepta la trama y se da por fallido
+                //como el equipo origen tenía esta ip con esa mac en su tabla arp, se debe borrar y hacer de nuevo una solicitud arp
+                delARPEntry(originId, destinationIP);
+                sendPacket(originIP, destinationIP);
+                return trace;
             }
 
             const networkDestinationObjectId = isMacinNetwork(switchOriginObjectId, destinationMac);

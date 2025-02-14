@@ -96,6 +96,19 @@ function addARPEntry(networkObjectId, ip, mac) {
 
 }
 
+function delARPEntry(networkObjectId, targetip) {
+    let tabla = document.getElementById(networkObjectId).querySelector(".arp-table").querySelector("table");
+    let rows = tabla.querySelectorAll("tr");
+    for (let i = 1; i < rows.length; i++) {
+        let row = rows[i];
+        let cells = row.querySelectorAll("td");
+        let ip = cells[0].innerText.trim();
+        if (ip === targetip) {
+            row.remove();
+        }
+    }
+}
+
 function isMacTableEmpty(switchObjectId) {
 
     let tabla = document.getElementById(switchObjectId).querySelector("table");
