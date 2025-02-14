@@ -90,11 +90,9 @@ function dragTerminal(event) {
 function terminalMessage(message) {
     const terminal = document.querySelector(".pc-terminal");
     const output = document.querySelector(".terminal-output");
-
     const messageElement = document.createElement("p");
     messageElement.className = "terminal-message";
     messageElement.textContent = message;
-
     output.appendChild(messageElement);
     terminal.scrollTop = output.scrollHeight;
 }
@@ -244,7 +242,7 @@ function command_Traceroute(args, originIP) {
         let trace = sendPacket(originIP, args[1]);
         let hop = 1;
         for (let i = 0; i < trace.length - 1; i++) {
-            let text = hop + ". " + trace[i].toString().padEnd(15) + " " + trace[i + 1].toString();
+            let text = hop + ". " + trace[i].padEnd(15) + " " + trace[i + 1];
             terminalMessage(text);
             hop++;
         }
