@@ -204,7 +204,7 @@ async function command_Ping(dataId, args, originIP) {
             return;
         }
 
-        ping(originIP, destinationIP, false);
+        ping(originIP, destinationIP);
         return;
     }
 

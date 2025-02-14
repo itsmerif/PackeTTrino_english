@@ -125,7 +125,6 @@ function routingPacket(networkOriginObjectId, networkOriginObjectIp, destination
             }
 
             trace.push(destinationIP);
-            console.log("Paquete recibido. Saltos:", trace);
             return trace;
         }
     }

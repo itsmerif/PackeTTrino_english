@@ -136,14 +136,12 @@ function setNewIndex() {
 
     itemsDropped.forEach(item => {
         let itemid = item.id;
-        console.log(itemid);
         let itemindex = parseInt(itemid.split("-")[1]);
         if (!isNaN(itemindex)) indexes.push(itemindex);
     });
 
     itemsText.forEach(item => {
         let itemid = item.id;
-        console.log(itemid);
         let itemindex = parseInt(itemid.split("-")[1]);
         if (!isNaN(itemindex)) indexes.push(itemindex);
     });
@@ -151,7 +149,6 @@ function setNewIndex() {
     itemIndex = indexes.length > 0 ? Math.max(...indexes) + 1 : 1;
 
 }
-
 
 function setTextContents() {
 
