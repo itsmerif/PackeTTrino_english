@@ -1,3 +1,36 @@
+function command_Ping(dataId, args, originIP) {
+
+    if (dataId.includes("router-")) { //por ahora solo se puede hacer ping desde un pc
+        terminalMessage("Error: Este comando solo puede ser ejecutado desde un pc.");
+        return;
+    }
+
+    if (args.length !== 2) {
+        terminalMessage("Error: Sintaxis: ping <ip>");
+        return;
+    }
+
+    if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
+        terminalMessage("Error: La IP de destino introducida no es válida.");
+        return;
+    }
+
+    //genero el paquete
+
+    const packet = {
+        origin: originIP,
+        destination: args[1],
+        protocol: "icmp",
+        ttl: 64,
+        type: "echo-request",
+        code: 0
+    };
+
+    ping(packet);
+    return;
+
+}
+
 function ping(packet) {
 
     try {
