@@ -1,5 +1,9 @@
-function command_Traceroute(args, originIP) {
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
+async function command_Traceroute(args, originIP) {
+    
     if (args.length > 3) {
         terminalMessage("Error: Sintaxis: traceroute <ip> [-debug]");
         return;
@@ -20,7 +24,6 @@ function command_Traceroute(args, originIP) {
     };
 
     try {
-
         let trace = sendPacket(packet);
         let hop = 1;
 
@@ -28,6 +31,7 @@ function command_Traceroute(args, originIP) {
             let text = hop + ". " + trace[i].padEnd(15) + " " + trace[i + 1];
             terminalMessage(text);
             hop++;
+            await sleep(500); // Espera 500ms antes de mostrar el siguiente salto
         }
 
     } catch (error) {
@@ -37,12 +41,14 @@ function command_Traceroute(args, originIP) {
 
         if (args[2] === "-debug") {
             terminalMessage(error.message);
+            await sleep(500);
         }
 
         for (let i = 0; i < trace.length - 1; i++) {
             let text = hop + ". " + trace[i].padEnd(15) + " " + trace[i + 1];
             terminalMessage(text);
             hop++;
+            await sleep(500);
         }
 
         window.pingInterval = setInterval(() => {
@@ -51,5 +57,4 @@ function command_Traceroute(args, originIP) {
         }, 500);
 
     }
-
 }
