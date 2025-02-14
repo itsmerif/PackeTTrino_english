@@ -98,5 +98,6 @@ async function pingVisual(packet) {
     minimizeTerminal();
     await waitForMove();
     await sendPacketVisual(packet);
+    ping(packet);
     maximizeTerminal();
 }
