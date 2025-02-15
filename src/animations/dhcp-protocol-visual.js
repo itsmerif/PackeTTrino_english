@@ -1,42 +1,17 @@
-async function command_Dchp(dataId, args) {
-
-    //ya sé que el primer argumento es dhcp
-
-    if (args.length > 3 || args.length < 2) {
-        terminalMessage("Error: Sintaxis: dhcp [ -release | -renew ] [ -visual ]");
-        return;
-    }
-
-    if (args[1] === "-release") { //llamada al protocolo de liberación de ip
-        releaseDhcp(dataId);
-        return;
-    }
-
-    if (args[1] === "-renew" && args[2] === "-visual") {
-        minimizeTerminal();
-        await waitForMove();
-        await dhcpVisual(dataId);
-        maximizeTerminal();
-        return;
-    }
-
-    if (args[1] === "-renew" && args.length === 2) {
-        dhcp(dataId);
-        return;
-    }
-
-    terminalMessage("Error: Sintaxis: dhcp [ -release | -renew ] [ -visual ]");
-}
-
-function dhcp(networkObjectId) {
+async function dhcpVisual(networkObjectId) {
     const networkObject = document.getElementById(networkObjectId); //obtenemos el elemento
     if (networkObject.getAttribute("data-dhcp") === "false") { //no esta configurado para dhcp
         terminalMessage("Error: Equipo no configurado para asignación automática de dirección IP.")
         return;
     }
     const switchObjectId = networkObject.getAttribute("data-switch"); //obtenemos el id del switch al que está conectado
+    const switchObject = document.getElementById(switchObjectId); //obtenemos el switch
     //primero el equipo realiza un broadcast con DHCPDISCOVER
     terminalMessage("DHCPDISCOVER to 255.255.255.255");
+    movePacket(networkObject.style.left, networkObject.style.top, switchObject.style.left, switchObject.style.top, "discover");
+    await waitForMove();
+    broadcastSwitch(switchObjectId, networkObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+    await waitForMove();
     if (!isDHCPinNetwork(switchObjectId)) { //no hay un servidor DHCP o agente de retransmision en la red
         terminalMessage("No DHCPOFFERS received.");
         return;
@@ -46,8 +21,16 @@ function dhcp(networkObjectId) {
     if (type === "server") { //se trata de un servidor dhcp en la misma red
         //el server envia por broadcast DHCPOFFER
         const newIp = getRandomIpfromDhcp(serverObject.id); //la ip que ofrece el servidor
+        movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "offer");
+        await waitForMove();
+        broadcastSwitch(switchObjectId, serverObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+        await waitForMove();
         terminalMessage("DHCPOFFER from " + serverObject.getAttribute("data-ip") + " on " + newIp); //el servidor responde con DHCPOFFER
         terminalMessage("DHCPREQUEST to 255.255.255.255 on " + newIp); //el equipo responde con DHCPREQUEST
+        movePacket(networkObject.style.left, networkObject.style.top, switchObject.style.left, switchObject.style.top, "request");
+        await waitForMove();
+        broadcastSwitch(switchObjectId, networkObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+        await waitForMove();
         //realizamos todos los procesos
         addDhcpEntry(serverObject.id, newIp, networkObject.getAttribute("data-mac"), networkObject.id); //añadimos la entrada a la tabla dhcp
         addARPEntry(networkObject.id, serverObject.getAttribute("data-ip"), serverObject.getAttribute("data-mac")); //añadimos la ip y mac al equipo origen
@@ -57,13 +40,34 @@ function dhcp(networkObjectId) {
         networkObject.setAttribute("data-network", serverObject.getAttribute("data-network"));
         networkObject.setAttribute("data-gateway", serverObject.getAttribute("data-gateway"));
         networkObject.setAttribute("data-dhcp-server", serverObject.id);
+        //el servidor responde con DHCPACK
+        movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "ack");
+        await waitForMove();
+        movePacket(switchObject.style.left, switchObject.style.top, networkObject.style.left, networkObject.style.top, "ack");
+        await waitForMove();
         terminalMessage("DHCPACK from " + serverObject.getAttribute("data-ip") + " on" + newIp);
     } else { //se trata de un agente de retransmision
         const mainServer = serverObject.getAttribute("data-main-server"); //direccion ip del servidor dhcp principal
         const mainServerObject = document.querySelector(`[data-ip="${mainServer}"]`); //obtenemos el puntero al servidor dhcp principal  (TODO: hacer un getElementById)
+        await ping(serverObject.getAttribute("data-ip"), mainServer, visual); //enviamos un paquete al servidor dhcp principal
         const newIp = getRandomIpfromDhcp(mainServerObject.id); //la ip que ofrece el servidor
+        await ping(mainServer, serverObject.getAttribute("data-ip"), visual); //oferta del servidor al agente
+        movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "broadcast");
+        await waitForMove();
+        broadcastSwitch(switchObjectId, serverObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+        await waitForMove();
         terminalMessage("DHCPOFFER from " + mainServer + " on " + newIp); //offer del servidor dhcp principal
         terminalMessage("DHCPREQUEST to 255.255.255.255 on " + newIp); //request del agente
+        movePacket(networkObject.style.left, networkObject.style.top, switchObject.style.left, switchObject.style.top, "discover");
+        await waitForMove();
+        broadcastSwitch(switchObjectId, networkObjectId); //broadcast del switch a todos los dispositivos conectados excepto el origen
+        await waitForMove();
+        await ping(serverObject.getAttribute("data-ip"), mainServer, visual); //request al servidor
+        await ping(mainServer, serverObject.getAttribute("data-ip"), visual); //ack al agente
+        movePacket(serverObject.style.left, serverObject.style.top, switchObject.style.left, switchObject.style.top, "unicast");
+        await waitForMove();
+        movePacket(switchObject.style.left, switchObject.style.top, networkObject.style.left, networkObject.style.top, "ack");
+        await waitForMove();
         terminalMessage("DHCPACK from " + mainServer + " on " + newIp);
         addDhcpEntry(mainServerObject.id, newIp, networkObject.getAttribute("data-mac"), networkObject.id);
         networkObject.setAttribute("data-ip", newIp);
@@ -72,6 +76,7 @@ function dhcp(networkObjectId) {
         networkObject.setAttribute("data-gateway", serverObject.getAttribute("data-gateway"));
         networkObject.setAttribute("data-dhcp-server", serverObject.id);
     }
+
 }
 
 function getRandomIpfromDhcp(serverObjectId) {

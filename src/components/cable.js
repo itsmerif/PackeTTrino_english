@@ -31,26 +31,25 @@ function createCableObject(x1, y1, x2, y2, start, end) {
 
 }
 
-
 function deleteCable(event) {
 
     const circle = event.target;
     const cableObject = circle.previousElementSibling;
     const NetworkObject = document.getElementById(cableObject.getAttribute("end-start"));
     const switchObject = document.getElementById(cableObject.getAttribute("end-end"));
-    
+
     if (NetworkObject.id.startsWith("pc-")) {
 
         NetworkObject.setAttribute("data-switch", "");  //eliminamos la referencia al switch en el pc
         NetworkObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
-        
+
     }
-    
+
     if (NetworkObject.id.startsWith("server-")) {
 
         NetworkObject.setAttribute("data-switch", "");  //eliminamos la referencia al switch en el pc
         NetworkObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
-        
+
     }
 
     if (NetworkObject.id.startsWith("router-")) {
@@ -78,47 +77,3 @@ function deleteCable(event) {
     circle.remove();
     cableObject.remove();
 }
-
-function movePacket(x1, y1, x2, y2, type) {
-
-    return new Promise((resolve) => {
-
-        const svg = document.getElementById("svg-board");
-        const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
-
-        // Convertimos la entrada a números
-        x1 = parseInt(x1.replace("px", ""));
-        y1 = parseInt(y1.replace("px", ""));
-        x2 = parseInt(x2.replace("px", ""));
-        y2 = parseInt(y2.replace("px", ""));
-
-        img.setAttribute("href", `/assets/packets/${type}.png`);
-        img.setAttribute("width", "50");
-        img.setAttribute("height", "50");
-        img.setAttribute("x", x1);
-        img.setAttribute("y", y1);
-        svg.appendChild(img);
-
-        let startTime;
-
-        function animateMove(time) {
-            if (!startTime) startTime = time;
-            const progress = (time - startTime) / 1000;
-            const currentX = x1 + (x2 - x1) * Math.min(progress, 1); // Aseguramos que progress no pase de 1
-            const currentY = y1 + (y2 - y1) * Math.min(progress, 1);
-            img.setAttribute("x", currentX);
-            img.setAttribute("y", currentY);
-
-            if (progress < 1) {
-                requestAnimationFrame(animateMove);
-            } else {
-                svg.removeChild(img);
-                resolve(); // ⬅️ Resolvemos la Promise cuando termine la animación
-            }
-        }
-
-        requestAnimationFrame(animateMove);
-    });
-    
-}
-

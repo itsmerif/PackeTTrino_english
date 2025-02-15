@@ -7,6 +7,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 async function command_Traceroute(args, originIP) {
+
     if (args.length > 3) {
         terminalMessage("Error: Sintaxis: traceroute <ip> [-debug]");
         return;
@@ -64,6 +65,8 @@ async function command_Traceroute(args, originIP) {
             terminalMessage(hop + ". " + "*".padEnd(15) + " *");
             hop++;
         }, 500);
+
+        stopTrace = false;
     }
 }
 
