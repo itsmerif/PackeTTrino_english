@@ -185,26 +185,36 @@ async function routingPacketVisual(packet, routerObjectId) {
                 //obtengo el id del nuevo dispositivo enrutador
                 const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
                 //ahora desde el nuevo dispositivo enrutador, se procesa el paquete
-                routingPacketVisual(packet, nexthopObjectId);
+                await routingPacketVisual(packet, nexthopObjectId);
+                return;
             }
         }
     }
 
     // Ultimo recurso, miramos la regla por defecto -> en la fila 4
+
     let row = rows[4];
     let cells = row.querySelectorAll("td");
     let gateway = cells[2].innerHTML;
+
     if (gateway !== "") { //comprobamos que se ha definido una regla por defecto
         let ruleInterface = cells[3].innerHTML;
         let nexthop = cells[4].innerHTML;
         //obtenemos el switch al que está conectado el dispositivo enrutador por la interfaz que tiene la regla
         const switchId = routerObject.getAttribute("data-switch-" + ruleInterface);
+        const networkSwitchObject = document.getElementById(switchId);
+        //enviamos el paquete por unicast al switch
+        await movePacket(routerObject.style.left, routerObject.style.top, networkSwitchObject.style.left, networkSwitchObject.style.top, "unicast");
+        //el switch realiza un broadcast a todos los equipos conectados
+        broadcastSwitch(switchId, routerObjectId);
+        await waitForMove();
         //comprobamos que la ip de destino está en la red
         if (!isIpInNetwork(switchId, nexthop)) return false;
         //obtenemos el id del nuevo dispositivo enrutador
         const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
         //ahora desde el nuevo dispositivo enrutador, se procesa el paquete
-        routingPacketVisual(packet, nexthopObjectId);
+        await routingPacketVisual(packet, nexthopObjectId);
+        return;
     }
 
     //si no se puede enrutar, lo damos por fallido
