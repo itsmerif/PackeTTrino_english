@@ -32,6 +32,7 @@ function sendPacket(packet, trace = []) {
     if (getNetwork(originIP, networkOriginObjectNetmask) === getNetwork(destinationIP, networkOriginObjectNetmask)) {
 
         if (!isIpInARPTable(networkOriginObjectId, destinationIP)) {
+            
             saveMac(switchOriginObjectId, networkOriginObjectId, networkOriginObjectMac);
 
             if (!isIpInNetwork(switchOriginObjectId, destinationIP)) {
@@ -128,7 +129,6 @@ function sendPacket(packet, trace = []) {
         return trace;
     }
 }
-
 
 function routingPacket(packet, routerObjectId, trace) {
 
