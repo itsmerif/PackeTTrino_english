@@ -6,7 +6,7 @@ function command_Ping(dataId, args, originIP) {
     }
 
     if (args.length > 3 || args.length < 2) {
-        terminalMessage("Error: Sintaxis: ping <ip> [-visual]");
+        terminalMessage("Error: Sintaxis: ping <ip> [-v]");
         return;
     }
 
@@ -26,7 +26,7 @@ function command_Ping(dataId, args, originIP) {
         code: 0
     };
 
-    if (args[2] === "-visual") {
+    if (args[2] === "-v") {
         pingVisual(packet);
         return;
     }
@@ -58,12 +58,14 @@ function ping(packet) {
 
         }catch (error) {
 
+            terminalMessage(error.message);
             ping_f(packet.origin);
 
         }
 
     } catch (error) {
 
+        terminalMessage(error.message);
         ping_f(packet.origin);
 
     }

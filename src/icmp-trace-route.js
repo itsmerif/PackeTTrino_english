@@ -1,5 +1,12 @@
+let stopTrace = false;
+
+document.addEventListener("keydown", (event) => {
+    if (event.ctrlKey && event.key === "c") {
+        stopTrace = true;
+    }
+});
+
 async function command_Traceroute(args, originIP) {
-    
     if (args.length > 3) {
         terminalMessage("Error: Sintaxis: traceroute <ip> [-debug]");
         return;
@@ -24,6 +31,7 @@ async function command_Traceroute(args, originIP) {
         let hop = 1;
 
         for (let i = 0; i < trace.length - 1; i++) {
+            if (stopTrace) break; // Detiene el bucle si se presiona Ctrl + C
             let text = hop + ". " + trace[i].padEnd(15) + " " + trace[i + 1];
             terminalMessage(text);
             hop++;
@@ -41,6 +49,7 @@ async function command_Traceroute(args, originIP) {
         }
 
         for (let i = 0; i < trace.length - 1; i++) {
+            if (stopTrace) break;
             let text = hop + ". " + trace[i].padEnd(15) + " " + trace[i + 1];
             terminalMessage(text);
             hop++;
@@ -48,10 +57,13 @@ async function command_Traceroute(args, originIP) {
         }
 
         window.pingInterval = setInterval(() => {
+            if (stopTrace) {
+                clearInterval(window.pingInterval);
+                return;
+            }
             terminalMessage(hop + ". " + "*".padEnd(15) + " *");
             hop++;
         }, 500);
-
     }
 }
 

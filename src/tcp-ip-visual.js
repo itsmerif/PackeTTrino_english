@@ -170,7 +170,6 @@ async function routingPacketVisual(packet, routerObjectId) {
             let ruleNetwork = cells[0].innerHTML;
             let ruleNetmask = cells[1].innerHTML;
             if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) { //una regla remota coincide con el destino
-                alert("rule remota");
                 let ruleInterface = cells[3].innerHTML;
                 let nexthop = cells[4].innerHTML; //obtengo el siguiente hop
                 //obtenemos el switch al que está conectado el dispositivo enrutador por la interfaz que tiene la regla
