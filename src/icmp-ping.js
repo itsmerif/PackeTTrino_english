@@ -56,7 +56,7 @@ function ping(packet) {
             sendPacket(newpacket); //echo reply
             ping_s(packet.origin);
 
-        }catch (error) {
+        } catch (error) {
 
             terminalMessage(error.message);
             ping_f(packet.origin);
@@ -99,6 +99,10 @@ function ping_f(origin) {
 async function pingVisual(packet) {
     minimizeTerminal();
     await waitForMove();
-    await sendPacketVisual(packet);
-    //maximizeTerminal();
+    try {
+        await sendPacketVisual(packet); //echo request
+    }catch (error) {
+        terminalMessage(error);
+    }
+    maximizeTerminal();
 }

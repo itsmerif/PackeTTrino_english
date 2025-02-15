@@ -7,9 +7,9 @@ async function sendPacketVisual(packet) {
     const originIP = packet.origin;
     const destinationIP = packet.destination;
     //comprobamos que el paquete tiene origen y destino
-    if (!originIP || !destinationIP) return false;
+    if (!originIP || !destinationIP) throw new Error("No se ha configurado el origen o no hay destino");
     //comprobamos que el origen y el destino no son iguales
-    if (originIP === destinationIP) return true;
+    if (originIP === destinationIP) return;
     //obtenemos las propiedades del paquete
     const networkOriginObject = document.querySelector(`[data-ip="${originIP}"]`);
     const networkOriginObjectId = networkOriginObject.id;
@@ -18,7 +18,7 @@ async function sendPacketVisual(packet) {
     const switchOriginObjectId = networkOriginObject.getAttribute("data-switch");
     const switchOriginObject = document.getElementById(switchOriginObjectId);
     //comprobamos que el equipo está conectado a un switch
-    if (!switchOriginObjectId) return false;
+    if (!switchOriginObjectId) throw new Error("No se ha detectado ninguna conexión.");
     //comprobamos si el destino está en la misma red que el origen
     if (getNetwork(originIP, networkOriginObjectNetmask) === getNetwork(destinationIP, networkOriginObjectNetmask)) { //están en la misma red
         //comprobamos si el destino está en la tabla arp del equipo origen
@@ -31,7 +31,7 @@ async function sendPacketVisual(packet) {
             broadcastSwitch(switchOriginObjectId, networkOriginObjectId);
             await waitForMove();
             //los equipos de la red valoran la solicitud arp
-            if (!isIpInNetwork(switchOriginObjectId, destinationIP)) return false;
+            if (!isIpInNetwork(switchOriginObjectId, destinationIP)) throw new Error("Ningún equipo de la red tiene esa IP.");
             //un equipo confirma que tiene esa ip
             const [networkDestinationObjectId, networkDestinationObjectmac] = isIpInNetwork(switchOriginObjectId, destinationIP);
             const networkDestinationObject = document.getElementById(networkDestinationObjectId);
@@ -45,7 +45,7 @@ async function sendPacketVisual(packet) {
             await movePacket(switchOriginObject.style.left, switchOriginObject.style.top, networkOriginObject.style.left, networkOriginObject.style.top, "arpreply");
             //el origen añade el destino a su tabla arp
             addARPEntry(networkOriginObjectId, destinationIP, networkDestinationObjectmac);
-            return true;
+            return;
         }
         //el destino está en la tabla arp del origen
         const destinationMac = isIpInARPTable(networkOriginObjectId, destinationIP);
@@ -63,7 +63,7 @@ async function sendPacketVisual(packet) {
                 //al no recibir respuesta, se elimina la ip de destino de la tabla arp del origen y se envia una solicitud arp
                 delARPEntry(networkOriginObjectId, destinationIP);
                 sendPacketVisual(packet);
-                return false;
+                return;
             }
             //uno de los equipos acepta la trama y debe comprobar si la ip de destino coincide con la ip del equipo destino
             const networkDestinationObjectId = isMacinNetwork(switchOriginObjectId, destinationMac);
@@ -71,7 +71,7 @@ async function sendPacketVisual(packet) {
                 //al no recibir respuesta, se elimina la ip de destino de la tabla arp del origen y se envia una solicitud arp
                 delARPEntry(networkOriginObjectId, destinationIP);
                 sendPacketVisual(packet);
-                return false;
+                return;
             }
             //el destino añade al origen a su tabla arp
             addARPEntry(networkDestinationObjectId, originIP, networkOriginObjectMac);
@@ -81,7 +81,7 @@ async function sendPacketVisual(packet) {
             saveMac(switchOriginObjectId, networkDestinationObjectId, destinationMac);
             //el switch devuelve una echo reply al origen
             await movePacket(switchOriginObject.style.left, switchOriginObject.style.top, networkOriginObject.style.left, networkOriginObject.style.top, "unicast");
-            return true;
+            return;
         }
         //el destino está en la tabla mac del switch
         const networkDestinationObjectId = getDeviceFromMac(switchOriginObjectId, destinationMac);
@@ -89,8 +89,8 @@ async function sendPacketVisual(packet) {
         //el switch envia el echo request por unicast al destino
         await movePacket(switchOriginObject.style.left, switchOriginObject.style.top, networkDestinationObject.style.left, networkDestinationObject.style.top, "unicast");
         //el paquete es procesado por el destino
-        if (!macCheck(networkDestinationObjectId, destinationMac)) return false;
-        if (!ipCheck(switchOriginObjectId, networkDestinationObjectId, destinationIP)) return false;
+        if (!macCheck(networkDestinationObjectId, destinationMac)) throw new Error("La MAC de destino no coincide con la MAC del equipo destino.");
+        if (!ipCheck(switchOriginObjectId, networkDestinationObjectId, destinationIP)) throw new Error("La IP de destino no coincide con la IP del equipo destino.");
         //el destino confirma el paquete
         //añade el origen a su tabla arp (si no la tiene)
         addARPEntry(networkDestinationObjectId, originIP, networkOriginObjectMac);
@@ -100,12 +100,12 @@ async function sendPacketVisual(packet) {
         saveMac(switchOriginObjectId, networkDestinationObjectId, destinationMac);
         //reenvia el echo reply por unicast al origen
         await movePacket(switchOriginObject.style.left, switchOriginObject.style.top, networkOriginObject.style.left, networkOriginObject.style.top, "unicast");
-        return true;
+        return;
 
     } else { //diferente red
         //obtenemos la puerta de enlace del origen
         const defaultGateway = networkOriginObject.getAttribute("data-gateway");
-        if (!defaultGateway) return false;
+        if (!defaultGateway) throw new Error("No existe una puerta de enlace en el origen");
         //comprobamos si la ip de la puerta de enlace está en la tabla arp del origen
         if (!isIpInARPTable(networkOriginObjectId, defaultGateway)) {
             const arpRequest = {
@@ -116,7 +116,7 @@ async function sendPacketVisual(packet) {
             //enviamos una solicitud arp al switch. si tiene exito, se reinicia el proceso
             await sendPacketVisual(arpRequest);
             sendPacketVisual(packet);
-            return false;
+            return;
         }
         //la puerta de enlace está en la tabla arp del origen
         const defaultGatewayMac = isIpInARPTable(networkOriginObjectId, defaultGateway);
@@ -159,9 +159,9 @@ async function routingPacketVisual(packet, routerObjectId) {
             broadcastSwitch(switchId, routerObjectId);
             await waitForMove();
             //los equipos de la red valoran la trama
-            if (!isIpInNetwork(switchId, destinationIP)) return false;
+            if (!isIpInNetwork(switchId, destinationIP)) throw new Error("Ningún equipo de la red tiene esa IP.");
             //el paquete ha llegado a un equipo que acepta la trama
-            return true;
+            return;
         }
     }
     //Reglas remotas -> de la fila 5 a la ultima
@@ -183,12 +183,12 @@ async function routingPacketVisual(packet, routerObjectId) {
                 broadcastSwitch(switchId, routerObjectId);
                 await waitForMove();
                 //los equipos de la red valoran la trama
-                if (!isIpInNetwork(switchId, nexthop)) return false;
+                if (!isIpInNetwork(switchId, nexthop)) throw new Error("Ningún equipo de la red tiene esa IP.");
                 //obtengo el id del nuevo dispositivo enrutador
                 const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
                 //reducimos el TTL del paquete
                 packet.ttl = packet.ttl - 1;
-                if (packet.ttl === 0) return false;
+                if (packet.ttl === 0) throw new Error("El TTL del paquete ha llegado a cero");
                 //ahora desde el nuevo dispositivo enrutador, se procesa el paquete
                 await routingPacketVisual(packet, nexthopObjectId);
                 return;
@@ -211,18 +211,16 @@ async function routingPacketVisual(packet, routerObjectId) {
         broadcastSwitch(switchId, routerObjectId);
         await waitForMove();
         //comprobamos que la ip de destino está en la red
-        if (!isIpInNetwork(switchId, nexthop)) return false;
+        if (!isIpInNetwork(switchId, nexthop)) throw new Error(`La dirección ${nexthop} no se encuentra en la red.`);
         //obtenemos el id del nuevo dispositivo enrutador
         const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
         //reducimos el TTL del paquete
         packet.ttl = packet.ttl - 1;
-        if (packet.ttl === 0) return false;
+        if (packet.ttl === 0) throw new Error("El TTL del paquete ha llegado a cero");
         //ahora desde el nuevo dispositivo enrutador, se procesa el paquete
         await routingPacketVisual(packet, nexthopObjectId);
         return;
     }
-
     //si no se puede enrutar, lo damos por fallido
-    return false;
-
+    throw new Error("No existe regla para enrutar el paquete en " + routerObjectId);
 }
