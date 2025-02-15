@@ -1,3 +1,33 @@
+async function command_Dchp(dataId, args) {
+
+    //ya sé que el primer argumento es dhcp
+
+    if (args.length > 3 || args.length < 2) {
+        terminalMessage("Error: Sintaxis: dhcp [ -release | -renew ] [ -visual ]");
+        return;
+    }
+
+    if (args[1] === "-release") { //llamada al protocolo de liberación de ip
+        releaseDhcp(dataId);
+        return;
+    }
+
+    if (args[1] === "-renew" && args[2] === "-visual") {
+        minimizeTerminal();
+        await waitForMove();
+        await dhcp(dataId, true);
+        maximizeTerminal();
+        return;
+    }
+
+    if (args[1] === "-renew" && args.length === 2) {
+        dhcp(dataId, false);
+        return;
+    }
+
+    terminalMessage("Error: Sintaxis: dhcp [ -release | -renew ] [ -visual ]");
+}
+
 async function dhcp(networkObjectId, visual = false) {
 
     const networkObject = document.getElementById(networkObjectId); //obtenemos el elemento

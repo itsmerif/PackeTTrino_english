@@ -5,20 +5,20 @@
   <meta charset="UTF-8">
   <title>PackeTTrino</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./styles/main.css">
-  <link rel="stylesheet" href="./styles/board.css">
-  <link rel="stylesheet" href="./styles/panel.css">
-  <link rel="stylesheet" href="./styles/pc.css">
-  <link rel="stylesheet" href="./styles/switch.css">
-  <link rel="stylesheet" href="./styles/arp-table.css">
-  <link rel="stylesheet" href="./styles/routing-table.css">
-  <link rel="stylesheet" href="./styles/dhcp-table.css">
-  <link rel="stylesheet" href="./styles/router.css">
-  <link rel="stylesheet" href="./styles/annotation.css">
-  <link rel="stylesheet" href="./styles/terminal.css">
-  <link rel="stylesheet" href="./styles/advancedoptions.css">
-  <link rel="stylesheet" href="./styles/dhcpserver.css">
-  <link rel="stylesheet" href="./styles/packet.css">
+  <link rel="stylesheet" href="./assets/styles/main.css">
+  <link rel="stylesheet" href="./assets/styles/board.css">
+  <link rel="stylesheet" href="./assets/styles/panel.css">
+  <link rel="stylesheet" href="./assets/styles/pc.css">
+  <link rel="stylesheet" href="./assets/styles/switch.css">
+  <link rel="stylesheet" href="./assets/styles/arp-table.css">
+  <link rel="stylesheet" href="./assets/styles/routing-table.css">
+  <link rel="stylesheet" href="./assets/styles/dhcp-table.css">
+  <link rel="stylesheet" href="./assets/styles/router.css">
+  <link rel="stylesheet" href="./assets/styles/annotation.css">
+  <link rel="stylesheet" href="./assets/styles/terminal.css">
+  <link rel="stylesheet" href="./assets/styles/advancedoptions.css">
+  <link rel="stylesheet" href="./assets/styles/dhcpserver.css">
+  <link rel="stylesheet" href="./assets/styles/packet.css">
 </head>
 
 <body onload="init()">
@@ -122,23 +122,23 @@
 
   <div class="packet-colors" style="display: none;"></div>
 
-  <script src="./src/main.js"></script>
-  <script src="./src/board.js"></script>
-  <script src="./src/panel.js"></script>
-  <script src="./src/pc.js"></script>
-  <script src="./src/functions.js"></script>
-  <script src="./src/router.js"></script>
-  <script src="./src/switch.js"></script>
-  <script src="./src/dhcpserver.js"></script>
-  <script src="./src/dhcp-relay-agent.js"></script>
-  <script src="./src/terminal.js"></script>
-  <script src="./src/cable.js"></script>
-  <script src="./src/icmp-ping.js"></script>
-  <script src="./src/icmp-trace-route.js"></script>
-  <script src="./src/dhcp-protocol.js"></script>
-  <script src="./src/text.js"></script>
-  <script src="./src/tcp-ip-protocol.js"></script>
-  <script src="./src/tcp-ip-visual.js"></script>
+  <script src="./src/animations/ip-protocol-visual.js"></script>
+  <script src="./src/components/panel-items.json"></script>
+  <script src="./src/components/terminal.js"></script>
+  <script src="./src/components/text.js"></script>
+  <script src="./src/main/main.js"></script>
+  <script src="./src/main/board.js"></script>
+  <script src="./src/network_functions/functions.js"></script>
+  <script src="./src/network_objects/cable.js"></script>
+  <script src="./src/network_objects/dhcp-relay-agent.js"></script>
+  <script src="./src/network_objects/dhcpserver.js"></script>
+  <script src="./src/network_objects/pc.js"></script>
+  <script src="./src/network_objects/router.js"></script>
+  <script src="./src/network_objects/switch.js"></script>
+  <script src="./src/protocols/dhcp-protocol.js"></script>
+  <script src="./src/protocols/icmp-protocol-ping.js"></script>
+  <script src="./src/protocols/icmp-protocol-trace-route.js"></script>
+  <script src="./src/protocols/ip-protocol.js"></script>
 
 </body>
 

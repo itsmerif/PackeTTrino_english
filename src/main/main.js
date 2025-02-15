@@ -18,7 +18,7 @@ async function init() {
 }
 
 function getPanelItems() {
-    fetch("./components/panel-items.json")
+    fetch("./src/components/panel-items.json")
         .then(response => response.json())
         .then(data => {
             const panel = document.getElementById("item-panel");
