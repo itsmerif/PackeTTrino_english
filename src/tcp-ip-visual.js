@@ -170,10 +170,12 @@ async function routingPacketVisual(packet, routerObjectId) {
             let ruleNetwork = cells[0].innerHTML;
             let ruleNetmask = cells[1].innerHTML;
             if (ruleNetwork === getNetwork(destinationIP, ruleNetmask)) { //una regla remota coincide con el destino
+                alert("rule remota");
                 let ruleInterface = cells[3].innerHTML;
                 let nexthop = cells[4].innerHTML; //obtengo el siguiente hop
                 //obtenemos el switch al que está conectado el dispositivo enrutador por la interfaz que tiene la regla
                 const switchId = routerObject.getAttribute("data-switch-" + ruleInterface);
+                const networkSwitchObject = document.getElementById(switchId);
                 //enviamos el paquete por unicast al switch
                 await movePacket(routerObject.style.left, routerObject.style.top, networkSwitchObject.style.left, networkSwitchObject.style.top, "unicast");
                 //el switch realiza un broadcast a todos los equipos conectados
@@ -184,7 +186,7 @@ async function routingPacketVisual(packet, routerObjectId) {
                 //obtengo el id del nuevo dispositivo enrutador
                 const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
                 //ahora desde el nuevo dispositivo enrutador, se procesa el paquete
-                routingPacket(packet, nexthopObjectId);
+                routingPacketVisual(packet, nexthopObjectId);
             }
         }
     }
@@ -203,10 +205,10 @@ async function routingPacketVisual(packet, routerObjectId) {
         //obtenemos el id del nuevo dispositivo enrutador
         const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
         //ahora desde el nuevo dispositivo enrutador, se procesa el paquete
-        routingPacket(packet, nexthopObjectId);
+        routingPacketVisual(packet, nexthopObjectId);
     }
 
     //si no se puede enrutar, lo damos por fallido
     return false;
-    
+
 }
