@@ -120,14 +120,16 @@ async function sendPacketVisual(packet) {
         }
         //la puerta de enlace está en la tabla arp del origen
         const defaultGatewayMac = isIpInARPTable(networkOriginObjectId, defaultGateway);
-        //el origen envia el icmp echo request por unicast al switch
+        //el origen envia el paquete por unicast al switch
         await movePacket(networkOriginObject.style.left, networkOriginObject.style.top, switchOriginObject.style.left, switchOriginObject.style.top, "unicast");
         //el switch añade el origen a su tabla mac (si no la tiene)
         saveMac(switchOriginObjectId, networkOriginObjectId, networkOriginObjectMac);
         const networkDestinationObjectId = getDeviceFromMac(switchOriginObjectId, defaultGatewayMac); //obtenemos el id del destino
         const networkDestinationObject = document.getElementById(networkDestinationObjectId);
-        //el switch envia el echo request por unicast al destino
+        //el switch envia el paquete por unicast al destino
         await movePacket(switchOriginObject.style.left, switchOriginObject.style.top, networkDestinationObject.style.left, networkDestinationObject.style.top, "unicast");
+        //reducimos el TTL del paquete
+        packet.ttl = packet.ttl - 1;
         //el paquete es procesado por el destino
         await routingPacketVisual(packet, networkDestinationObjectId);
     }
@@ -184,19 +186,19 @@ async function routingPacketVisual(packet, routerObjectId) {
                 if (!isIpInNetwork(switchId, nexthop)) return false;
                 //obtengo el id del nuevo dispositivo enrutador
                 const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
+                //reducimos el TTL del paquete
+                packet.ttl = packet.ttl - 1;
+                if (packet.ttl === 0) return false;
                 //ahora desde el nuevo dispositivo enrutador, se procesa el paquete
                 await routingPacketVisual(packet, nexthopObjectId);
                 return;
             }
         }
     }
-
     // Ultimo recurso, miramos la regla por defecto -> en la fila 4
-
     let row = rows[4];
     let cells = row.querySelectorAll("td");
     let gateway = cells[2].innerHTML;
-
     if (gateway !== "") { //comprobamos que se ha definido una regla por defecto
         let ruleInterface = cells[3].innerHTML;
         let nexthop = cells[4].innerHTML;
@@ -212,6 +214,9 @@ async function routingPacketVisual(packet, routerObjectId) {
         if (!isIpInNetwork(switchId, nexthop)) return false;
         //obtenemos el id del nuevo dispositivo enrutador
         const nexthopObjectId = isIpInNetwork(switchId, nexthop)[0];
+        //reducimos el TTL del paquete
+        packet.ttl = packet.ttl - 1;
+        if (packet.ttl === 0) return false;
         //ahora desde el nuevo dispositivo enrutador, se procesa el paquete
         await routingPacketVisual(packet, nexthopObjectId);
         return;
