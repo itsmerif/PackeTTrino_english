@@ -111,10 +111,10 @@ function command_Ip(id, args) {
         const gateway = pc.getAttribute("data-gateway");
         const mac = pc.getAttribute("data-mac");
 
-        terminalMessage(`Dirección IP: ${ip}
-        Puerta de Enlace: ${gateway}
-        Máscara de Red: ${netmask}
-        Dirección Física: ${mac}`);
+        terminalMessage(`Dirección IP: ${ip}`);
+        terminalMessage(`Puerta de Enlace: ${gateway}`);
+        terminalMessage(`Máscara de Red: ${netmask}`);
+        terminalMessage(`Dirección Física: ${mac}`);
 
         return;
     }
