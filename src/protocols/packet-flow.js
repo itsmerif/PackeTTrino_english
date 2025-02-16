@@ -82,7 +82,8 @@ function packetGenerator_PC(originId, originIP, destinationIP, type) {
         }
 
         if (packet) {
-            terminalMessage(originId + ": Enviando paquete " + type + "...");
+            terminalMessage(originId + ": Enviando paquete " + type + " a la puerta de enlace...");
+            console.log(packet);
             kernelSwitch(originId, switchObjectId, packet);
         }
 
@@ -93,30 +94,27 @@ function packetGenerator_PC(originId, originIP, destinationIP, type) {
 
 function kernelSwitch(networkObjectId, switchObjectId, packet) {
 
+    console.log(packet);
+
     saveMac(switchObjectId, networkObjectId, packet.layer2.origin_mac);
 
     if (packet.layer2.destination_mac === "ff:ff:ff:ff:ff:ff" || !isMacInMACTable(switchObjectId, packet.layer2.destination_mac)) {
+        terminalMessage(switchObjectId + ": Saturando todos los puertos...");
         const physical_ports = getDeviceTable(switchObjectId);
-
         for (let i = 0; i < physical_ports.length; i++) {
-
             if (physical_ports[i] !== networkObjectId) {
-
                 if (physical_ports[i].startsWith("router-")) {
                     packetProcessor_Router(switchObjectId, physical_ports[i], packet);
                 }
-
                 packetProcessor_PC(physical_ports[i], packet);
-
             }
         }
-
         return;
     }
 
     const device = getDeviceFromMac(switchObjectId, packet.layer2.destination_mac);
-    terminalMessage(switchObjectId + ": Enviando paquete directamente a " + device);
 
+    terminalMessage(switchObjectId + ": Enviando paquete directamente a " + device);
     if (device.startsWith("router-")) {
         packetProcessor_Router(switchObjectId, device, packet);
     } else {
@@ -126,7 +124,7 @@ function kernelSwitch(networkObjectId, switchObjectId, packet) {
 }
 
 function packetProcessor_PC(networkObjectId, packet) {
-
+    console.log(packet);
     const networkObject = document.getElementById(networkObjectId);
 
     if (packet.layer2.protocol === "arp") {
@@ -136,7 +134,7 @@ function packetProcessor_PC(networkObjectId, packet) {
             if (packet.layer3.destination_ip !== networkObject.getAttribute("data-ip")) {
                 return;
             }
-
+            
             addARPEntry(networkObjectId, packet.layer3.origin_ip, packet.layer2.origin_mac);
             packetGenerator_PC(networkObjectId, packet.layer3.destination_ip, packet.layer3.origin_ip, "arp-reply");
 
@@ -165,8 +163,7 @@ function packetProcessor_PC(networkObjectId, packet) {
             if (packet.layer3.destination_ip !== networkObject.getAttribute("data-ip")) {
                 return;
             }
-
-            addARPEntry(networkObjectId, packet.layer3.origin_ip, packet.layer2.origin_mac);
+          
             packetGenerator_PC(networkObjectId, networkObject.getAttribute("data-ip"), packet.layer3.origin_ip, "icmp-echo-reply");
 
         } else if (packet.layer3.type === "echo-reply") {
@@ -179,7 +176,7 @@ function packetProcessor_PC(networkObjectId, packet) {
 }
 
 function packetProcessor_Router(switchObjectId, routerObjectId, packet) {
-
+    console.log(packet);
     const routerObject = document.getElementById(routerObjectId);
     let routerObjectIp;
 
@@ -196,7 +193,7 @@ function packetProcessor_Router(switchObjectId, routerObjectId, packet) {
         if (packet.layer2.protocol === "arp" && packet.layer2.type === "request") {
             addARPEntry(routerObjectId, packet.layer3.origin_ip, packet.layer2.origin_mac);
             const newPacket = arpReply(routerObjectIp, packet.layer3.origin_ip, routerObject.getAttribute("data-mac"), packet.layer2.origin_mac);
-            terminalMessage(routerObjectIp + " respondiendo ARP...");
+            terminalMessage(routerObjectId + ": respondiendo ARP...");
             kernelSwitch(routerObjectId, switchObjectId, newPacket);
             return;
         }
@@ -228,8 +225,10 @@ function packetProcessor_Router(switchObjectId, routerObjectId, packet) {
 
         if (ruleNetwork === getNetwork(destination_ip, ruleNetmask)) {
             const physical_port = routerObject.getAttribute("data-switch-" + ruleInterface);
-            packet.layer2.destination_mac = "ff:ff:ff:ff:ff:ff";
-            console.log(packet);
+            //cambiasmos la mac de destino por la que tenemos en la tabla de ARP o por broadcast
+            packet.layer2.destination_mac = isIpInARPTable(routerObjectId, destination_ip) || "ff:ff:ff:ff:ff:ff";
+            //cambiamos la mac de origen por la del router
+            packet.layer2.origin_mac = routerObject.getAttribute("data-mac");
             terminalMessage(routerObjectId + " enviando paquete a " + physical_port);
             kernelSwitch(routerObjectId, physical_port, packet);
         }
