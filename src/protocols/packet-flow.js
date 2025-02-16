@@ -7,25 +7,52 @@ function command_Pack(dataId, args) {
 function packetGenerator(originId, originIP, destinationIP) {
 
     const networkObject = document.getElementById(originId);
+    const networkObjectNetmask = networkObject.getAttribute("data-netmask");
     const switchObjectId = networkObject.getAttribute("data-switch");
     const originMac = networkObject.getAttribute("data-mac");
-    const destinationMac = isIpInARPTable(originId, destinationIP);
 
     if (!switchObjectId) {
         terminalMessage("Error: Este equipo no tiene conexión.");
         return;
     }
 
-    if (!destinationMac) {
-        const packet = arpRequest(originIP, destinationIP, originMac);
-        terminalMessage("La IP de destino no está en la tabla ARP del origen. Enviando solicitud ARP...");
-        kernelSwitch(originId, switchObjectId, packet);
-        return;
-    }
+    if (getNetwork(originIP, networkObjectNetmask) === getNetwork(destinationIP, networkObjectNetmask)) { //destino y origen en la misma red
 
-    const packet = icmpEchoRequest(originIP, destinationIP, originMac, destinationMac);
-    terminalMessage("Enviando paquete ICMP...");
-    kernelSwitch(originId, switchObjectId, packet);
+        let destinationMac = isIpInARPTable(originId, destinationIP);
+
+        if (!destinationMac) {
+            const packet = arpRequest(originIP, destinationIP, originMac);
+            terminalMessage("La IP de destino no está en la tabla ARP del origen. Enviando solicitud ARP...");
+            kernelSwitch(originId, switchObjectId, packet);
+            return;
+        }
+
+        const packet = icmpEchoRequest(originIP, destinationIP, originMac, destinationMac);
+        terminalMessage("Enviando paquete ICMP...");
+        kernelSwitch(originId, switchObjectId, packet);
+
+    } else {
+
+        const defaultGateway = networkObject.getAttribute("data-gateway");
+
+        if (!defaultGateway) { //no existe una puerta de enlace en el origen
+            terminalMessage("No existe una puerta de enlace en el origen");
+            return;
+        }
+
+        const gatewayMac = isIpInARPTable(originId, defaultGateway);
+
+        if (!gatewayMac) {
+            const packet = arpRequest(originIP, defaultGateway, originMac);
+            terminalMessage("La IP de destino no está en la tabla ARP del origen. Enviando solicitud ARP...");
+            kernelSwitch(originId, switchObjectId, packet);
+        }
+
+        const packet = icmpEchoRequest(originIP, destinationIP, originMac, gatewayMac);
+        terminalMessage("Enviando paquete ICMP a la puerta de enlace...");
+        kernelSwitch(originId, switchObjectId, packet);
+
+    }
 }
 
 function kernelSwitch(networkObjectId, switchObjectId, packet) {
@@ -36,38 +63,54 @@ function kernelSwitch(networkObjectId, switchObjectId, packet) {
         const physical_ports = getDeviceTable(switchObjectId);
 
         for (let i = 0; i < physical_ports.length; i++) {
+
             if (physical_ports[i] !== networkObjectId) {
+
+                if (physical_ports[i].startsWith("router-")) {
+                    packetProcessor_Router(switchObjectId, physical_ports[i], packet);
+                }
+
                 packetProcessor(physical_ports[i], packet);
+
             }
         }
+
         return;
     }
 
     const device = getDeviceFromMac(switchObjectId, packet.layer2.destination_mac);
     terminalMessage("Enviando paquete directamente a " + device);
-    packetProcessor(device, packet);
+
+    if (device.startsWith("router-")) {
+        packetProcessor_Router(switchObjectId, device, packet);
+    } else {
+        packetProcessor(device, packet);
+    }
+
 }
 
 function packetProcessor(networkObjectId, packet) {
-
+    
+    console.log(networkObjectId, packet);
     const networkObject = document.getElementById(networkObjectId);
     const switchObjectId = networkObject.getAttribute("data-switch");
 
     if (packet.layer2.protocol === "arp") {
 
-        if (packet.layer2.type === "request"){
+        if (packet.layer2.type === "request") {
 
             if (packet.layer3.destination_ip !== networkObject.getAttribute("data-ip")) {
-                terminalMessage("Error: La IP de destino no coincide con la IP del equipo destino: " + networkObject.getAttribute("data-ip"));
+                //terminalMessage("Error: La IP de destino no coincide con la IP del equipo destino: " + networkObject.getAttribute("data-ip"));
                 return;
             }
-            
-            const newPacket = arpReply(networkObject.getAttribute("data-ip"), packet.layer3.origin_ip, networkObject.getAttribute("data-mac"), packet.layer2.origin_mac);    
+
+            addARPEntry(networkObjectId, packet.layer3.origin_ip, packet.layer2.origin_mac);
+            const newPacket = arpReply(networkObject.getAttribute("data-ip"), packet.layer3.origin_ip, networkObject.getAttribute("data-mac"), packet.layer2.origin_mac);
             terminalMessage(networkObject.getAttribute("data-ip") + " respondiendo ARP...");
             kernelSwitch(networkObjectId, switchObjectId, newPacket);
             return;
 
-        }else if (packet.layer2.type === "reply") {
+        } else if (packet.layer2.type === "reply") {
 
             addARPEntry(networkObjectId, packet.layer3.origin_ip, packet.layer2.origin_mac);
             terminalMessage("La IP de " + networkObjectId + " ha sido agregada a la tabla ARP.");
@@ -82,26 +125,80 @@ function packetProcessor(networkObjectId, packet) {
         if (packet.layer3.type === "echo-request") {
 
             if (packet.layer3.destination_ip !== networkObject.getAttribute("data-ip")) {
-                terminalMessage("Error: La IP de destino no coincide con la IP del equipo destino: " + networkObject.getAttribute("data-ip"));
+                //terminalMessage("Error: La IP de destino no coincide con la IP del equipo destino: " + networkObject.getAttribute("data-ip"));
                 return;
             }
-    
-            if (packet.layer2.destination_mac !== networkObject.getAttribute("data-mac")) {
-                terminalMessage("Error: La MAC de destino no coincide con la MAC del equipo destino: " + networkObject.getAttribute("data-mac"));
-                return;
-            }
-            
-            const newPacket = icmpEchoReply(networkObject.getAttribute("data-ip"), packet.layer3.origin_ip, networkObject.getAttribute("data-mac"), packet.layer2.origin_mac);    
+
+            addARPEntry(networkObjectId, packet.layer3.origin_ip, packet.layer2.origin_mac);
+            const newPacket = icmpEchoReply(networkObject.getAttribute("data-ip"), packet.layer3.origin_ip, networkObject.getAttribute("data-mac"), packet.layer2.origin_mac);
             terminalMessage("Respondiendo ICMP...");
             kernelSwitch(networkObjectId, switchObjectId, newPacket);
-            return;
 
         } else if (packet.layer3.type === "echo-reply") {
 
             terminalMessage("Respuesta ICMP recibida.");
-            return;
 
         }
 
     }
+}
+
+function packetProcessor_Router(switchObjectId, routerObjectId, packet) {
+
+    const routerObject = document.getElementById(routerObjectId);
+    let routerObjectIp;
+
+    if (routerObject.getAttribute("data-switch-enp0s3") === switchObjectId) {
+        routerObjectIp = routerObject.getAttribute("ip-enp0s3");
+    } else if (routerObject.getAttribute("data-switch-enp0s8") === switchObjectId) {
+        routerObjectIp = routerObject.getAttribute("ip-enp0s8");
+    } else if (routerObject.getAttribute("data-switch-enp0s9") === switchObjectId) {
+        routerObjectIp = routerObject.getAttribute("ip-enp0s9");
+    }
+
+    if (routerObjectIp === packet.layer3.destination_ip) { //el destino es el router
+        
+        if (packet.layer2.protocol === "arp" && packet.layer2.type === "request") {
+            addARPEntry(routerObjectId, packet.layer3.origin_ip, packet.layer2.origin_mac);
+            const newPacket = arpReply(routerObjectIp, packet.layer3.origin_ip, routerObject.getAttribute("data-mac"), packet.layer2.origin_mac);
+            terminalMessage(routerObjectIp + " respondiendo ARP...");
+            kernelSwitch(routerObjectId, switchObjectId, newPacket);
+            return;
+        } 
+
+        if (packet.layer3.protocol === "icmp" && packet.layer3.type === "echo-request") {
+            const newPacket = icmpEchoReply(routerObjectIp, packet.layer3.origin_ip, routerObject.getAttribute("data-mac"), packet.layer2.origin_mac);
+            terminalMessage(routerObjectIp + " respondiendo ICMP...");
+            kernelSwitch(routerObjectId, switchObjectId, newPacket);
+            return;
+        }
+
+    }
+
+    //el dispositivo debe enrutar el paquete
+
+    const destination_ip = packet.layer3.destination_ip;
+    const routingTable = routerObject.querySelector(".routing-table").querySelector("table");
+    const rows = routingTable.querySelectorAll("tr");
+
+    //reglas de conexion directa
+
+    for (let i = 1; i <= 3; i++) {
+
+        let row = rows[i];
+        let cells = row.querySelectorAll("td");
+        let ruleNetwork = cells[0].innerHTML;
+        let ruleNetmask = cells[1].innerHTML;
+        let ruleInterface = cells[3].innerHTML;
+
+        if (ruleNetwork === getNetwork(destination_ip, ruleNetmask)) {
+            const physical_port = routerObject.getAttribute("data-switch-" + ruleInterface);
+            packet.layer2.destination_mac = "ff:ff:ff:ff:ff:ff";
+            console.log(packet);
+            terminalMessage(routerObjectId + " enviando paquete a " + physical_port);
+            kernelSwitch(routerObjectId, physical_port, packet);
+        }
+
+    }
+
 }
