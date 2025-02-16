@@ -108,8 +108,7 @@ function packetProcessor(networkObjectId, packet) {
         return;
     }
 
-    if (packet.layer2.protocol === "icmp" && packet.layer2.type === "echo-request") {
-
+    if (packet.layer3.protocol === "icmp" && packet.layer3.type === "echo-request") {
         if (packet.layer3.destination_ip !== networkObject.getAttribute("data-ip")) {
             terminalMessage("Error: La IP de destino no coincide con la IP del equipo destino: " + networkObject.getAttribute("data-ip"));
             return;
@@ -140,7 +139,7 @@ function packetProcessor(networkObjectId, packet) {
         return;
     }
 
-    if (packet.layer2.protocol === "icmp" && packet.layer2.type === "echo-reply") {
+    if (packet.layer3.protocol === "icmp" && packet.layer3.type === "echo-reply") {
         terminalMessage("Respuesta ICMP recibida.");
         return;
     }
