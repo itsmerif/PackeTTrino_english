@@ -38,6 +38,9 @@ function sendCommand(event) {
             case "traceroute":
                 command_Traceroute(args, originIP);
                 break;
+            case "pack":
+                command_Pack(dataId, args);
+                break;
             default:
                 newoutput = "Command not found";
                 document.querySelector(".terminal-output").innerHTML = newoutput;
