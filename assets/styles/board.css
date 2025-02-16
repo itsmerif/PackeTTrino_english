@@ -43,3 +43,20 @@
 circle:hover {
     cursor: pointer;
 }
+
+.quick-info {
+    position: absolute;
+    top: 60%;
+    left: 60%;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
+    background-color: white;
+    box-shadow: 0px 0px 10px black;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}

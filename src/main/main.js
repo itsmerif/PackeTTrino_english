@@ -1,6 +1,7 @@
 //variables globales
 
 let itemIndex = 0;
+let quickInfoTimeout;
 
 // funciones de inicio
 
