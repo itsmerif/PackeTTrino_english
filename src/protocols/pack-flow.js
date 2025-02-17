@@ -24,9 +24,34 @@ class ArpReply {
     }
 }
 
+class IcmpEchoRequest {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac) {
+        this.origin_ip = origin_ip;
+        this.destination_ip = destination_ip;
+        this.origin_mac = origin_mac;
+        this.destination_mac = destination_mac;
+        this.protocol = "icmp";
+        this.ttl = 64;
+        this.type = "request";
+    }
+}
+
+class IcmpEchoReply {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac) {
+        this.origin_ip = origin_ip;
+        this.destination_ip = destination_ip;
+        this.origin_mac = origin_mac;
+        this.destination_mac = destination_mac;
+        this.protocol = "icmp";
+        this.ttl = 64;
+        this.type = "reply";
+    }
+}
+
 function sp(id, args) {
 
     let ip; let netmask; let switchId; let destination; let packet; let type;
+    let destination_mac;
     const $networkObject = document.getElementById(id);
 
     if (args.length > 4 || args.length < 3) {
@@ -102,18 +127,35 @@ function sp(id, args) {
     }
 
     switch (type) {
+
         case "arp-request":
+
             packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
             break;
-        case "arp-reply":
-            packet = new ArpReply(ip, destination, $networkObject.getAttribute("data-mac"));
+
+        case "icmp":
+
+            destination_mac = isIpInARPTable(id, destination);
+
+            if (!destination_mac) {
+
+                buffer[id] = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), "");
+                packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
+
+            } else {
+
+                packet = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), destination_mac);
+            }
+
             break;
+
         default:
+
             terminalMessage("Error: Tipo de paquete no reconocido.");
-            break;
+            return;
     }
 
-    terminalMessage("Generando paquete...");
+    terminalMessage(id + ": Generando paquete...");
 
     if (!switchId) {
         terminalMessage("Error: No se ha detectado ninguna conexión.");
@@ -121,23 +163,9 @@ function sp(id, args) {
     }
 
     if (packet) {
-        packetSender(id, packet);
+        switchProcessor(switchId, id, packet);
     }
 
-}
-
-function packetSender(networkObjectId, packet) { //esta funcion se encarga de evaluar el camino que debe seguir el paquete
-
-    const $networkObject = document.getElementById(networkObjectId);
-
-    if ( packet.protocol !== "arp" && !isIpInARPTable($networkObject.id, packet.destination_ip)) { //el destino del paquete no está en la tabla de ARP
-        buffer[networkObjectId] = packet;
-        terminalMessage(networkObjectId + ": no existe en la tabla de ARP, se guarda en el buffer.");
-        let arpRequest = new ArpRequest(packet.origin_ip, packet.destination_ip, $networkObject.getAttribute("data-mac"));
-        switchProcessor($networkObject.getAttribute("data-switch"), networkObjectId, arpRequest);
-        return;
-    }
-    
 }
 
 function switchProcessor(switchId, physical_port, packet) {
@@ -198,14 +226,12 @@ function packetProcessor(switchId, port, packet) {
 
     if (packet.protocol === "arp" && packet.type === "request") {
 
-        terminalMessage(port + ": Solicitud ARP recibida");
-
         if (packet.destination_ip !== networkObjectIp) {
-            terminalMessage(port + ": Solicitud ARP invalida");
+            terminalMessage(port + ": Solicitud ARP ignorada");
             return;
         }
 
-        terminalMessage(port + ": Enviando un ARP REPLY");
+        terminalMessage(port + ": Enviando un Respuesta ARP");
         addARPEntry(port, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
         switchProcessor(switchId, port, newPacket);
@@ -222,10 +248,35 @@ function packetProcessor(switchId, port, packet) {
         }
 
         addARPEntry(port, packet.origin_ip, packet.origin_mac);
-        terminalMessage("El equipo con ip " + packet.origin_ip + " ha sido agregado a la tabla de ARP");
+        terminalMessage(port + ": El equipo con ip " + packet.origin_ip + " ha sido agregado a la tabla de ARP");
+        
+        if (buffer[port]){
+            buffer[port].destination_mac = isIpInARPTable(port, buffer[port].destination_ip);
+            terminalMessage("Enviando paquete en el buffer: " + buffer[port].protocol)
+            switchProcessor(switchId, port, buffer[port])
+        }
+    }
+
+    if (packet.protocol === "icmp" && packet.type === "request") {
+        
+        if (packet.destination_ip !== networkObjectIp) {
+            terminalMessage(port + ": Solicitud ICMP ignorada");
+            return;
+        }
+
+        terminalMessage(port + ": Enviando ICMP ECHO REPLY");
+        let newPacket = new IcmpEchoReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
+        switchProcessor(switchId, port, newPacket);
         return;
 
     }
 
+    if (packet.protocol === "icmp" && packet.type === "reply") {
+
+        if (packet.destination_ip !== networkObjectIp) return;
+
+        terminalMessage(port + ": ICMP ECHO REPLY recibido.");
+
+    }
 }
 
