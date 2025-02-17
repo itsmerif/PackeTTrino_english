@@ -100,6 +100,7 @@ img {
 .file-options input[type="file"] {
     background: #f3f4f6;
     padding: 10px;
+    padding-right: 15px;
     border-radius: 8px;
     border: 2px dashed #d1d5db;
     cursor: pointer;

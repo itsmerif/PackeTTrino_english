@@ -1,4 +1,4 @@
-buffer = {};
+let buffer = {};
 
 class ArpRequest {
     constructor(origin_ip, destination_ip, origin_mac) {
@@ -128,7 +128,7 @@ function sp(id, args) {
 
     switch (type) {
 
-        case "arp-request":
+        case "arp":
 
             packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
             break;
@@ -182,7 +182,6 @@ function switchProcessor(switchId, physical_port, packet) {
                 packetProcessor(switchId, port, packet);
             }
         }
-
         return;
     }
 
@@ -194,35 +193,21 @@ function switchProcessor(switchId, physical_port, packet) {
 
 function packetProcessor(switchId, port, packet) {
 
+    if (port.startsWith("pc-")){
+        packetProcessor_PC(switchId, port, packet);
+    }    
+
+    if (port.startsWith("router-")){
+        packetProcessor_router(switchId, port, packet);
+    }
+
+}
+
+function packetProcessor_PC(switchId, port, packet) {
+
     const $networkObject = document.getElementById(port);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
-
-    let networkObjectIp;
-
-    if (!$networkObject.id.startsWith("router-")) {
-        networkObjectIp = $networkObject.getAttribute("data-ip");
-    }
-
-    if ($networkObject.id.startsWith("router-")) { //tomo la ip de la interfaz conectada al switch
-
-        switch (switchId) {
-            case $networkObject.getAttribute("data-switch-enp0s3"):
-                networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-                break;
-            case $networkObject.getAttribute("data-switch-enp0s8"):
-                networkObjectIp = $networkObject.getAttribute("ip-enp0s8");
-                break;
-            case $networkObject.getAttribute("data-switch-enp0s9"):
-                networkObjectIp = $networkObject.getAttribute("ip-enp0s9");
-                break;
-        }
-
-        if (packet.destination_ip !== networkObjectIp) { //no es el destino, entonces lo debe redireccionar
-            //packetRouting(switchId, port, packet);
-            return;
-        }
-
-    }
+    const networkObjectIp = $networkObject.getAttribute("data-ip");
 
     if (packet.protocol === "arp" && packet.type === "request") {
 
@@ -278,5 +263,54 @@ function packetProcessor(switchId, port, packet) {
         terminalMessage(port + ": ICMP ECHO REPLY recibido.");
 
     }
+
 }
 
+function packetProcessor_router() {
+
+    const $networkObject = document.getElementById(port);
+    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    let networkObjectIp;
+
+    switch (switchId) {
+        case $networkObject.getAttribute("data-switch-enp0s3"):
+            networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
+            break;
+        case $networkObject.getAttribute("data-switch-enp0s8"):
+            networkObjectIp = $networkObject.getAttribute("ip-enp0s8");
+            break;
+        case $networkObject.getAttribute("data-switch-enp0s9"):
+            networkObjectIp = $networkObject.getAttribute("ip-enp0s9");
+            break;
+    }
+
+    if (packet.protocol === "arp" && packet.type === "request") {
+
+        if (packet.destination_ip !== networkObjectIp) {
+            terminalMessage(port + ": Solicitud ARP ignorada");
+            return;
+        }
+
+        terminalMessage(port + ": Enviando un Respuesta ARP");
+        addARPEntry(port, packet.origin_ip, packet.origin_mac);
+        let newPacket = new ArpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
+        switchProcessor(switchId, port, newPacket);
+        return;
+    }
+
+    if (packet.protocol === "icmp" && packet.type === "request") {
+        
+        if (packet.destination_ip !== networkObjectIp) {
+            terminalMessage(port + ": Solicitud ICMP ignorada");
+            return;
+        }
+
+        terminalMessage(port + ": Enviando ICMP ECHO REPLY");
+        let newPacket = new IcmpEchoReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
+        switchProcessor(switchId, port, newPacket);
+        return;
+
+    }
+
+
+}
