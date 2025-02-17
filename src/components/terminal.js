@@ -40,7 +40,7 @@ function sendCommand(event) {
                 command_Traceroute(args, originIP);
                 break;
             case "sp":
-                command_sp(dataId, args);
+                packetGenerator(dataId, args);
                 break;
             default:
                 newoutput = "Command not found";
