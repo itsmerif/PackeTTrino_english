@@ -20,14 +20,15 @@ function sendCommand(event) {
                 command_Ping(dataId, args, originIP);
                 break;
             case "arp":
-                newoutput = getARPTable(dataId);
+                //terminalMessage(getARPTable(dataId));
+                terminalMessage("Comando arp ejecutado correctamente");
                 break;
             case "exit":
                 event.target.value = "";
                 document.querySelector(".pc-terminal").style.display = "none";
                 break;
             case "ip":
-                command_Ip(dataId, args);
+                command_Ip(dataId, args, originIP);
                 break;
             case "dhcp":
                 command_Dchp(dataId, args);
@@ -38,8 +39,8 @@ function sendCommand(event) {
             case "traceroute":
                 command_Traceroute(args, originIP);
                 break;
-            case "pack":
-                command_Pack(dataId, args);
+            case "sp":
+                command_sp(dataId, args);
                 break;
             default:
                 newoutput = "Command not found";
