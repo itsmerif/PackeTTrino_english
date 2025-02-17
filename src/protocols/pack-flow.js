@@ -1,3 +1,5 @@
+buffer = {};
+
 class ArpRequest {
     constructor(origin_ip, destination_ip, origin_mac) {
         this.origin_ip = origin_ip;
@@ -22,7 +24,7 @@ class ArpReply {
     }
 }
 
-function packetGenerator(id, args) {
+function sp(id, args) {
 
     let ip; let netmask; let switchId; let destination; let packet; let type;
     const $networkObject = document.getElementById(id);
@@ -119,9 +121,23 @@ function packetGenerator(id, args) {
     }
 
     if (packet) {
-        switchProcessor(switchId, id, packet);
+        packetSender(id, packet);
     }
 
+}
+
+function packetSender(networkObjectId, packet) { //esta funcion se encarga de evaluar el camino que debe seguir el paquete
+
+    const $networkObject = document.getElementById(networkObjectId);
+
+    if ( packet.protocol !== "arp" && !isIpInARPTable($networkObject.id, packet.destination_ip)) { //el destino del paquete no está en la tabla de ARP
+        buffer[networkObjectId] = packet;
+        terminalMessage(networkObjectId + ": no existe en la tabla de ARP, se guarda en el buffer.");
+        let arpRequest = new ArpRequest(packet.origin_ip, packet.destination_ip, $networkObject.getAttribute("data-mac"));
+        switchProcessor($networkObject.getAttribute("data-switch"), networkObjectId, arpRequest);
+        return;
+    }
+    
 }
 
 function switchProcessor(switchId, physical_port, packet) {
@@ -152,7 +168,7 @@ function packetProcessor(switchId, port, packet) {
 
     const $networkObject = document.getElementById(port);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
-    
+
     let networkObjectIp;
 
     if (!$networkObject.id.startsWith("router-")) {
@@ -181,7 +197,7 @@ function packetProcessor(switchId, port, packet) {
     }
 
     if (packet.protocol === "arp" && packet.type === "request") {
-        
+
         terminalMessage(port + ": Solicitud ARP recibida");
 
         if (packet.destination_ip !== networkObjectIp) {
@@ -194,7 +210,7 @@ function packetProcessor(switchId, port, packet) {
         let newPacket = new ArpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
         switchProcessor(switchId, port, newPacket);
         return;
-    }   
+    }
 
     if (packet.protocol === "arp" && packet.type === "reply") {
 
