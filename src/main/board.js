@@ -1,3 +1,8 @@
+let pcs = {};
+let routers = {};
+let switches = {};
+let servers = {};
+
 function dragOverBoard(event) {
     event.preventDefault();
 }
@@ -40,6 +45,7 @@ function dropItem(event) {
     const itemId = JSON.parse(item).itemId;
     const x = event.clientX;    
     const y = event.clientY;
+    const $board = document.querySelector(".board");
 
     if (itemType === "item") {
 
