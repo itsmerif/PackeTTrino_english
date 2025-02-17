@@ -266,7 +266,7 @@ function packetProcessor_PC(switchId, port, packet) {
 
 }
 
-function packetProcessor_router() {
+function packetProcessor_router(switchId, port, packet) {
 
     const $networkObject = document.getElementById(port);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
