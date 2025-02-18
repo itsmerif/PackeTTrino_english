@@ -16,6 +16,7 @@ async function init() {
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm);
     document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm);
     document.getElementById("item-panel").querySelector(".traffic").addEventListener("click", showPacketTraffic);
+    document.addEventListener("keydown", () => {document.querySelector(".packet-traffic").style.display = "none";});
     removePropagationPingform();
 }
 

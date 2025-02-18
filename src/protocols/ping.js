@@ -34,7 +34,7 @@ function ping(dataId, args) {
         icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, args[1]);
         ping_s(networkObjectIp);
     } catch (error) {
-        terminalMessage(error.message);
+        //terminalMessage(error.message);
         ping_f(networkObjectIp);
     }
 
