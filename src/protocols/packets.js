@@ -4,10 +4,10 @@ class packet {
         this.destination_ip = destination_ip;
         this.origin_mac = origin_mac;
         this.destination_mac = destination_mac;
-    }  
+    }
 }
 
-class ArpRequest extends packet{
+class ArpRequest extends packet {
     constructor(origin_ip, destination_ip, origin_mac) {
         super(origin_ip, destination_ip, origin_mac, "ff:ff:ff:ff:ff:ff");;
         this.protocol = "arp";
@@ -16,7 +16,7 @@ class ArpRequest extends packet{
     }
 }
 
-class ArpReply extends packet{
+class ArpReply extends packet {
     constructor(origin_ip, destination_ip, origin_mac, destination_mac) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
         this.protocol = "arp";
@@ -41,11 +41,11 @@ class IcmpEchoReply extends packet {
         this.ttl = 64;
         this.type = "reply";
     }
-} 
+}
 
 class dhcpDiscover extends packet {
     constructor(origin_mac) {
-        super("0.0.0.0","255.255.255.255", origin_mac, "ff:ff:ff:ff:ff:ff");
+        super("0.0.0.0", "255.255.255.255", origin_mac, "ff:ff:ff:ff:ff:ff");
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "discover";
@@ -54,7 +54,7 @@ class dhcpDiscover extends packet {
 }
 
 class dhcpOffer extends packet {
-    constructor(origin_ip, origin_mac, server_ip, offer_ip, client_mac) {
+    constructor(origin_ip, origin_mac, server_ip, offer_ip, client_mac, gateway, netmask) {
         super(origin_ip, "255.255.255.255", origin_mac, client_mac);
         this.protocol = "dhcp";
         this.ttl = 64;
@@ -63,11 +63,14 @@ class dhcpOffer extends packet {
         this.yiaddr = offer_ip;
         this.siaddr = server_ip;
         this.ciaddr = client_mac;
+        //dhcp options
+        this.gateway = gateway;
+        this.netmask = netmask;
     }
 }
 
 class dhcpRequest extends packet {
-    constructor(origin_mac, requested_ip, server_ip, client_mac) {
+    constructor(origin_mac, requested_ip, server_ip, client_mac, hostname) {
         super("0.0.0.0", "255.255.255.255", origin_mac, "ff:ff:ff:ff:ff:ff");
         this.protocol = "dhcp";
         this.ttl = 64;
@@ -76,11 +79,13 @@ class dhcpRequest extends packet {
         this.yiaddr = requested_ip;
         this.siaddr = server_ip;
         this.ciaddr = client_mac;
+        //dhcp options
+        this.hostname = hostname;
     }
 }
 
 class dhcpAck extends packet {
-    constructor(origin_mac, assigned_ip, client_mac, server_ip) {
+    constructor(origin_mac, assigned_ip, client_mac, server_ip, gateway, netmask, hostname) {
         super(server_ip, "255.255.255.255", origin_mac, client_mac);
         this.protocol = "dhcp";
         this.ttl = 64;
@@ -89,5 +94,9 @@ class dhcpAck extends packet {
         this.ciaddr = client_mac;
         this.yiaddr = assigned_ip;
         this.siaddr = server_ip;
+        //dhcp options
+        this.gateway = gateway;
+        this.netmask = netmask;
+        this.hostname = hostname;
     }
 }

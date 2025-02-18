@@ -350,7 +350,7 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
     if (packet.protocol === "dhcp" && packet.type === "offer") {
         if (packet.ciaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
             terminalMessage("DHCP OFFER Recibido")
-            let newPacket = new dhcpRequest(networkObjectMac, packet.yiaddr, packet.siaddr, packet.ciaddr);
+            let newPacket = new dhcpRequest(networkObjectMac, packet.yiaddr, packet.siaddr, packet.ciaddr, networkObjectId );
             addPacketTraffic(newPacket);
             terminalMessage("DHCP REQUEST Enviado")
             switchProcessor(switchId, networkObjectId, newPacket);
@@ -589,29 +589,36 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
 
 function packetProcessor_dhcp_server(switchId, networkObjectId, packet){
 
-    const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("data-mac");
-    const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const $serverObject = document.getElementById(networkObjectId);
+    const serverObjectMac = $serverObject.getAttribute("data-mac");
+    const serverObjectIp = $serverObject.getAttribute("data-ip");
+
+    //configuracion del servidor dhcp
+
+    const gatewayOffer = $serverObject.getAttribute("offer-gateway");
+    const netmaskOffer = $serverObject.getAttribute("offer-netmask");
 
 
-    if (packet.destination_ip === networkObjectIp) { //el paquete es para mi
+    if (packet.destination_ip === serverObjectIp) { //el paquete es para mi
         //logica de arp e icmp
     }
 
     if (packet.protocol === "dhcp" && packet.type === "discover"){ //peticion de descubrimiento dhcp
+
         let offerIP = getRandomIpfromDhcp(networkObjectId) //obtenemos una ip válida del servidor
-        let newPacket = new dhcpOffer(networkObjectIp, networkObjectMac, networkObjectIp, offerIP, packet.origin_mac);
+        let newPacket = new dhcpOffer(serverObjectIp, serverObjectMac, serverObjectIp, offerIP, packet.origin_mac, gatewayOffer, netmaskOffer);
         addPacketTraffic(newPacket);
         switchProcessor(switchId, networkObjectId, newPacket);
         return;
+
     }
 
     if (packet.protocol === "dhcp" && packet.type === "request")  { //solicitud de ip
 
-        if (packet.siaddr === networkObjectIp)  { //el paquete va dirigido al server, lo aceptamos
+        if (packet.siaddr === serverObjectIp)  { //el paquete va dirigido al server, lo aceptamos
            terminalMessage( networkObjectId + ": DHCP REQUEST Recibido")
-           let newPacket = new dhcpAck(networkObjectMac, packet.yiaddr, packet.ciaddr, networkObjectIp);
-           addDhcpEntry(networkObjectId, packet.yiaddr, packet.ciaddr, "equipo-1");
+           let newPacket = new dhcpAck(serverObjectMac, packet.yiaddr, packet.ciaddr, serverObjectIp, gatewayOffer, netmaskOffer, packet.hostname);
+           addDhcpEntry(networkObjectId, packet.yiaddr, packet.ciaddr, packet.hostname);
            terminalMessage( networkObjectId + ": DHCP ACK Enviado")
            addPacketTraffic(newPacket)
            switchProcessor(switchId, networkObjectId, newPacket);

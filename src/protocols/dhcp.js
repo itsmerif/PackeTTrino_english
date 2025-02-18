@@ -4,6 +4,8 @@ function dhcp(dataId, args) {
     const switchObjectId = $networkObject.getAttribute("data-switch");
     const isDchpOn = $networkObject.getAttribute("data-dhcp")
 
+    cleanPacketTraffic(); //limpiamos la tabla de paquetes
+
     if (dataId.includes("router-")) { //por ahora solo se puede hacer ping desde un pc
         terminalMessage("Error: Este comando solo puede ser ejecutado desde un pc.");
         return;
@@ -25,7 +27,5 @@ function dhcp(dataId, args) {
         dhcpDiscoverGenerator(dataId, switchObjectId);
         return;
     }
-
-    cleanPacketTraffic(); //limpiamos la tabla de paquetes
 
 }

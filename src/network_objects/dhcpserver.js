@@ -22,8 +22,13 @@ function createDhcpServerObject(x, y) {
     networkObject.setAttribute("data-mac", getRandomMac());
     networkObject.setAttribute("data-gateway", "");
     networkObject.setAttribute("data-switch", "");
+
+    //configuracion de oferta
+
     networkObject.setAttribute("data-range-start", "");
     networkObject.setAttribute("data-range-end", "");
+    networkObject.setAttribute("offer-gateway", "");
+    networkObject.setAttribute("offer-netmask", "");
 
     //server grafico
 
@@ -118,6 +123,8 @@ function showDhcpSpecs(event) {
     const gateway = networkObject.getAttribute("data-gateway");
     const rangeStart = networkObject.getAttribute("data-range-start");
     const rangeEnd = networkObject.getAttribute("data-range-end");
+    const offerGateway = networkObject.getAttribute("offer-gateway");
+    const offerNetmask = networkObject.getAttribute("offer-netmask");
 
     //mostramos el formulario
     document.querySelector(".dhcp-form #ip-dhcp").value = ip;
@@ -126,6 +133,8 @@ function showDhcpSpecs(event) {
     document.querySelector(".dhcp-form #range-start").value = rangeStart;
     document.querySelector(".dhcp-form #range-end").value = rangeEnd;
     document.getElementById("form-dhcp-item-id").innerHTML = itemId;
+    document.querySelector(".dhcp-form #offer-gateway").value = offerGateway;
+    document.querySelector(".dhcp-form #offer-netmask").value = offerNetmask;
 
     //ocultamos y mostramos
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
@@ -144,6 +153,8 @@ function saveDhcpSpecs(event) {
     const newGateway = document.querySelector(".dhcp-form #gateway-dhcp").value;
     const newRangeStart = document.querySelector(".dhcp-form #range-start").value;
     const newRangeEnd = document.querySelector(".dhcp-form #range-end").value;
+    const newOfferGateway = document.querySelector(".dhcp-form #offer-gateway").value;
+    const newOfferNetmask = document.querySelector(".dhcp-form #offer-netmask").value;
 
     //guardamos los nuevos atributos en el server
 
@@ -152,6 +163,8 @@ function saveDhcpSpecs(event) {
     networkObject.setAttribute("data-gateway", newGateway);
     networkObject.setAttribute("data-range-start", newRangeStart);
     networkObject.setAttribute("data-range-end", newRangeEnd);
+    networkObject.setAttribute("offer-gateway", newOfferGateway);
+    networkObject.setAttribute("offer-netmask", newOfferNetmask);
 
     //ocultamos el formulario
 
