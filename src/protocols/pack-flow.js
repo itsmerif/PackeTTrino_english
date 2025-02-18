@@ -350,13 +350,19 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
     if (packet.protocol === "dhcp" && packet.type === "offer") {
         if (packet.ciaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
             terminalMessage("DHCP OFFER Recibido")
-            let newPacket = new dhcpRequest(networkObjectMac, packet.yiaddr, packet.siaddr);
+            let newPacket = new dhcpRequest(networkObjectMac, packet.yiaddr, packet.siaddr, packet.ciaddr);
             addPacketTraffic(newPacket);
             terminalMessage("DHCP REQUEST Enviado")
-            switchProcessor(switchId, networkObjectId);
+            switchProcessor(switchId, networkObjectId, newPacket);
         }
     }
 
+    if (packet.protocol === "dhcp" && packet.type === "ack") {
+        if (packet.ciaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
+            terminalMessage("DHCP ACK Recibido");
+            setDhcpInfo(networkObjectId, packet);
+        }
+    }
 }
 
 function packetProcessor_router(switchId, networkObjectId, packet) {
@@ -588,7 +594,7 @@ function packetProcessor_dhcp_server(switchId, networkObjectId, packet){
     const networkObjectIp = $networkObject.getAttribute("data-ip");
 
 
-    if (packet.destination_ip === networkObjectIp) { //logica de equipo normal
+    if (packet.destination_ip === networkObjectIp) { //el paquete es para mi
         //logica de arp e icmp
     }
 
@@ -603,10 +609,13 @@ function packetProcessor_dhcp_server(switchId, networkObjectId, packet){
     if (packet.protocol === "dhcp" && packet.type === "request")  { //solicitud de ip
 
         if (packet.siaddr === networkObjectIp)  { //el paquete va dirigido al server, lo aceptamos
-
-           let newPacket = new dhcpAck(networkObjectMac, packet.yiaddr, 3600);
+           terminalMessage( networkObjectId + ": DHCP REQUEST Recibido")
+           let newPacket = new dhcpAck(networkObjectMac, packet.yiaddr, packet.ciaddr, networkObjectIp);
+           addDhcpEntry(networkObjectId, packet.yiaddr, packet.ciaddr, "equipo-1");
+           terminalMessage( networkObjectId + ": DHCP ACK Enviado")
            addPacketTraffic(newPacket)
-
+           switchProcessor(switchId, networkObjectId, newPacket);
+           return;
         }
 
     }

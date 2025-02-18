@@ -55,7 +55,7 @@ class dhcpDiscover extends packet {
 
 class dhcpOffer extends packet {
     constructor(origin_ip, origin_mac, server_ip, offer_ip, client_mac) {
-        super(origin_ip, "255.255.255.255", origin_mac, "ff:ff:ff:ff:ff:ff");
+        super(origin_ip, "255.255.255.255", origin_mac, client_mac);
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "offer";
@@ -67,7 +67,7 @@ class dhcpOffer extends packet {
 }
 
 class dhcpRequest extends packet {
-    constructor(origin_mac, requested_ip, server_ip) {
+    constructor(origin_mac, requested_ip, server_ip, client_mac) {
         super("0.0.0.0", "255.255.255.255", origin_mac, "ff:ff:ff:ff:ff:ff");
         this.protocol = "dhcp";
         this.ttl = 64;
@@ -75,17 +75,19 @@ class dhcpRequest extends packet {
         this.port = "67";
         this.yiaddr = requested_ip;
         this.siaddr = server_ip;
+        this.ciaddr = client_mac;
     }
 }
 
 class dhcpAck extends packet {
-    constructor(origin_mac, assigned_ip, lease_time) {
-        super("0.0.0.0", "255.255.255.255", origin_mac, "ff:ff:ff:ff:ff:ff");
+    constructor(origin_mac, assigned_ip, client_mac, server_ip) {
+        super(server_ip, "255.255.255.255", origin_mac, client_mac);
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "ack";
         this.port = "68";
-        this.assigned_ip = assigned_ip;
-        this.lease_time = lease_time; 
+        this.ciaddr = client_mac;
+        this.yiaddr = assigned_ip;
+        this.siaddr = server_ip;
     }
 }

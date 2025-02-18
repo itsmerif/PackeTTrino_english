@@ -450,3 +450,11 @@ function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
     table.appendChild(newRow);
 
 }
+
+function setDhcpInfo(networkObjectId, packet) {
+    const $networkObject = document.getElementById(networkObjectId);
+    let newIp = packet.yiaddr;
+    $networkObject.setAttribute("data-ip", newIp);
+    $networkObject.setAttribute("data-netmask", "255.255.255.0");
+    $networkObject.setAttribute("data-gateway", "192.168.1.1");  
+}
