@@ -281,22 +281,22 @@ function addPacketTraffic(packet) {
 }
 
 function showPacketTraffic() {
+    const $packetTraffic = document.querySelector(".packet-traffic");
+    if ($packetTraffic.style.display === "flex") {
+        $packetTraffic.style.display = "none";
+    } else {
+        $packetTraffic.style.display = "flex";
+    }
+}
+
+function cleanPacketTraffic() {
 
     const $packetTraffic = document.querySelector(".packet-traffic");
     const $table = $packetTraffic.querySelector("table");
     const $trs = $table.querySelectorAll("tr");
 
-    if ($packetTraffic.style.display === "flex") {
-
-        for (let i = 1; i < $trs.length; i++) {
-            $trs[i].remove();
-        }
-
-        $packetTraffic.style.display = "none";
-
-    } else {
-
-        $packetTraffic.style.display = "flex";
-
+    for (let i = 1; i < $trs.length; i++) {
+        $trs[i].remove();
     }
+
 }

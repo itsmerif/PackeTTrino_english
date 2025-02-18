@@ -53,6 +53,8 @@ function sp(id, args) {
     let ip; let netmask; let switchId; let destination; let packet; let type;
     const $networkObject = document.getElementById(id);
 
+    cleanPacketTraffic(); //limpiamos la tabla de paquetes
+
     if (args.length > 4 || args.length < 3) {
         terminalMessage("Error: Sintaxis: sp [source (only for routers)] <destination> <packet-type>");
         return;
