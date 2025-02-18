@@ -72,8 +72,8 @@ class dhcpRequest extends packet {
         this.ttl = 64;
         this.type = "request";
         this.port = "67";
-        this.requested_ip = requested_ip;
-        this.server_ip = server_ip;
+        this.yiaddr = requested_ip;
+        this.siaddr = server_ip;
     }
 }
 
