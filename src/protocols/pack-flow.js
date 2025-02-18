@@ -445,6 +445,13 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
 
     if (!isSameNetwork) { //paquete a reenviar
 
+        //no reenviamos trafico de tipo ARP
+        
+        if (packet.protocol === "arp") {
+            terminalMessage(networkObjectId + ": El paquete es de tipo ARP, no se puede enrutar");
+            return;
+        }
+
         //enrutamiento
 
         const routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
@@ -550,7 +557,7 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
             addPacketTraffic(packet);
             switchProcessor(nextSwitch, networkObjectId, packet); //mandamos el paquete al switch
             return;
-            
+
         }
 
     }
