@@ -524,6 +524,35 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
 
             }
         }
+
+        //ultimo recurso, miramos la regla por defecto -> en la fila 4
+
+        let row = rows[4];
+        let cells = row.querySelectorAll("td");
+        let gateway = cells[2].innerHTML;
+
+        if (gateway !== "") { //si no hay regla por defecto, no tenemos que comprobar nada
+            let ruleInterface = cells[3].innerHTML;
+            let nexthop = cells[4].innerHTML;
+            const nextSwitch = $routerObject.getAttribute("data-switch-" + ruleInterface);
+            packet.origin_mac = routerObjectMac; //cambiamos la mac del origen por la del router
+            packet.destination_mac = isIpInARPTable(networkObjectId, nexthop);
+
+            if (!packet.destination_mac) { //no tenemos la mac del destino en nuestra tabla de arp, lo guardamos en el buffer y enviamos un ARP primero
+                terminalMessage(networkObjectId + ": Destino No Guardado. Enviando ARP por " + nexthop);
+                buffer[networkObjectId] = packet;
+                let newPacket = new ArpRequest(gateway, nexthop, routerObjectMac);
+                addPacketTraffic(newPacket);
+                switchProcessor(nextSwitch, networkObjectId, newPacket);
+                return;
+            }
+            
+            addPacketTraffic(packet);
+            switchProcessor(nextSwitch, networkObjectId, packet); //mandamos el paquete al switch
+            return;
+            
+        }
+
     }
 
 
