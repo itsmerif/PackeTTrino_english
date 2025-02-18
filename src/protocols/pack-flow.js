@@ -1,4 +1,6 @@
 let buffer = {};
+let arpFlag = true;
+let icmpFlag =  true;
 
 function sp(id, args) {
 
@@ -121,12 +123,16 @@ function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) 
             //terminalMessage(networkObjectId + ": Gateway No Guardado. Enviando ARP por " + defaultGateway);
             buffer[networkObjectId] = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), "");
             packet = new ArpRequest(ip, defaultGateway, $networkObject.getAttribute("data-mac"));
+            arpFlag = false;
+            
             addPacketTraffic(packet);
             switchProcessor(switchId, networkObjectId, packet);
             return;
         }
 
         packet = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), defaultGatewayMac);
+        icmpFlag = false;
+        
         addPacketTraffic(packet);
         switchProcessor(switchId, networkObjectId, packet);
         return;
@@ -141,12 +147,17 @@ function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) 
         //guardamos el paquete en el buffer y enviamos una solicitud ARP primero
         buffer[networkObjectId] = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), "");
         packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
+        addPacketTraffic(packet);
+        arpFlag = false;
+        
+        switchProcessor(switchId, networkObjectId, packet);
     } else {
         packet = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), destination_mac);
+        icmpFlag = false;
+        
+        addPacketTraffic(packet);
+        switchProcessor(switchId, networkObjectId, packet);
     }
-
-    addPacketTraffic(packet);
-    switchProcessor(switchId, networkObjectId, packet);
 
 }
 
@@ -172,12 +183,15 @@ function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destination) {
             //terminalMessage(networkObjectId + ": Gateway No Guardado. Enviando ARP por " + defaultGateway);
             buffer[networkObjectId] = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), "");
             packet = new ArpRequest(ip, defaultGateway, $networkObject.getAttribute("data-mac"));
+            arpFlag = false;
             addPacketTraffic(packet);
             switchProcessor(switchId, networkObjectId, packet);
             return;
         }
 
         packet = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), defaultGatewayMac);
+        icmpFlag = false;
+        
         addPacketTraffic(packet);
         switchProcessor(switchId, networkObjectId, packet);
         return;
@@ -189,12 +203,17 @@ function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destination) {
     if (!destination_mac) {
         buffer[networkObjectId] = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), "");
         packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
+        arpFlag = false;
+        
+        addPacketTraffic(packet);
+        switchProcessor(switchId, networkObjectId, packet);
     } else {
         packet = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), destination_mac);
+        icmpFlag = false;
+        
+        addPacketTraffic(packet);
+        switchProcessor(switchId, networkObjectId, packet);
     }
-
-    addPacketTraffic(packet);
-    switchProcessor(switchId, networkObjectId, packet);
 
 }
 
@@ -276,6 +295,9 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
             return;
         }
 
+        arpFlag = true;
+        
+
         addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
         //terminalMessage(networkObjectId + ": El equipo con ip " + packet.origin_ip + " ha sido agregado a la tabla de ARP");
 
@@ -308,6 +330,9 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
             throw new Error("Destino No Coincide");
         }
         //terminalMessage(networkObjectId + ": ICMP ECHO REPLY recibido.");
+
+        
+        icmpFlag = true;
     }
 
 }
@@ -382,6 +407,8 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
                 return;
             }
 
+            
+            arpFlag = true;
             addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
             //terminalMessage(networkObjectId + ": El equipo con ip " + packet.origin_ip + " ha sido agregado a la tabla de ARP");
 
@@ -435,6 +462,8 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
                     //terminalMessage(networkObjectId + ": Destino No Guardado. Enviando ARP por " + packet.destination_ip);
                     buffer[networkObjectId] = packet;
                     let newPacket = new ArpRequest(gateway, packet.destination_ip, routerObjectMac);
+                    arpFlag = false;
+                    
                     addPacketTraffic(newPacket);
                     switchProcessor(nextSwitch, networkObjectId, newPacket);
                     return;
@@ -472,6 +501,8 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
                         //terminalMessage(networkObjectId + ": Destino No Guardado. Enviando ARP por " + nexthop);
                         buffer[networkObjectId] = packet;
                         let newPacket = new ArpRequest(gateway, nexthop, routerObjectMac);
+                        arpFlag = false;
+                        
                         addPacketTraffic(newPacket);
                         switchProcessor(nextSwitch, networkObjectId, newPacket);
                         return;
@@ -502,6 +533,8 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
                 //terminalMessage(networkObjectId + ": Destino No Guardado. Enviando ARP por " + nexthop);
                 buffer[networkObjectId] = packet;
                 let newPacket = new ArpRequest(gateway, nexthop, routerObjectMac);
+                arpFlag = false;
+                
                 addPacketTraffic(newPacket);
                 switchProcessor(nextSwitch, networkObjectId, newPacket);
                 return;

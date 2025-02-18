@@ -32,12 +32,20 @@ function ping(dataId, args) {
 
     try {
         icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, args[1]);
-        ping_s(networkObjectIp);
     } catch (error) {
         //terminalMessage(error.message);
         ping_f(networkObjectIp);
+        return;
     }
 
+    console.log(arpFlag, icmpFlag);
+
+    if (!arpFlag || !icmpFlag) {
+        ping_f(networkObjectIp);
+    } else {
+        ping_s(networkObjectIp);
+    }
+    
 }
 
 function ping_s(origin) {
