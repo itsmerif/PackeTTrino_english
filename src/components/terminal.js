@@ -17,11 +17,7 @@ function sendCommand(event) {
         switch (command) {
 
             case "ping":
-                command_Ping(dataId, args, originIP);
-                break;
-            case "arp":
-                //terminalMessage(getARPTable(dataId));
-                terminalMessage("Comando arp ejecutado correctamente");
+                ping(dataId, args);
                 break;
             case "exit":
                 event.target.value = "";
@@ -29,15 +25,6 @@ function sendCommand(event) {
                 break;
             case "ip":
                 command_Ip(dataId, args, originIP);
-                break;
-            case "dhcp":
-                command_Dchp(dataId, args);
-                break;
-            case "tcp":
-                command_Tcp(args, originIP);
-                break;
-            case "traceroute":
-                command_Traceroute(args, originIP);
                 break;
             case "sp":
                 sp(dataId, args);
