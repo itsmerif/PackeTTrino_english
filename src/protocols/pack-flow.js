@@ -270,7 +270,7 @@ function packetProcessor(switchId, networkObjectId, packet) {
         packetProcessor_router(switchId, networkObjectId, packet);
     }
 
-    if (networkObjectId.startsWith("server-")){
+    if (networkObjectId.startsWith("dhcp-server-")){
         packetProcessor_dhcp_server(switchId, networkObjectId, packet);
     }
 

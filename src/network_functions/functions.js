@@ -224,7 +224,7 @@ function ipCheck(switchObjectId,networkObjectId, ip) {
     const networkObject = document.getElementById(networkObjectId);
     let networkObjectIp = "";
 
-    if (networkObjectId.startsWith("pc-") || networkObjectId.startsWith("server-")) {
+    if (networkObjectId.startsWith("pc-") || networkObjectId.startsWith("dhcp-server-")) {
         networkObjectIp = networkObject.getAttribute("data-ip");
     }
     if (networkObjectId.startsWith("router-")) {
@@ -318,7 +318,7 @@ function isIpInNetwork(switchObjectId, ipAddress) {
         const mac = networkObject.getAttribute("data-mac");
         let ip = "";
 
-        if (devices[i].startsWith("pc-") || devices[i].startsWith("server-")) {
+        if (devices[i].startsWith("pc-") || devices[i].startsWith("dhcp-server-")) {
             ip = networkObject.getAttribute("data-ip");
         }
 
@@ -365,11 +365,11 @@ function isDHCPinNetwork(switchObjectId) {
         const cells = row.querySelectorAll("td");
         const networkObjectId = cells[0].innerHTML; //dispositivo conectado
 
-        if (networkObjectId.startsWith("server-dhcp-relay-")) { //devolvemos el id identificandolo como agente de retransmision
+        if (networkObjectId.startsWith("dhcp-relay-server-")) { //devolvemos el id identificandolo como agente de retransmision
             return [networkObjectId, "relay"];
         }
 
-        if (networkObjectId.startsWith("server-")) { //devolvemos el id identificandolo como servidor
+        if (networkObjectId.startsWith("dhcp-server-")) { //devolvemos el id identificandolo como servidor
             return [networkObjectId, "server"];
         }
 

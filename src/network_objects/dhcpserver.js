@@ -12,7 +12,7 @@ function createDhcpServerObject(x, y) {
 
     //caracteristicas generales
 
-    networkObject.id = `server-${itemIndex}`;
+    networkObject.id = `dhcp-server-${itemIndex}`;
     networkObject.classList.add("item-dropped", "dhcp-server");
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;

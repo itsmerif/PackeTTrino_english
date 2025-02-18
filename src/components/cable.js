@@ -45,7 +45,7 @@ function deleteCable(event) {
 
     }
 
-    if (NetworkObject.id.startsWith("server-")) {
+    if (NetworkObject.id.startsWith("dhcp-server-")) {
 
         NetworkObject.setAttribute("data-switch", "");  //eliminamos la referencia al switch en el pc
         NetworkObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar

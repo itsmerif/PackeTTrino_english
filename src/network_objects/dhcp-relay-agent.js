@@ -9,7 +9,7 @@ function createDhcpRelayObject(x, y) {
 
     //caracteristicas generales
 
-    networkObject.id = `server-dhcp-relay-${itemIndex}`;
+    networkObject.id = `dhcp-relay-server-${itemIndex}`;
     networkObject.classList.add("item-dropped", "dhcp-relay");
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
