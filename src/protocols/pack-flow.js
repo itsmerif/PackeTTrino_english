@@ -217,6 +217,12 @@ function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destination) {
 
 }
 
+function dhcpDiscoverGenerator(networkObjectId, switchId) {
+    $networkObject = document.getElementById(networkObjectId);
+    networkObjectMac = $networkObject.getAttribute("data-mac");
+    let packet = new dhcpDiscover(networkObjectMac);
+}
+
 function switchProcessor(switchId, networkObjectId, packet) {
 
     const $switchObject = document.getElementById(switchId);

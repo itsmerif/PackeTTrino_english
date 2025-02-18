@@ -19,6 +19,9 @@ function sendCommand(event) {
             case "ping":
                 ping(dataId, args);
                 break;
+            case "dhcp":
+                dhcp(dataId, args);
+                break;
             case "exit":
                 event.target.value = "";
                 document.querySelector(".pc-terminal").style.display = "none";
