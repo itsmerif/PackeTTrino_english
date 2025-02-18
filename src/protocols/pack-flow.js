@@ -128,27 +128,24 @@ function sp(id, args) {
     terminalMessage(id + ": Generando paquete...");
 
     switch (type) {
-
         case "arp":
-
             packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
             switchProcessor(switchId, id, packet);
             return;
-
-        case "icmp":
-
-            icmpPacketGenerator(id, switchId, ip, destination);
+        case "icmp-request":
+            icmpRequestPacketGenerator(id, switchId, ip, destination);
             return;
-
+        case "icmp-reply":
+            icmpReplyPacketGenerator(id, switchId, ip, destination);
+            return;
         default:
-
             terminalMessage("Error: Tipo de paquete no reconocido.");
             return;    
     }
 
 }
 
-function icmpPacketGenerator(networkObjectId, switchId, ip, destination) {
+function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const isSameNetwork = getNetwork(ip, $networkObject.getAttribute("data-netmask")) === getNetwork(destination, $networkObject.getAttribute("data-netmask"));
@@ -187,6 +184,51 @@ function icmpPacketGenerator(networkObjectId, switchId, ip, destination) {
         packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
     } else {
         packet = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), destination_mac);
+    }
+
+    switchProcessor(switchId, networkObjectId, packet);
+
+}
+
+function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destination) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const isSameNetwork = getNetwork(ip, $networkObject.getAttribute("data-netmask")) === getNetwork(destination, $networkObject.getAttribute("data-netmask"));
+    let destination_mac; let packet;
+
+    if (!isSameNetwork) { //el destino no está en la misma red, debemos enviarlo a la puerta de enlace
+
+        terminalMessage(networkObjectId + ": Destino En Otra Red...");
+        const defaultGateway = $networkObject.getAttribute("data-gateway");
+
+        if (!defaultGateway) {
+            terminalMessage(networkObjectId + ": Error: Puerta de Enlace Predetermina No Configurada");
+            return;
+        }
+
+        const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
+
+        if (!defaultGatewayMac) { //no tenemos la ip de la puerta de enlace en nuestra tabla de arp, lo guardamos en el buffer y enviamos un ARP primero
+            terminalMessage( networkObjectId + ": Gateway No Guardado. Enviando ARP por " + defaultGateway);
+            buffer[networkObjectId] = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), "");
+            packet = new ArpRequest(ip, defaultGateway, $networkObject.getAttribute("data-mac"));
+            switchProcessor(switchId, networkObjectId, packet);
+            return;
+        }
+
+        packet = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), defaultGatewayMac);
+        switchProcessor(switchId, networkObjectId, packet);
+        return;
+
+    }
+
+    destination_mac = isIpInARPTable(networkObjectId, destination);
+
+    if (!destination_mac) {
+        buffer[networkObjectId] = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), "");
+        packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
+    } else {
+        packet = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), destination_mac);
     }
 
     switchProcessor(switchId, networkObjectId, packet);
@@ -234,6 +276,7 @@ function packetProcessor_PC(switchId, port, packet) {
     const $networkObject = document.getElementById(port);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const isSameNetwork = getNetwork(packet.destination_ip, $networkObject.getAttribute("data-netmask")) === getNetwork(networkObjectIp, $networkObject.getAttribute("data-netmask"));
 
     if (packet.protocol === "arp" && packet.type === "request") {
 
@@ -276,8 +319,7 @@ function packetProcessor_PC(switchId, port, packet) {
         }
 
         terminalMessage(port + ": Enviando ICMP ECHO REPLY");
-        let newPacket = new IcmpEchoReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
-        switchProcessor(switchId, port, newPacket);
+        icmpReplyPacketGenerator(port, switchId, networkObjectIp, packet.origin_ip);
         return;
 
     }
