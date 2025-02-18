@@ -347,6 +347,16 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
         icmpFlag = true;
     }
 
+    if (packet.protocol === "dhcp" && packet.type === "offer") {
+        if (packet.ciaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
+            terminalMessage("DHCP OFFER Recibido")
+            let newPacket = new dhcpRequest(networkObjectMac, packet.yiaddr, packet.siaddr);
+            addPacketTraffic(newPacket);
+            terminalMessage("DHCP REQUEST Enviado")
+            switchProcessor(switchId, networkObjectId);
+        }
+    }
+
 }
 
 function packetProcessor_router(switchId, networkObjectId, packet) {
@@ -574,19 +584,31 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
 function packetProcessor_dhcp_server(switchId, networkObjectId, packet){
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = document.getElementById("data-mac");
+    const networkObjectMac = $networkObject.getAttribute("data-mac");
     const networkObjectIp = $networkObject.getAttribute("data-ip");
 
 
     if (packet.destination_ip === networkObjectIp) { //logica de equipo normal
-
+        //logica de arp e icmp
     }
-
 
     if (packet.protocol === "dhcp" && packet.type === "discover"){ //peticion de descubrimiento dhcp
         let offerIP = getRandomIpfromDhcp(networkObjectId) //obtenemos una ip válida del servidor
-        let newPacket = new dhcpOffer(networkObjectMac, offerIP);
+        let newPacket = new dhcpOffer(networkObjectIp, networkObjectMac, networkObjectIp, offerIP, packet.origin_mac);
+        addPacketTraffic(newPacket);
         switchProcessor(switchId, networkObjectId, newPacket);
+        return;
+    }
+
+    if (packet.protocol === "dhcp" && packet.type === "request")  { //solicitud de ip
+
+        if (packet.siaddr === networkObjectIp)  { //el paquete va dirigido al server, lo aceptamos
+
+           let newPacket = new dhcpAck(networkObjectMac, packet.yiaddr, 3600);
+           addPacketTraffic(newPacket)
+
+        }
+
     }
 
 }
