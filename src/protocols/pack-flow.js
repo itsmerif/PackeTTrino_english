@@ -218,9 +218,11 @@ function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destination) {
 }
 
 function dhcpDiscoverGenerator(networkObjectId, switchId) {
-    $networkObject = document.getElementById(networkObjectId);
-    networkObjectMac = $networkObject.getAttribute("data-mac");
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectMac = $networkObject.getAttribute("data-mac");
     let packet = new dhcpDiscover(networkObjectMac);
+    addPacketTraffic(packet);
+    switchProcessor(switchId, networkObjectId, packet);
 }
 
 function switchProcessor(switchId, networkObjectId, packet) {
@@ -266,6 +268,10 @@ function packetProcessor(switchId, networkObjectId, packet) {
 
     if (networkObjectId.startsWith("router-")) {
         packetProcessor_router(switchId, networkObjectId, packet);
+    }
+
+    if (networkObjectId.startsWith("server-")){
+        packetProcessor_dhcp_server(switchId, networkObjectId, packet);
     }
 
 }
@@ -438,6 +444,12 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
             throw new Error("El paquete es de tipo ARP, no se puede enrutar");
         }
 
+        //no reenviamos trafico dirigido a broadcast
+
+        if (packet.destination_ip = "255.255.255.255") {
+            throw new Error("El paquete tiene broadcast como dirección IP, se descarta");
+        }
+
         //enrutamiento
 
         const routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
@@ -556,5 +568,25 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
         throw new Error("No existe regla para enrutar el paquete en " + routerObjectId);
     }
 
+
+}
+
+function packetProcessor_dhcp_server(switchId, networkObjectId, packet){
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectMac = document.getElementById("data-mac");
+    const networkObjectIp = $networkObject.getAttribute("data-ip");
+
+
+    if (packet.destination_ip === networkObjectIp) { //logica de equipo normal
+
+    }
+
+
+    if (packet.protocol === "dhcp" && packet.type === "discover"){ //peticion de descubrimiento dhcp
+        let offerIP = getRandomIpfromDhcp(networkObjectId) //obtenemos una ip válida del servidor
+        let newPacket = new dhcpOffer(networkObjectMac, offerIP);
+        switchProcessor(switchId, networkObjectId, newPacket);
+    }
 
 }

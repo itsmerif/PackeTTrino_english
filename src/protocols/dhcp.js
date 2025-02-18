@@ -9,13 +9,14 @@ function dhcp(dataId, args) {
         return;
     }
 
-    if (!isDchpOn) {
+    if (isDchpOn === "false") {
         terminalMessage("Error: Equipo No Configurado Como DHCP");
         return;
     }
 
     if (args.length !== 2){
         terminalMessage("Error de argumentos. Sintáxis: dhcp < -renew | -release > ");
+        console.log(isDchpOn);
         return;
     }
 
