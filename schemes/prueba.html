@@ -1,0 +1,961 @@
+<svg ondragover="dragOverBoard(event)" id="svg-board" rope-start="startId" rope-end="endId" preserveAspectRatio="none"
+    width="100%" height="100%" style="position: absolute; top: 0; left: 0;">
+    <line end-start="router-2" end-end="switch-3" x1="904" y1="239" x2="717" y2="360" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="810" cy="299" r="10" fill="red"></circle>
+    <line end-start="pc-0" end-end="switch-3" x1="466" y1="505" x2="717" y2="360" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="591" cy="432" r="10" fill="red"></circle>
+    <line end-start="pc-1" end-end="switch-3" x1="650" y1="557" x2="717" y2="360" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="683" cy="458" r="10" fill="red"></circle>
+    <line end-start="router-2" end-end="switch-4" x1="904" y1="239" x2="1140" y2="337" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="1022" cy="288" r="10" fill="red"></circle>
+    <line end-start="pc-9" end-end="switch-8" x1="1144" y1="655" x2="1257" y2="530" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="1200" cy="592" r="10" fill="red"></circle>
+    <line end-start="router-7" end-end="switch-4" x1="1076" y1="470" x2="1140" y2="337" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="1108" cy="403" r="10" fill="red"></circle>
+    <line end-start="router-7" end-end="switch-8" x1="1076" y1="470" x2="1257" y2="530" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="1166" cy="500" r="10" fill="red"></circle>
+    <line end-start="pc-5" end-end="switch-4" x1="1199" y1="151" x2="1140" y2="337" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="1169" cy="244" r="10" fill="red"></circle>
+    <line end-start="router-7" end-end="switch-21" x1="1076" y1="470" x2="1345" y2="392" stroke="black"
+        stroke-width="5"></line>
+    <circle onclick="deleteCable(event)" cx="1210" cy="431" r="10" fill="red"></circle>
+    <line end-start="pc-23" end-end="switch-21" x1="1467" y1="267" x2="1345" y2="392" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="1406" cy="329" r="10" fill="red"></circle>
+    <line end-start="pc-24" end-end="switch-21" x1="1572" y1="445" x2="1345" y2="392" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="1458" cy="418" r="10" fill="red"></circle>
+    <line end-start="router-2" end-end="switch-27" x1="904" y1="239" x2="640" y2="123" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="772" cy="181" r="10" fill="red"></circle>
+    <line end-start="router-28" end-end="switch-27" x1="353" y1="156" x2="640" y2="123" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="496" cy="139" r="10" fill="red"></circle>
+    <line end-start="pc-29" end-end="switch-27" x1="925" y1="93" x2="640" y2="123" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="782" cy="108" r="10" fill="red"></circle>
+    <line end-start="router-28" end-end="switch-34" x1="353" y1="156" x2="203" y2="258" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="278" cy="207" r="10" fill="red"></circle>
+    <line end-start="router-35" end-end="switch-34" x1="147" y1="384" x2="203" y2="258" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="175" cy="321" r="10" fill="red"></circle>
+    <line end-start="pc-39" end-end="switch-34" x1="405" y1="296" x2="203" y2="258" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="304" cy="277" r="10" fill="red"></circle>
+    <line end-start="router-35" end-end="switch-41" x1="147" y1="384" x2="151" y2="575" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="149" cy="479" r="10" fill="red"></circle>
+    <line end-start="pc-42" end-end="switch-41" x1="130" y1="733" x2="151" y2="575" stroke="black" stroke-width="5">
+    </line>
+    <circle onclick="deleteCable(event)" cx="140" cy="654" r="10" fill="red"></circle>
+</svg>
+<article id="pc-0" class="item-dropped pc" data-ip="192.168.1.100" data-netmask="255.255.255.0"
+    data-network="192.168.1.0" data-mac="55:6e:00:04:83:88" data-gateway="192.168.1.1" data-switch="switch-3"
+    data-dhcp="false" onclick="showPcForm('pc-0')" oncontextmenu="showAdvancedOptions(event)"
+    ondragstart="BoardItemDragStart(event)" style="left: 466px; top: 505px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+    <div class="quick-info" style="display: none;">
+        <span class="ip">255.255.255.255/16</span>
+    </div>
+</article>
+<article id="pc-1" class="item-dropped pc" data-ip="192.168.1.101" data-netmask="255.255.255.0"
+    data-network="192.168.1.0" data-mac="73:81:1f:a5:3b:6d" data-gateway="192.168.1.1" data-switch="switch-3"
+    data-dhcp="false" onclick="showPcForm('pc-1')" oncontextmenu="showAdvancedOptions(event)"
+    ondragstart="BoardItemDragStart(event)" style="left: 650px; top: 557px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+    <div class="quick-info" style="display: none;">
+        <span class="ip">255.255.255.255/16</span>
+    </div>
+</article>
+<article id="router-2" class="item-dropped router" data-mac="68:3e:4b:37:b4:0a" ip-enp0s3="192.168.1.1"
+    netmask-enp0s3="255.255.255.0" ip-enp0s8="172.16.0.1" netmask-enp0s8="255.255.0.0" ip-enp0s9="172.17.0.1"
+    netmask-enp0s9="255.255.0.0" data-switch-enp0s3="switch-3" data-switch-enp0s8="switch-4"
+    data-switch-enp0s9="switch-27" ondragstart="BoardItemDragStart(event)"
+    oncontextmenu="showAdvancedOptionsRouter(event)" onclick="showRoutingTable(event)" style="left: 904px; top: 239px;">
+    <img src="./assets/board/router.png" alt="router" draggable="false">
+    <article class="arp-table">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <article class="routing-table" onclick="event.stopPropagation()" style="display: none;">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Destination</th>
+                    <th>Netmask</th>
+                    <th>Gateway</th>
+                    <th>Interface</th>
+                    <th>Next Hop</th>
+                </tr>
+                <tr>
+                    <td>192.168.1.0</td>
+                    <td>255.255.255.0</td>
+                    <td>192.168.1.1</td>
+                    <td>enp0s3</td>
+                    <td> 0.0.0.0</td>
+                </tr>
+                <tr>
+                    <td>172.16.0.0</td>
+                    <td>255.255.0.0</td>
+                    <td>172.16.0.1</td>
+                    <td>enp0s8</td>
+                    <td> 0.0.0.0 </td>
+                </tr>
+                <tr>
+                    <td>172.17.0.0</td>
+                    <td>255.255.0.0</td>
+                    <td>172.17.0.1</td>
+                    <td>enp0s9</td>
+                    <td> 0.0.0.0 </td>
+                </tr>
+                <tr>
+                    <td> 0.0.0.0 </td>
+                    <td> 0.0.0.0 </td>
+                    <td>172.17.0.1</td>
+                    <td>enp0s9</td>
+                    <td>172.17.0.2</td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+
+                    <td>10.0.0.0</td>
+                    <td>255.0.0.0</td>
+                    <td>172.16.0.1</td>
+                    <td>enp0s8</td>
+                    <td>172.16.0.2</td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+
+                    <td>11.0.0.0</td>
+                    <td>255.0.0.0</td>
+                    <td>172.16.0.1</td>
+                    <td>enp0s8</td>
+                    <td>172.16.0.2</td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeRoutingTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showRouterSpecs(event)"> Configurar Interfaces de Red </button>
+        <button onclick="showRouterARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="switch-3" class="item-dropped switch" data-mac="00:3f:e2:7d:c9:ee" ondragstart="BoardItemDragStart(event)"
+    ondrop="switchConn(event)" onclick="showMacTable(event)" oncontextmenu="showAdvancedOptionsSwitch(event)"
+    style="left: 717px; top: 360px;"><img src="./assets/board/switch.png" alt="switch" draggable="false">
+    <article class="mac-table" style="display: none;">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Device</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+
+                    <td class="device-name">router-2</td>
+                    <td class="mac-address"></td>
+                </tr>
+                <tr>
+
+                    <td class="device-name">pc-0</td>
+                    <td class="mac-address"></td>
+                </tr>
+                <tr>
+
+                    <td class="device-name">pc-1</td>
+                    <td class="mac-address"></td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeMacTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="switch-4" class="item-dropped switch" data-mac="36:bc:2c:3c:4a:1f" ondragstart="BoardItemDragStart(event)"
+    ondrop="switchConn(event)" onclick="showMacTable(event)" oncontextmenu="showAdvancedOptionsSwitch(event)"
+    style="left: 1140px; top: 337px;"><img src="./assets/board/switch.png" alt="switch" draggable="false">
+    <article class="mac-table" style="display: none;">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Device</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+
+                    <td class="device-name">router-2</td>
+                    <td class="mac-address"></td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+
+                    <td class="device-name">router-7</td>
+                    <td class="mac-address"></td>
+                </tr>
+                <tr>
+
+                    <td class="device-name">pc-5</td>
+                    <td class="mac-address"></td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeMacTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="pc-5" class="item-dropped pc" data-ip="172.16.0.100" data-netmask="255.255.0.0" data-network="172.16.0.0"
+    data-mac="ac:c0:40:31:77:d0" data-gateway="172.16.0.1" data-switch="switch-4" data-dhcp="false"
+    onclick="showPcForm('pc-5')" oncontextmenu="showAdvancedOptions(event)" ondragstart="BoardItemDragStart(event)"
+    style="left: 1199px; top: 151px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+    <div class="quick-info" style="display: none;">
+        <span class="ip">255.255.255.255/16</span>
+    </div>
+</article>
+<article id="router-7" class="item-dropped router" data-mac="d6:18:f7:a6:a7:12" ip-enp0s3="172.16.0.2"
+    netmask-enp0s3="255.255.0.0" ip-enp0s8="10.0.0.1" netmask-enp0s8="255.0.0.0" ip-enp0s9="11.0.0.1"
+    netmask-enp0s9="255.0.0.0" data-switch-enp0s3="switch-4" data-switch-enp0s8="switch-8"
+    data-switch-enp0s9="switch-21" ondragstart="BoardItemDragStart(event)"
+    oncontextmenu="showAdvancedOptionsRouter(event)" onclick="showRoutingTable(event)"
+    style="left: 1076px; top: 470px;"><img src="./assets/board/router.png" alt="router" draggable="false">
+    <article class="arp-table" style="display: none;">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <article class="routing-table" onclick="event.stopPropagation()" style="display: none;">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Destination</th>
+                    <th>Netmask</th>
+                    <th>Gateway</th>
+                    <th>Interface</th>
+                    <th>Next Hop</th>
+                </tr>
+                <tr>
+                    <td>172.16.0.0</td>
+                    <td>255.255.0.0</td>
+                    <td>172.16.0.2</td>
+                    <td>enp0s3</td>
+                    <td> 0.0.0.0</td>
+                </tr>
+                <tr>
+                    <td>10.0.0.0</td>
+                    <td>255.0.0.0</td>
+                    <td>10.0.0.1</td>
+                    <td>enp0s8</td>
+                    <td> 0.0.0.0 </td>
+                </tr>
+                <tr>
+                    <td>11.0.0.0</td>
+                    <td>255.0.0.0</td>
+                    <td>11.0.0.1</td>
+                    <td>enp0s9</td>
+                    <td> 0.0.0.0 </td>
+                </tr>
+                <tr>
+                    <td> 0.0.0.0 </td>
+                    <td> 0.0.0.0 </td>
+                    <td>172.16.0.2</td>
+                    <td>enp0s3</td>
+                    <td>172.16.0.1</td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+
+                    <td>192.168.1.0</td>
+                    <td>255.255.255.0</td>
+                    <td>172.16.0.2</td>
+                    <td>enp0s3</td>
+                    <td>172.16.0.1</td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeRoutingTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showRouterSpecs(event)"> Configurar Interfaces de Red </button>
+        <button onclick="showRouterARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="switch-8" class="item-dropped switch" data-mac="5c:84:bc:34:64:c6" ondragstart="BoardItemDragStart(event)"
+    ondrop="switchConn(event)" onclick="showMacTable(event)" oncontextmenu="showAdvancedOptionsSwitch(event)"
+    style="left: 1257px; top: 530px;"><img src="./assets/board/switch.png" alt="switch" draggable="false">
+    <article class="mac-table">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Device</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+
+                    <td class="device-name">pc-9</td>
+                    <td class="mac-address"></td>
+                </tr>
+                <tr>
+
+                    <td class="device-name">router-7</td>
+                    <td class="mac-address"></td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeMacTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="pc-9" class="item-dropped pc" data-ip="10.0.0.100" data-netmask="255.0.0.0" data-network="10.0.0.0"
+    data-mac="9f:be:11:cd:29:c8" data-gateway="10.0.0.1" data-switch="switch-8" data-dhcp="false"
+    onclick="showPcForm('pc-9')" oncontextmenu="showAdvancedOptions(event)" ondragstart="BoardItemDragStart(event)"
+    style="left: 1144px; top: 655px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+    <div class="quick-info" style="display: none;">
+        <span class="ip">255.255.255.255/16</span>
+    </div>
+</article>
+<article id="text-10" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".1"
+    style="left: 797px; top: 247px; position: absolute; width: 40px; margin-left: -20px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-11" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".1"
+    style="left: 1038px; top: 240px; position: absolute; width: 40px; margin-left: -20px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-12" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".100"
+    style="left: 565.008px; top: 380px; position: absolute; width: 49.2031px; margin-left: -24.6016px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-13" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".101"
+    style="left: 727.008px; top: 444px; position: absolute; width: 49.2031px; margin-left: -24.6016px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-14" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text="192.168.1.0/24"
+    style="left: 653px; top: 297px; position: absolute; width: 120.094px; margin-left: -60.0469px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-15" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text="172.16.0.0/16"
+    style="left: 1245.01px; top: 324px; position: absolute; width: 111.766px; margin-left: -55.8828px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-16" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text="10.0.0.0/8"
+    style="left: 1355.01px; top: 511px; position: absolute; width: 86.7344px; margin-left: -43.3672px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-17" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".2"
+    style="left: 1060px; top: 379px; position: absolute; width: 40px; margin-left: -20px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-18" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".1"
+    style="left: 1144px; top: 520px; position: absolute; width: 40px; margin-left: -20px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-19" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".100"
+    style="left: 1212.01px; top: 232px; position: absolute; width: 49.2031px; margin-left: -24.6016px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-20" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".100"
+    style="left: 1245.01px; top: 582px; position: absolute; width: 49.2031px; margin-left: -24.6016px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="switch-21" class="item-dropped switch" data-mac="ac:7d:4c:07:b9:10" ondragstart="BoardItemDragStart(event)"
+    ondrop="switchConn(event)" onclick="showMacTable(event)" oncontextmenu="showAdvancedOptionsSwitch(event)"
+    style="left: 1345px; top: 392px;"><img src="./assets/board/switch.png" alt="switch" draggable="false">
+    <article class="mac-table">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Device</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+
+                    <td class="device-name">router-7</td>
+                    <td class="mac-address"></td>
+                </tr>
+                <tr>
+
+                    <td class="device-name">pc-23</td>
+                    <td class="mac-address"></td>
+                </tr>
+                <tr>
+
+                    <td class="device-name">pc-24</td>
+                    <td class="mac-address"></td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeMacTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="text-22" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".1"
+    style="left: 1238px; top: 445px; position: absolute; width: 40px; margin-left: -20px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="pc-23" class="item-dropped pc" data-ip="11.0.0.100" data-netmask="255.0.0.0" data-network="11.0.0.0"
+    data-mac="9c:12:6e:2d:2e:88" data-gateway="11.0.0.1" data-switch="switch-21" data-dhcp="false"
+    onclick="showPcForm('pc-23')" oncontextmenu="showAdvancedOptions(event)" ondragstart="BoardItemDragStart(event)"
+    style="left: 1467px; top: 267px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+    <div class="quick-info" style="display: none;">
+        <span class="ip">255.255.255.255/16</span>
+    </div>
+</article>
+<article id="pc-24" class="item-dropped pc" data-ip="11.0.0.101" data-netmask="255.0.0.0" data-network="11.0.0.0"
+    data-mac="81:0d:29:7e:6b:26" data-gateway="11.0.0.1" data-switch="switch-21" data-dhcp="false"
+    onclick="showPcForm('pc-24')" oncontextmenu="showAdvancedOptions(event)" ondragstart="BoardItemDragStart(event)"
+    style="left: 1572px; top: 445px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+    <div class="quick-info" style="display: none;">
+        <span class="ip">255.255.255.255/16</span>
+    </div>
+</article>
+<article id="text-25" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".100"
+    style="left: 1369.01px; top: 297px; position: absolute; width: 49.2031px; margin-left: -24.6016px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-26" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".101"
+    style="left: 1460.01px; top: 371px; position: absolute; width: 49.2031px; margin-left: -24.6016px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="switch-27" class="item-dropped switch" data-mac="57:92:c6:82:0a:1e" ondragstart="BoardItemDragStart(event)"
+    ondrop="switchConn(event)" onclick="showMacTable(event)" oncontextmenu="showAdvancedOptionsSwitch(event)"
+    style="left: 640px; top: 123px;"><img src="./assets/board/switch.png" alt="switch" draggable="false">
+    <article class="mac-table" style="display: none;">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Device</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+            <tr>
+
+                <td class="device-name">router-2</td>
+                <td class="mac-address"></td>
+            </tr>
+            <tr>
+
+                <td class="device-name">router-28</td>
+                <td class="mac-address"></td>
+            </tr>
+            <tr>
+
+                <td class="device-name">pc-29</td>
+                <td class="mac-address"></td>
+            </tr>
+        </table>
+        <button onclick="closeMacTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="router-28" class="item-dropped router" data-mac="c2:4c:82:cd:42:0d" ip-enp0s3="172.17.0.2"
+    netmask-enp0s3="255.255.0.0" ip-enp0s8="172.18.0.1" netmask-enp0s8="255.255.0.0" ip-enp0s9="" netmask-enp0s9=""
+    data-switch-enp0s3="switch-27" data-switch-enp0s8="switch-34" data-switch-enp0s9=""
+    ondragstart="BoardItemDragStart(event)" oncontextmenu="showAdvancedOptionsRouter(event)"
+    onclick="showRoutingTable(event)" style="left: 353px; top: 156px;"><img src="./assets/board/router.png" alt="router"
+        draggable="true">
+    <article class="arp-table">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <article class="routing-table" onclick="event.stopPropagation()" style="display: none;">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Destination</th>
+                    <th>Netmask</th>
+                    <th>Gateway</th>
+                    <th>Interface</th>
+                    <th>Next Hop</th>
+                </tr>
+                <tr>
+                    <td>172.17.0.0</td>
+                    <td>255.255.0.0</td>
+                    <td>172.17.0.2</td>
+                    <td>enp0s3</td>
+                    <td> 0.0.0.0</td>
+                </tr>
+                <tr>
+                    <td>172.18.0.0</td>
+                    <td>255.255.0.0</td>
+                    <td>172.18.0.1</td>
+                    <td>enp0s8</td>
+                    <td> 0.0.0.0 </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>enp0s9</td>
+                    <td> 0.0.0.0 </td>
+                </tr>
+                <tr>
+                    <td> 0.0.0.0 </td>
+                    <td> 0.0.0.0 </td>
+                    <td>172.17.0.2</td>
+                    <td>enp0s3</td>
+                    <td>172.17.0.1</td>
+                </tr>
+            </tbody>
+            <tr>
+
+                <td>172.19.0.0</td>
+                <td>255.255.0.0</td>
+                <td>172.18.0.1</td>
+                <td>enp0s8</td>
+                <td>172.18.0.2</td>
+            </tr>
+        </table>
+        <button onclick="closeRoutingTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showRouterSpecs(event)"> Configurar Interfaces de Red </button>
+        <button onclick="showRouterARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="pc-29" class="item-dropped pc" data-ip="172.17.0.100" data-netmask="255.255.0.0" data-network="172.17.0.0"
+    data-mac="b8:9e:fa:52:b4:7c" data-gateway="172.17.0.1" data-switch="switch-27" data-dhcp="false"
+    onclick="showPcForm('pc-29')" oncontextmenu="showAdvancedOptions(event)" ondragstart="BoardItemDragStart(event)"
+    style="left: 925px; top: 93px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+    <div class="quick-info" style="display: none;">
+        <span class="ip">255.255.255.255/16</span>
+    </div>
+</article>
+<article id="text-30" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".1"
+    style="left: 806px; top: 139px; position: absolute; width: 40px; margin-left: -20px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-31" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text="172.17.0.0/16"
+    style="left: 637.008px; top: 62px; position: absolute; width: 111.766px; margin-left: -55.8828px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-32" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".2"
+    style="left: 495px; top: 83px; position: absolute; width: 40px; margin-left: -20px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-33" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".100"
+    style="left: 784.008px; top: 55px; position: absolute; width: 49.2031px; margin-left: -24.6016px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="switch-34" class="item-dropped switch" data-mac="38:86:bc:cd:3f:43" ondragstart="BoardItemDragStart(event)"
+    ondrop="switchConn(event)" onclick="showMacTable(event)" oncontextmenu="showAdvancedOptionsSwitch(event)"
+    style="left: 203px; top: 258px;"><img src="./assets/board/switch.png" alt="switch" draggable="false">
+    <article class="mac-table">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Device</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+            <tr>
+
+                <td class="device-name">router-28</td>
+                <td class="mac-address"></td>
+            </tr>
+            <tr>
+
+                <td class="device-name">router-35</td>
+                <td class="mac-address"></td>
+            </tr>
+            <tr>
+
+                <td class="device-name">pc-39</td>
+                <td class="mac-address"></td>
+            </tr>
+        </table>
+        <button onclick="closeMacTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="router-35" class="item-dropped router" data-mac="0e:1f:bb:cf:f6:67" ip-enp0s3="172.18.0.2"
+    netmask-enp0s3="255.255.0.0" ip-enp0s8="172.19.0.1" netmask-enp0s8="255.255.0.0" ip-enp0s9="" netmask-enp0s9=""
+    data-switch-enp0s3="switch-34" data-switch-enp0s8="switch-41" data-switch-enp0s9=""
+    ondragstart="BoardItemDragStart(event)" oncontextmenu="showAdvancedOptionsRouter(event)"
+    onclick="showRoutingTable(event)" style="left: 147px; top: 384px;"><img src="./assets/board/router.png" alt="router"
+        draggable="true">
+    <article class="arp-table">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <article class="routing-table" onclick="event.stopPropagation()" style="display: none;">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Destination</th>
+                    <th>Netmask</th>
+                    <th>Gateway</th>
+                    <th>Interface</th>
+                    <th>Next Hop</th>
+                </tr>
+                <tr>
+                    <td>172.18.0.0</td>
+                    <td>255.255.0.0</td>
+                    <td>172.18.0.2</td>
+                    <td>enp0s3</td>
+                    <td> 0.0.0.0</td>
+                </tr>
+                <tr>
+                    <td>172.19.0.0</td>
+                    <td>255.255.0.0</td>
+                    <td>172.19.0.1</td>
+                    <td>enp0s8</td>
+                    <td> 0.0.0.0 </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>enp0s9</td>
+                    <td> 0.0.0.0 </td>
+                </tr>
+                <tr>
+                    <td> 0.0.0.0 </td>
+                    <td> 0.0.0.0 </td>
+                    <td>172.18.0.2</td>
+                    <td>enp0s3</td>
+                    <td>172.18.0.1</td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeRoutingTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showRouterSpecs(event)"> Configurar Interfaces de Red </button>
+        <button onclick="showRouterARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="text-36" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text="172.18.0.0/16"
+    style="left: 89.0078px; top: 230px; position: absolute; width: 111.766px; margin-left: -55.8828px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-37" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".1"
+    style="left: 256px; top: 155px; position: absolute; width: 40px; margin-left: -20px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-38" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".2"
+    style="left: 219px; top: 317px; position: absolute; width: 40px; margin-left: -20px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="pc-39" class="item-dropped pc" data-ip="172.18.0.100" data-netmask="255.255.0.0" data-network="172.18.0.0"
+    data-mac="73:08:d1:01:85:bf" data-gateway="172.18.0.1" data-switch="switch-34" data-dhcp="false"
+    onclick="showPcForm('pc-39')" oncontextmenu="showAdvancedOptions(event)" ondragstart="BoardItemDragStart(event)"
+    style="left: 405px; top: 296px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+    <div class="quick-info" style="display: none;">
+        <span class="ip">255.255.255.255/16</span>
+    </div>
+</article>
+<article id="text-40" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".100"
+    style="left: 322.008px; top: 229px; position: absolute; width: 49.2031px; margin-left: -24.6016px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="switch-41" class="item-dropped switch" data-mac="a1:f1:ac:ce:8a:f4" ondragstart="BoardItemDragStart(event)"
+    ondrop="switchConn(event)" onclick="showMacTable(event)" oncontextmenu="showAdvancedOptionsSwitch(event)"
+    style="left: 151px; top: 575px;"><img src="./assets/board/switch.png" alt="switch" draggable="false">
+    <article class="mac-table">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Device</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+            <tr>
+
+                <td class="device-name">router-35</td>
+                <td class="mac-address"></td>
+            </tr>
+            <tr>
+
+                <td class="device-name">pc-42</td>
+                <td class="mac-address"></td>
+            </tr>
+        </table>
+        <button onclick="closeMacTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+</article>
+<article id="pc-42" class="item-dropped pc" data-ip="172.19.0.100" data-netmask="255.255.0.0" data-network="172.19.0.0"
+    data-mac="bc:8e:1a:c3:32:4f" data-gateway="172.19.0.1" data-switch="switch-41" data-dhcp="false"
+    onclick="showPcForm('pc-42')" oncontextmenu="showAdvancedOptions(event)" ondragstart="BoardItemDragStart(event)"
+    style="left: 130px; top: 733px;">
+    <img src="./assets/board/pc.png" alt="pc" draggable="false">
+    <article class="arp-table" onclick="event.stopPropagation()">
+        <table>
+            <tbody>
+                <tr>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    </article>
+    <div class="advanced-options-modal" style="display: none;">
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
+    </div>
+    <div class="quick-info" style="display: none;">
+        <span class="ip">255.255.255.255/16</span>
+    </div>
+</article>
+<article id="text-44" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text="172.19.0.0/16"
+    style="left: 255.008px; top: 533px; position: absolute; width: 111.766px; margin-left: -55.8828px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-45" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".1"
+    style="left: 190px; top: 459px; position: absolute; width: 40px; margin-left: -20px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
+<article id="text-46" class="text-annotation" onmousedown="dragText(event)"
+    oncontextmenu="showAdvancedOptionsText(event)" data-text=".100"
+    style="left: 189.008px; top: 635px; position: absolute; width: 49.2031px; margin-left: -24.6016px;">
+    <div class="advanced-options-modal" style="display: none;"><button onclick="deleteItem(event)">Eliminar</button>
+    </div><input type="text" oninput="autoExtendText.call(this)">
+</article>
