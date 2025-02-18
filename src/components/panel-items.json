@@ -46,5 +46,11 @@
         "image": "./assets/panel/txt.png",
         "draggable": true,
         "size": "100%"
+    },
+    {
+        "name": "traffic",
+        "image": "./assets/panel/traffic.png",
+        "draggable": false,
+        "size": "100%"
     }
 ]

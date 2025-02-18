@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="./assets/styles/advancedoptions.css">
   <link rel="stylesheet" href="./assets/styles/dhcpserver.css">
   <link rel="stylesheet" href="./assets/styles/packet.css">
+  <link rel="stylesheet" href="./assets/styles/packet-traffic.css">
 </head>
 
 <body onload="init()">
@@ -119,6 +120,19 @@
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
     <input type="submit" value="Hacer Ping">
   </form>
+
+  <article  class="packet-traffic">
+    <table>
+      <tr>
+        <th>Protocol</th>
+        <th>Type</th>
+        <th>Origin IP</th>
+        <th>Destination IP</th>
+        <th>Origin MAC</th>
+        <th>Destination MAC</th>
+      </tr>
+    </table>
+  </article>
 
   <script src="./src/animations/ip-protocol-visual.js"></script>
   <script src="./src/animations/move-packet.js"></script>

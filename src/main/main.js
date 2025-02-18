@@ -15,6 +15,7 @@ async function init() {
     document.querySelector(".pc-terminal").addEventListener("keydown", terminalKeyboard);
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm);
     document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm);
+    document.getElementById("item-panel").querySelector(".traffic").addEventListener("click", showPacketTraffic);
     removePropagationPingform();
 }
 
@@ -255,4 +256,47 @@ function dragPingForm(event) {
 
     document.addEventListener('mousemove', movePingForm);
     document.addEventListener('mouseup', stopDragging);
+}
+
+function addPacketTraffic(packet) {
+    const $table = document.querySelector(".packet-traffic table");
+
+    let protocol = packet.protocol;
+    let type = packet.type;
+    let destinationIP = packet.destination_ip;
+    let originIP = packet.origin_ip;
+    let destinationMAC = packet.destination_mac;
+    let originMAC = packet.origin_mac;
+
+    $table.innerHTML += `
+        <tr>
+            <td>${protocol}</td>
+            <td>${type}</td>
+            <td>${originIP}</td>
+            <td>${destinationIP}</td>
+            <td>${originMAC}</td>
+            <td>${destinationMAC}</td>
+        </tr>
+    `;
+}
+
+function showPacketTraffic() {
+
+    const $packetTraffic = document.querySelector(".packet-traffic");
+    const $table = $packetTraffic.querySelector("table");
+    const $trs = $table.querySelectorAll("tr");
+
+    if ($packetTraffic.style.display === "flex") {
+
+        for (let i = 1; i < $trs.length; i++) {
+            $trs[i].remove();
+        }
+
+        $packetTraffic.style.display = "none";
+
+    } else {
+
+        $packetTraffic.style.display = "flex";
+
+    }
 }
