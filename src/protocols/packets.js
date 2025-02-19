@@ -50,7 +50,7 @@ class dhcpDiscover extends packet {
         this.ttl = 64;
         this.type = "discover";
         this.port = "67";
-    }
+    }   
 }
 
 class dhcpOffer extends packet {
