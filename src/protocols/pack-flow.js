@@ -250,15 +250,13 @@ function switchProcessor(switchId, networkObjectId, packet) {
 
             if (device !== networkObjectId) { //no saturamos el puerto de origen
                 if (device.startsWith("pc-")) {
-                    //packetProcessor_PC(switchId, device, packet);          
+                    packetProcessor_PC(switchId, device, packet);          
                 } else if (device.startsWith("router-")) {
-                    //packetProcessor_router(switchId, device, packet);
-                    packetEntryFilterRouter(switchId,device,packet);
+                    packetProcessor_router(switchId, device, packet);
                 } else if (device.startsWith("dhcp-server-")) {
-                    //packetProcessor_dhcp_server(switchId, device, packet);
+                    packetProcessor_dhcp_server(switchId, device, packet);
                 } else if (device.startsWith("dhcp-relay-server-")) {
-                    //packetProcessor_dhcp_relay_server(switchId, device, packet);
-                    packetEntryFilterDhcpRelayServer(switchId,device,packet);
+                    packetProcessor_dhcp_relay_server(switchId, device, packet);
                 }
             }
         }
@@ -282,25 +280,6 @@ function switchProcessor(switchId, networkObjectId, packet) {
     }
 
     return;
-}
-
-function packetEntryFilterRouter(switchId, networkObjectId, packet) {
-
-    if (packet.destination_ip === "255.255.255.255") { //no hacemos nada con trafico dirigido a broadcast
-        terminalMessage( networkObjectId + ": Paquete DHCP-DISCOVER ignorado");
-        return;
-    }
-
-    packetProcessor_router(switchId, networkObjectId, packet);
-
-}
-
-function packetEntryFilterDhcpRelayServer(switchId, networkObjectId, packet) {
-    if (packet.protocol === "dhcp" && packet.type === "discover") {
-        terminalMessage( networkObjectId + ": Paquete DHCP-DISCOVER recibido");
-        packetProcessor_dhcp_relay_server(switchId, networkObjectId, packet);
-        return;
-    }
 }
 
 function packetProcessor_PC(switchId, networkObjectId, packet) {
