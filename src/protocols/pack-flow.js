@@ -233,30 +233,29 @@ function switchProcessor(switchId, networkObjectId, packet) {
 
     const $switchObject = document.getElementById(switchId);
 
-    //guardamos la mac de origen si no la tenemos en la tabla MAC del switch
-
+    // Guardamos la MAC de origen si no está en la tabla MAC del switch
     saveMac(switchId, networkObjectId, packet.origin_mac);
 
     if (packet.destination_mac === "ff:ff:ff:ff:ff:ff" || !isMacInMACTable(switchId, packet.destination_mac)) {
 
-        terminalMessage(switchId + ": Saturación de puertos...");
+        terminalMessage(`${switchId}: Saturación de puertos...`);
         order++;
 
         let devices = getDeviceTable($switchObject.id);
 
-        for (let i = 0; i < devices.length; i++) {
+        for (let device of devices) {
+            if (device !== networkObjectId) {
 
-            let device = devices[i];
+                let duplicatePacket = structuredClone(packet);
 
-            if (device !== networkObjectId) { //no saturamos el puerto de origen
                 if (device.startsWith("pc-")) {
-                    packetProcessor_PC(switchId, device, packet);          
+                    packetProcessor_PC(switchId, device, duplicatePacket);          
                 } else if (device.startsWith("router-")) {
-                    packetProcessor_router(switchId, device, packet);
+                    packetProcessor_router(switchId, device, duplicatePacket);
                 } else if (device.startsWith("dhcp-server-")) {
-                    packetProcessor_dhcp_server(switchId, device, packet);
+                    packetProcessor_dhcp_server(switchId, device, duplicatePacket);
                 } else if (device.startsWith("dhcp-relay-server-")) {
-                    packetProcessor_dhcp_relay_server(switchId, device, packet);
+                    packetProcessor_dhcp_relay_server(switchId, device, duplicatePacket);
                 }
             }
         }
@@ -264,23 +263,24 @@ function switchProcessor(switchId, networkObjectId, packet) {
         return;
     }
 
-    //la mac de destino está en la tabla MAC del switch
-
     let device = getDeviceFromMac(switchId, packet.destination_mac);
-    terminalMessage(switchId + ": Reenviando paquete a " + device);
+    terminalMessage(`${switchId}: Reenviando paquete a ${device}`);
+
+    let duplicatePacket = structuredClone(packet);
 
     if (device.startsWith("pc-")) {
-        packetProcessor_PC(switchId, device, packet);          
+        packetProcessor_PC(switchId, device, duplicatePacket);          
     } else if (device.startsWith("router-")) {
-        packetProcessor_router(switchId, device, packet);
+        packetProcessor_router(switchId, device, duplicatePacket);
     } else if (device.startsWith("dhcp-server-")) {
-        packetProcessor_dhcp_server(switchId, device, packet);
+        packetProcessor_dhcp_server(switchId, device, duplicatePacket);
     } else if (device.startsWith("dhcp-relay-server-")) {
-        packetProcessor_dhcp_relay_server(switchId, device, packet);
+        packetProcessor_dhcp_relay_server(switchId, device, duplicatePacket);
     }
 
     return;
 }
+
 
 function packetProcessor_PC(switchId, networkObjectId, packet) {
 
