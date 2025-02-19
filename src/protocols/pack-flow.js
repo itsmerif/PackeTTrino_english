@@ -371,8 +371,6 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
 
 function packetProcessor_router(switchId, networkObjectId, packet) {
 
-    console.log(packet);
-
     const $routerObject = document.getElementById(networkObjectId);
     const routerObjectMac = $routerObject.getAttribute("data-mac");
     const availableNetworks = [
@@ -609,12 +607,12 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
 
         if (packet.protocol === "arp" && packet.type === "request") {
 
-            if (packet.destination_ip !== networkObjectIp) {
+            if (packet.destination_ip !== serverObjectIp) {
                 terminalMessage(port + ": Solicitud ARP ignorada");
                 return;
             }
 
-            terminalMessage(networkObjectId + ": Enviando un Respuesta ARP");
+            terminalMessage(serverObjectId + ": Enviando un Respuesta ARP");
             addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
             let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
             addPacketTraffic(newPacket);
@@ -628,6 +626,8 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
 
         let offerIP = getRandomIpfromDhcp(serverObjectId) //obtenemos una ip válida del servidor
         let newPacket = new dhcpOffer(serverObjectIp, serverObjectMac, serverObjectIp, offerIP, packet.origin_mac, gatewayOffer, netmaskOffer);
+        console.log(packet.giaddr);
+        if (packet.giaddr !== "0.0.0.0") newPacket.destination_ip = packet.giaddr;
         addPacketTraffic(newPacket);
         switchProcessor(switchId, serverObjectId, newPacket);
         return;
@@ -669,8 +669,10 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
             terminalMessage(serverObjectId + ": El equipo con ip " + packet.origin_ip + " ha sido agregado a la tabla de ARP");
 
             if (buffer[serverObjectId]) {
+                buffer[serverObjectId].origin_mac = serverObjectMac;
                 buffer[serverObjectId].destination_mac = isIpInARPTable(serverObjectId, packet.origin_ip);
                 buffer[serverObjectId].destination_ip = mainServer;
+                buffer[serverObjectId].giaddr = serverObjectIp;
                 addPacketTraffic(buffer[serverObjectId]);
                 switchProcessor(switchId, serverObjectId, buffer[serverObjectId]);
                 delete buffer[serverObjectId];
@@ -696,6 +698,8 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
         //la mac de la puerta de enlace esta en la tabla de arp
 
         packet.destination_ip = mainServer;
+        packet.origin_mac = serverObjectMac;
+        packet.giaddr = serverObjectIp;
         packet.destination_mac = defaultGatewayMac;
         addPacketTraffic(packet);
         switchProcessor(switchId, serverObjectId, packet);
