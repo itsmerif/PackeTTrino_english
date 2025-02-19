@@ -270,11 +270,11 @@ function switchProcessor(switchId, networkObjectId, packet) {
     terminalMessage(switchId + ": Reenviando paquete a " + device);
 
     if (device.startsWith("pc-")) {
-        //packetProcessor_PC(switchId, device, packet);          
+        packetProcessor_PC(switchId, device, packet);          
     } else if (device.startsWith("router-")) {
         packetProcessor_router(switchId, device, packet);
     } else if (device.startsWith("dhcp-server-")) {
-        //packetProcessor_dhcp_server(switchId, device, packet);
+        packetProcessor_dhcp_server(switchId, device, packet);
     } else if (device.startsWith("dhcp-relay-server-")) {
         packetProcessor_dhcp_relay_server(switchId, device, packet);
     }
@@ -376,9 +376,11 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
     //bloqueo de paquetes 
 
     if (packet.destination_ip === "255.255.255.255") { //no hacemos nada con trafico dirigido a broadcast
-        terminalMessage("Paquete DHCP-DISCOVER ignorado");
+        terminalMessage(networkObjectId + ": Paquete DHCP-DISCOVER ignorado");
         return;
     }
+
+    //obtenemos especificaciones del router
 
     const $routerObject = document.getElementById(networkObjectId);
     const routerObjectMac = $routerObject.getAttribute("data-mac");
@@ -387,8 +389,6 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
         getNetwork($routerObject.getAttribute("ip-enp0s8"), $routerObject.getAttribute("netmask-enp0s8")),
         getNetwork($routerObject.getAttribute("ip-enp0s9"), $routerObject.getAttribute("netmask-enp0s9"))
     ];
-
-    //obtenemos especificaciones del router
 
     let networkObjectIp; let networkObjectNetmask;
 
@@ -409,11 +409,6 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
 
     const isSameNetwork = getNetwork(packet.destination_ip, networkObjectNetmask) === getNetwork(networkObjectIp, networkObjectNetmask);
 
-    if (packet.protocol === "dhcp" && packet.type === "discover") {
-        console.log(packet);
-        terminalMessage("Paquete DHCP-DISCOVER recibido");
-        return;
-    }
 
     if (packet.destination_ip === networkObjectIp) { //el destinoIp del paquete es el propio router -> actúa como un equipo normal
         if (packet.protocol === "arp" && packet.type === "request") {
@@ -467,7 +462,7 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
         }
     }
 
-    /*
+    
     if (!isSameNetwork) { //paquete con destino otra red
 
         //enrutamiento
@@ -584,7 +579,6 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
         throw new Error("No existe regla para enrutar el paquete en " + routerObjectId);
 
     }
-    */
 
 }
 
