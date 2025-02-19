@@ -678,7 +678,8 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
         }
 
         if (packet.protocol === "dhcp" && packet.type === "offer") { //oferta del server principal
-            terminalMessage(serverObjectId + ": DHCP OFFER Recibido")
+            if (packet.giaddr !== serverObjectIp) return; //comprobamos si el offer está dirigido
+            terminalMessage(serverObjectId + " : DHCP-OFFER Recibido. ");
             return;
         }
 
