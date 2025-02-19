@@ -281,7 +281,6 @@ function switchProcessor(switchId, networkObjectId, packet) {
     return;
 }
 
-
 function packetProcessor_PC(switchId, networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
@@ -615,7 +614,16 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
     if (packet.protocol === "dhcp" && packet.type === "discover") { //peticion de descubrimiento dhcp
 
         let offerIP = getRandomIpfromDhcp(serverObjectId) //obtenemos una ip válida del servidor
-        let newPacket = new dhcpOffer(serverObjectIp, serverObjectMac, serverObjectIp, offerIP, packet.origin_mac, gatewayOffer, netmaskOffer);
+
+        let newPacket = new dhcpOffer(
+            serverObjectIp, //origin ip
+            serverObjectMac, //origin mac
+            serverObjectIp, //server ip
+            offerIP, //offer ip
+            packet.origin_mac, //destination mac
+            gatewayOffer, //gateway offer
+            netmaskOffer //netmask offer
+        );
 
         //comprobamos si proviene de un agente de retransmision
         if (packet.giaddr !== "0.0.0.0") {
@@ -665,10 +673,7 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
             terminalMessage(serverObjectId + ": El equipo con ip " + packet.origin_ip + " ha sido agregado a la tabla de ARP");
 
             if (buffer[serverObjectId]) {
-                buffer[serverObjectId].origin_mac = serverObjectMac;
                 buffer[serverObjectId].destination_mac = isIpInARPTable(serverObjectId, packet.origin_ip);
-                buffer[serverObjectId].destination_ip = mainServer;
-                buffer[serverObjectId].giaddr = serverObjectIp;
                 addPacketTraffic(buffer[serverObjectId]);
                 switchProcessor(switchId, serverObjectId, buffer[serverObjectId]);
                 delete buffer[serverObjectId];
@@ -678,8 +683,15 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
         }
 
         if (packet.protocol === "dhcp" && packet.type === "offer") { //oferta del server principal
-            if (packet.giaddr !== serverObjectIp) return; //comprobamos si el offer está dirigido
+            if (packet.giaddr !== serverObjectIp) return; //comprobamos si el offer está dirigido al agente
             terminalMessage(serverObjectId + " : DHCP-OFFER Recibido. ");
+            //reenviamos el paquete al cliente que lo solicitó
+            packet.destination_mac = packet.ciaddr;
+            packet.destination_ip = "255.255.255.255";
+            packet.origin_mac = serverObjectMac;
+            packet.giaddr = "0.0.0.0";
+            addPacketTraffic(packet);
+            switchProcessor(switchId, serverObjectId, packet);
             return;
         }
 
@@ -688,9 +700,17 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
     if (packet.protocol === "dhcp" && packet.type === "discover") { //peticion de descubrimiento dhcp, la mandamos al server
 
         terminalMessage(serverObjectId + ": DHCP DISCOVER Recibido");
-
         const defaultGateway = $serverObject.getAttribute("data-gateway");
         let defaultGatewayMac = isIpInARPTable(serverObjectId, defaultGateway);
+
+        //hago cambios en el paquete para que se envie al servidor
+
+        packet.chaddr = packet.origin_mac;
+        packet.destination_ip = mainServer;
+        packet.origin_mac = serverObjectMac;
+        packet.giaddr = serverObjectIp;
+        packet.destination_mac = defaultGatewayMac;
+        packet.origin_ip = serverObjectIp;
 
         if (!defaultGatewayMac) { //no tenemos la ip de la puerta de enlace en nuestra tabla de arp, lo guardamos en el buffer y enviamos un ARP primero
             buffer[serverObjectId] = packet;
@@ -702,10 +722,6 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
 
         //la mac de la puerta de enlace esta en la tabla de arp
 
-        packet.destination_ip = mainServer;
-        packet.origin_mac = serverObjectMac;
-        packet.giaddr = serverObjectIp;
-        packet.destination_mac = defaultGatewayMac;
         addPacketTraffic(packet);
         switchProcessor(switchId, serverObjectId, packet);
         return;

@@ -51,19 +51,21 @@ class dhcpDiscover extends packet {
         this.type = "discover";
         this.port = "67";
         this.giaddr = "0.0.0.0";
+        this.ciaddr = "0.0.0.0";
+        this.chaddr = "";
     }   
 }
 
 class dhcpOffer extends packet {
-    constructor(origin_ip, origin_mac, server_ip, offer_ip, client_mac, gateway, netmask) {
-        super(origin_ip, "255.255.255.255", origin_mac, client_mac);
+    constructor(origin_ip, origin_mac, server_ip, offer_ip, destination_mac, gateway, netmask) {
+        super(origin_ip, "255.255.255.255", origin_mac, destination_mac);
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "offer";
         this.port = "68";
         this.yiaddr = offer_ip;
         this.siaddr = server_ip;
-        this.ciaddr = client_mac;
+        this.ciaddr = "0.0.0.0";
         this.giaddr = "0.0.0.0";
         //dhcp options
         this.gateway = gateway;
