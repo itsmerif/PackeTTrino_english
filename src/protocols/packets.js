@@ -64,6 +64,7 @@ class dhcpOffer extends packet {
         this.yiaddr = offer_ip;
         this.siaddr = server_ip;
         this.ciaddr = client_mac;
+        this.giaddr = "0.0.0.0";
         //dhcp options
         this.gateway = gateway;
         this.netmask = netmask;

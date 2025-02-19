@@ -1,6 +1,7 @@
 let buffer = {};
 let arpFlag = true;
 let icmpFlag = true;
+let order = 0;
 
 function sp(id, args) {
 
@@ -149,7 +150,7 @@ function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) 
         packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
         addPacketTraffic(packet);
         arpFlag = false;
-
+        addPacketTraffic(packet);
         switchProcessor(switchId, networkObjectId, packet);
     } else {
         packet = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), destination_mac);
@@ -221,8 +222,11 @@ function dhcpDiscoverGenerator(networkObjectId, switchId) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     let packet = new dhcpDiscover(networkObjectMac);
+    terminalMessage(networkObjectId + ": Enviando DHCP Discover");
     addPacketTraffic(packet);
+    //console.log(`dhcpDiscoverGenerator(${networkObjectId}, ${switchId})`);
     switchProcessor(switchId, networkObjectId, packet);
+    return;
 }
 
 function switchProcessor(switchId, networkObjectId, packet) {
@@ -233,9 +237,10 @@ function switchProcessor(switchId, networkObjectId, packet) {
 
     saveMac(switchId, networkObjectId, packet.origin_mac);
 
-    if (packet.destination_mac === "ff:ff:ff:ff:ff:ff" || !isMacInMACTable($switchObject.id, packet.destination_mac)) {
+    if (packet.destination_mac === "ff:ff:ff:ff:ff:ff" || !isMacInMACTable(switchId, packet.destination_mac)) {
 
         terminalMessage(switchId + ": Saturación de puertos...");
+        order++;
 
         let devices = getDeviceTable($switchObject.id);
 
@@ -244,9 +249,18 @@ function switchProcessor(switchId, networkObjectId, packet) {
             let device = devices[i];
 
             if (device !== networkObjectId) { //no saturamos el puerto de origen
-                packetProcessor(switchId, device, packet);
+                if (device.startsWith("pc-")) {
+                    //packetProcessor_PC(switchId, device, packet);          
+                } else if (device.startsWith("router-")) {
+                    //packetProcessor_router(switchId, device, packet);
+                    packetEntryFilterRouter(switchId,device,packet);
+                } else if (device.startsWith("dhcp-server-")) {
+                    //packetProcessor_dhcp_server(switchId, device, packet);
+                } else if (device.startsWith("dhcp-relay-server-")) {
+                    //packetProcessor_dhcp_relay_server(switchId, device, packet);
+                    packetEntryFilterDhcpRelayServer(switchId,device,packet);
+                }
             }
-
         }
 
         return;
@@ -254,30 +268,39 @@ function switchProcessor(switchId, networkObjectId, packet) {
 
     //la mac de destino está en la tabla MAC del switch
 
-    let device = getDeviceFromMac($switchObject.id, packet.destination_mac);
+    let device = getDeviceFromMac(switchId, packet.destination_mac);
     terminalMessage(switchId + ": Reenviando paquete a " + device);
-    packetProcessor(switchId, device, packet);
+
+    if (device.startsWith("pc-")) {
+        //packetProcessor_PC(switchId, device, packet);          
+    } else if (device.startsWith("router-")) {
+        packetProcessor_router(switchId, device, packet);
+    } else if (device.startsWith("dhcp-server-")) {
+        //packetProcessor_dhcp_server(switchId, device, packet);
+    } else if (device.startsWith("dhcp-relay-server-")) {
+        packetProcessor_dhcp_relay_server(switchId, device, packet);
+    }
+
+    return;
+}
+
+function packetEntryFilterRouter(switchId, networkObjectId, packet) {
+
+    if (packet.destination_ip === "255.255.255.255") { //no hacemos nada con trafico dirigido a broadcast
+        terminalMessage( networkObjectId + ": Paquete DHCP-DISCOVER ignorado");
+        return;
+    }
+
+    packetProcessor_router(switchId, networkObjectId, packet);
 
 }
 
-function packetProcessor(switchId, networkObjectId, packet) {
-
-    if (networkObjectId.startsWith("pc-")) {
-        packetProcessor_PC(switchId, networkObjectId, packet);
-    }
-
-    if (networkObjectId.startsWith("router-")) {
-        packetProcessor_router(switchId, networkObjectId, packet);
-    }
-
-    if (networkObjectId.startsWith("dhcp-server-")) {
-        packetProcessor_dhcp_server(switchId, networkObjectId, packet);
-    }
-
-    if (networkObjectId.startsWith("dhcp-relay-server-")) {
+function packetEntryFilterDhcpRelayServer(switchId, networkObjectId, packet) {
+    if (packet.protocol === "dhcp" && packet.type === "discover") {
+        terminalMessage( networkObjectId + ": Paquete DHCP-DISCOVER recibido");
         packetProcessor_dhcp_relay_server(switchId, networkObjectId, packet);
+        return;
     }
-
 }
 
 function packetProcessor_PC(switchId, networkObjectId, packet) {
@@ -371,6 +394,13 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
 
 function packetProcessor_router(switchId, networkObjectId, packet) {
 
+    //bloqueo de paquetes 
+
+    if (packet.destination_ip === "255.255.255.255") { //no hacemos nada con trafico dirigido a broadcast
+        terminalMessage("Paquete DHCP-DISCOVER ignorado");
+        return;
+    }
+
     const $routerObject = document.getElementById(networkObjectId);
     const routerObjectMac = $routerObject.getAttribute("data-mac");
     const availableNetworks = [
@@ -378,6 +408,8 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
         getNetwork($routerObject.getAttribute("ip-enp0s8"), $routerObject.getAttribute("netmask-enp0s8")),
         getNetwork($routerObject.getAttribute("ip-enp0s9"), $routerObject.getAttribute("netmask-enp0s9"))
     ];
+
+    //obtenemos especificaciones del router
 
     let networkObjectIp; let networkObjectNetmask;
 
@@ -398,10 +430,13 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
 
     const isSameNetwork = getNetwork(packet.destination_ip, networkObjectNetmask) === getNetwork(networkObjectIp, networkObjectNetmask);
 
-    //router actuando como equipo normal
+    if (packet.protocol === "dhcp" && packet.type === "discover") {
+        console.log(packet);
+        terminalMessage("Paquete DHCP-DISCOVER recibido");
+        return;
+    }
 
-    if (packet.destination_ip === networkObjectIp) { //el paquete es para mi
-
+    if (packet.destination_ip === networkObjectIp) { //el destinoIp del paquete es el propio router -> actúa como un equipo normal
         if (packet.protocol === "arp" && packet.type === "request") {
 
             if (packet.destination_ip !== networkObjectIp) {
@@ -416,7 +451,6 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
             switchProcessor(switchId, networkObjectId, newPacket);
             return;
         }
-
         if (packet.protocol === "icmp" && packet.type === "request") {
 
             if (packet.destination_ip !== networkObjectIp) {
@@ -431,7 +465,6 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
             return;
 
         }
-
         if (packet.protocol === "arp" && packet.type === "reply") {
 
             if (packet.destination_ip !== networkObjectIp) {
@@ -449,27 +482,14 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
                 addPacketTraffic(buffer[networkObjectId]);
                 switchProcessor(switchId, networkObjectId, buffer[networkObjectId]);
                 delete buffer[networkObjectId];
+                return;
             }
 
-            return;
         }
     }
 
-    if (!isSameNetwork) { //paquete a reenviar
-
-        //no reenviamos trafico de tipo ARP
-
-        if (packet.protocol === "arp") {
-            terminalMessage(networkObjectId + ": El paquete es de tipo ARP, no se puede enrutar");
-            return;
-        }
-
-        //no reenviamos trafico dirigido a broadcast
-
-        if (packet.destination_ip === "255.255.255.255") {
-            terminalMessage(networkObjectId + ": El paquete tiene broadcast como dirección IP, se descarta");
-            return;
-        }
+    /*
+    if (!isSameNetwork) { //paquete con destino otra red
 
         //enrutamiento
 
@@ -490,26 +510,22 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
             if (ruleNetwork === getNetwork(packet.destination_ip, ruleNetmask)) { //la regla coincide con la red de destino
 
                 terminalMessage(networkObjectId + ": Reenviando el paquete...")
-
-                const nextSwitch = $routerObject.getAttribute("data-switch-" + ruleInterface); //obtenemos el switch que va a saltar
-
+                const nextSwitch = $routerObject.getAttribute("data-switch-" + ruleInterface); //obtenemos el switch por el que va a saltar
                 packet.origin_mac = routerObjectMac; //cambiamos la mac del origen por la del router
+                packet.destination_mac = isIpInARPTable(networkObjectId, packet.destination_ip); //cambiamos la mac de destino por la de la tabla de arp
 
-                packet.destination_mac = isIpInARPTable(networkObjectId, packet.destination_ip);
-
-                if (!packet.destination_mac) { //no tenemos la mac del destino en nuestra tabla de arp, lo guardamos en el buffer y enviamos un ARP primero
+                if (!packet.destination_mac) { //no tenemos la mac del destino en nuestra tabla arp, lo guardamos en el buffer y enviamos un ARP primero
                     terminalMessage(networkObjectId + ": Destino No Guardado. Enviando ARP por " + packet.destination_ip);
                     buffer[networkObjectId] = packet;
                     let newPacket = new ArpRequest(gateway, packet.destination_ip, routerObjectMac);
                     arpFlag = false;
-
                     addPacketTraffic(newPacket);
                     switchProcessor(nextSwitch, networkObjectId, newPacket);
                     return;
                 }
-
                 addPacketTraffic(packet);
                 switchProcessor(nextSwitch, networkObjectId, packet);
+                terminalMessage(networkObjectId + ": Reenviando el paquete directamente...")
                 return;
             }
 
@@ -541,7 +557,6 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
                         buffer[networkObjectId] = packet;
                         let newPacket = new ArpRequest(gateway, nexthop, routerObjectMac);
                         arpFlag = false;
-
                         addPacketTraffic(newPacket);
                         switchProcessor(nextSwitch, networkObjectId, newPacket);
                         return;
@@ -586,13 +601,18 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
         }
 
         //no hay regla para enrutar el paquete, lo damos por fallido
+
         throw new Error("No existe regla para enrutar el paquete en " + routerObjectId);
+
     }
+    */
 
 }
 
 function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
 
+    //console.log(`llamada ${order} packetProcessor_dhcp_server(${switchId}, ${serverObjectId}, ${packet.protocol}, ${packet.type})`);
+    order++;
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");
     const serverObjectIp = $serverObject.getAttribute("data-ip");
@@ -603,35 +623,37 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
     const netmaskOffer = $serverObject.getAttribute("offer-netmask");
 
 
-    if (packet.destination_ip === serverObjectIp) { //el paquete es para mi
+    if (packet.protocol === "arp" && packet.type === "request") {
 
-        if (packet.protocol === "arp" && packet.type === "request") {
-
-            if (packet.destination_ip !== serverObjectIp) {
-                terminalMessage(port + ": Solicitud ARP ignorada");
-                return;
-            }
-
-            terminalMessage(serverObjectId + ": Enviando un Respuesta ARP");
-            addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
-            let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
-            addPacketTraffic(newPacket);
-            switchProcessor(switchId, serverObjectId, newPacket);
+        if (packet.destination_ip !== serverObjectIp) {
+            terminalMessage(port + ": Solicitud ARP ignorada");
             return;
-
         }
+
+        terminalMessage(serverObjectId + ": Enviando un Respuesta ARP");
+        addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
+        let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
+        addPacketTraffic(newPacket);
+        switchProcessor(switchId, serverObjectId, newPacket);
+        return;
+
     }
 
     if (packet.protocol === "dhcp" && packet.type === "discover") { //peticion de descubrimiento dhcp
 
         let offerIP = getRandomIpfromDhcp(serverObjectId) //obtenemos una ip válida del servidor
         let newPacket = new dhcpOffer(serverObjectIp, serverObjectMac, serverObjectIp, offerIP, packet.origin_mac, gatewayOffer, netmaskOffer);
-        console.log(packet.giaddr);
-        if (packet.giaddr !== "0.0.0.0") newPacket.destination_ip = packet.giaddr;
+
+        //comprobamos si proviene de un agente de retransmision
+        if (packet.giaddr !== "0.0.0.0") {
+            newPacket.destination_ip = packet.giaddr;
+            newPacket.giaddr = packet.giaddr;
+        }
+
+        terminalMessage(serverObjectId + ": DHCP OFFER Enviado")
         addPacketTraffic(newPacket);
         switchProcessor(switchId, serverObjectId, newPacket);
         return;
-
     }
 
     if (packet.protocol === "dhcp" && packet.type === "request") { //solicitud de ip
@@ -652,6 +674,7 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
 
 function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
 
+    //console.log(`packetProcessor_dhcp_relay_server(${switchId}, ${serverObjectId}, ${packet})`);
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");
     const serverObjectIp = $serverObject.getAttribute("data-ip");
@@ -680,9 +703,17 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
 
             return;
         }
+
+        if (packet.protocol === "dhcp" && packet.type === "offer") { //oferta del server principal
+            terminalMessage(serverObjectId + ": DHCP OFFER Recibido")
+            return;
+        }
+
     }
 
     if (packet.protocol === "dhcp" && packet.type === "discover") { //peticion de descubrimiento dhcp, la mandamos al server
+
+        terminalMessage(serverObjectId + ": DHCP DISCOVER Recibido");
 
         const defaultGateway = $serverObject.getAttribute("data-gateway");
         let defaultGatewayMac = isIpInARPTable(serverObjectId, defaultGateway);

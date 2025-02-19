@@ -16,7 +16,7 @@ async function init() {
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm);
     document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm);
     document.getElementById("item-panel").querySelector(".traffic").addEventListener("click", showPacketTraffic);
-    document.addEventListener("keydown", () => {document.querySelector(".packet-traffic").style.display = "none";});
+    document.addEventListener("keydown", () => { document.querySelector(".packet-traffic").style.display = "none"; });
     removePropagationPingform();
 }
 
@@ -129,7 +129,7 @@ function loadState() {
         setNewIndex();
         setTextContents();
     };
-    lector.readAsText(archivo); 
+    lector.readAsText(archivo);
 }
 
 function setNewIndex() {
@@ -189,8 +189,8 @@ async function minimizeTerminal() {
     const originalHeight = rect.height;
 
     // Calcular el nuevo tamaño (30%)
-    const targetWidth = originalWidth*0.3;
-    const targetHeight = originalHeight*0.3;
+    const targetWidth = originalWidth * 0.3;
+    const targetHeight = originalHeight * 0.3;
     const windowHeight = window.innerHeight;
 
     // Aplicar animación con transición
@@ -268,6 +268,8 @@ function addPacketTraffic(packet) {
     let originIP = packet.origin_ip;
     let destinationMAC = packet.destination_mac;
     let originMAC = packet.origin_mac;
+    let giaddress = packet.giaddr;
+    let yiaddress = packet.yiaddr;
 
     $table.innerHTML += `
         <tr>
@@ -277,6 +279,8 @@ function addPacketTraffic(packet) {
             <td>${destinationIP}</td>
             <td>${originMAC}</td>
             <td>${destinationMAC}</td>
+            <td>${giaddress}</td>
+            <td>${yiaddress}</td>
         </tr>
     `;
 }
