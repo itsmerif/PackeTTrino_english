@@ -292,8 +292,6 @@ function dhcpReleaseGenerator(networkObjectId, switchId) {
 
 function dhcpRenewGenerator(networkObjectId, switchId) {
 
-    cleanPacketTraffic(); //limpiamos la tabla de paquetes
-
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("data-ip");
     const networkObjectMac = $networkObject.getAttribute("data-mac");
@@ -305,9 +303,8 @@ function dhcpRenewGenerator(networkObjectId, switchId) {
     if (!isSameNetwork) { //el servidor dhcp no está en la misma red, intentamos llevarlo a la puerta de enlace
 
         const defaultGateway = $networkObject.getAttribute("data-gateway");
-        console.log(defaultGateway);
         const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
-        newPacket = new dhcpRenew(networkObjectIp, dhcpServerIp, networkObjectMac, defaultGatewayMac);
+        newPacket = new dhcpRenew(networkObjectIp, dhcpServerIp, networkObjectMac, defaultGatewayMac, networkObjectId);
 
         if (!defaultGatewayMac) { //no tenemos la ip de la puerta de enlace en nuestra tabla de arp, lo guardamos en el buffer y enviamos un ARP primero
             buffer[networkObjectId] = newPacket;
@@ -327,7 +324,7 @@ function dhcpRenewGenerator(networkObjectId, switchId) {
     //el servidor dhcp está en la misma red, enviamos un DHCP Renew
 
     const destination_mac = isIpInARPTable(networkObjectId, dhcpServerIp);
-    newPacket = new dhcpRenew(networkObjectIp, dhcpServerIp, networkObjectMac, destination_mac);
+    newPacket = new dhcpRenew(networkObjectIp, dhcpServerIp, networkObjectMac, destination_mac, networkObjectId);
 
     if (!destination_mac) { //la mac del servidor no está en la tabla arp
         buffer[networkObjectId] = newPacket;
@@ -815,8 +812,11 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
     }
 
     if (packet.protocol === "dhcp" && packet.type === "renew") {
+
         if (packet.siaddr === serverObjectIp) { //el paquete va dirigido al server, lo aceptamos
-            addDhcpEntry(serverObjectId, packet.ciaddr, packet.chaddr, packet.hostname);
+
+            updateDhcpEntry(serverObjectId, packet.ciaddr);
+
             let newPacket = new dhcpAck(
                 serverObjectMac, //origin mac
                 packet.ciaddr, //assigned ip
@@ -825,9 +825,11 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
                 networkOffer, //netmask offer
                 packet.hostname //hostname
             );
+
             addPacketTraffic(newPacket);
             switchProcessor(switchId, serverObjectId, newPacket);
             return;
+
         }
     }
 }

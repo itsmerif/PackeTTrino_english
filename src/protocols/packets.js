@@ -123,7 +123,7 @@ class dhcpRelease extends packet {
 }
 
 class dhcpRenew extends packet {
-    constructor(origin_ip, destination_ip, origin_mac, destination_mac) {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, hostname) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
         this.protocol = "dhcp";
         this.ttl = 64;
@@ -134,5 +134,6 @@ class dhcpRenew extends packet {
         this.siaddr = destination_ip;
         this.giaddr = "";
         this.chaddr = origin_mac;
+        this.hostname = hostname;
     }
 }

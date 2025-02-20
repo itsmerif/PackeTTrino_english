@@ -88,13 +88,33 @@ function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
         <td>${newip}</td>
         <td>${newmac}</td>
         <td>${newhostname}</td>
-        <td class="lease-time">10</td>`;
+        <td class="lease-time">3600</td>`;
     table.appendChild(newRow);
 
     if (dataInterval === "false") {
         setInterval(() => updateLeaseTime(serverObjectId), 1000);
         serverObject.setAttribute("data-interval", "true");
     }
+}
+
+function updateDhcpEntry(serverObjectId, newip) {
+
+    const serverObject = document.getElementById(serverObjectId);
+    const table = serverObject.querySelector(".dhcp-table").querySelector("table");
+    const rows = table.querySelectorAll("tr");
+
+    for (let i = 1; i < rows.length; i++) {
+        let row = rows[i];
+        let cells = row.querySelectorAll("td");
+        let ip = cells[0].innerHTML;
+
+        if (ip === newip) {
+            cells[3].innerHTML = "3600";
+            return;
+        } 
+
+    }
+
 }
 
 function updateLeaseTime(serverObjectId) {

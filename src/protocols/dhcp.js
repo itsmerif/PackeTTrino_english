@@ -24,8 +24,15 @@ function dhcp(dataId, args) {
     }
 
     if (args[1] === "-renew") {
-        terminalMessage("Buscando servidor DHCP...");
-        dhcpDiscoverGenerator(dataId, switchObjectId);
+
+        if (!$networkObjectIp) { //no tenemos una ip, tenemos que buscar uno
+            terminalMessage("Buscando servidor DHCP...");
+            dhcpDiscoverGenerator(dataId, switchObjectId);
+        } else {
+            terminalMessage("Renovando IP...");
+            dhcpRenewGenerator(dataId, switchObjectId);      
+        }
+        
         command_Ip(dataId, ["ip", "a"]);
         return;
     }
