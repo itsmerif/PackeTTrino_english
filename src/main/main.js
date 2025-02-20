@@ -269,11 +269,11 @@ function addPacketTraffic(packet) {
     let destinationMAC = packet.destination_mac;
     let originMAC = packet.origin_mac;
     let destinationPort = packet.port || "N/A";
-    let giaddress = packet.giaddr;
-    let yiaddress = packet.yiaddr;
-    let ciaddress = packet.ciaddr;
-    let siaddress = packet.siaddr;
-    let chaddress = packet.chaddr;
+    let giaddress = packet.giaddr || "N/A";
+    let yiaddress = packet.yiaddr || "N/A";
+    let ciaddress = packet.ciaddr || "N/A";
+    let siaddress = packet.siaddr || "N/A";
+    let chaddress = packet.chaddr || "N/A";
 
     $table.innerHTML += `
         <tr>
@@ -303,7 +303,6 @@ function showPacketTraffic() {
         $packetTraffic.style.width = $packetTraffic.offsetWidth + "px"; // Fijar ancho actual
     }
 }
-
 
 function cleanPacketTraffic() {
 

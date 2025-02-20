@@ -1,6 +1,7 @@
 function dhcp(dataId, args) {
     
     const $networkObject = document.getElementById(dataId);
+    const $networkObjectIp = $networkObject.getAttribute("data-ip");
     const switchObjectId = $networkObject.getAttribute("data-switch");
     const isDchpOn = $networkObject.getAttribute("data-dhcp")
 
@@ -26,6 +27,18 @@ function dhcp(dataId, args) {
         terminalMessage("Buscando servidor DHCP...");
         dhcpDiscoverGenerator(dataId, switchObjectId);
         command_Ip(dataId, ["ip", "a"]);
+        return;
+    }
+
+    if (args[1] === "-release") {
+
+        if (!$networkObjectIp) {
+            terminalMessage("No hay ninguna IP para liberar.");
+            return;
+        }
+        
+        terminalMessage("Liberando dirercción IP...");
+        dhcpReleaseGenerator(dataId, switchObjectId);
         return;
     }
 

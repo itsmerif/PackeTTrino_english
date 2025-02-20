@@ -451,12 +451,38 @@ function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
 
 }
 
+function deleteDhcpEntry(serverObjectId, targetip) {
+    const serverObject = document.getElementById(serverObjectId);
+    const table = serverObject.querySelector(".dhcp-table").querySelector("table");
+    const rows = table.querySelectorAll("tr");
+
+    for (let i = 1; i < rows.length; i++) {
+        let row = rows[i];
+        let cells = row.querySelectorAll("td");
+        let ip = cells[0].innerHTML;
+        if (ip === targetip) {
+            row.remove();
+            return;
+        }
+    }
+}
+
 function setDhcpInfo(networkObjectId, packet) {
     const $networkObject = document.getElementById(networkObjectId);
     let newIp = packet.yiaddr;
     let newGateway = packet.gateway;
     let newNetmask = packet.netmask;
+    let newServer = packet.siaddr;
     $networkObject.setAttribute("data-ip", newIp);
     $networkObject.setAttribute("data-gateway", newGateway);
     $networkObject.setAttribute("data-netmask", newNetmask);
+    $networkObject.setAttribute("data-dhcp-server", newServer);
+}
+
+function deleteDhcpInfo(networkObjectId) {
+    const $networkObject = document.getElementById(networkObjectId);
+    $networkObject.setAttribute("data-ip", "");
+    $networkObject.setAttribute("data-gateway", "");
+    $networkObject.setAttribute("data-netmask", "");
+    $networkObject.setAttribute("data-dhcp-server", "");
 }

@@ -14,6 +14,7 @@ function createPcObject(x, y) {
     networkObject.setAttribute("data-gateway", "");
     networkObject.setAttribute("data-switch", "");
     networkObject.setAttribute("data-dhcp", false);
+    networkObject.setAttribute("data-dhcp-server", "");
 
     //contenido
     networkObject.innerHTML = `

@@ -106,3 +106,18 @@ class dhcpAck extends packet {
         this.hostname = hostname;
     }
 }
+
+class dhcpRelease extends packet {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac) {
+        super(origin_ip, destination_ip, origin_mac, destination_mac);
+        this.protocol = "dhcp";
+        this.ttl = 64;
+        this.type = "release";
+        this.port = "68";
+        this.ciaddr = origin_ip;
+        this.yiaddr = "";
+        this.siaddr = destination_ip;
+        this.giaddr = "";
+        this.chaddr = origin_mac;
+    }
+}
