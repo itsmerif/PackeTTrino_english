@@ -659,12 +659,15 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");
     const serverObjectIp = $serverObject.getAttribute("data-ip");
+    const serverObjectNetmask = $serverObject.getAttribute("data-netmask");
+    const serverObjectNetwork = getNetwork(serverObjectIp, serverObjectNetmask);
     const defaultGateway = $serverObject.getAttribute("data-gateway");
 
     //configuracion del servidor dhcp
 
     const gatewayOffer = $serverObject.getAttribute("offer-gateway");
     const netmaskOffer = $serverObject.getAttribute("offer-netmask");
+    const networkOffer = getNetwork(gatewayOffer, netmaskOffer); //obtengo la red a la que ofrece
 
 
     if (packet.protocol === "arp" && packet.type === "request") {
@@ -699,9 +702,14 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
         );
 
         //comprobamos si proviene de un agente de retransmision
+
         if (packet.giaddr !== "0.0.0.0") {
             newPacket.destination_ip = packet.giaddr;
             newPacket.giaddr = packet.giaddr;
+        } else { //asumimos que el paquete viene de la misma red que el server
+            if (networkOffer !== serverObjectNetwork) {
+                return;
+            }
         }
 
         //terminalMessage(serverObjectId + ": DHCP OFFER Enviado")
@@ -725,13 +733,14 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
                 packet.hostname //hostname
             );
 
+            newPacket.chaddr = packet.chaddr;
+
             //comprobamos si proviene de un agente de retransmision
 
             if (packet.giaddr !== "0.0.0.0") {
                 newPacket.destination_ip = packet.giaddr;
                 newPacket.giaddr = packet.giaddr;
                 newPacket.destination_mac = isIpInARPTable(serverObjectId, defaultGateway);
-                newPacket.chaddr = packet.chaddr;
             }
 
             addDhcpEntry(serverObjectId, packet.yiaddr, packet.chaddr, packet.hostname);

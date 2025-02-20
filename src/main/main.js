@@ -300,7 +300,6 @@ function showPacketTraffic() {
     } else {
         $packetTraffic.style.overflow = "auto";
         $packetTraffic.style.display = "flex";
-        $packetTraffic.style.width = $packetTraffic.offsetWidth + "px"; // Fijar ancho actual
     }
 }
 
