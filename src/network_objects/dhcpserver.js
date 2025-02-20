@@ -22,6 +22,7 @@ function createDhcpServerObject(x, y) {
     networkObject.setAttribute("data-mac", getRandomMac());
     networkObject.setAttribute("data-gateway", "");
     networkObject.setAttribute("data-switch", "");
+    networkObject.setAttribute("data-interval", "false");
 
     //configuracion de oferta
 

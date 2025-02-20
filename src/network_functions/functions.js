@@ -435,20 +435,35 @@ function checkIpinDhcp(serverObjectId, newip) {
 }
 
 function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
-
     const serverObject = document.getElementById(serverObjectId);
     const table = serverObject.querySelector(".dhcp-table").querySelector("table");
     const newRow = document.createElement("tr");
+    const dataInterval = serverObject.getAttribute("data-interval");
 
     newRow.innerHTML = `
-        <tr>
-            <td>${newip}</td>
-            <td>${newmac}</td>
-            <td>${newhostname}</td>
-            <td>3600</td>
-        </tr>`;
+        <td>${newip}</td>
+        <td>${newmac}</td>
+        <td>${newhostname}</td>
+        <td class="lease-time">3600</td>`;
     table.appendChild(newRow);
 
+    if (dataInterval === "false") {
+        setInterval(() => updateLeaseTime(serverObjectId), 1000);
+        serverObject.setAttribute("data-interval", "true");
+    }
+}
+
+function updateLeaseTime(serverObjectId) {
+    const $serverObject = document.getElementById(serverObjectId);
+    const table = $serverObject.querySelector(".dhcp-table").querySelector("table");
+    const leases = table.querySelectorAll(".lease-time");
+
+    leases.forEach(lease => {
+        let time = parseInt(lease.innerHTML, 10);
+        if (time > 0) {
+            lease.innerHTML = time - 1;
+        }
+    });
 }
 
 function deleteDhcpEntry(serverObjectId, targetip) {
