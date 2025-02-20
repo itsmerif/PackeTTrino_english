@@ -290,6 +290,60 @@ function dhcpReleaseGenerator(networkObjectId, switchId) {
 
 }
 
+function dhcpRenewGenerator(networkObjectId, switchId) {
+
+    cleanPacketTraffic(); //limpiamos la tabla de paquetes
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+    const dhcpServerIp = $networkObject.getAttribute("data-dhcp-server");
+    const isSameNetwork = getNetwork(networkObjectIp, networkObjectNetmask) === getNetwork(dhcpServerIp, networkObjectNetmask);
+    let newPacket;
+
+    if (!isSameNetwork) { //el servidor dhcp no está en la misma red, intentamos llevarlo a la puerta de enlace
+
+        const defaultGateway = $networkObject.getAttribute("data-gateway");
+        console.log(defaultGateway);
+        const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
+        newPacket = new dhcpRenew(networkObjectIp, dhcpServerIp, networkObjectMac, defaultGatewayMac);
+
+        if (!defaultGatewayMac) { //no tenemos la ip de la puerta de enlace en nuestra tabla de arp, lo guardamos en el buffer y enviamos un ARP primero
+            buffer[networkObjectId] = newPacket;
+            let arpRequest = new ArpRequest(networkObjectIp, defaultGateway, networkObjectMac);
+            addPacketTraffic(arpRequest);
+            switchProcessor(switchId, networkObjectId, arpRequest);
+            return;
+        }
+
+        //tenemos la puerta de enlace en la tabla de arp
+        addPacketTraffic(newPacket);
+        switchProcessor(switchId, networkObjectId, newPacket);
+        return;
+
+    }
+
+    //el servidor dhcp está en la misma red, enviamos un DHCP Renew
+
+    const destination_mac = isIpInARPTable(networkObjectId, dhcpServerIp);
+    newPacket = new dhcpRenew(networkObjectIp, dhcpServerIp, networkObjectMac, destination_mac);
+
+    if (!destination_mac) { //la mac del servidor no está en la tabla arp
+        buffer[networkObjectId] = newPacket;
+        let arpRequest = new ArpRequest(networkObjectIp, dhcpServerIp, networkObjectMac);
+        addPacketTraffic(arpRequest);
+        switchProcessor(switchId, networkObjectId, arpRequest);
+        return;
+    }
+
+    //la mac del servidor está en la tabla arp
+
+    addPacketTraffic(newPacket);
+    switchProcessor(switchId, networkObjectId, newPacket);
+
+}
+
 function switchProcessor(switchId, networkObjectId, packet) {
 
     const $switchObject = document.getElementById(switchId);
@@ -756,6 +810,23 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
         if (packet.siaddr === serverObjectIp) { //el paquete va dirigido al server, lo aceptamos
             terminalMessage(serverObjectId + ": Eliminando DHCP entry");
             deleteDhcpEntry(serverObjectId, packet.ciaddr);
+            return;
+        }
+    }
+
+    if (packet.protocol === "dhcp" && packet.type === "renew") {
+        if (packet.siaddr === serverObjectIp) { //el paquete va dirigido al server, lo aceptamos
+            addDhcpEntry(serverObjectId, packet.ciaddr, packet.chaddr, packet.hostname);
+            let newPacket = new dhcpAck(
+                serverObjectMac, //origin mac
+                packet.ciaddr, //assigned ip
+                serverObjectIp, //server ip
+                defaultGateway, //gateway offer
+                networkOffer, //netmask offer
+                packet.hostname //hostname
+            );
+            addPacketTraffic(newPacket);
+            switchProcessor(switchId, serverObjectId, newPacket);
             return;
         }
     }
