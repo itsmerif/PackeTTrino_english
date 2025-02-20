@@ -25,6 +25,7 @@ function dhcp(dataId, args) {
     if (args[1] === "-renew") {
         terminalMessage("Buscando servidor DHCP...");
         dhcpDiscoverGenerator(dataId, switchObjectId);
+        command_Ip(dataId, ["ip", "a"]);
         return;
     }
 

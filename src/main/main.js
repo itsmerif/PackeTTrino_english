@@ -297,6 +297,7 @@ function showPacketTraffic() {
     if ($packetTraffic.style.display === "flex") {
         $packetTraffic.style.display = "none";
     } else {
+        $packetTraffic.style.overflow = "auto";
         $packetTraffic.style.display = "flex";
     }
 }
