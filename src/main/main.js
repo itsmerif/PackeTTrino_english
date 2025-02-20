@@ -17,6 +17,7 @@ async function init() {
     document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm);
     document.getElementById("item-panel").querySelector(".traffic").addEventListener("click", showPacketTraffic);
     document.addEventListener("keydown", (event) => { if (event.key === "Escape") { document.querySelector(".packet-traffic").style.display = "none"; } });
+    document.querySelector(".filter-traffic").querySelector("input").addEventListener("keydown", (event) => { if (event.key === "Enter") { filterPacketTraffic(); } });
     removePropagationPingform();
 }
 
