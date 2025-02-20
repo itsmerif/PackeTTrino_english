@@ -444,7 +444,7 @@ function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
         <td>${newip}</td>
         <td>${newmac}</td>
         <td>${newhostname}</td>
-        <td class="lease-time">3600</td>`;
+        <td class="lease-time">60</td>`;
     table.appendChild(newRow);
 
     if (dataInterval === "false") {
@@ -462,6 +462,10 @@ function updateLeaseTime(serverObjectId) {
         let time = parseInt(lease.innerHTML, 10);
         if (time > 0) {
             lease.innerHTML = time - 1;
+        }
+        if (time === 0) {
+            let row = lease.parentNode;
+            row.remove();
         }
     });
 }
