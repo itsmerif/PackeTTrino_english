@@ -24,6 +24,13 @@ function ping(dataId, args) {
         return;
     }
 
+    //gestion de equipo
+
+    if (!networkObjectIp || !networkObjectNetmask || !networkObjectMac) {
+        terminalMessage("Error: No se ha configurado el equipo.");
+        return;
+    }
+
     //generamos el paquete
 
     cleanPacketTraffic(); //limpiamos la tabla de paquetes
@@ -37,8 +44,6 @@ function ping(dataId, args) {
         ping_f(networkObjectIp);
         return;
     }
-
-    console.log(arpFlag, icmpFlag);
 
     if (!arpFlag || !icmpFlag) {
         ping_f(networkObjectIp);

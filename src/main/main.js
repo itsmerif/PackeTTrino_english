@@ -267,6 +267,7 @@ function addPacketTraffic(packet) {
     let originIP = packet.origin_ip;
     let destinationMAC = packet.destination_mac;
     let originMAC = packet.origin_mac;
+    let destinationPort = packet.port || "N/A";
     let giaddress = packet.giaddr;
     let yiaddress = packet.yiaddr;
     let ciaddress = packet.ciaddr;
@@ -281,6 +282,7 @@ function addPacketTraffic(packet) {
             <td>${destinationIP}</td>
             <td>${originMAC}</td>
             <td>${destinationMAC}</td>
+            <td>${destinationPort}</td>
             <td>${ciaddress}</td>
             <td>${giaddress}</td>
             <td>${siaddress}</td>

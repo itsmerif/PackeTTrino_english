@@ -353,9 +353,21 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "dhcp" && packet.type === "offer") {
-        if (packet.ciaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
+        if (packet.chaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
             terminalMessage("DHCP OFFER Recibido")
-            let newPacket = new dhcpRequest(networkObjectMac, packet.yiaddr, packet.siaddr, packet.ciaddr, networkObjectId);
+
+            let newPacket = new dhcpRequest(
+                networkObjectMac, //origin mac
+                packet.yiaddr, //requested ip
+                packet.siaddr, //server ip
+                networkObjectId //hostname
+            );
+            
+            newPacket.destination_mac = packet.origin_mac;
+            newPacket.yiaddr = packet.yiaddr;
+            newPacket.giaddr = packet.giaddr;
+            newPacket.chaddr = packet.chaddr;
+
             addPacketTraffic(newPacket);
             terminalMessage("DHCP REQUEST Enviado")
             switchProcessor(switchId, networkObjectId, newPacket);
@@ -363,7 +375,7 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "dhcp" && packet.type === "ack") {
-        if (packet.ciaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
+        if (packet.chaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
             terminalMessage("DHCP ACK Recibido");
             setDhcpInfo(networkObjectId, packet);
         }
@@ -588,6 +600,7 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");
     const serverObjectIp = $serverObject.getAttribute("data-ip");
+    const defaultGateway = $serverObject.getAttribute("data-gateway");
 
     //configuracion del servidor dhcp
 
@@ -621,6 +634,7 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
             serverObjectIp, //server ip
             offerIP, //offer ip
             packet.origin_mac, //destination mac
+            packet.chaddr, //chaddr
             gatewayOffer, //gateway offer
             netmaskOffer //netmask offer
         );
@@ -640,9 +654,28 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
     if (packet.protocol === "dhcp" && packet.type === "request") { //solicitud de ip
 
         if (packet.siaddr === serverObjectIp) { //el paquete va dirigido al server, lo aceptamos
+
             terminalMessage(serverObjectId + ": DHCP REQUEST Recibido")
-            let newPacket = new dhcpAck(serverObjectMac, packet.yiaddr, packet.ciaddr, serverObjectIp, gatewayOffer, netmaskOffer, packet.hostname);
-            addDhcpEntry(serverObjectId, packet.yiaddr, packet.ciaddr, packet.hostname);
+
+            let newPacket = new dhcpAck(
+                serverObjectMac, //origin mac
+                packet.yiaddr, //assigned ip
+                serverObjectIp, //server ip
+                gatewayOffer, //gateway offer
+                netmaskOffer, //netmask offer
+                packet.hostname //hostname
+            );
+
+            //comprobamos si proviene de un agente de retransmision
+
+            if (packet.giaddr !== "0.0.0.0") {
+                newPacket.destination_ip = packet.giaddr;
+                newPacket.giaddr = packet.giaddr;
+                newPacket.destination_mac = isIpInARPTable(serverObjectId, defaultGateway);
+                newPacket.chaddr = packet.chaddr;
+            }
+
+            addDhcpEntry(serverObjectId, packet.yiaddr, packet.chaddr, packet.hostname);
             terminalMessage(serverObjectId + ": DHCP ACK Enviado")
             addPacketTraffic(newPacket)
             switchProcessor(switchId, serverObjectId, newPacket);
@@ -660,6 +693,7 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
     const serverObjectMac = $serverObject.getAttribute("data-mac");
     const serverObjectIp = $serverObject.getAttribute("data-ip");
     const mainServer = $serverObject.getAttribute("data-main-server");
+    const defaultGateway = $serverObject.getAttribute("data-gateway");
 
     if (packet.destination_ip === serverObjectIp) { //el paquete es para mi
 
@@ -689,7 +723,19 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
             packet.destination_mac = packet.ciaddr;
             packet.destination_ip = "255.255.255.255";
             packet.origin_mac = serverObjectMac;
-            packet.giaddr = "0.0.0.0";
+            packet.destination_mac = packet.chaddr;
+            addPacketTraffic(packet);
+            switchProcessor(switchId, serverObjectId, packet);
+            return;
+        }
+
+        if (packet.protocol === "dhcp" && packet.type === "ack") {
+            if (packet.giaddr === serverObjectMac) return; //comprobamos si el ack está dirigido al agente
+            //cambiamos los campos del paquete
+            packet.origin_ip = serverObjectIp;
+            packet.destination_ip = "255.255.255.255";
+            packet.origin_mac = serverObjectMac;
+            packet.destination_mac = packet.chaddr;
             addPacketTraffic(packet);
             switchProcessor(switchId, serverObjectId, packet);
             return;
@@ -700,7 +746,6 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
     if (packet.protocol === "dhcp" && packet.type === "discover") { //peticion de descubrimiento dhcp, la mandamos al server
 
         terminalMessage(serverObjectId + ": DHCP DISCOVER Recibido");
-        const defaultGateway = $serverObject.getAttribute("data-gateway");
         let defaultGatewayMac = isIpInARPTable(serverObjectId, defaultGateway);
 
         //hago cambios en el paquete para que se envie al servidor
@@ -726,6 +771,18 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
         switchProcessor(switchId, serverObjectId, packet);
         return;
 
+    }
+
+    if (packet.protocol === "dhcp" && packet.type === "request") {
+        if (packet.giaddr !== serverObjectIp) return; //comprobamos si el request está dirigido al agente
+        //cambiamos los campos del paquete
+        packet.origin_ip = serverObjectIp;
+        packet.destination_ip = mainServer;
+        packet.origin_mac = serverObjectMac;
+        packet.destination_mac = isIpInARPTable(serverObjectId, defaultGateway);
+        addPacketTraffic(packet);
+        switchProcessor(switchId, serverObjectId, packet);
+        return;
     }
 
 }
