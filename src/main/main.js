@@ -16,7 +16,7 @@ async function init() {
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm);
     document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm);
     document.getElementById("item-panel").querySelector(".traffic").addEventListener("click", showPacketTraffic);
-    document.addEventListener("keydown", () => { document.querySelector(".packet-traffic").style.display = "none"; });
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape") { document.querySelector(".packet-traffic").style.display = "none"; } });
     removePropagationPingform();
 }
 
@@ -299,8 +299,10 @@ function showPacketTraffic() {
     } else {
         $packetTraffic.style.overflow = "auto";
         $packetTraffic.style.display = "flex";
+        $packetTraffic.style.width = $packetTraffic.offsetWidth + "px"; // Fijar ancho actual
     }
 }
+
 
 function cleanPacketTraffic() {
 
@@ -310,6 +312,39 @@ function cleanPacketTraffic() {
 
     for (let i = 1; i < $trs.length; i++) {
         $trs[i].remove();
+    }
+
+}
+
+function filterPacketTraffic() {
+
+    const $packetTraffic = document.querySelector(".packet-traffic");
+    const $table = $packetTraffic.querySelector("table");
+    const $trs = $table.querySelectorAll("tr");
+
+    let filter = document.querySelector(".filter-traffic input").value.toLowerCase();
+
+    for (let i = 1; i < $trs.length; i++) {
+        let $tr = $trs[i];
+        let $tds = $tr.querySelectorAll("td");
+        let protocol = $tds[0].innerHTML;
+        let type = $tds[1].innerHTML;
+        let originIP = $tds[2].innerHTML;
+        let destinationIP = $tds[3].innerHTML;
+        let originMAC = $tds[4].innerHTML;
+        let destinationMAC = $tds[5].innerHTML;
+        let destinationPort = $tds[6].innerHTML;
+        let ciaddr = $tds[7].innerHTML;
+        let giaddr = $tds[8].innerHTML;
+        let siaddr = $tds[9].innerHTML;
+        let yiaddr = $tds[10].innerHTML;
+        let chaddr = $tds[11].innerHTML;
+
+        if (protocol.includes(filter) || type.includes(filter) || originIP.includes(filter) || destinationIP.includes(filter) || originMAC.includes(filter) || destinationMAC.includes(filter) || destinationPort.includes(filter) || ciaddr.includes(filter) || giaddr.includes(filter) || siaddr.includes(filter) || yiaddr.includes(filter) || chaddr.includes(filter)) {
+            $tr.style.display = "table-row";
+        } else {
+            $tr.style.display = "none";
+        }
     }
 
 }

@@ -1,10 +1,11 @@
 .packet-traffic {
     position: absolute;
-    top: 50%;
+    top:15%;
     left: 50%;
-    transform: translateX(-50%) translateY(calc(-50% - 0.5px));
+    transform: translateX(-50%);
     display: none;
     flex-direction: column;
+    align-items: flex-start;
     gap: 0px;
     background-color: white;
     padding: 20px;
@@ -13,13 +14,15 @@
     border-radius: 8px;
     text-align: center;
     z-index: 2;
-    opacity: 0;
-    animation: fadeInPacketTraffic 0.3s ease forwards;
+    /*opacity: 0;
+    animation: fadeInPacketTraffic 0.3s ease forwards;*/
     border: 1px solid #ddd;
     min-width: 220px;
     max-height: 500px;
     overflow: auto;
+    box-sizing: border-box;
 }
+
 
 @keyframes fadeInPacketTraffic {
     from {
@@ -81,4 +84,35 @@
 .packet-traffic button:hover {
     background-color: rgb(203, 171, 0);
     box-shadow: 0 2px 8px #ddd;
+}
+
+.filter-traffic{
+    display: flex;
+    margin: 10px;
+    gap: 10px;
+    box-sizing: border-box;
+}
+
+.filter-traffic input {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: fff;
+    color: #333;
+    font-weight: 500;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.filter-traffic button{
+    width: fit-content;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: beige;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    color: #333;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: auto;
 }
