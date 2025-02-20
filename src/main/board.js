@@ -66,8 +66,7 @@ function dropItem(event) {
                 createDhcpRelayObject(x, y);
                 break;
             case "dnsserver":
-                //createDnsServerObject(x, y);
-                alert("El servidor DNS no esta implementado todavía");
+                createDnsServerObject(x, y);
                 break;
             case "text":
                 createTextObject(x, y);

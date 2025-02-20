@@ -46,6 +46,7 @@ class IcmpEchoReply extends packet {
 class dhcpDiscover extends packet {
     constructor(origin_mac) {
         super("0.0.0.0", "255.255.255.255", origin_mac, "ff:ff:ff:ff:ff:ff");
+        this.transport_protocol = "udp";
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "discover";
@@ -59,6 +60,7 @@ class dhcpDiscover extends packet {
 class dhcpOffer extends packet {
     constructor(origin_ip, origin_mac, server_ip, offer_ip, destination_mac, chaddr, gateway, netmask) {
         super(origin_ip, "255.255.255.255", origin_mac, destination_mac);
+        this.transport_protocol = "udp";
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "offer";
@@ -77,6 +79,7 @@ class dhcpOffer extends packet {
 class dhcpRequest extends packet {
     constructor(origin_mac, requested_ip, server_ip, hostname) {
         super("0.0.0.0", "255.255.255.255", origin_mac, "ff:ff:ff:ff:ff:ff");
+        this.transport_protocol = "udp";
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "request";
@@ -93,6 +96,7 @@ class dhcpRequest extends packet {
 class dhcpAck extends packet {
     constructor(origin_mac, assigned_ip, server_ip, gateway, netmask, hostname) {
         super(server_ip, "255.255.255.255", origin_mac, "ff:ff:ff:ff:ff:ff");
+        this.transport_protocol = "udp";
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "ack";
@@ -110,6 +114,7 @@ class dhcpAck extends packet {
 class dhcpRelease extends packet {
     constructor(origin_ip, destination_ip, origin_mac, destination_mac) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
+        this.transport_protocol = "udp";
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "release";
@@ -125,6 +130,7 @@ class dhcpRelease extends packet {
 class dhcpRenew extends packet {
     constructor(origin_ip, destination_ip, origin_mac, destination_mac, hostname) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
+        this.transport_protocol = "udp";
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "renew";

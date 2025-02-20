@@ -79,7 +79,7 @@ function switchConn(event) {
         const y1 = JSON.parse(item).originy; //obtengo el y del elemento origen
         const mac = JSON.parse(item).mac;
 
-        if (itemType === "item-dropped" && (itemId.startsWith("pc-") || itemId.startsWith("dhcp-server-") || itemId.startsWith("dhcp-relay-server-"))) {
+        if (itemType === "item-dropped" && (itemId.startsWith("pc-") || itemId.startsWith("dhcp-server-") || itemId.startsWith("dhcp-relay-server-") || itemId.startsWith("dns-server-"))) {
 
             createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
             saveConn(event, itemId);

@@ -38,21 +38,7 @@ function deleteCable(event) {
     const NetworkObject = document.getElementById(cableObject.getAttribute("end-start"));
     const switchObject = document.getElementById(cableObject.getAttribute("end-end"));
 
-    if (NetworkObject.id.startsWith("pc-")) {
-
-        NetworkObject.setAttribute("data-switch", "");  //eliminamos la referencia al switch en el pc
-        NetworkObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
-
-    }
-
-    if (NetworkObject.id.startsWith("dhcp-server-")) {
-
-        NetworkObject.setAttribute("data-switch", "");  //eliminamos la referencia al switch en el pc
-        NetworkObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
-
-    }
-
-    if (NetworkObject.id.startsWith("dhcp-relay-")) {
+    if (!NetworkObject.id.startsWith("router-")) {
 
         NetworkObject.setAttribute("data-switch", "");  //eliminamos la referencia al switch en el pc
         NetworkObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
