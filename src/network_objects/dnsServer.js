@@ -24,7 +24,6 @@ function createDnsServerObject(x, y) {
 
     //caracteristicas especiales
 
-    networkObject.setAttribute("authoritative", "false");
     networkObject.setAttribute("recursion", "false");
 
     //server grafico
@@ -39,7 +38,7 @@ function createDnsServerObject(x, y) {
     advancedOptions.classList.add("advanced-options-modal");
     advancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showPcForm(${networkObject.id})">Configurar DNS</button>
+        <button onclick="showDnsForm(event)">Configurar DNS</button>
         <button onclick="showARPTable(event)">Ver Tabla ARP</button>
         <button onclick="deleteItem(event)">Eliminar</button>
     `;
@@ -86,12 +85,43 @@ function createDnsServerObject(x, y) {
     itemIndex++;
 }
 
-function showDnsForm(id) {
-    //
+function showDnsForm(event) {
+    event.stopPropagation();
+    const form = document.querySelector(".dns-form");
+    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
+    const $serverObject = event.target.closest(".item-dropped");
+    const id = $serverObject.id;
+    const ip = $serverObject.getAttribute("data-ip");
+    const netmask = $serverObject.getAttribute("data-netmask");
+    const gateway = $serverObject.getAttribute("data-gateway");
+    const isRecursive = $serverObject.getAttribute("recursion");
+    form.querySelector("#ip-dns").value = ip;
+    form.querySelector("#netmask-dns").value = netmask;
+    form.querySelector("#gateway-dns").value = gateway;
+    form.querySelector("#dns-recursive").checked = isRecursive === "true";
+    document.getElementById("form-dns-item-id").innerHTML = id;
+    form.style.display = "flex";
 }
 
 function saveDnsSpecs(event) {
-    //
+    event.preventDefault();
+    event.stopPropagation();
+    const form = event.target.closest("form");
+    //tomo los datos del formulario
+    const id = form.querySelector("#form-dns-item-id").innerHTML;
+    const $serverObject = document.getElementById(id);
+    const ip = form.querySelector("#ip-dns").value;
+    const netmask = form.querySelector("#netmask-dns").value;
+    const gateway = form.querySelector("#gateway-dns").value;
+    const isRecursive = form.querySelector("#dns-recursive").checked;
+    //actualizo el servidor
+    $serverObject.setAttribute("data-ip", ip);
+    $serverObject.setAttribute("data-netmask", netmask);
+    $serverObject.setAttribute("data-gateway", gateway);
+    $serverObject.setAttribute("recursion", isRecursive);
+    //limpio el formulario
+    form.reset();
+    form.style.display = "none";
 }
 
 function showAdvancedOptions(event) {

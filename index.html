@@ -85,13 +85,11 @@
   <form class="dns-form" onsubmit="saveDnsSpecs(event); return false;" style="display: none;">
     <p id="form-dns-item-id"></p>
     <label for="ip">IP:</label>
-    <input type="text" id="ip" name="ip" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="ip-dns" name="ip-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="netmask">Netmask:</label>
-    <input type="text" id="netmask" name="netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="netmask-dns" name="netmask-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="gateway">Gateway:</label>
-    <input type="text" id="gateway" name="gateway" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <label for="dns-authoritative">DNS Authoritative:</label>
-    <input type="checkbox" id="dns-authoritative" name="dns-authoritative">
+    <input type="text" id="gateway-dns" name="gateway-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="dns-recursive">DNS Recursive:</label>
     <input type="checkbox" id="dns-recursive" name="dns-recursive">
     <button type="submit">Guardar</button>

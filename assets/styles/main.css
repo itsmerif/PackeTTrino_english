@@ -13,6 +13,7 @@
 @import url('./advanced-options.css');
 @import url('./dhcp-server-form.css');
 @import url('./packet-traffic.css');
+@import url('./dns-server-form.css');
 
 body {
     margin: 0px;
