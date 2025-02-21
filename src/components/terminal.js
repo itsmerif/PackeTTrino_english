@@ -22,6 +22,9 @@ function sendCommand(event) {
             case "dhcp":
                 dhcp(dataId, args);
                 break;
+            case "firewall":
+                command_firewall(dataId, args);
+                break;
             case "exit":
                 event.target.value = "";
                 document.querySelector(".pc-terminal").style.display = "none";

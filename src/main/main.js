@@ -2,6 +2,7 @@
 
 let itemIndex = 0;
 let quickInfoTimeout;
+let visualMode = false;
 
 // funciones de inicio
 
@@ -262,7 +263,7 @@ function dragPingForm(event) {
 
 function addPacketTraffic(packet) {
     const $table = document.querySelector(".packet-traffic table");
-    let transportProtocol = packet.transport_protocol;
+    let transportProtocol = packet.transport_protocol || "N/A";
     let protocol = packet.protocol;
     let type = packet.type;
     let destinationIP = packet.destination_ip;

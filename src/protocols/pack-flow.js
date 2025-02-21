@@ -496,6 +496,10 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
 
 function packetProcessor_router(switchId, networkObjectId, packet) {
 
+    //el firewall evalua el paquete
+
+    if (!firewallProcessor(networkObjectId, packet)) return;
+
     //bloqueo de paquetes 
 
     if (packet.destination_ip === "255.255.255.255") { //no hacemos nada con trafico dirigido a broadcast
@@ -933,4 +937,56 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
         return;
     }
 
+}
+
+function firewallProcessor(networkObjectId, packet) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const firewallTable = $networkObject.querySelector(".firewall-table").querySelector("table");
+    const rules = firewallTable.querySelectorAll("tr");
+
+    const networkObjectIPs = [
+        $networkObject.getAttribute("ip-enp0s3"),
+        $networkObject.getAttribute("ip-enp0s8"),
+        $networkObject.getAttribute("ip-enp0s9")
+    ];
+
+    //definimos variables de regla objetivo
+
+    let targetChain;
+
+    if (networkObjectIPs.includes(packet.destination_ip)) {
+        targetChain = "INPUT";
+    } else {
+        targetChain = "FORWARD";
+    }
+
+    console.log(targetChain);
+
+    for (let i = 1; i < rules.length; i++) {
+        const rule = rules[i];
+        const cells = rule.querySelectorAll("td");
+        const ruleChain = cells[1].innerHTML;
+        const ruleProtocol = cells[2].innerHTML;
+        const ruleOrigin = cells[3].innerHTML;
+        const ruleDestination = cells[4].innerHTML;
+        const rulePort = cells[5].innerHTML;
+        const ruleAction = cells[6].innerHTML;
+
+        if (ruleChain === targetChain 
+            && ruleProtocol === packet.transport_protocol
+            && (ruleOrigin === "*" || ruleOrigin === packet.origin_ip)
+            && (ruleDestination === "*" || ruleDestination === packet.destination_ip)
+            && (rulePort === "*" || rulePort === packet.port)
+        ) {
+            if (ruleAction === "ACCEPT") {
+                return true;
+            } else if (ruleAction === "DROP") {
+                return false;
+            }
+        }
+    }
+
+    // si no hay regla que coincida, se aplica política por defecto ACCEPT
+    return true;
 }

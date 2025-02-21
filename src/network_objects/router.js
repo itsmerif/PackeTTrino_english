@@ -6,6 +6,7 @@ function createRouterObject(x, y) {
     const networkObjectArpTable = document.createElement("article");
     const networkObjectRoutingTable = document.createElement("article");
     const networkObjectAdvancedOptions = document.createElement("div");
+    const firewallTable = document.createElement("article");
 
     //características generales
 
@@ -96,6 +97,25 @@ function createRouterObject(x, y) {
 
     networkObject.appendChild(networkObjectRoutingTable);
 
+    //tabla de firewall
+
+    firewallTable.classList.add("firewall-table");
+    firewallTable.innerHTML = `
+            <table>
+                <tr>
+                    <th>Id</th>
+                    <th>Chain</th>
+                    <th>Protocol</th>
+                    <th>Origin IP</th>
+                    <th>Destination IP</th>
+                    <th>Port</th>
+                    <th>Action</th>
+                </tr>
+            </table>
+            <button onclick="closeFirewallTable(event)">Cerrar</button>`;
+
+    networkObject.appendChild(firewallTable);
+
     //opciones avanzadas
 
     networkObjectAdvancedOptions.classList.add("advanced-options-modal");
@@ -103,6 +123,7 @@ function createRouterObject(x, y) {
         <button onclick="showTerminal(event)">Modo Terminal</button>
         <button onclick="showRouterSpecs(event)"> Configurar Interfaces de Red </button>
         <button onclick="showRouterARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="showRouterFirewallTable(event)">Ver Tabla Firewall</button>
         <button onclick="deleteItem(event)">Eliminar</button>`;
     networkObject.appendChild(networkObjectAdvancedOptions);
 
@@ -267,4 +288,20 @@ function removeRoutingEntry(routerObjectId, destination, netmask, nexthop) {
         }
     }
 
+}
+
+function showRouterFirewallTable(event) {
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped");
+    const table = networkObject.querySelector(".firewall-table");
+    const modal = networkObject.querySelector(".advanced-options-modal");
+    modal.style.display = "none";
+    table.style.display = "flex";
+}
+
+function closeFirewallTable(event) {
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped");
+    const table = networkObject.querySelector(".firewall-table");
+    table.style.display = "none";
 }
