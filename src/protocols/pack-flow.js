@@ -735,6 +735,7 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
     const netmaskOffer = $serverObject.getAttribute("offer-netmask");
     const networkOffer = getNetwork(gatewayOffer, netmaskOffer); //obtengo la red a la que ofrece
 
+    //comportamiento de pc
 
     if (packet.protocol === "arp" && packet.type === "request") {
 
@@ -751,6 +752,23 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
         return;
 
     }
+
+    if (packet.protocol === "icmp" && packet.type === "request") {
+
+        if (packet.destination_ip !== serverObjectIp) {
+            //terminalMessage(serverObjectId + ": Solicitud ICMP ignorada");
+            return;
+        }
+
+        //terminalMessage(serverObjectId + ": Enviando ICMP ECHO REPLY");
+        let newPacket = new IcmpEchoReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
+        addPacketTraffic(newPacket);
+        switchProcessor(switchId, serverObjectId, newPacket);
+        return;
+
+    }
+
+    //comportamiento de servidor dhcp
 
     if (packet.protocol === "dhcp" && packet.type === "discover") { //peticion de descubrimiento dhcp
 
