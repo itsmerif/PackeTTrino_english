@@ -32,7 +32,7 @@ function command_firewall(networkObjectId, args) {
             return;
         }
 
-        if (args[1] !== "add" || args[2] !== "-A" || args[4] !== "-p" || args[6] !== "--dport" || args[8] !== "-s" || args[10] !== "-d" || args[12] !== "-j") {
+        if (args[2] !== "-A" || args[4] !== "-p" || args[6] !== "--dport" || args[8] !== "-s" || args[10] !== "-d" || args[12] !== "-j") {
             terminalMessage("Error: Sintaxis: firewall add -A <chain> -p <protocol> --dport <port> -s <origin> -d <destination> -j <action>");
             return;
         }
@@ -82,7 +82,6 @@ function command_firewall(networkObjectId, args) {
 
         let newRule = new FirewallRule(chain, protocol, origin, destination, port, action);
         addFirewallRule(networkObjectId, newRule);
-        terminalMessage("Comando firewall ejecutado correctamente");
     }
 
     if (args[1] === "del") {
@@ -91,13 +90,17 @@ function command_firewall(networkObjectId, args) {
 
         //evaluacion de claves
 
-        if (args.length !== 4) {
-            terminalMessage("Error: Sintaxis: firewall del <chain> <ruleId>");
+        if (args.length !== 3) {
+            terminalMessage("Error: Sintaxis: firewall del <ruleId>");
             return;
         }
 
-
-
+        if (!args[2].match(/^\d+$/)) {
+            terminalMessage("Error: El id introducido no es válido.");
+            return;
+        }
+        
+        deleteFirewallRule(networkObjectId, args[2]);
     }
 }
 
@@ -119,4 +122,13 @@ function addFirewallRule(routerObjectId, newRule) {
             <td>${newRule.action}</td>
         </tr>`;
     ruleTable.appendChild(newRow);
+    terminalMessage("Comando firewall ejecutado correctamente");
+}
+
+function deleteFirewallRule(routerObjectId, ruleId) {
+    const $networkObject = document.getElementById(routerObjectId);
+    const ruleTable = $networkObject.querySelector(".firewall-table").querySelector("table");
+    const rows = ruleTable.querySelectorAll("tr");
+    rows[ruleId].remove();
+    terminalMessage("Comando firewall ejecutado correctamente");
 }

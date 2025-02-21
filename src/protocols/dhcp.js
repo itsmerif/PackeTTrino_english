@@ -1,5 +1,5 @@
 function dhcp(dataId, args) {
-    
+
     const $networkObject = document.getElementById(dataId);
     const $networkObjectIp = $networkObject.getAttribute("data-ip");
     const switchObjectId = $networkObject.getAttribute("data-switch");
@@ -17,7 +17,7 @@ function dhcp(dataId, args) {
         return;
     }
 
-    if (args.length !== 2){
+    if (args.length !== 2) {
         terminalMessage("Error de argumentos. Sintáxis: dhcp < -renew | -release > ");
         console.log(isDchpOn);
         return;
@@ -26,14 +26,44 @@ function dhcp(dataId, args) {
     if (args[1] === "-renew") {
 
         if (!$networkObjectIp) { //no tenemos una ip, tenemos que buscar uno
-            terminalMessage("Buscando servidor DHCP...");
-            dhcpDiscoverGenerator(dataId, switchObjectId);
+
+            //terminalMessage("Buscando servidor DHCP...");
+
+            try {
+
+                dhcpDiscoverFlag = false;
+                dhcpRequestFlag = false;
+
+                dhcpDiscoverGenerator(dataId, switchObjectId);
+
+                if (dhcpDiscoverFlag === false || dhcpRequestFlag === false) {
+                    ping_f("0.0.0.0");
+                    return;
+                }
+
+                ping_s("0.0.0.0");
+
+            } catch (error) {
+
+                terminalMessage("Error: " + error);
+                return;
+
+            }
+
         } else {
-            terminalMessage("Renovando IP...");
-            dhcpRenewGenerator(dataId, switchObjectId);      
+
+            //terminalMessage("Renovando IP...");
+
+            try {
+                dhcpRenewGenerator(dataId, switchObjectId);
+            } catch (error) {
+                terminalMessage("Error: " + error);
+                return;
+            }
+
         }
-        
-        command_Ip(dataId, ["ip", "a"]);
+
+        //command_Ip(dataId, ["ip", "a"]);
         return;
     }
 
@@ -43,7 +73,7 @@ function dhcp(dataId, args) {
             terminalMessage("No hay ninguna IP para liberar.");
             return;
         }
-        
+
         terminalMessage("Liberando dirercción IP...");
         dhcpReleaseGenerator(dataId, switchObjectId);
         return;

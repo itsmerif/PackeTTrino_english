@@ -1,6 +1,9 @@
 let buffer = {};
 let arpFlag = true;
 let icmpFlag = true;
+let dhcpDiscoverFlag = false;
+let dhcpRequestFlag = false;
+let dhcpRenewFlag = false;
 let order = 0;
 
 function sp(id, args) {
@@ -224,7 +227,6 @@ function dhcpDiscoverGenerator(networkObjectId, switchId) {
     let packet = new dhcpDiscover(networkObjectMac);
     //terminalMessage(networkObjectId + ": Enviando DHCP Discover");
     addPacketTraffic(packet);
-    //console.log(`dhcpDiscoverGenerator(${networkObjectId}, ${switchId})`);
     switchProcessor(switchId, networkObjectId, packet);
     return;
 }
@@ -465,7 +467,13 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "dhcp" && packet.type === "offer") {
+
         if (packet.chaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
+
+            console.log("DHCP Discover");
+
+            dhcpDiscoverFlag = true;
+
             //terminalMessage("DHCP OFFER Recibido")
 
             let newPacket = new dhcpRequest(
@@ -483,12 +491,15 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
             addPacketTraffic(newPacket);
             //terminalMessage("DHCP REQUEST Enviado")
             switchProcessor(switchId, networkObjectId, newPacket);
+
         }
+
     }
 
     if (packet.protocol === "dhcp" && packet.type === "ack") {
         if (packet.chaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
             //terminalMessage("DHCP ACK Recibido");
+            dhcpRequestFlag = true;
             setDhcpInfo(networkObjectId, packet);
         }
     }
@@ -961,7 +972,7 @@ function firewallProcessor(networkObjectId, packet) {
         targetChain = "FORWARD";
     }
 
-    console.log(targetChain);
+    //console.log(targetChain);
 
     for (let i = 1; i < rules.length; i++) {
         const rule = rules[i];
