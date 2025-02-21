@@ -15,6 +15,7 @@ function createRouterObject(x, y) {
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
     networkObject.setAttribute("data-mac", getRandomMac());
+    networkObject.setAttribute("firewall-default-policy", "ACCEPT");
 
     //icono
 

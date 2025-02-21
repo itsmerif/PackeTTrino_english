@@ -11,9 +11,11 @@ class FirewallRule {
 
 function command_firewall(networkObjectId, args) {
 
+    const $networkObject = document.getElementById(networkObjectId);
     const validChains = ["INPUT", "OUTPUT", "FORWARD"];
     const validProtocols = ["tcp", "udp", "icmp"];
     const validActions = ["ACCEPT", "DROP", "REJECT"];
+    const validPolicies = ["ACCEPT", "DROP"];
 
     if (!networkObjectId.startsWith("router-")) {
         terminalMessage("Error: Este comando solo puede ser ejecutado desde un router.");
@@ -102,13 +104,29 @@ function command_firewall(networkObjectId, args) {
         
         deleteFirewallRule(networkObjectId, args[2]);
     }
+
+    if (args[1] === "default") {
+
+        if (args.length !== 3) {
+            terminalMessage("Error: Sintaxis: firewall default <policy>");
+            return;
+        }
+
+        if (!validPolicies.includes(args[2])) {
+            terminalMessage("Error: La política introducida no es válida.");
+            return;
+        }
+
+        $networkObject.setAttribute("firewall-default-policy", args[2]);
+        terminalMessage("Comando firewall ejecutado correctamente");
+        
+    }
 }
 
 function addFirewallRule(routerObjectId, newRule) {
     const $networkObject = document.getElementById(routerObjectId);
     const ruleTable = $networkObject.querySelector(".firewall-table").querySelector("table");
     const rows = ruleTable.querySelectorAll("tr");
-    //obtenemos el numero de reglas para asignar el id
     let ruleId = rows.length;
     const newRow = document.createElement("tr");
     newRow.innerHTML = `

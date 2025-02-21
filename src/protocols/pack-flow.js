@@ -971,6 +971,7 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
 function firewallProcessor(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
+    const defaultPolicy = $networkObject.getAttribute("firewall-default-policy");
     const firewallTable = $networkObject.querySelector(".firewall-table").querySelector("table");
     const rules = firewallTable.querySelectorAll("tr");
 
@@ -1023,6 +1024,7 @@ function firewallProcessor(networkObjectId, packet) {
 
     }
 
-    // si no hay regla que coincida, se aplica política por defecto ACCEPT
-    return true;
+    // si no hay regla que coincida, se aplica la política por defecto
+
+    return defaultPolicy === "ACCEPT";
 }
