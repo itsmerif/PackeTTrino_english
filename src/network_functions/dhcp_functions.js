@@ -82,7 +82,6 @@ function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
     const serverObject = document.getElementById(serverObjectId);
     const table = serverObject.querySelector(".dhcp-table").querySelector("table");
     const newRow = document.createElement("tr");
-    const dataInterval = serverObject.getAttribute("data-interval");
 
     newRow.innerHTML = `
         <td>${newip}</td>
@@ -91,14 +90,13 @@ function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
         <td class="lease-time">3600</td>`;
     table.appendChild(newRow);
 
-    if (dataInterval === "false") {
-        setInterval(() => updateLeaseTime(serverObjectId), 1000);
-        serverObject.setAttribute("data-interval", "true");
+    // Si el temporizador no existe, inicia uno
+    if (!leaseTimers[serverObjectId]) {
+        leaseTimers[serverObjectId] = setInterval(() => updateLeaseTime(serverObjectId), 1000);
     }
 }
 
 function updateDhcpEntry(serverObjectId, newip) {
-
     const serverObject = document.getElementById(serverObjectId);
     const table = serverObject.querySelector(".dhcp-table").querySelector("table");
     const rows = table.querySelectorAll("tr");
@@ -111,15 +109,13 @@ function updateDhcpEntry(serverObjectId, newip) {
         if (ip === newip) {
             cells[3].innerHTML = "3600";
             return;
-        } 
-
+        }
     }
-
 }
 
 function updateLeaseTime(serverObjectId) {
-    const $serverObject = document.getElementById(serverObjectId);
-    const table = $serverObject.querySelector(".dhcp-table").querySelector("table");
+    const serverObject = document.getElementById(serverObjectId);
+    const table = serverObject.querySelector(".dhcp-table").querySelector("table");
     const leases = table.querySelectorAll(".lease-time");
 
     leases.forEach(lease => {
@@ -129,10 +125,26 @@ function updateLeaseTime(serverObjectId) {
         }
         if (time === 0) {
             let row = lease.parentNode;
-            let cells = row.querySelectorAll("td");
-            let ip = cells[0].innerHTML;
             row.remove();
-            renewLeaseTime(ip);
+        }
+    });
+
+    if (table.querySelectorAll("tr").length === 1) {
+        clearInterval(leaseTimers[serverObjectId]);
+        delete leaseTimers[serverObjectId];
+    }
+}
+
+function startLeaseTimers() {
+    const dhcpServers = document.querySelectorAll(".dhcp-server");
+
+    dhcpServers.forEach(server => {
+        const serverObjectId = server.id;
+        const table = server.querySelector(".dhcp-table table");
+        const leases = table.querySelectorAll("tr");
+
+        if (leases.length > 1 && !leaseTimers[serverObjectId]) {
+            leaseTimers[serverObjectId] = setInterval(() => updateLeaseTime(serverObjectId), 1000);
         }
     });
 }
@@ -148,6 +160,10 @@ function deleteDhcpEntry(serverObjectId, targetip) {
         let ip = cells[0].innerHTML;
         if (ip === targetip) {
             row.remove();
+            if (table.querySelectorAll("tr").length === 1) { // Solo queda la cabecera
+                clearInterval(window.leaseTimer);
+                serverObject.setAttribute("data-interval", "false");
+            }
             return;
         }
     }
@@ -179,22 +195,5 @@ function renewLeaseTime(ip) {
     const switchId = $networkObject.getAttribute("data-switch");
     const isDHCPon = $networkObject.getAttribute("data-dhcp");
     if (isDHCPon === "false") return;
-    console.log("Emitiendo DHCP Renew...");
     dhcpRenewGenerator(networkObjectId, switchId);
-}
-
-function startLeaseTimers() {
-    const $dhcpServers = document.querySelectorAll(".dhcp-server");
-
-    for (let i = 0; i < $dhcpServers.length; i++) {
-        const $dhcpServer = $dhcpServers[i];
-        const serverObjectId = $dhcpServer.id;
-        const leaseTable = $dhcpServer.querySelector(".dhcp-table").querySelector("table");
-        const leases = leaseTable.querySelectorAll("tr");
-
-        if (leases.length > 1) {
-            setInterval(() => updateLeaseTime(serverObjectId), 1000); 
-        }
-    }
-
 }

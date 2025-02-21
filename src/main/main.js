@@ -3,6 +3,7 @@
 let itemIndex = 0;
 let quickInfoTimeout;
 let visualMode = false;
+const leaseTimers = {};
 
 // funciones de inicio
 

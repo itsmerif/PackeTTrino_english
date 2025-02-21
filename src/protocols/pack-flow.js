@@ -265,7 +265,7 @@ function dhcpReleaseGenerator(networkObjectId, switchId) {
         //tenemos la puerta de enlace en la tabla ARP
         
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, newPacket);
+        switchProcessor(switchId, networkObjectId, newPacket);
         deleteDhcpInfo(networkObjectId);
         return;
 
