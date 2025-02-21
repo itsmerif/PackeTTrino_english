@@ -130,6 +130,7 @@ function loadState() {
         document.querySelector(".board").innerHTML = contenido;
         setNewIndex();
         setTextContents();
+        startLeaseTimers();
     };
     lector.readAsText(archivo);
 }

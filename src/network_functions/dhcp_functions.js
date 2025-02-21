@@ -182,3 +182,19 @@ function renewLeaseTime(ip) {
     console.log("Emitiendo DHCP Renew...");
     dhcpRenewGenerator(networkObjectId, switchId);
 }
+
+function startLeaseTimers() {
+    const $dhcpServers = document.querySelectorAll(".dhcp-server");
+
+    for (let i = 0; i < $dhcpServers.length; i++) {
+        const $dhcpServer = $dhcpServers[i];
+        const serverObjectId = $dhcpServer.id;
+        const leaseTable = $dhcpServer.querySelector(".dhcp-table").querySelector("table");
+        const leases = leaseTable.querySelectorAll("tr");
+
+        if (leases.length > 1) {
+            setInterval(() => updateLeaseTime(serverObjectId), 1000); 
+        }
+    }
+
+}
