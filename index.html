@@ -8,19 +8,18 @@
   <link rel="stylesheet" href="./assets/styles/main.css">
   <link rel="stylesheet" href="./assets/styles/board.css">
   <link rel="stylesheet" href="./assets/styles/panel.css">
-  <link rel="stylesheet" href="./assets/styles/pc.css">
-  <link rel="stylesheet" href="./assets/styles/switch.css">
+  <link rel="stylesheet" href="./assets/styles/pc-form.css">
+  <link rel="stylesheet" href="./assets/styles/mac-table.css">
   <link rel="stylesheet" href="./assets/styles/arp-table.css">
   <link rel="stylesheet" href="./assets/styles/routing-table.css">
   <link rel="stylesheet" href="./assets/styles/dhcp-table.css">
   <link rel="stylesheet" href="./assets/styles/dns-table.css">
   <link rel="stylesheet" href="./assets/styles/firewall-table.css">
-  <link rel="stylesheet" href="./assets/styles/router.css">
+  <link rel="stylesheet" href="./assets/styles/router-form.css">
   <link rel="stylesheet" href="./assets/styles/annotation.css">
   <link rel="stylesheet" href="./assets/styles/terminal.css">
-  <link rel="stylesheet" href="./assets/styles/advancedoptions.css">
-  <link rel="stylesheet" href="./assets/styles/dhcpserver.css">
-  <link rel="stylesheet" href="./assets/styles/packet.css">
+  <link rel="stylesheet" href="./assets/styles/advanced-options.css">
+  <link rel="stylesheet" href="./assets/styles/dhcp-server-form.css">
   <link rel="stylesheet" href="./assets/styles/packet-traffic.css">
 </head>
 
@@ -95,6 +94,21 @@
     <label for="offer-netmask">Oferta Netmask:</label>
     <input type="text" id="offer-netmask" name="offer-netmask" placeholder="255.255.255.0"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <button type="submit">Guardar</button>
+  </form> 
+
+  <form class="dns-form" onsubmit="saveDnsSpecs(event); return false;" style="display: none;">
+    <p id="form-dns-item-id"></p>
+    <label for="ip">IP:</label>
+    <input type="text" id="ip" name="ip" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <label for="netmask">Netmask:</label>
+    <input type="text" id="netmask" name="netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <label for="gateway">Gateway:</label>
+    <input type="text" id="gateway" name="gateway" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <label for="dns-authoritative">DNS Authoritative:</label>
+    <input type="checkbox" id="dns-authoritative" name="dns-authoritative">
+    <label for="dns-recursive">DNS Recursive:</label>
+    <input type="checkbox" id="dns-recursive" name="dns-recursive">
     <button type="submit">Guardar</button>
   </form>
 
