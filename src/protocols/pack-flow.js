@@ -990,7 +990,12 @@ function firewallProcessor(networkObjectId, packet) {
         targetChain = "FORWARD";
     }
 
-    //console.log(targetChain);
+    console.log(targetChain);
+    console.log(packet.transport_protocol);
+    console.log(packet.protocol);
+    console.log(packet.origin_ip);
+    console.log(packet.destination_ip);
+    console.log(packet.port);
 
     for (let i = 1; i < rules.length; i++) {
         const rule = rules[i];
@@ -1002,18 +1007,19 @@ function firewallProcessor(networkObjectId, packet) {
         const rulePort = cells[5].innerHTML;
         const ruleAction = cells[6].innerHTML;
 
-        if (ruleChain === targetChain 
-            && ruleProtocol === packet.transport_protocol
-            && (ruleOrigin === "*" || ruleOrigin === packet.origin_ip)
-            && (ruleDestination === "*" || ruleDestination === packet.destination_ip)
-            && (rulePort === "*" || rulePort === packet.port)
-        ) {
-            if (ruleAction === "ACCEPT") {
-                return true;
-            } else if (ruleAction === "DROP") {
-                return false;
-            }
-        }
+        if (ruleChain !== targetChain) return true;
+
+        if (ruleProtocol !== packet.transport_protocol && ruleProtocol !== packet.protocol) return true;
+
+        if (ruleOrigin !== "*" && ruleOrigin !== packet.origin_ip) return true;
+
+        if (ruleDestination !== "*" && ruleDestination !== packet.destination_ip) return true;
+
+        if (rulePort !== "*" && rulePort !== packet.port) return true;
+
+        if (ruleAction === "ACCEPT") return true;
+
+        if (ruleAction === "DROP") return false;
     }
 
     // si no hay regla que coincida, se aplica política por defecto ACCEPT
