@@ -1,3 +1,19 @@
+@import url('./board.css');
+@import url('./panel.css');
+@import url('./pc-form.css');
+@import url('./mac-table.css');
+@import url('./arp-table.css');
+@import url('./routing-table.css');
+@import url('./dhcp-table.css');
+@import url('./dns-table.css');
+@import url('./firewall-table.css');
+@import url('./router-form.css');
+@import url('./annotation.css');
+@import url('./terminal.css');
+@import url('./advanced-options.css');
+@import url('./dhcp-server-form.css');
+@import url('./packet-traffic.css');
+
 body {
     margin: 0px;
     padding: 0px;
