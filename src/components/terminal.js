@@ -25,15 +25,18 @@ function sendCommand(event) {
             case "firewall":
                 command_firewall(dataId, args);
                 break;
-            case "exit":
-                event.target.value = "";
-                document.querySelector(".pc-terminal").style.display = "none";
-                break;
             case "ip":
                 command_Ip(dataId, args, originIP);
                 break;
             case "sp":
                 sp(dataId, args);
+                break;
+            case "dns":
+                command_dns(dataId, args);
+                break;
+            case "exit":
+                event.target.value = "";
+                document.querySelector(".pc-terminal").style.display = "none";
                 break;
             default:
                 newoutput = "Command not found";
