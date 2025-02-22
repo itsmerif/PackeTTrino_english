@@ -39,7 +39,7 @@ function ping(dataId, args) {
                 terminalMessage("Error: No se pudo resolver el nombre de dominio.");
             } else {
                 try { //intentamos hacer ping a la ip de respuesta
-                    icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, isDomainInCache(dataId, args[1])[1]);
+                    icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, isDomainInCachePc(dataId, args[1])[1]);
                 } catch (error) {
                     ping_f(networkObjectIp);
                     return;
