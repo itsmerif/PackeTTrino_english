@@ -9,7 +9,6 @@ function createPcObject(x, y) {
     networkObject.classList.add("item-dropped", "pc");
     networkObject.setAttribute("data-ip", "");
     networkObject.setAttribute("data-netmask", "");
-    networkObject.setAttribute("data-network", "");
     networkObject.setAttribute("data-mac", getRandomMac());
     networkObject.setAttribute("data-gateway", "");
     networkObject.setAttribute("data-switch", "");
@@ -98,7 +97,6 @@ function savePcSpecs(event) {
     networkObject.setAttribute("data-ip", newIp);
     networkObject.setAttribute("data-netmask", newNetmask);
     networkObject.setAttribute("data-gateway", newGateway);
-    networkObject.setAttribute("data-network", getNetwork(newIp, newNetmask));
     networkObject.setAttribute("data-dhcp", newDhcp);
     networkObject.setAttribute("data-dns-server", newDnsServer);
     document.querySelector(".pc-form").style.display = "none";

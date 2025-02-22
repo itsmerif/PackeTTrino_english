@@ -63,11 +63,6 @@ function command_Ip(id, args) {
 
     if (args[1] === "route" || args[1] === "r") { //añadir reglas de enrutamiento, solo puede ser ejecutado desde un router
 
-        if (!id.includes("router-")) {
-            terminalMessage('Error: Este comando solo puede ser ejecutado desde un router.');
-            return;
-        }
-
         if (args.length === 2) {
             printRoutingTable(id);
             return;
@@ -197,6 +192,21 @@ function removeRoutingEntry(routerObjectId, destination, netmask) {
 function printRoutingTable(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
+
+    // caso 1) es un equipo
+
+    if (!networkObjectId.includes("router-")) {
+        const ip = $networkObject.getAttribute("data-ip");
+        const netmask = $networkObject.getAttribute("data-netmask");
+        const network = getNetwork(ip, netmask);
+        const gateway = $networkObject.getAttribute("data-gateway");
+        terminalMessage(`${network}/${netmaskToCidr(netmask)} via ${ip} dev enp0s3`);
+        terminalMessage(`default via ${gateway || "-"} dev enp0s3`);
+        return;
+    }
+
+    // caso 2) es un router
+
     const table = $networkObject.querySelector(".routing-table").querySelector("table");
     const rows = table.querySelectorAll("tr");
 
@@ -268,7 +278,8 @@ function showObjectInfo(id) {
 function addNetwork(networkObjectId, ip, netmask, interface) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const rows = $networkObject.querySelector(".routing-table").querySelector("table").querySelectorAll("tr");
+
+    // caso 1) es un equipo
 
     if (!networkObjectId.includes("router-")) {
 
@@ -283,6 +294,9 @@ function addNetwork(networkObjectId, ip, netmask, interface) {
         return;
     }
 
+    // caso 2) es un router
+
+    const rows = $networkObject.querySelector(".routing-table").querySelector("table").querySelectorAll("tr");
     $networkObject.setAttribute("ip-" + interface, ip);
     $networkObject.setAttribute("netmask-" + interface, netmask);
 

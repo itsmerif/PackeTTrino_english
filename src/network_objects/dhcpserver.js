@@ -18,7 +18,6 @@ function createDhcpServerObject(x, y) {
     networkObject.style.top = `${y}px`;
     networkObject.setAttribute("data-ip", "");
     networkObject.setAttribute("data-netmask", "");
-    networkObject.setAttribute("data-network", "");
     networkObject.setAttribute("data-mac", getRandomMac());
     networkObject.setAttribute("data-gateway", "");
     networkObject.setAttribute("data-switch", "");

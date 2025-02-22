@@ -16,7 +16,6 @@ function BoardItemDragStart(event) {
     const networkObjectid = networkObject.id;
     const ip = networkObject.getAttribute("data-ip");
     const netmask = networkObject.getAttribute("data-netmask");
-    const network = networkObject.getAttribute("data-network");
     const mac = networkObject.getAttribute("data-mac");
     const gateway = networkObject.getAttribute("data-gateway");
     const itemType = "item-dropped";
@@ -30,7 +29,6 @@ function BoardItemDragStart(event) {
         itemId: networkObjectid,
         ip: ip,
         netmask: netmask,
-        network: network,
         mac: mac,
         gateway: gateway,
         originx: x,
