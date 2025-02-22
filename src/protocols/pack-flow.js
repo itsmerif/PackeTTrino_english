@@ -447,6 +447,8 @@ function switchProcessor(switchId, networkObjectId, packet) {
         packetProcessor_dhcp_server(switchId, device, duplicatePacket);
     } else if (device.startsWith("dhcp-relay-server-")) {
         packetProcessor_dhcp_relay_server(switchId, device, duplicatePacket);
+    } else if (device.startsWith("dns-server-")) {
+        packetProcessor_dns_server(switchId, device, duplicatePacket);
     }
 
     return;
@@ -559,6 +561,11 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
             dhcpRequestFlag = true;
             setDhcpInfo(networkObjectId, packet);
         }
+    }
+
+    if (packet.protocol === "dns" && packet.type === "reply") {
+        terminalMessage("DNS Reply Recibido");
+        terminalMessage("Respuesta: " + packet.answer);
     }
 }
 
@@ -1027,6 +1034,8 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
 
 function packetProcessor_dns_server(switchId, serverObjectId, packet) {
 
+    console.log(packet);
+
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");
     const serverObjectIp = $serverObject.getAttribute("data-ip");
@@ -1034,15 +1043,34 @@ function packetProcessor_dns_server(switchId, serverObjectId, packet) {
     //comportamiento como equipo normal
 
     if (packet.protocol === "arp" && packet.type === "request") {
-
         if (packet.destination_ip !== serverObjectIp) {
-            //terminalMessage(serverObjectId + ": Solicitud ARP ignorada");
             return;
         }
-
-        //terminalMessage(serverObjectId + ": Enviando un Respuesta ARP");
         addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
+        addPacketTraffic(newPacket);
+        switchProcessor(switchId, serverObjectId, newPacket);
+        return;
+    }
+
+    if (packet.protocol === "icmp" && packet.type === "request") {
+        if (packet.destination_ip !== serverObjectIp) {
+            return;
+        }
+        let newPacket = new IcmpEchoReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
+        addPacketTraffic(newPacket);
+        switchProcessor(switchId, serverObjectId, newPacket);
+        return;
+    }
+
+    //comportamiento como servidor dns
+
+    if (packet.protocol === "dns" && packet.type === "request") {
+        if (packet.destination_ip !== serverObjectIp) {
+            return;
+        }
+        let answerTranslation = isDomainInCache(serverObjectId, packet.query);
+        let newPacket = new dnsReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac, packet.query, answerTranslation);
         addPacketTraffic(newPacket);
         switchProcessor(switchId, serverObjectId, newPacket);
         return;

@@ -7,9 +7,8 @@ function command_dig(dataId, args) {
         return;
     }
 
-    dig(dataId, args[1]);
     terminalMessage("Buscando información de dominio...");
-
+    dig(dataId, args[1]);
 }
 
 function dig(dataId, domain) {
@@ -32,7 +31,6 @@ function dig(dataId, domain) {
 
 }
 
-
 function isDomainInCache(networkObjectId, targetDomain) {
 
     const $networkObject = document.getElementById(networkObjectId);
@@ -45,7 +43,7 @@ function isDomainInCache(networkObjectId, targetDomain) {
         let row = records[i];
         let cells = row.querySelectorAll("td");
         let domain = cells[0].innerHTML;
-        let ip = cells[1].innerHTML;
+        let ip = cells[2].innerHTML;
 
         if (domain === targetDomain) {
             return ip;

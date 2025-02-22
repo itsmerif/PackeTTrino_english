@@ -156,3 +156,16 @@ class dnsRequest extends packet {
         this.answer = "";
     }
 }
+
+class dnsReply extends packet {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, query, answer) {
+        super(origin_ip, destination_ip, origin_mac, destination_mac);
+        this.transport_protocol = "udp";
+        this.protocol = "dns";
+        this.ttl = 64;
+        this.type = "reply";
+        this.port = "53";
+        this.query = query;
+        this.answer = answer;
+    }
+}
