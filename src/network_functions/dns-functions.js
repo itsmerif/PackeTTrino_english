@@ -91,7 +91,7 @@ function addDnsEntry(serverObjectId, newrecord) {
     newRow.innerHTML = `
         <tr>
             <td>${newrecord.domain}</td>
-            <td>${newrecord.type}</td>
+            <td>${(newrecord.type).toUpperCase()}</td>
             <td>${newrecord.value}</td>
         </tr>`;
     dnsTable.appendChild(newRow);
