@@ -1,6 +1,6 @@
 let buffer = {};
-let arpFlag = true;
-let icmpFlag = true;
+let arpFlag = false;
+let icmpFlag = false;
 let dhcpDiscoverFlag = false;
 let dhcpRequestFlag = false;
 let dhcpRenewFlag = false;
@@ -153,13 +153,9 @@ function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) 
         buffer[networkObjectId] = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), "");
         packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
         addPacketTraffic(packet);
-        arpFlag = false;
-        addPacketTraffic(packet);
         switchProcessor(switchId, networkObjectId, packet);
     } else {
         packet = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), destination_mac);
-        icmpFlag = false;
-
         addPacketTraffic(packet);
         switchProcessor(switchId, networkObjectId, packet);
     }

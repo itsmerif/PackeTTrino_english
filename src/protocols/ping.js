@@ -29,32 +29,32 @@ function ping(dataId, args) {
 
     cleanPacketTraffic(); //limpiamos la tabla de paquetes
 
-    if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) { //asumimos que es un nombre de dominio
+    //caso 1) el valor introducido es una nombre de dominio
 
+    if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
         dnsRequestFlag = false;
-        dig(dataId, args[1]);
-        
+        dig(dataId, args[1]);       
         setTimeout(() => {
             if (!dnsRequestFlag) {
                 terminalMessage("Error: No se pudo resolver el nombre de dominio.");
             } else {
-                try { //intentamos hacer ping a la ip
+                try { //intentamos hacer ping a la ip de respuesta
                     icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, isDomainInCache(dataId, args[1])[1]);
                 } catch (error) {
                     ping_f(networkObjectIp);
                     return;
                 }           
-                if (!arpFlag || !icmpFlag) {
+                if (!icmpFlag) {
                     ping_f(networkObjectIp);
                 } else {
                     ping_s(networkObjectIp);
                 }
             }
-        }, 1000);
-
+        }, 500);
         return;
-
     }
+
+    //caso 2) el valor introducido es una ip
 
     if (args[1] === getNetwork(networkObjectIp, networkObjectNetmask)) { //no se le permite hacer ping a la red
         terminalMessage("Error: La IP de destino introducida no es válida.");
@@ -67,25 +67,18 @@ function ping(dataId, args) {
     }
 
     try {
-
+        icmpFlag = false;
         icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, args[1]);
-
     } catch (error) {
-
         //terminalMessage(error.message);
         ping_f(networkObjectIp);
         return;
-
     }
 
-    if (!arpFlag || !icmpFlag) {
-
+    if (!icmpFlag) {
         ping_f(networkObjectIp);
-
     } else {
-
         ping_s(networkObjectIp);
-
     }
     
 }
