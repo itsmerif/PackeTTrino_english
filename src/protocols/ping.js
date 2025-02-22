@@ -14,13 +14,7 @@ function ping(dataId, args) {
     }
 
     if (args.length !== 2 ) {
-        terminalMessage("Error: Sintaxis: ping <ip> [-v]");
-        return;
-    }
-
-    if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)
-        || args[1] === getNetwork(networkObjectIp, networkObjectNetmask)) {
-        terminalMessage("Error: La IP de destino introducida no es válida.");
+        terminalMessage("Error: Sintaxis: ping <ip | dominio>");
         return;
     }
 
@@ -35,20 +29,77 @@ function ping(dataId, args) {
 
     cleanPacketTraffic(); //limpiamos la tabla de paquetes
 
-    //todo: bloquear hacer ping al broadcast
+    if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) { //asumimos que es un nombre de dominio
 
-    try {
-        icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, args[1]);
-    } catch (error) {
-        //terminalMessage(error.message);
-        ping_f(networkObjectIp);
+        dnsRequestFlag = false;
+        
+        dig(dataId, args[1]);
+
+        setTimeout(() => {
+
+            if (!dnsRequestFlag) {
+
+                terminalMessage("Error: No se pudo resolver el nombre de dominio.");
+
+            } else {
+
+                try { //intentamos hacer ping a la ip
+
+                    icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, isDomainInCache(dataId, args[1])[1]);
+
+                } catch (error) {
+                    ping_f(networkObjectIp);
+                    return;
+                }
+            
+                if (!arpFlag || !icmpFlag) {
+
+                    ping_f(networkObjectIp);
+
+                } else {
+
+                    ping_s(networkObjectIp);
+
+                }
+
+            }
+
+        }, 1000);
+
+        return;
+
+    }
+
+    if (args[1] === getNetwork(networkObjectIp, networkObjectNetmask)) { //no se le permite hacer ping a la red
+        terminalMessage("Error: La IP de destino introducida no es válida.");
         return;
     }
 
-    if (!arpFlag || !icmpFlag) {
-        ping_f(networkObjectIp);
-    } else {
+    if (args[1] === networkObjectIp) { //es el mismo equipo, lo damos por exito
         ping_s(networkObjectIp);
+        return;
+    }
+
+    try {
+
+        icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, args[1]);
+
+    } catch (error) {
+
+        //terminalMessage(error.message);
+        ping_f(networkObjectIp);
+        return;
+
+    }
+
+    if (!arpFlag || !icmpFlag) {
+
+        ping_f(networkObjectIp);
+
+    } else {
+
+        ping_s(networkObjectIp);
+
     }
     
 }

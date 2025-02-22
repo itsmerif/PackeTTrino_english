@@ -24,10 +24,11 @@ function dig(dataId, domain) {
         return;
     }
 
-    //si tenemos la respuesta en cache, mostramos la información
+    dnsRequestFlag = true;
 
-    terminalMessage(`Nombre de Dominio: ${domain}`);
-    terminalMessage(`Tipo de Registro: ${translationType}`);
-    terminalMessage(`Respuesta: ${translation}`);
+    //si tenemos la respuesta en cache, mostramos la información
+    //terminalMessage(`Nombre de Dominio: ${domain}`);
+    //terminalMessage(`Tipo de Registro: ${translationType}`);
+    //terminalMessage(`Respuesta: ${translation}`);
 
 }

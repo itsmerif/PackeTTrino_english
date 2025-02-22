@@ -19,7 +19,7 @@ function dhcp(dataId, args) {
 
     if (args.length !== 2) {
         terminalMessage("Error de argumentos. Sintáxis: dhcp < -renew | -release > ");
-        console.log(isDchpOn);
+        //console.log(isDchpOn);
         return;
     }
 

@@ -4,6 +4,7 @@ let icmpFlag = true;
 let dhcpDiscoverFlag = false;
 let dhcpRequestFlag = false;
 let dhcpRenewFlag = false;
+let dnsRequestFlag = false;
 let order = 0;
 
 function sp(id, args) {
@@ -529,7 +530,7 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
 
         if (packet.chaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
 
-            console.log("DHCP Discover");
+            //console.log("DHCP Discover");
 
             dhcpDiscoverFlag = true;
 
@@ -564,9 +565,15 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "dns" && packet.type === "reply") {
-        if (packet.answer) addDnsCacheEntry(networkObjectId, packet.query, packet.answer_type, packet.answer);
-        terminalMessage("DNS Reply Recibido");
-        terminalMessage("Tipo de Registro: " + packet.answer_type + ", Respuesta: " + packet.answer);
+
+        if (packet.answer) {
+            addDnsCacheEntry(networkObjectId, packet.query, packet.answer_type, packet.answer);
+            dnsRequestFlag = true;
+        }
+
+        //terminalMessage("DNS Reply Recibido");
+        //terminalMessage("Tipo de Registro: " + packet.answer_type + ", Respuesta: " + packet.answer);
+
     }
 }
 
@@ -934,7 +941,7 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
 
 function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
 
-    //console.log(`packetProcessor_dhcp_relay_server(${switchId}, ${serverObjectId}, ${packet})`);
+    ////console.log(`packetProcessor_dhcp_relay_server(${switchId}, ${serverObjectId}, ${packet})`);
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");
     const serverObjectIp = $serverObject.getAttribute("data-ip");
@@ -1035,7 +1042,7 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
 
 function packetProcessor_dns_server(switchId, serverObjectId, packet) {
 
-    console.log(packet);
+    //console.log(packet);
 
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");
