@@ -153,6 +153,7 @@ class dnsRequest extends packet {
         this.type = "request";
         this.port = "53";
         this.query = query;
+        this.answer_type = "";
         this.answer = "";
     }
 }
@@ -166,6 +167,7 @@ class dnsReply extends packet {
         this.type = "reply";
         this.port = "53";
         this.query = query;
+        this.answer_type = "";
         this.answer = answer;
     }
 }

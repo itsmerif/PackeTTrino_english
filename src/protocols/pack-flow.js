@@ -564,9 +564,9 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "dns" && packet.type === "reply") {
-        if (packet.answer) addDnsCacheEntry(networkObjectId, packet.query, packet.answer);
+        if (packet.answer) addDnsCacheEntry(networkObjectId, packet.query, packet.answer_type, packet.answer);
         terminalMessage("DNS Reply Recibido");
-        terminalMessage("Respuesta: " + packet.answer);
+        terminalMessage("Tipo de Registro: " + packet.answer_type + ", Respuesta: " + packet.answer);
     }
 }
 
@@ -1067,13 +1067,12 @@ function packetProcessor_dns_server(switchId, serverObjectId, packet) {
     //comportamiento como servidor dns
 
     if (packet.protocol === "dns" && packet.type === "request") {
-        if (packet.destination_ip !== serverObjectIp) {
-            return;
-        }
-        let answerTranslation = isDomainInCache(serverObjectId, packet.query);
+        if (packet.destination_ip !== serverObjectIp) return;
+        let [answerType, answerTranslation] = isDomainInCache(serverObjectId, packet.query);
         let newPacket = new dnsReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac, packet.query, answerTranslation);
+        newPacket.answer_type = answerType;
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, serverObjectId, newPacket);
+        switchProcessor(switchId, serverObjectId, newPacket);    
         return;
     }
 

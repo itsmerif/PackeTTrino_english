@@ -112,18 +112,20 @@ function isDomainInCache(networkObjectId, targetDomain) {
         let row = records[i];
         let cells = row.querySelectorAll("td");
         let domain = cells[0].innerHTML;
-        let ip = cells[2].innerHTML;
+        let type = cells[1].innerHTML;
+        let value = cells[2].innerHTML;
 
         if (domain === targetDomain) {
-            return ip;
+            return [type, value];
         }
 
     }
 
-    return false;
+    return [false, false];
+
 }
 
-function addDnsCacheEntry(networkObjectId, domain, ip) {
+function addDnsCacheEntry(networkObjectId, domain, type, value) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
@@ -132,7 +134,8 @@ function addDnsCacheEntry(networkObjectId, domain, ip) {
     newRow.innerHTML = `
         <tr>
             <td>${domain}</td>
-            <td>${ip}</td>
+            <td>${type}</td>
+            <td>${value}</td>
         </tr>`;
     dnsTable.appendChild(newRow);
 

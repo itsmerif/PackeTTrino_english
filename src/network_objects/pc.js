@@ -35,7 +35,8 @@ function createPcObject(x, y) {
             <table>
                 <tr>
                     <th>Domain</th>
-                    <th>IP</th>
+                    <th>Type</th>
+                    <th>Value</th>
                 </tr>
             </table>
             <button onclick="closeDnsTable(event)">Cerrar</button>

@@ -17,16 +17,17 @@ function dig(dataId, domain) {
 
     const $networkObject= document.getElementById(dataId);
     const switchId = $networkObject.getAttribute("data-switch");
-    const translationIp = isDomainInCache(dataId, domain);
+    const [translationType, translation] = isDomainInCache(dataId, domain);
 
-    if (!translationIp) { //no tenemos la ip en cache, buscamos en el servidor
+    if (!translation) { //no tenemos la ip en cache, buscamos en el servidor
         dnsRequestPacketGenerator(dataId, switchId, domain);
         return;
     }
 
-    //si tenemos la ip en cache, mostramos la información
+    //si tenemos la respuesta en cache, mostramos la información
 
     terminalMessage(`Nombre de Dominio: ${domain}`);
-    terminalMessage(`Dirección IP: ${translationIp}`);
+    terminalMessage(`Tipo de Registro: ${translationType}`);
+    terminalMessage(`Respuesta: ${translation}`);
 
 }
