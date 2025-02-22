@@ -149,12 +149,16 @@ function command_man(topic) {
             terminalMessage("<p><span style='color: red'>Nota</span>: Todas las opciones son obligatorias. Usar (*) significa cualquier valor.</p>");
             break;
         case "ip":
-            terminalMessage("<p>ip: utilidad para mostrar/configurar la configuración de red o enrutamiento en un dispositivo</p>");
-            terminalMessage("<p>Sintaxis: ip &lt;route|a&gt;</p>");
-            terminalMessage("<p style='text-decoration: underline;'>Opciones:</p>");
-            terminalMessage("<p>a: mostrar la información del equipo</p>");
-            terminalMessage("<p>route: configurar las reglas de enrutamiento</p>");
+            terminalMessage("<p>ip: utilidad para mostrar/administrar la configuración de red o enrutamiento en un dispositivo</p>");
+            terminalMessage("<p style='text-decoration: underline;'>Opciones de address:</p>");
+            terminalMessage("<p>Sintaxis: ip addr [add|del] [ip] [netmask] dev [interface]</p>");
+            terminalMessage("<p>addr: mostrar la información del equipo</p>");
+            terminalMessage("<p>add: añadir una nueva red a un dispositivo</p>");
+            terminalMessage("<p>del: eliminar una red de un dispositivo</p>");
+            terminalMessage("<p>Ejemplo: ip addr add 192.168.1.100 255.255.255.0 dev enp0s3</p>");
             terminalMessage("<p style='text-decoration: underline;'>Opciones de route:</p>");
+            terminalMessage("<p>Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]</p>");
+            terminalMessage("<p>route: configurar las reglas de enrutamiento</p>");
             terminalMessage("<p>add: añadir una regla de enrutamiento. Debe ir seguida de una dirección y una máscara de red.</p>");
             terminalMessage("<p>del: eliminar una regla de enrutamiento. Debe ir seguida de una dirección y una máscara de red.</p>");
             terminalMessage("<p>via: especificar la interfaz por la que se va a saltar y el siguiente salto</p>");
