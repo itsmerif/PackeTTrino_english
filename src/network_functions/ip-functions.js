@@ -1,56 +1,79 @@
 function command_Ip(id, args) {
 
-    if (args[1] === "a") { //mostramos la informacion del equipo, solo puede ser ejecutado desde un pc
+    if (args[1] === "addr" || args[1] === "a") { //mostramos la informacion del equipo, solo puede ser ejecutado desde un pc
 
-        if (!id.includes("router-")) {
-
-            const $networkObject = document.getElementById(id);
-            const ip = $networkObject.getAttribute("data-ip");
-            const netmask = $networkObject.getAttribute("data-netmask");
-            const gateway = $networkObject.getAttribute("data-gateway");
-            const mac = $networkObject.getAttribute("data-mac");
-
-            terminalMessage(`Dirección IP: ${ip}`);
-            terminalMessage(`Puerta de Enlace: ${gateway}`);
-            terminalMessage(`Máscara de Red: ${netmask}`);
-            terminalMessage(`Dirección Física: ${mac}`);
-
+        if (args.length === 2) {
+            showObjectInfo(id);
             return;
-
         }
 
-        if (id.includes("router-")) {
-            
-            const $routerObject = document.getElementById(id);
-            const ipEnp0s3 = $routerObject.getAttribute("ip-enp0s3");
-            const ipEnp0s8 = $routerObject.getAttribute("ip-enp0s8");
-            const ipEnp0s9 = $routerObject.getAttribute("ip-enp0s9");
-            const netmaskEnp0s3 = $routerObject.getAttribute("netmask-enp0s3");
-            const netmaskEnp0s8 = $routerObject.getAttribute("netmask-enp0s8");
-            const netmaskEnp0s9 = $routerObject.getAttribute("netmask-enp0s9");
-            const mac = $routerObject.getAttribute("data-mac");
+        if (args[2] === "add") {
 
-            terminalMessage(`Dirección IP Enp0s3: ${ipEnp0s3}`);
-            terminalMessage(`Máscara de Red Enp0s3: ${netmaskEnp0s3}`);
-            terminalMessage(`Dirección IP Enp0s8: ${ipEnp0s8}`);
-            terminalMessage(`Máscara de Red Enp0s8: ${netmaskEnp0s8}`);
-            terminalMessage(`Dirección IP Enp0s9: ${ipEnp0s9}`);
-            terminalMessage(`Máscara de Red Enp0s9: ${netmaskEnp0s9}`);
-            terminalMessage(`Dirección Física: ${mac}`);
+            if (args.length !== 7) {
+                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip] [netmask] dev [interface]');
+                return;
+            }
 
+            if (args[2] !== "add" && args[2] !== "del") {
+                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip] [netmask] dev [interface]');
+                return;
+            }
+
+            if (!isValidIp(args[3])) {
+                terminalMessage("Error: La IP introducida no es válida.");
+                return;
+            }
+
+            if (!isValidIp(args[4])) {
+                terminalMessage("Error: La máscara de red introducida no es válida.");
+                return;
+            }
+
+            if (args[5] !== "dev") {
+                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip] [netmask] dev [interface]');
+                return;
+            }
+
+            if (args[6] !== "enp0s3" && args[6] !== "enp0s8" && args[6] !== "enp0s9") {
+                terminalMessage("Error: La interfaz introducida no es válida.");
+                return;
+            }
+
+            addNetwork(id, args[3], args[4], args[6]);
+            return;
+        }
+
+        if (args[2] === "del") {
+
+            if (args.length !== 4) {
+                terminalMessage('Error de argumentos. Sintaxis: ip addr del [interface]');
+                return;
+            }
+
+            if (args[3] !== "enp0s3" && args[3] !== "enp0s8" && args[3] !== "enp0s9") {
+                terminalMessage("Error: La interfaz introducida no es válida.");
+                return;
+            }
+
+            removeNetwork(id, args[3]);
             return;
         }
 
     }
 
-    if (args[1] === "route") { //añadir reglas de enrutamiento, solo puede ser ejecutado desde un router
+    if (args[1] === "route" || args[1] === "r") { //añadir reglas de enrutamiento, solo puede ser ejecutado desde un router
 
         if (!id.includes("router-")) {
             terminalMessage('Error: Este comando solo puede ser ejecutado desde un router.');
             return;
         }
 
-        if (args.length < 8) {
+        if (args.length === 2) {
+            printRoutingTable(id);
+            return;
+        }
+
+        if (args.length !== 8) {
             terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
             return;
         }
@@ -69,11 +92,6 @@ function command_Ip(id, args) {
             removeRoutingEntry(id, args[3], args[4], args[6], args[7]);
             return;
         }
-    }
-
-    if (args[1] === "r") {
-       printRoutingTable(id);
-       return;
     }
 
     terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
@@ -204,4 +222,154 @@ function printRoutingTable(networkObjectId) {
     }
 }
 
+function showObjectInfo(id) {
 
+    const $networkObject = document.getElementById(id);
+
+    if (!id.includes("router-")) {
+
+        const ip = $networkObject.getAttribute("data-ip");
+        const netmask = $networkObject.getAttribute("data-netmask");
+        const gateway = $networkObject.getAttribute("data-gateway");
+        const mac = $networkObject.getAttribute("data-mac");
+
+        terminalMessage(`Dirección IP: ${ip}`);
+        terminalMessage(`Puerta de Enlace: ${gateway}`);
+        terminalMessage(`Máscara de Red: ${netmask}`);
+        terminalMessage(`Dirección Física: ${mac}`);
+
+        return;
+
+    }
+
+    if (id.includes("router-")) {
+
+        const ipEnp0s3 = $networkObject.getAttribute("ip-enp0s3");
+        const ipEnp0s8 = $networkObject.getAttribute("ip-enp0s8");
+        const ipEnp0s9 = $networkObject.getAttribute("ip-enp0s9");
+        const netmaskEnp0s3 = $networkObject.getAttribute("netmask-enp0s3");
+        const netmaskEnp0s8 = $networkObject.getAttribute("netmask-enp0s8");
+        const netmaskEnp0s9 = $networkObject.getAttribute("netmask-enp0s9");
+        const mac = $networkObject.getAttribute("data-mac");
+
+        terminalMessage(`Dirección IP Enp0s3: ${ipEnp0s3}`);
+        terminalMessage(`Máscara de Red Enp0s3: ${netmaskEnp0s3}`);
+        terminalMessage(`Dirección IP Enp0s8: ${ipEnp0s8}`);
+        terminalMessage(`Máscara de Red Enp0s8: ${netmaskEnp0s8}`);
+        terminalMessage(`Dirección IP Enp0s9: ${ipEnp0s9}`);
+        terminalMessage(`Máscara de Red Enp0s9: ${netmaskEnp0s9}`);
+        terminalMessage(`Dirección Física: ${mac}`);
+
+        return;
+    }
+
+}
+
+function addNetwork(networkObjectId, ip, netmask, interface) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const rows = $networkObject.querySelector(".routing-table").querySelector("table").querySelectorAll("tr");
+
+    if (!networkObjectId.includes("router-")) {
+
+        if (interface !== "enp0s3") {
+            terminalMessage("Error: La interfaz introducida no es válida.");
+            return;
+        }
+
+        $networkObject.setAttribute("data-ip", ip);
+        $networkObject.setAttribute("data-netmask", netmask);
+        terminalMessage("La red ha sido creada correctamente.");
+        return;
+    }
+
+    $networkObject.setAttribute("ip-" + interface, ip);
+    $networkObject.setAttribute("netmask-" + interface, netmask);
+
+    //ahora actualizamos la tabla de enrutamiento
+
+    if (interface === "enp0s3") {
+        let targetRow = rows[1];
+        let cells = targetRow.querySelectorAll("td");
+        cells[0].innerHTML = getNetwork(ip, netmask);
+        cells[1].innerHTML = netmask;
+        cells[2].innerHTML = ip;
+        cells[3].innerHTML = interface;
+    }
+
+    if (interface === "enp0s8") {
+        let targetRow = rows[2];
+        let cells = targetRow.querySelectorAll("td");
+        cells[0].innerHTML = getNetwork(ip, netmask);
+        cells[1].innerHTML = netmask;
+        cells[2].innerHTML = ip;
+        cells[3].innerHTML = interface;
+    }
+
+    if (interface === "enp0s9") {
+        let targetRow = rows[3];
+        let cells = targetRow.querySelectorAll("td");
+        cells[0].innerHTML = getNetwork(ip, netmask);
+        cells[1].innerHTML = netmask;
+        cells[2].innerHTML = ip;
+        cells[3].innerHTML = interface;
+    }
+
+    terminalMessage("La red ha sido creada correctamente.");
+
+}
+
+function removeNetwork(networkObjectId, interface) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const rows = $networkObject.querySelector(".routing-table").querySelector("table").querySelectorAll("tr");
+
+    if (!networkObjectId.includes("router-")) {
+
+        if (interface !== "enp0s3") {
+            terminalMessage("Error: La interfaz introducida no es válida.");
+            return;
+        }
+
+        $networkObject.setAttribute("data-ip", "");
+        $networkObject.setAttribute("data-netmask", "");
+
+        terminalMessage("La red ha sido eliminada correctamente.");
+        return;
+    }
+
+    $networkObject.setAttribute("ip-" + interface, "");
+    $networkObject.setAttribute("netmask-" + interface, "");
+
+    //ahora actualizamos la tabla de enrutamiento
+
+    if (interface === "enp0s3") {
+        let targetRow = rows[1];
+        let cells = targetRow.querySelectorAll("td");
+        cells[0].innerHTML = "";
+        cells[1].innerHTML = "";
+        cells[2].innerHTML = "";
+        cells[3].innerHTML = "";
+    }
+
+    if (interface === "enp0s8") {
+        let targetRow = rows[2];
+        let cells = targetRow.querySelectorAll("td");
+        cells[0].innerHTML = "";
+        cells[1].innerHTML = "";
+        cells[2].innerHTML = "";
+        cells[3].innerHTML = "";
+    }
+
+    if (interface === "enp0s9") {
+        let targetRow = rows[3];
+        let cells = targetRow.querySelectorAll("td");
+        cells[0].innerHTML = "";
+        cells[1].innerHTML = "";
+        cells[2].innerHTML = "";
+        cells[3].innerHTML = "";
+    }
+
+    terminalMessage("La red ha sido eliminada correctamente.");
+
+}

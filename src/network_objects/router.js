@@ -239,6 +239,7 @@ function saveRouterSpecs(event) {
     });
 
     form.style.display = "none";
+    
 }
 
 function showRouterFirewallTable(event) {
