@@ -2,22 +2,45 @@ function command_Ip(id, args) {
 
     if (args[1] === "a") { //mostramos la informacion del equipo, solo puede ser ejecutado desde un pc
 
-        if (id.includes("router-")) {
-            return "Error: Este comando solo puede ser ejecutado desde un pc.";
+        if (!id.includes("router-")) {
+
+            const $networkObject = document.getElementById(id);
+            const ip = $networkObject.getAttribute("data-ip");
+            const netmask = $networkObject.getAttribute("data-netmask");
+            const gateway = $networkObject.getAttribute("data-gateway");
+            const mac = $networkObject.getAttribute("data-mac");
+
+            terminalMessage(`Dirección IP: ${ip}`);
+            terminalMessage(`Puerta de Enlace: ${gateway}`);
+            terminalMessage(`Máscara de Red: ${netmask}`);
+            terminalMessage(`Dirección Física: ${mac}`);
+
+            return;
+
         }
 
-        const pc = document.getElementById(id);
-        const ip = pc.getAttribute("data-ip");
-        const netmask = pc.getAttribute("data-netmask");
-        const gateway = pc.getAttribute("data-gateway");
-        const mac = pc.getAttribute("data-mac");
+        if (id.includes("router-")) {
+            
+            const $routerObject = document.getElementById(id);
+            const ipEnp0s3 = $routerObject.getAttribute("ip-enp0s3");
+            const ipEnp0s8 = $routerObject.getAttribute("ip-enp0s8");
+            const ipEnp0s9 = $routerObject.getAttribute("ip-enp0s9");
+            const netmaskEnp0s3 = $routerObject.getAttribute("netmask-enp0s3");
+            const netmaskEnp0s8 = $routerObject.getAttribute("netmask-enp0s8");
+            const netmaskEnp0s9 = $routerObject.getAttribute("netmask-enp0s9");
+            const mac = $routerObject.getAttribute("data-mac");
 
-        terminalMessage(`Dirección IP: ${ip}`);
-        terminalMessage(`Puerta de Enlace: ${gateway}`);
-        terminalMessage(`Máscara de Red: ${netmask}`);
-        terminalMessage(`Dirección Física: ${mac}`);
+            terminalMessage(`Dirección IP Enp0s3: ${ipEnp0s3}`);
+            terminalMessage(`Máscara de Red Enp0s3: ${netmaskEnp0s3}`);
+            terminalMessage(`Dirección IP Enp0s8: ${ipEnp0s8}`);
+            terminalMessage(`Máscara de Red Enp0s8: ${netmaskEnp0s8}`);
+            terminalMessage(`Dirección IP Enp0s9: ${ipEnp0s9}`);
+            terminalMessage(`Máscara de Red Enp0s9: ${netmaskEnp0s9}`);
+            terminalMessage(`Dirección Física: ${mac}`);
 
-        return;
+            return;
+        }
+
     }
 
     if (args[1] === "route") { //añadir reglas de enrutamiento, solo puede ser ejecutado desde un router
