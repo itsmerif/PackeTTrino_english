@@ -30,26 +30,3 @@ function dig(dataId, domain) {
     terminalMessage(`Dirección IP: ${translationIp}`);
 
 }
-
-function isDomainInCache(networkObjectId, targetDomain) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
-    const records = dnsTable.querySelectorAll("tr");
-    let i = 1;
-
-    while ( i < records.length ) {
-
-        let row = records[i];
-        let cells = row.querySelectorAll("td");
-        let domain = cells[0].innerHTML;
-        let ip = cells[2].innerHTML;
-
-        if (domain === targetDomain) {
-            return ip;
-        }
-
-    }
-
-    return false;
-}

@@ -564,6 +564,7 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "dns" && packet.type === "reply") {
+        addDnsCacheEntry(networkObjectId, packet.query, packet.answer);
         terminalMessage("DNS Reply Recibido");
         terminalMessage("Respuesta: " + packet.answer);
     }
