@@ -33,7 +33,7 @@ function ping(dataId, args) {
 
     if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
         dnsRequestFlag = false;
-        dig(dataId, args[1]);       
+        dig(dataId, args[1], false);       
         setTimeout(() => {
             if (!dnsRequestFlag) {
                 terminalMessage("Error: No se pudo resolver el nombre de dominio.");

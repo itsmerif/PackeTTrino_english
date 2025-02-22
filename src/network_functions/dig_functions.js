@@ -9,11 +9,11 @@ function command_dig(dataId, args) {
 
     terminalMessage("Buscando información de dominio...");
     
-    dig(dataId, args[1]);
+    dig(dataId, args[1], true);
 
 }
 
-function dig(dataId, domain) {
+function dig(dataId, domain, verbose = false) {
 
     cleanPacketTraffic()
 
@@ -32,9 +32,11 @@ function dig(dataId, domain) {
                 terminalMessage("Error: No se pudo resolver el nombre de dominio.");
             } else {
                 let [translationType, translation] = isDomainInCachePc(dataId, domain);
-                terminalMessage(`Nombre de Dominio: ${domain}`);
-                terminalMessage(`Tipo de Registro: ${translationType}`);
-                terminalMessage(`Respuesta: ${translation}`);
+                if (verbose) {
+                    terminalMessage(`Nombre de Dominio: ${domain}`);
+                    terminalMessage(`Tipo de Registro: ${translationType}`);
+                    terminalMessage(`Respuesta: ${translation}`);
+                }
             }
         }, 500);
 
@@ -43,9 +45,11 @@ function dig(dataId, domain) {
 
     dnsRequestFlag = true;
 
-    terminalMessage(`Nombre de Dominio: ${domain}`);
-    terminalMessage(`Tipo de Registro: ${translationType}`);
-    terminalMessage(`Respuesta: ${translation}`);
+    if (verbose) {
+        terminalMessage(`Nombre de Dominio: ${domain}`);
+        terminalMessage(`Tipo de Registro: ${translationType}`);
+        terminalMessage(`Respuesta: ${translation}`);
+    }
 
 }
 
