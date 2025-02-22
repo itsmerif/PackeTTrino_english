@@ -119,6 +119,8 @@ function isDomainInCache(networkObjectId, targetDomain) {
             return [type, value];
         }
 
+        i++;
+
     }
 
     return [false, false];

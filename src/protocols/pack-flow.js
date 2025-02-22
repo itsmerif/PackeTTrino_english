@@ -387,6 +387,7 @@ function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
     packet = new dnsRequest(networkObjectIp, dnsServer, networkObjectMac, destination_mac, domain);
 
     if (!destination_mac) { //la mac del servidor no está en la tabla arp
+        console.log(packet);
         buffer[networkObjectId] = packet;
         let arpRequest = new ArpRequest(networkObjectIp, dnsServer, networkObjectMac);
         addPacketTraffic(arpRequest);

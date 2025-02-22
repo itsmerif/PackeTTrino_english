@@ -26,7 +26,6 @@ function dig(dataId, domain) {
 
     dnsRequestFlag = true;
 
-    //si tenemos la respuesta en cache, mostramos la información
     //terminalMessage(`Nombre de Dominio: ${domain}`);
     //terminalMessage(`Tipo de Registro: ${translationType}`);
     //terminalMessage(`Respuesta: ${translation}`);
