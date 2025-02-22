@@ -137,6 +137,8 @@ function showDnsTable(event) {
     const networkObject = event.target.closest(".item-dropped");
     const table = networkObject.querySelector(".dns-table");
     table.style.display = "flex";
+    const modal = networkObject.querySelector(".advanced-options-modal");
+    if (modal) modal.style.display = "none";
 }
 
 function closeDnsTable(event) {

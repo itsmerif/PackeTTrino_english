@@ -34,6 +34,8 @@
     <input type="text" id="netmask" name="netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="gateway">Gateway:</label>
     <input type="text" id="gateway" name="gateway" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <label for="dns-server">DNS Server:</label>
+    <input type="text" id="dns-server" name="dns-server" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <button type="submit">Guardar</button>
   </form>
 
@@ -159,6 +161,7 @@
   <script src="./src/network_functions/functions.js"></script>
   <script src="./src/network_functions/dhcp_functions.js"></script>
   <script src="./src/network_functions/arp_functions.js"></script>
+  <script src="./src/network_functions/dig_functions.js"></script>
   <script src="./src/components/cable.js"></script>
   <script src="./src/network_objects/dhcp-relay-agent.js"></script>
   <script src="./src/network_objects/dhcpserver.js"></script>

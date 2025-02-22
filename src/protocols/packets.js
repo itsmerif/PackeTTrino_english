@@ -143,3 +143,16 @@ class dhcpRenew extends packet {
         this.hostname = hostname;
     }
 }
+
+class dnsRequest extends packet {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, query) {
+        super(origin_ip, destination_ip, origin_mac, destination_mac);
+        this.transport_protocol = "udp";
+        this.protocol = "dns";
+        this.ttl = 64;
+        this.type = "request";
+        this.port = "53";
+        this.query = query;
+        this.answer = "";
+    }
+}

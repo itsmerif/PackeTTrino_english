@@ -343,6 +343,61 @@ function dhcpRenewGenerator(networkObjectId, switchId) {
 
 }
 
+function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+    const dnsServer = $networkObject.getAttribute("data-dns-server");
+    const isSameNetwork = getNetwork(networkObjectIp, networkObjectNetmask) === getNetwork(dnsServer, networkObjectNetmask);
+    let packet;
+
+    if (!dnsServer) {
+        terminalMessage(networkObjectId + ": No se ha definido el servidor DNS");
+        return;
+    }
+
+    if (!isSameNetwork) { //el servidor dns no está en la misma red, intentamos llevarlo a la puerta de enlace
+
+        const defaultGateway = $networkObject.getAttribute("data-gateway");
+        const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
+        packet = new dnsRequest(networkObjectIp, dnsServer, networkObjectMac, defaultGatewayMac, domain);
+
+        if (!defaultGatewayMac) { //no tenemos la ip de la puerta de enlace en nuestra tabla de arp, lo guardamos en el buffer y enviamos un ARP primero
+            buffer[networkObjectId] = packet;
+            let arpRequest = new ArpRequest(networkObjectIp, defaultGateway, networkObjectMac);
+            addPacketTraffic(arpRequest);
+            switchProcessor(switchId, networkObjectId, arpRequest);
+            return;
+        }
+
+        //tenemos la puerta de enlace en la tabla de arp
+
+        addPacketTraffic(packet);
+        switchProcessor(switchId, networkObjectId, packet);
+        return;
+
+    }
+
+    //están en la misma red
+
+    const destination_mac = isIpInARPTable(networkObjectId, dnsServer);
+    packet = new dnsRequest(networkObjectIp, dnsServer, networkObjectMac, destination_mac, domain);
+
+    if (!destination_mac) { //la mac del servidor no está en la tabla arp
+        buffer[networkObjectId] = packet;
+        let arpRequest = new ArpRequest(networkObjectIp, dnsServer, networkObjectMac);
+        addPacketTraffic(arpRequest);
+        switchProcessor(switchId, networkObjectId, arpRequest);
+        return;
+    }
+
+    addPacketTraffic(packet);
+    switchProcessor(switchId, networkObjectId, packet);
+
+}
+
 function switchProcessor(switchId, networkObjectId, packet) {
 
     const $switchObject = document.getElementById(switchId);
@@ -370,6 +425,8 @@ function switchProcessor(switchId, networkObjectId, packet) {
                     packetProcessor_dhcp_server(switchId, device, duplicatePacket);
                 } else if (device.startsWith("dhcp-relay-server-")) {
                     packetProcessor_dhcp_relay_server(switchId, device, duplicatePacket);
+                } else if (device.startsWith("dns-server-")) {
+                    packetProcessor_dns_server(switchId, device, duplicatePacket);
                 }
             }
         }
@@ -963,6 +1020,31 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
         packet.destination_mac = isIpInARPTable(serverObjectId, defaultGateway);
         addPacketTraffic(packet);
         switchProcessor(switchId, serverObjectId, packet);
+        return;
+    }
+
+}
+
+function packetProcessor_dns_server(switchId, serverObjectId, packet) {
+
+    const $serverObject = document.getElementById(serverObjectId);
+    const serverObjectMac = $serverObject.getAttribute("data-mac");
+    const serverObjectIp = $serverObject.getAttribute("data-ip");
+
+    //comportamiento como equipo normal
+
+    if (packet.protocol === "arp" && packet.type === "request") {
+
+        if (packet.destination_ip !== serverObjectIp) {
+            //terminalMessage(serverObjectId + ": Solicitud ARP ignorada");
+            return;
+        }
+
+        //terminalMessage(serverObjectId + ": Enviando un Respuesta ARP");
+        addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
+        let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
+        addPacketTraffic(newPacket);
+        switchProcessor(switchId, serverObjectId, newPacket);
         return;
     }
 

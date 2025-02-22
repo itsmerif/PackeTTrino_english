@@ -34,6 +34,9 @@ function sendCommand(event) {
             case "dns":
                 command_dns(dataId, args);
                 break;
+            case "dig":
+                command_dig(dataId, args);
+                break;
             case "exit":
                 event.target.value = "";
                 document.querySelector(".pc-terminal").style.display = "none";

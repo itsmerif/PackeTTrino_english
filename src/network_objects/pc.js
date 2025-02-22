@@ -14,11 +14,13 @@ function createPcObject(x, y) {
     networkObject.setAttribute("data-gateway", "");
     networkObject.setAttribute("data-switch", "");
     networkObject.setAttribute("data-dhcp", false);
+    networkObject.setAttribute("data-dns-server", "");
     networkObject.setAttribute("data-dhcp-server", "");
 
     //contenido
     networkObject.innerHTML = `
         <img src="./assets/board/pc.png" alt="pc" draggable="true">
+
         <article class="arp-table" onclick="event.stopPropagation()">
             <table>
                 <tr>
@@ -28,11 +30,24 @@ function createPcObject(x, y) {
             </table>
             <button onclick="closeARPTable(event)">Cerrar</button>
         </article>
+
+        <article class="dns-table">
+            <table>
+                <tr>
+                    <th>Domain</th>
+                    <th>IP</th>
+                </tr>
+            </table>
+            <button onclick="closeDnsTable(event)">Cerrar</button>
+        </article>
+
         <div class="advanced-options-modal">
             <button onclick="showTerminal(event)">Modo Terminal</button>
             <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+            <button onclick="showDnsTable(event)">Ver Tabla DNS</button>
             <button onclick="deleteItem(event)">Eliminar</button>
         </div>
+
         <div class="quick-info" style="display: none;">
             <span class="ip">255.255.255.255/16</span>
         </div>
@@ -54,10 +69,12 @@ function showPcForm(id) {
     const netmask = networkObject.getAttribute("data-netmask");
     const gateway = networkObject.getAttribute("data-gateway");
     const dhcp = networkObject.getAttribute("data-dhcp");
+    const dnsServer = networkObject.getAttribute("data-dns-server");
     document.querySelector(".pc-form #ip").value = ip;
     document.getElementById("form-item-id").innerHTML = id;
     document.querySelector(".pc-form #netmask").value = netmask;
     document.querySelector(".pc-form #gateway").value = gateway;
+    document.querySelector(".pc-form #dns-server").value = dnsServer;
 
     if (dhcp === "true") {
         document.querySelector(".pc-form #dhcp").checked = true;
@@ -76,11 +93,13 @@ function savePcSpecs(event) {
     const newNetmask = document.querySelector(".pc-form #netmask").value;
     const newGateway = document.querySelector(".pc-form #gateway").value;
     const newDhcp = document.querySelector(".pc-form #dhcp").checked;
+    const newDnsServer = document.querySelector(".pc-form #dns-server").value;
     networkObject.setAttribute("data-ip", newIp);
     networkObject.setAttribute("data-netmask", newNetmask);
     networkObject.setAttribute("data-gateway", newGateway);
     networkObject.setAttribute("data-network", getNetwork(newIp, newNetmask));
     networkObject.setAttribute("data-dhcp", newDhcp);
+    networkObject.setAttribute("data-dns-server", newDnsServer);
     document.querySelector(".pc-form").style.display = "none";
 }
 
