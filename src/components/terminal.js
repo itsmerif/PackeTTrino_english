@@ -37,6 +37,12 @@ function sendCommand(event) {
             case "dig":
                 command_dig(dataId, args);
                 break;
+            case "help":
+                command_help();
+                break;
+            case "man":
+                command_man(args[1]);
+                break;
             case "exit":
                 event.target.value = "";
                 document.querySelector(".pc-terminal").style.display = "none";
@@ -95,63 +101,59 @@ function terminalMessage(message) {
     const output = document.querySelector(".terminal-output");
     const messageElement = document.createElement("p");
     messageElement.className = "terminal-message";
-    messageElement.textContent = message;
+    messageElement.innerHTML = message;
     output.appendChild(messageElement);
     terminal.scrollTop = output.scrollHeight;
 }
 
-function command_Ip(id, args) {
+function command_help() {
+    terminalMessage("<li>ping &lt;ip|domain&gt;</li>");
+    terminalMessage("<li>dhcp &lt;-renew|-release&gt;</li>");
+    terminalMessage("<li>firewall &lt;add|del&gt; -A &lt;chain&gt; -p &lt;protocol&gt; --dport &lt;port&gt; -s &lt;origin&gt; -d &lt;destination&gt; -j &lt;action&gt;</li>");
+    terminalMessage("<li>ip &lt;route|a&gt;</li>");
+    terminalMessage("<li>dig [@server] &lt;domain&gt;</li>");
+    terminalMessage("<li>help</li>");
+    terminalMessage("<li>exit</li>");
+}
 
-    if (args[1] === "a") { //mostramos la informacion del equipo, solo puede ser ejecutado desde un pc
+function command_man(topic) {
 
-        if (id.includes("router-")) {
-            return "Error: Este comando solo puede ser ejecutado desde un pc.";
-        }
-
-        const pc = document.getElementById(id);
-        const ip = pc.getAttribute("data-ip");
-        const netmask = pc.getAttribute("data-netmask");
-        const gateway = pc.getAttribute("data-gateway");
-        const mac = pc.getAttribute("data-mac");
-
-        terminalMessage(`Dirección IP: ${ip}`);
-        terminalMessage(`Puerta de Enlace: ${gateway}`);
-        terminalMessage(`Máscara de Red: ${netmask}`);
-        terminalMessage(`Dirección Física: ${mac}`);
-
-        return;
+    switch (topic) {
+        case "ping":
+            terminalMessage("<p>ping: herramienta de diagnóstico de red utilizada para verificar la conectividad entre un dispositivo y otro </p>");
+            terminalMessage("<p>Sintaxis: ping &lt;ip|domain&gt;</p>");
+            terminalMessage("<p>Ejemplo: ping 8.8.8.8</p>");
+            terminalMessage("<p>Ejemplo: ping google.com</p>");
+            terminalMessage("<p><span style='color: red;'>Nota:</span> Si se introduce una ip no válida, se intentará resolver como nombre de dominio.</p>");
+            break;
+        case "dhcp":
+            terminalMessage("<p>dhcp: herramienta de descubrimiento de servidor DHCP o de renovación de IP</p>");
+            terminalMessage("<p>Opciones:</p>");
+            terminalMessage("<p><span style='color: green'>-renew </span>: renovar la IP si se tiene una asignada o descubrir un servidor DHCP</p>");
+            terminalMessage("<p><span style='color: green'>-release </span>: liberar la IP si se tiene una asignada </p>");
+            terminalMessage("<p><span style='color: red'>Nota </span>: El equipo debe estar configurado como DHCP para que este comando funcione.</p>");
+            break;
+        case "firewall":
+            terminalMessage("<p>firewall: comando para configurar reglas de firewall</p>");
+            terminalMessage("<p>Sintaxis: firewall &lt;add|del&gt; -A &lt;chain&gt; -p &lt;protocol&gt; --dport &lt;port&gt; -s &lt;origin&gt; -d &lt;destination&gt; -j &lt;action&gt;</p>");
+            terminalMessage("<p>Ejemplo: firewall add -A INPUT -p tcp --dport 80 -s 192.168.1.100 -d 192.168.1.1 -j ACCEPT</p>");
+            break;
+        case "ip":
+            terminalMessage("<p>ip: comando para configurar las interfaces de red</p>");
+            terminalMessage("<p>Sintaxis: ip &lt;route|a&gt;</p>");
+            terminalMessage("<p>Ejemplo: ip route add 192.168.1.0/24 via 192.168.1.1 dev enp0s3</p>");
+            break;
+        case "dig":
+            terminalMessage("<p>dig: comando para buscar información en un servidor DNS</p>");
+            terminalMessage("<p>Sintaxis: dig [@server] &lt;domain&gt;</p>");
+            terminalMessage("<p>Ejemplo: dig @8.8.8.8 google.com</p>");
+            break;
+        case "help":
+            terminalMessage("<p>help: comando para mostrar la ayuda del terminal</p>");
+            terminalMessage("<p>Sintaxis: help</p>");
+            terminalMessage("<p>Ejemplo: help</p>");
+            break;
+        case "exit":
+            break;
     }
-
-    if (args[1] === "route") { //añadir reglas de enrutamiento, solo puede ser ejecutado desde un router
-
-        if (!id.includes("router-")) {
-            terminalMessage('Error: Este comando solo puede ser ejecutado desde un router.');
-            return;
-        }
-
-        if (args.length < 8) {
-            terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
-            return;
-        }
-
-        if (args[2] !== "add" && args[2] !== "del" || args[5] !== "via") {
-            terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
-            return;
-        }
-
-        if (args[2] === "add") {
-            addRoutingEntry(id, args[3], args[4], args[6], args[7]);
-            terminalMessage('Comando ip route ejecutado correctamente');
-            return;
-        }
-
-        if (args[2] === "del") {
-            removeRoutingEntry(id, args[3], args[4], args[6], args[7]);
-            terminalMessage('Comando ip route ejecutado correctamente');
-            return;
-        }
-    }
-
-    terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
-
 }

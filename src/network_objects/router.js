@@ -241,56 +241,6 @@ function saveRouterSpecs(event) {
     form.style.display = "none";
 }
 
-function addRoutingEntry(routerObjectId, destination, netmask, interface, nexthop) {
-
-    const networkObject = document.getElementById(routerObjectId);
-    const table = networkObject.querySelector(".routing-table").querySelector("table");
-
-    if (destination !== "0.0.0.0") { //añadimos una nueva regla
-
-        const newRow = document.createElement("tr");
-        const gateway = networkObject.getAttribute("ip-" + interface);
-        newRow.innerHTML = `
-            <tr>
-                <td>${destination}</td>
-                <td>${netmask}</td>
-                <td>${gateway}</td>
-                <td>${interface}</td>
-                <td>${nexthop}</td>
-            </tr>`;
-        table.appendChild(newRow);
-
-    } else { //editamos la regla por defecto
-
-        const rows = table.querySelectorAll("tr");
-        const defaultRule = rows[4];
-        const cells = defaultRule.querySelectorAll("td");
-        const gateway = networkObject.getAttribute("ip-" + interface);
-        cells[2].innerHTML = gateway;
-        cells[3].innerHTML = interface;
-        cells[4].innerHTML = nexthop;
-
-    }
-
-}
-
-function removeRoutingEntry(routerObjectId, destination, netmask, nexthop) {
-
-    const networkObject = document.getElementById(routerObjectId);
-    const table = networkObject.querySelector(".routing-table").querySelector("table");
-    const rows = table.querySelectorAll("tr");
-
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
-        const cells = row.querySelectorAll("td");
-
-        if (cells[0].innerHTML === destination && cells[1].innerHTML === netmask) {
-            table.removeChild(row);
-        }
-    }
-
-}
-
 function showRouterFirewallTable(event) {
     event.stopPropagation();
     const networkObject = event.target.closest(".item-dropped");

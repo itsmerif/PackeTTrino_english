@@ -26,8 +26,8 @@ function dig(dataId, domain) {
 
     dnsRequestFlag = true;
 
-    //terminalMessage(`Nombre de Dominio: ${domain}`);
-    //terminalMessage(`Tipo de Registro: ${translationType}`);
-    //terminalMessage(`Respuesta: ${translation}`);
+    terminalMessage(`Nombre de Dominio: ${domain}`);
+    terminalMessage(`Tipo de Registro: ${translationType}`);
+    terminalMessage(`Respuesta: ${translation}`);
 
 }

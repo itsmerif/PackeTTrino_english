@@ -119,7 +119,7 @@ function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) 
 
         if (!defaultGateway) {
             //terminalMessage(networkObjectId + ": Error: Puerta de Enlace Predetermina No Configurada");
-            throw new Error("Error: Puerta de Enlace Predetermina No Configurada");
+            throw new Error("Error: Puerta de Enlace Predeterminada No Configurada");
         }
 
         const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
@@ -128,8 +128,6 @@ function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) 
             //terminalMessage(networkObjectId + ": Gateway No Guardado. Enviando ARP por " + defaultGateway);
             buffer[networkObjectId] = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), "");
             packet = new ArpRequest(ip, defaultGateway, $networkObject.getAttribute("data-mac"));
-            arpFlag = false;
-
             addPacketTraffic(packet);
             switchProcessor(switchId, networkObjectId, packet);
             return;
@@ -137,7 +135,6 @@ function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) 
 
         packet = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), defaultGatewayMac);
         icmpFlag = false;
-
         addPacketTraffic(packet);
         switchProcessor(switchId, networkObjectId, packet);
         return;
