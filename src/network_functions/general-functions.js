@@ -54,6 +54,20 @@ function binaryToIp(binary) {
     return ip
 }
 
+function netmaskToCidr(netmask) {
+
+    let octets = netmask.split("."); //separamos por octetos
+
+    for (let i = 0; i < octets.length; i++) {
+        octets[i] = parseInt(octets[i]).toString(2).padStart(8, "0");
+    }
+
+    let cidr = octets.join("").split("0")[0].length;
+
+    return cidr;
+
+}
+
 function getMACTable(switchObjectId) {
 
     const switchOriginObject = document.getElementById(switchObjectId);
