@@ -40,11 +40,11 @@ function tcp(networkObjectId, destination, port) {
     setTimeout(() => {
 
         if (!tcpSyncFlag) {
-            terminalMessage(networkObjectId + ": No se pudo establecer la conexión.");
+            //terminalMessage(networkObjectId + ": No se pudo establecer la conexión.");
             return;
         }
 
-        terminalMessage(networkObjectId + ": Conexión establecida con éxito.");
+        //terminalMessage(networkObjectId + ": Conexión establecida con éxito.");
 
     },500);
 

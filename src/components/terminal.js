@@ -43,6 +43,9 @@ function sendCommand(event) {
             case "tcp":
                 command_tcp(dataId, args);
                 break;
+            case "http":
+                command_http(dataId, args);
+                break;
             case "help":
                 command_help();
                 break;

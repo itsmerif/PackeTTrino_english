@@ -344,7 +344,7 @@ function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
         switchProcessor(switchId, networkObjectId, packet);
     } else {
         packet = new syn(networkObjectIp, ip, networkObjectMac, destination_mac, port);
-        tcpBuffer[networkObjectId] = buffer[networkObjectId].sequence_number; //almacenamos el número de secuencia para el siguiente paquete
+        tcpBuffer[networkObjectId] = packet.sequence_number; //almacenamos el número de secuencia para el siguiente paquete
         addPacketTraffic(packet);
         switchProcessor(switchId, networkObjectId, packet);
     }

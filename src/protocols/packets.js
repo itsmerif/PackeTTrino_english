@@ -213,3 +213,19 @@ class Ack extends packet {
         this.ack_number = Math.floor(Math.random()*100000);
     }
 }
+
+class httpRequest extends packet {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, port, method, path) {
+        super(origin_ip, destination_ip, origin_mac, destination_mac);
+        this.transport_protocol = "tcp";
+        this.protocol = "http";
+        this.ttl = 64;
+        this.type = "request";
+        this.sport = port;
+        this.dport = 80;
+        this.sequence_number = Math.floor(Math.random()*100000);
+        this.ack_number = 0;
+        this.method = method;
+        this.path = path;
+    }
+}
