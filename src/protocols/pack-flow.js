@@ -800,6 +800,10 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
 }
 
 function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
+    
+    //cortafuegos
+
+    if (!firewallProcessorHost(serverObjectId, packet)) return;
 
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");
@@ -965,10 +969,14 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
 
         }
     }
-}
+    }
 
 function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
 
+    //cortafuegos
+
+    if (!firewallProcessorHost(serverObjectId, packet)) return;
+    
     ////console.log(`packetProcessor_dhcp_relay_server(${switchId}, ${serverObjectId}, ${packet})`);
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");
@@ -1102,6 +1110,8 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
 }
 
 function packetProcessor_dns_server(switchId, serverObjectId, packet) {
+
+    if (!firewallProcessorHost(serverObjectId, packet)) return;
 
     //console.log(packet);
 
@@ -1273,7 +1283,5 @@ function firewallProcessorHost(networkObjectId, packet) {
     }
 
     // si no hay regla que coincida, se aplica la política por defecto
-
-    console.log(defaultPolicy);
     return defaultPolicy === "ACCEPT";
 }
