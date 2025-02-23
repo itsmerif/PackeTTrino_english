@@ -41,6 +41,20 @@ function createPcObject(x, y) {
             <button onclick="closeDnsTable(event)">Cerrar</button>
         </article>
 
+        <article class="firewall-table">
+            <table>
+                <tr>
+                    <th>Id</th>
+                    <th>Chain</th>
+                    <th>Protocol</th>
+                    <th>Origin IP</th>
+                    <th>Destination IP</th>
+                    <th>Port</th>
+                    <th>Action</th>
+                </tr>
+            </table>
+        </article>
+
         <div class="advanced-options-modal">
             <button onclick="showTerminal(event)">Modo Terminal</button>
             <button onclick="showARPTable(event)">Ver Tabla ARP</button>

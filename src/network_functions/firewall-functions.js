@@ -17,11 +17,6 @@ function command_firewall(networkObjectId, args) {
     const validActions = ["ACCEPT", "DROP", "REJECT"];
     const validPolicies = ["ACCEPT", "DROP"];
 
-    if (!networkObjectId.startsWith("router-")) {
-        terminalMessage("Error: Este comando solo puede ser ejecutado desde un router.");
-        return;
-    }
-
     if (args[1] === "add") {
 
         //comando -> firewall add -A <chain> -p <protocol> --dport <port> -s <origin> -d <destination> -j <action>
@@ -121,6 +116,11 @@ function command_firewall(networkObjectId, args) {
         terminalMessage("Comando firewall ejecutado correctamente");
         
     }
+
+    if (args[1] === "-n") {
+        showFirewallRules(networkObjectId);
+        return;
+    }
 }
 
 function addFirewallRule(routerObjectId, newRule) {
@@ -149,4 +149,10 @@ function deleteFirewallRule(routerObjectId, ruleId) {
     const rows = ruleTable.querySelectorAll("tr");
     rows[ruleId].remove();
     terminalMessage("Comando firewall ejecutado correctamente");
+}
+
+function showFirewallRules(networkObjectId) {
+    const $networkObject = document.getElementById(networkObjectId);
+    const firewallTable = $networkObject.querySelector(".firewall-table").querySelector("table");
+    terminalMessage(`${firewallTable.outerHTML}`);
 }

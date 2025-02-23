@@ -62,3 +62,19 @@
 .terminal-output li {
     padding: 5px;
 }
+
+.terminal-output table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.terminal-output table * {
+    border: 1px solid white;
+    border-collapse: collapse;
+    text-align: center;
+    padding: 5px;
+}
+
+.terminal-output table th {
+    color: greenyellow;
+}
