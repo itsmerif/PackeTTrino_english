@@ -171,3 +171,45 @@ class dnsReply extends packet {
         this.answer = answer;
     }
 }
+
+class syn extends packet {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, port) {
+        super(origin_ip, destination_ip, origin_mac, destination_mac);
+        this.transport_protocol = "tcp";
+        this.protocol = "tcp";
+        this.ttl = 64;
+        this.type = "syn";
+        this.sport = 5000;
+        this.dport = port;
+        this.sequence_number = Math.floor(Math.random()*100000);
+        this.ack_number = 0;
+    }
+}
+
+class synAck extends packet {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, port) {
+        super(origin_ip, destination_ip, origin_mac, destination_mac);
+        this.transport_protocol = "tcp";
+        this.protocol = "tcp";
+        this.ttl = 64;
+        this.type = "syn-ack";
+        this.sport = port;
+        this.dport = 5000;
+        this.sequence_number = Math.floor(Math.random()*100000);
+        this.ack_number = 0;
+    }
+}
+
+class Ack extends packet {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, port) {
+        super(origin_ip, destination_ip, origin_mac, destination_mac);
+        this.transport_protocol = "tcp";
+        this.protocol = "tcp";
+        this.ttl = 64;
+        this.type = "syn-ack-reply";
+        this.sport = 5000;
+        this.dport = port;
+        this.sequence_number = Math.floor(Math.random()*100000);
+        this.ack_number = Math.floor(Math.random()*100000);
+    }
+}

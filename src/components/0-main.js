@@ -248,18 +248,20 @@ function dragPingForm(event) {
 function addPacketTraffic(packet) {
     const $table = document.querySelector(".packet-traffic table");
     let transportProtocol = packet.transport_protocol || "N/A";
-    let protocol = packet.protocol;
+    let protocol = packet.protocol || "N/A";
     let type = packet.type;
     let destinationIP = packet.destination_ip;
     let originIP = packet.origin_ip;
     let destinationMAC = packet.destination_mac;
     let originMAC = packet.origin_mac;
-    let destinationPort = packet.port || "N/A";
+    //let destinationPort = packet.port || "N/A";
     //let giaddress = packet.giaddr || "N/A";
     //let yiaddress = packet.yiaddr || "N/A";
     //let ciaddress = packet.ciaddr || "N/A";
     //let siaddress = packet.siaddr || "N/A";
     //let chaddress = packet.chaddr || "N/A";
+    let sequenceNumber = packet.sequence_number || "N/A";
+    let ackNumber = packet.ack_number || "N/A";
 
     $table.innerHTML += `
         <tr>
@@ -270,7 +272,8 @@ function addPacketTraffic(packet) {
             <td>${destinationIP}</td>
             <td>${originMAC}</td>
             <td>${destinationMAC}</td>
-            <td>${destinationPort}</td>
+            <td>${sequenceNumber}</td>
+            <td>${ackNumber}</td>
         </tr>
     `;
 }

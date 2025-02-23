@@ -40,6 +40,9 @@ function sendCommand(event) {
             case "dig":
                 command_dig(dataId, args);
                 break;
+            case "tcp":
+                command_tcp(dataId, args);
+                break;
             case "help":
                 command_help();
                 break;
