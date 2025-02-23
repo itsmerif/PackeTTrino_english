@@ -8,6 +8,7 @@ function createDhcpServerObject(x, y) {
     const advancedOptions = document.createElement("div");
     const networkObjectArpTable = document.createElement("article");
     const networkObjectDhcpTable = document.createElement("article");
+    const firewallTable = document.createElement("article");
 
 
     //caracteristicas generales
@@ -22,6 +23,7 @@ function createDhcpServerObject(x, y) {
     networkObject.setAttribute("data-gateway", "");
     networkObject.setAttribute("data-switch", "");
     networkObject.setAttribute("data-interval", "false");
+    networkObject.setAttribute("firewall-default-policy", "ACCEPT");
 
     //configuracion de oferta
 
@@ -62,6 +64,24 @@ function createDhcpServerObject(x, y) {
         <button onclick="closeARPTable(event)">Cerrar</button>`;
     
     networkObject.appendChild(networkObjectArpTable);
+
+    //tabla de firewall
+    
+    firewallTable.classList.add("firewall-table");
+    firewallTable.innerHTML = `
+            <table>
+                <tr>
+                    <th>Id</th>
+                    <th>Chain</th>
+                    <th>Protocol</th>
+                    <th>Origin IP</th>
+                    <th>Destination IP</th>
+                    <th>Port</th>
+                    <th>Action</th>
+                </tr>
+            </table>`;
+
+    networkObject.appendChild(firewallTable);
 
     //tabla de alquileres
 

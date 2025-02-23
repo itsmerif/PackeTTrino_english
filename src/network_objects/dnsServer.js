@@ -6,6 +6,7 @@ function createDnsServerObject(x, y) {
     const advancedOptions = document.createElement("div");
     const networkObjectArpTable = document.createElement("article");
     const networkObjectDnsTable = document.createElement("article");
+    const firewallTable = document.createElement("article");
 
     //caracteristicas generales
 
@@ -20,6 +21,7 @@ function createDnsServerObject(x, y) {
     networkObject.setAttribute("data-switch", "");
     networkObject.setAttribute("data-dhcp", false);
     networkObject.setAttribute("data-dhcp-server", "");
+    networkObject.setAttribute("firewall-default-policy", "ACCEPT");
 
     //caracteristicas especiales
 
@@ -57,6 +59,24 @@ function createDnsServerObject(x, y) {
         <button onclick="closeARPTable(event)">Cerrar</button>`;
     
     networkObject.appendChild(networkObjectArpTable);
+
+    //tabla de firewall
+
+    firewallTable.classList.add("firewall-table");
+    firewallTable.innerHTML = `
+            <table>
+                <tr>
+                    <th>Id</th>
+                    <th>Chain</th>
+                    <th>Protocol</th>
+                    <th>Origin IP</th>
+                    <th>Destination IP</th>
+                    <th>Port</th>
+                    <th>Action</th>
+                </tr>
+            </table>`;
+
+    networkObject.appendChild(firewallTable);
 
     //tabla de registros dns
 

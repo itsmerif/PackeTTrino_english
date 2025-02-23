@@ -5,6 +5,7 @@ function createDhcpRelayObject(x, y) {
     const networkObjectIcon = document.createElement("img");
     const advancedOptions = document.createElement("div");
     const networkObjectArpTable = document.createElement("article");
+    const firewallTable = document.createElement("article");
 
 
     //caracteristicas generales
@@ -19,6 +20,7 @@ function createDhcpRelayObject(x, y) {
     networkObject.setAttribute("data-gateway", "");
     networkObject.setAttribute("data-switch", "");
     networkObject.setAttribute("data-main-server", "");
+    networkObject.setAttribute("firewall-default-policy", "ACCEPT");
 
     //server grafico
 
@@ -53,6 +55,24 @@ function createDhcpRelayObject(x, y) {
     
     networkObject.appendChild(networkObjectArpTable);
 
+    //tabla de firewall
+
+    firewallTable.classList.add("firewall-table");
+    firewallTable.innerHTML = `
+            <table>
+                <tr>
+                    <th>Id</th>
+                    <th>Chain</th>
+                    <th>Protocol</th>
+                    <th>Origin IP</th>
+                    <th>Destination IP</th>
+                    <th>Port</th>
+                    <th>Action</th>
+                </tr>
+            </table>`;
+
+    networkObject.appendChild(firewallTable);
+    
     //eventos
 
     networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
