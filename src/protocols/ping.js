@@ -93,9 +93,8 @@ function router_ping(dataId, args) {
     let newPacket = new IcmpEchoRequest(routerObjectIp, destinationIp, $routerObject.getAttribute("data-mac"), "");
 
     icmpFlag = false;
-
     cleanPacketTraffic(); //limpiamos la tabla de paquetes
-    
+
     try {
         console.log("Ping desde router....");
         packetProcessor_router(switchId, dataId, newPacket);

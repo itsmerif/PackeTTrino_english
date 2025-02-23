@@ -613,7 +613,7 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
 
     const isSameNetwork = getNetwork(packet.destination_ip, networkObjectNetmask) === getNetwork(networkObjectIp, networkObjectNetmask);
 
-    if (packet.destination_ip === networkObjectIp) { //paquete con destino al router
+    if (availableIps.includes(packet.destination_ip)) { //paquete con destino al router
 
         if (packet.protocol === "arp" && packet.type === "request") {
 
@@ -667,10 +667,9 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
         }
 
         if (packet.protocol === "icmp" && packet.type === "reply") {
-            if (packet.destination_ip !== networkObjectIp) {
-                throw new Error("Destino No Coincide");
-            }
+            console.log("ICMP REPLY");
             icmpFlag = true;
+            return;
         }
 
     }
