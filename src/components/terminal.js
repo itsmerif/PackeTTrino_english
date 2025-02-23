@@ -34,9 +34,6 @@ function sendCommand(event) {
             case "ip":
                 command_Ip(dataId, args, originIP);
                 break;
-            case "sp":
-                sp(dataId, args);
-                break;
             case "dns":
                 command_dns(dataId, args);
                 break;
