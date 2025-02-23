@@ -106,6 +106,8 @@ function sp(id, args) {
 
 }
 
+//Generadores
+
 function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) {
 
     const $networkObject = document.getElementById(networkObjectId);
@@ -257,7 +259,7 @@ function dhcpReleaseGenerator(networkObjectId, switchId) {
         }
 
         //tenemos la puerta de enlace en la tabla ARP
-        
+
         addPacketTraffic(newPacket);
         switchProcessor(switchId, networkObjectId, newPacket);
         deleteDhcpInfo(networkObjectId);
@@ -274,7 +276,7 @@ function dhcpReleaseGenerator(networkObjectId, switchId) {
         buffer[networkObjectId] = newPacket;
         let arpRequest = new ArpRequest(networkObjectIp, dhcpServerIp, networkObjectMac);
         addPacketTraffic(arpRequest);
-        switchProcessor(switchId, networkObjectId,arpRequest);
+        switchProcessor(switchId, networkObjectId, arpRequest);
         return;
     }
 
@@ -393,6 +395,8 @@ function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
 
 }
 
+//Procesadores 
+
 function switchProcessor(switchId, networkObjectId, packet) {
 
     const $switchObject = document.getElementById(switchId);
@@ -413,7 +417,7 @@ function switchProcessor(switchId, networkObjectId, packet) {
                 let duplicatePacket = structuredClone(packet);
 
                 if (device.startsWith("pc-")) {
-                    packetProcessor_PC(switchId, device, duplicatePacket);          
+                    packetProcessor_PC(switchId, device, duplicatePacket);
                 } else if (device.startsWith("router-")) {
                     packetProcessor_router(switchId, device, duplicatePacket);
                 } else if (device.startsWith("dhcp-server-")) {
@@ -435,7 +439,7 @@ function switchProcessor(switchId, networkObjectId, packet) {
     let duplicatePacket = structuredClone(packet);
 
     if (device.startsWith("pc-")) {
-        packetProcessor_PC(switchId, device, duplicatePacket);          
+        packetProcessor_PC(switchId, device, duplicatePacket);
     } else if (device.startsWith("router-")) {
         packetProcessor_router(switchId, device, duplicatePacket);
     } else if (device.startsWith("dhcp-server-")) {
@@ -536,7 +540,7 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
                 packet.siaddr, //server ip
                 networkObjectId //hostname
             );
-            
+
             newPacket.destination_mac = packet.origin_mac;
             newPacket.yiaddr = packet.yiaddr;
             newPacket.giaddr = packet.giaddr;
@@ -573,7 +577,7 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
 
 function packetProcessor_router(switchId, networkObjectId, packet) {
 
-    //el firewall evalua el paquete
+    //cortafuegos
 
     if (!firewallProcessor(networkObjectId, packet)) return;
 
@@ -588,11 +592,7 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
 
     const $routerObject = document.getElementById(networkObjectId);
     const routerObjectMac = $routerObject.getAttribute("data-mac");
-    const availableNetworks = [
-        getNetwork($routerObject.getAttribute("ip-enp0s3"), $routerObject.getAttribute("netmask-enp0s3")),
-        getNetwork($routerObject.getAttribute("ip-enp0s8"), $routerObject.getAttribute("netmask-enp0s8")),
-        getNetwork($routerObject.getAttribute("ip-enp0s9"), $routerObject.getAttribute("netmask-enp0s9"))
-    ];
+    const availableIps = [$routerObject.getAttribute("ip-enp0s3"), $routerObject.getAttribute("ip-enp0s8"), $routerObject.getAttribute("ip-enp0s9")];
 
     let networkObjectIp; let networkObjectNetmask;
 
@@ -613,15 +613,14 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
 
     const isSameNetwork = getNetwork(packet.destination_ip, networkObjectNetmask) === getNetwork(networkObjectIp, networkObjectNetmask);
 
+    if (packet.destination_ip === networkObjectIp) { //paquete con destino al router
 
-    if (packet.destination_ip === networkObjectIp) { //el destinoIp del paquete es el propio router -> actúa como un equipo normal
         if (packet.protocol === "arp" && packet.type === "request") {
 
             if (packet.destination_ip !== networkObjectIp) {
                 //terminalMessage(networkObjectId + ": Solicitud ARP ignorada");
                 return;
             }
-
             //terminalMessage(networkObjectId + ": Enviando un Respuesta ARP");
             addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
             let newPacket = new ArpReply(networkObjectIp, packet.origin_ip, routerObjectMac, packet.origin_mac);
@@ -629,6 +628,7 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
             switchProcessor(switchId, networkObjectId, newPacket);
             return;
         }
+
         if (packet.protocol === "icmp" && packet.type === "request") {
 
             if (packet.destination_ip !== networkObjectIp) {
@@ -643,6 +643,7 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
             return;
 
         }
+
         if (packet.protocol === "arp" && packet.type === "reply") {
 
             if (packet.destination_ip !== networkObjectIp) {
@@ -664,10 +665,17 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
             }
 
         }
+
+        if (packet.protocol === "icmp" && packet.type === "reply") {
+            if (packet.destination_ip !== networkObjectIp) {
+                throw new Error("Destino No Coincide");
+            }
+            icmpFlag = true;
+        }
+
     }
 
-    
-    if (!isSameNetwork) { //paquete con destino otra red
+    if (!isSameNetwork || availableIps.includes(packet.origin_ip)) { //paquete con destino otra red o con origen en el router
 
         //enrutamiento
 
@@ -1073,7 +1081,7 @@ function packetProcessor_dns_server(switchId, serverObjectId, packet) {
         let newPacket = new dnsReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac, packet.query, answerTranslation);
         newPacket.answer_type = answerType;
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, serverObjectId, newPacket);    
+        switchProcessor(switchId, serverObjectId, newPacket);
         return;
     }
 
@@ -1115,12 +1123,12 @@ function firewallProcessor(networkObjectId, packet) {
         const rulePort = cells[5].innerHTML;
         const ruleAction = cells[6].innerHTML;
 
-        if (ruleChain === targetChain  
-        && (ruleProtocol === packet.transport_protocol || ruleProtocol === packet.protocol)
-        && (ruleOrigin === "*" || ruleOrigin === packet.origin_ip)
-        && (ruleDestination === "*" || ruleDestination === packet.destination_ip)
-        && (rulePort === "*" || rulePort === packet.port)
-        ){
+        if (ruleChain === targetChain
+            && (ruleProtocol === packet.transport_protocol || ruleProtocol === packet.protocol)
+            && (ruleOrigin === "*" || ruleOrigin === packet.origin_ip)
+            && (ruleDestination === "*" || ruleDestination === packet.destination_ip)
+            && (rulePort === "*" || rulePort === packet.port)
+        ) {
 
             if (ruleAction === "ACCEPT") {
                 return true;

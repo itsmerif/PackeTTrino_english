@@ -9,7 +9,7 @@ function ping(dataId, args) {
     //gestion de entrada
 
     if (dataId.includes("router-")) { //por ahora solo se puede hacer ping desde un pc
-        terminalMessage("Error: Este comando solo puede ser ejecutado desde un pc.");
+        router_ping(dataId, args);
         return;
     }
 
@@ -81,6 +81,35 @@ function ping(dataId, args) {
         ping_s(networkObjectIp);
     }
     
+}
+
+function router_ping(dataId, args) {
+
+    const $routerObject = document.getElementById(dataId);
+    const routerObjectIp = $routerObject.getAttribute("ip-enp0s3"); //obtenemos una ip válida del router, cualquiera
+    const switchId = $routerObject.getAttribute("data-switch-enp0s3");
+    const destinationIp = args[1];
+
+    let newPacket = new IcmpEchoRequest(routerObjectIp, destinationIp, $routerObject.getAttribute("data-mac"), "");
+
+    icmpFlag = false;
+
+    cleanPacketTraffic(); //limpiamos la tabla de paquetes
+    
+    try {
+        console.log("Ping desde router....");
+        packetProcessor_router(switchId, dataId, newPacket);
+    } catch (error) {
+        ping_f(routerObjectIp);
+        return;
+    }
+
+    if (!icmpFlag) {
+        ping_f(routerObjectIp);
+    } else {
+        ping_s(routerObjectIp);
+    }
+
 }
 
 function ping_s(origin) {
