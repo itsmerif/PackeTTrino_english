@@ -153,6 +153,8 @@ function deleteFirewallRule(routerObjectId, ruleId) {
 
 function showFirewallRules(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
+    const defaultPolicy = $networkObject.getAttribute("firewall-default-policy");
     const firewallTable = $networkObject.querySelector(".firewall-table").querySelector("table");
+    terminalMessage(`Firewall Default Policy: ${defaultPolicy}`);
     terminalMessage(`${firewallTable.outerHTML}`);
 }
