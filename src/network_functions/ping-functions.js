@@ -8,7 +8,7 @@ function ping(dataId, args) {
 
     //gestion de entrada
 
-    if (dataId.includes("router-")) { //por ahora solo se puede hacer ping desde un pc
+    if (dataId.includes("router-")) { //se reenvia a la funcion especifica para routers
         router_ping(dataId, args);
         return;
     }
@@ -91,7 +91,6 @@ function router_ping(dataId, args) {
     const destinationIp = args[1];
 
     let newPacket = new IcmpEchoRequest(routerObjectIp, destinationIp, $routerObject.getAttribute("data-mac"), "");
-
     icmpFlag = false;
     cleanPacketTraffic(); //limpiamos la tabla de paquetes
 
