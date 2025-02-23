@@ -1,3 +1,6 @@
+let terminalBuffer = [];
+let currentCommandIndex = 0;
+
 function sendCommand(event) {
 
     const terminal = event.target.closest('.pc-terminal');
@@ -9,6 +12,9 @@ function sendCommand(event) {
         window.clearInterval(window.pingInterval); //limpiamos todos los pings en funcionamiento
         document.querySelector(".terminal-output").innerHTML = ""; //limpiamos la salida
         const input = event.target.value.trim(); //obtenemos la entrada eliminando los espacios en blanco
+        terminalBuffer.push(input); //añadimos el comando en el buffer
+        currentCommandIndex++; //actualizamos el indice del cursos de comandos
+        document.querySelector(".pc-terminal").querySelector("input").value = ""; //limpiamos la entrada
         const args = input.split(" "); //dividimos la entrada en argumentos separados por espacios
         const command = args[0]; //el primer argumento es el comando
 
@@ -46,6 +52,8 @@ function sendCommand(event) {
             case "exit":
                 event.target.value = "";
                 document.querySelector(".pc-terminal").style.display = "none";
+                terminalBuffer = [];
+                currentCommandIndex = 0;
                 break;
             default:
                 newoutput = "Command not found";
@@ -175,5 +183,38 @@ function command_man(topic) {
             break;
         case "exit":
             break;
+    }
+}
+
+function terminalKeyboard(event) {
+
+    if (event.ctrlKey && event.key === "c") {
+        event.preventDefault();
+        clearInterval(window.pingInterval);
+        document.querySelector(".terminal-output").innerHTML = "";
+    }
+
+    if (event.key === "Escape") {
+        event.preventDefault();
+        clearInterval(window.pingInterval);
+        terminalBuffer = [];
+        currentCommandIndex = 0;
+        document.querySelector(".pc-terminal").style.display = "none";
+        document.querySelector(".terminal-output").innerHTML = "";
+        document.querySelector(".pc-terminal").querySelector("input").value = "";
+    }
+
+    if (event.key === "ArrowUp") {
+        event.preventDefault();
+        if (currentCommandIndex === 0) return;
+        currentCommandIndex--;
+        document.querySelector(".pc-terminal").querySelector("input").value = terminalBuffer[currentCommandIndex];
+    }
+
+    if (event.key === "ArrowDown") {
+        event.preventDefault();
+        if (currentCommandIndex === terminalBuffer.length) return;
+        currentCommandIndex++;
+        document.querySelector(".pc-terminal").querySelector("input").value = terminalBuffer[currentCommandIndex] || "";
     }
 }

@@ -38,24 +38,6 @@ function getPanelItems() {
             });
         });
 }
-
-function terminalKeyboard(event) {
-
-    if (event.ctrlKey && event.key === "c") {
-        event.preventDefault();
-        clearInterval(window.pingInterval);
-        document.querySelector(".terminal-output").innerHTML = "";
-    }
-
-    if (event.key === "Escape") {
-        event.preventDefault();
-        clearInterval(window.pingInterval);
-        document.querySelector(".pc-terminal").style.display = "none";
-        document.querySelector(".terminal-output").innerHTML = "";
-        document.querySelector(".pc-terminal").querySelector("input").value = "";
-    }
-}
-
 function deleteMouse() {
     let cursor = document.body.style.cursor;
     if (cursor.includes("cTargetX")) {
