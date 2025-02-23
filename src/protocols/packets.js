@@ -209,8 +209,8 @@ class Ack extends packet {
         this.type = "syn-ack-reply";
         this.sport = 5000;
         this.dport = port;
-        this.sequence_number = Math.floor(Math.random()*100000);
-        this.ack_number = Math.floor(Math.random()*100000);
+        this.sequence_number = "";
+        this.ack_number = "";
     }
 }
 

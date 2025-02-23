@@ -319,7 +319,7 @@ function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
         const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
 
         if (!defaultGatewayMac) {
-            buffer[networkObjectId] = new syn(ip, defaultGateway, networkObjectMac, defaultGatewayMac, port);
+            buffer[networkObjectId] = new syn(networkObjectIp, ip, networkObjectMac, defaultGatewayMac, port);
             tcpBuffer[networkObjectId] = buffer[networkObjectId].sequence_number; //almacenamos el número de secuencia para el siguiente paquete
             packet = new ArpRequest(networkObjectIp, defaultGateway, networkObjectMac);
             addPacketTraffic(packet);
@@ -327,7 +327,10 @@ function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
             return;
         }
 
+        //tenemos la puerta de enlace en la tabla de arp
+
         packet = new syn(networkObjectIp, ip, networkObjectMac, defaultGatewayMac, port);
+        tcpBuffer[networkObjectId] = packet.sequence_number; //almacenamos el número de secuencia para el siguiente paquete
         addPacketTraffic(packet);
         switchProcessor(switchId, networkObjectId, packet);
         return;
@@ -561,6 +564,7 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
         if (packet.destination_ip !== networkObjectIp) return; //comprobamos si el paquete es para mi respecto a ip
         if (packet.ack_number !== tcpBuffer[networkObjectId] + 1) return; //comprobamos si el paquete es para mi respecto a la secuencia TCP
         tcpSyncFlag = true;
+        tcpBuffer = {}; //limpiamos el buffer de paquetes TCP
         return;
     }
 
