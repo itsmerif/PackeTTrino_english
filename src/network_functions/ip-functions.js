@@ -178,15 +178,19 @@ function removeRoutingEntry(routerObjectId, destination, netmask) {
     const table = networkObject.querySelector(".routing-table").querySelector("table");
     const rows = table.querySelectorAll("tr");
 
-    for (let i = 1; i < rows.length; i++) {
+    for (let i = 5; i < rows.length; i++) {
         const row = rows[i];
         const cells = row.querySelectorAll("td");
 
         if (cells[0].innerHTML === destination && cells[1].innerHTML === netmask) {
             table.removeChild(row);
+            terminalMessage("La regla ha sido eliminada correctamente.");
+            return;
         }
+
     }
 
+    terminalMessage("Error: La regla no existe.");
 }
 
 function printRoutingTable(networkObjectId) {
