@@ -255,11 +255,11 @@ function addPacketTraffic(packet) {
     let destinationMAC = packet.destination_mac;
     let originMAC = packet.origin_mac;
     let destinationPort = packet.port || "N/A";
-    let giaddress = packet.giaddr || "N/A";
-    let yiaddress = packet.yiaddr || "N/A";
-    let ciaddress = packet.ciaddr || "N/A";
-    let siaddress = packet.siaddr || "N/A";
-    let chaddress = packet.chaddr || "N/A";
+    //let giaddress = packet.giaddr || "N/A";
+    //let yiaddress = packet.yiaddr || "N/A";
+    //let ciaddress = packet.ciaddr || "N/A";
+    //let siaddress = packet.siaddr || "N/A";
+    //let chaddress = packet.chaddr || "N/A";
 
     $table.innerHTML += `
         <tr>
@@ -271,11 +271,6 @@ function addPacketTraffic(packet) {
             <td>${originMAC}</td>
             <td>${destinationMAC}</td>
             <td>${destinationPort}</td>
-            <td>${ciaddress}</td>
-            <td>${giaddress}</td>
-            <td>${siaddress}</td>
-            <td>${yiaddress}</td>
-            <td>${chaddress}</td>
         </tr>
     `;
 }
