@@ -16,6 +16,8 @@ function createPcObject(x, y) {
     networkObject.setAttribute("data-dns-server", "");
     networkObject.setAttribute("data-dhcp-server", "");
     networkObject.setAttribute("firewall-default-policy", "ACCEPT");
+    networkObject.setAttribute("web-server", "off");
+    networkObject.setAttribute("web-content", "");
 
     //contenido
     networkObject.innerHTML = `

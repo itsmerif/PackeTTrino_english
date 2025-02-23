@@ -564,7 +564,6 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
         if (packet.destination_ip !== networkObjectIp) return; //comprobamos si el paquete es para mi respecto a ip
         if (packet.ack_number !== tcpBuffer[networkObjectId] + 1) return; //comprobamos si el paquete es para mi respecto a la secuencia TCP
         tcpSyncFlag = true;
-        tcpBuffer = {}; //limpiamos el buffer de paquetes TCP
         return;
     }
 

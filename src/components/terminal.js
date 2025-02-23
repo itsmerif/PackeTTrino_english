@@ -46,6 +46,9 @@ function sendCommand(event) {
             case "http":
                 command_http(dataId, args);
                 break;
+            case "apache":
+                command_apache(dataId, args);
+                break;
             case "help":
                 command_help();
                 break;

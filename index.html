@@ -29,13 +29,17 @@
     <label for="dhcp">Obtener una dirección IP automática (DHCP):</label>
     <input type="checkbox" id="dhcp" name="dhcp">
     <label for="ip">IP:</label>
-    <input type="text" id="ip" name="ip" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="ip" name="ip"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="netmask">Netmask:</label>
-    <input type="text" id="netmask" name="netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="netmask" name="netmask"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="gateway">Gateway:</label>
-    <input type="text" id="gateway" name="gateway" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="gateway" name="gateway"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="dns-server">DNS Server:</label>
-    <input type="text" id="dns-server" name="dns-server" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="dns-server" name="dns-server"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <button type="submit">Guardar</button>
   </form>
 
@@ -82,16 +86,19 @@
     <input type="text" id="offer-netmask" name="offer-netmask" placeholder="255.255.255.0"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <button type="submit">Guardar</button>
-  </form> 
+  </form>
 
   <form class="dns-form" onsubmit="saveDnsSpecs(event); return false;" style="display: none;">
     <p id="form-dns-item-id"></p>
     <label for="ip">IP:</label>
-    <input type="text" id="ip-dns" name="ip-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="ip-dns" name="ip-dns"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="netmask">Netmask:</label>
-    <input type="text" id="netmask-dns" name="netmask-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="netmask-dns" name="netmask-dns"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="gateway">Gateway:</label>
-    <input type="text" id="gateway-dns" name="gateway-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="gateway-dns" name="gateway-dns"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="dns-recursive">DNS Recursive:</label>
     <input type="checkbox" id="dns-recursive" name="dns-recursive">
     <button type="submit">Guardar</button>
@@ -100,22 +107,30 @@
   <form class="dhcp-relay-form" onsubmit="saveDhcpRelaySpecs(event); return false;" style="display: none;">
     <p id="form-dhcp-relay-item-id"></p>
     <label for="ip-relay">IP:</label>
-    <input type="text" id="ip-relay" name="ip-relay" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="ip-relay" name="ip-relay"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="netmask-relay">Netmask:</label>
-    <input type="text" id="netmask-relay" name="netmask-relay" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="netmask-relay" name="netmask-relay"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="gateway-relay">Gateway:</label>
-    <input type="text" id="gateway-relay" name="gateway-relay" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="gateway-relay" name="gateway-relay"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="main-server">Servidor DHCP Principal:</label>
-    <input type="text" id="main-server" name="main-server" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="main-server" name="main-server"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <button type="submit">Guardar</button>
   </form>
 
-  <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;" onmousedown="dragTerminal(event)">
+  <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;"
+    onmousedown="dragTerminal(event)">
     <p>
       <span>%></span>
       <input type="text" onkeydown="sendCommand(event)" autofocus>
     </p>
     <div class="terminal-output"></div>
+    <textarea class="file-editor" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()"
+      onmouseup="event.stopPropagation()" onkeydown="event.stopPropagation()" onkeyup="event.stopPropagation()"
+      ondragstart="event.stopPropagation()"></textarea>
   </div>
 
   <form class="ping-form" onsubmit="pingSim(); return false;" style="display: none;" onmousedown="dragPingForm(event)">
@@ -128,7 +143,7 @@
     <input type="submit" value="Hacer Ping">
   </form>
 
-  <article  class="packet-traffic">
+  <article class="packet-traffic">
     <div class="filter-traffic">
       <input type="text">
       <button onclick="filterPacketTraffic()">Filtrar</button>
@@ -145,7 +160,7 @@
         <!--<th>Destination Port</th>-->
         <th>Sequence Number</th>
         <th>Acknowledgement Number</th>
-       <!-- <th>ciaddr</th>
+        <!-- <th>ciaddr</th>
         <th>giaddr</th>
         <th>siaddr</th>
         <th>yiaddr</th>
@@ -168,6 +183,7 @@
   <script src="./src/network_functions/ping-functions.js"></script>
   <script src="./src/network_functions/tcp-functions.js"></script>
   <script src="./src/network_functions/http-functions.js"></script>
+  <script src="./src/network_functions/apache-functions.js"></script>
   <script src="./src/components/cable.js"></script>
   <script src="./src/network_objects/dhcp-relay-agent.js"></script>
   <script src="./src/network_objects/dhcpserver.js"></script>
