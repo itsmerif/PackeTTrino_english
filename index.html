@@ -131,14 +131,14 @@
 
     <div class="editor-container" style="display: none;">
       <div class="editor-buttons">
-        <button class="save-btn">Guardar</button>
-        <button class="close-btn">Cerrar</button>
+        <button class="save-btn" onclick="saveFile()">Guardar</button>
+        <button class="close-btn" onclick="closeEditor()">Cerrar</button>
       </div>
       <textarea class="file-editor" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()"
         onmouseup="event.stopPropagation()" onkeydown="event.stopPropagation()" onkeyup="event.stopPropagation()"
-        ondragstart="event.stopPropagation()"></textarea>
+        ondragstart="event.stopPropagation()">
+      </textarea>
     </div>
-
   </div>
 
   <form class="ping-form" onsubmit="pingSim(); return false;" style="display: none;" onmousedown="dragPingForm(event)">

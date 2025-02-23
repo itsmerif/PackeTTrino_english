@@ -49,6 +49,9 @@ function sendCommand(event) {
             case "apache":
                 command_apache(dataId, args);
                 break;
+            case "nano":
+                command_nano(dataId, args);
+                break;
             case "help":
                 command_help();
                 break;
@@ -224,4 +227,47 @@ function terminalKeyboard(event) {
         currentCommandIndex++;
         document.querySelector(".pc-terminal").querySelector("input").value = terminalBuffer[currentCommandIndex] || "";
     }
+}
+
+function command_nano(dataId, args) {
+
+    const fileName = args[1];
+    const fileEditorContainer = document.querySelector(".editor-container");
+    let content = fileEditorContainer.querySelector(".file-editor");
+
+    if (!fileName) {
+        terminalMessage("Error: El nombre del archivo no puede estar vacío");
+        return;
+    }
+
+    if (fileName === "/etc/network/interfaces") {
+        //obtenemos la información del objeto
+        const $networkObject = document.getElementById(dataId);
+        const networkObjectIp = $networkObject.getAttribute("data-ip");
+        const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+        const networkObjectGateway = $networkObject.getAttribute("data-gateway");
+        //creamos el contenido del archivo
+        let fileContent;
+        fileContent = `#The loopback network interface\n`;
+        fileContent += `\n`;
+        //loopback
+        fileContent += `auto lo\niface lo inet loopback\n`;
+        fileContent += `\n`;
+        //interfaz enp0s3
+        fileContent += `# The primary network interface\n`;
+        fileContent += `\n`;
+        fileContent += `auto enp0s3\niface enp0s3 inet static\n`;
+        fileContent += `address ${networkObjectIp}\n`;
+        fileContent += `netmask ${networkObjectNetmask}\n`;
+        fileContent += `gateway ${networkObjectGateway}\n`;
+        //actualizamos el contenido del editor
+        content.value = fileContent;
+        fileEditorContainer.style.display = "block";
+    }
+    
+}
+
+function closeEditor() {
+    document.querySelector(".editor-container").style.display = "none";
+    document.querySelector(".file-editor").value = "";
 }
