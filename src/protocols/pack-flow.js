@@ -972,6 +972,19 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
 
     if (packet.destination_ip === serverObjectIp) { //el paquete es para mi
 
+        //comportamiento de pc
+        
+        if (packet.protocol === "arp" && packet.type === "request") {	
+            if (packet.destination_ip !== serverObjectIp) {
+                return;
+            }
+            addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
+            let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
+            addPacketTraffic(newPacket);
+            switchProcessor(switchId, serverObjectId, newPacket);
+            return;
+        }
+
         if (packet.protocol === "arp" && packet.type === "reply") {
 
             if (packet.destination_ip !== serverObjectIp) {
@@ -990,6 +1003,26 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
 
             return;
         }
+
+        if (packet.protocol === "icmp" && packet.type === "request") {
+            if (packet.destination_ip !== serverObjectIp) {
+                return;
+            }
+            let newPacket = new IcmpEchoReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
+            addPacketTraffic(newPacket);
+            switchProcessor(switchId, serverObjectId, newPacket);
+            return;
+        }
+
+        if (packet.protocol === "icmp" && packet.type === "reply") {
+            if (packet.destination_ip !== serverObjectIp) {
+                throw new Error("Destino No Coincide");
+            }
+            icmpFlag = true;
+            return;
+        }
+        
+        //comportamiento de servidor dhcp
 
         if (packet.protocol === "dhcp" && packet.type === "offer") { //oferta del server principal
             if (packet.giaddr !== serverObjectIp) return; //comprobamos si el offer está dirigido al agente
