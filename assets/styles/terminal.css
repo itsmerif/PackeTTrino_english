@@ -61,6 +61,9 @@
 
 .terminal-output li {
     padding: 5px;
+    list-style-position: outside;
+    margin-left: 20px;
+    text-indent: -25px;
 }
 
 .terminal-output table {

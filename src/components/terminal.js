@@ -115,13 +115,13 @@ function terminalMessage(message) {
 }
 
 function command_help() {
-    terminalMessage("<li>ping &lt;ip|domain&gt;</li>");
-    terminalMessage("<li>dhcp &lt;-renew|-release&gt;</li>");
-    terminalMessage("<li>firewall &lt;add|del&gt; -A &lt;chain&gt; -p &lt;protocol&gt; --dport &lt;port&gt; -s &lt;origin&gt; -d &lt;destination&gt; -j &lt;action&gt;</li>");
-    terminalMessage("<li>ip &lt;route|a&gt;</li>");
-    terminalMessage("<li>dig [@server] &lt;domain&gt;</li>");
-    terminalMessage("<li>help</li>");
-    terminalMessage("<li>exit</li>");
+    terminalMessage("<li>ping: utilidad para enviar paquetes ICMP Echo Request a dispositivos </li>");
+    terminalMessage("<li>dhcp: utilidad para configurar DHCP en dispositivos</li>");
+    terminalMessage("<li>firewall: utilidad para configurar cortafuegos en dispositivos</li>");
+    terminalMessage("<li>ip: utilidad para mostrar/administrar la configuracion de red o enrutamiento en dispositivos</li>");
+    terminalMessage("<li>dig: utilidad para resolver nombres de dominio</li>");
+    terminalMessage("<li>help: mostrar ayuda del terminal</li>");
+    terminalMessage("<li>exit: salir del terminal</li>");
 }
 
 function command_man(topic) {
@@ -171,15 +171,16 @@ function command_man(topic) {
             terminalMessage("<p>del: eliminar una regla de enrutamiento. Debe ir seguida de una dirección y una máscara de red.</p>");
             terminalMessage("<p>via: especificar la interfaz por la que se va a saltar y el siguiente salto</p>");
             terminalMessage("<p>Ejemplo: ip route add 192.168.1.0 255.255.255.0 via enp0s3 172.16.0.2</p>");
-            terminalMessage("<p><span style='color: red'>Nota</span>: La utiliad ip route solo puede ser ejecutada desde un router.</p>");
+            terminalMessage("<p><span style='color: red'>Nota</span>: La utilidad ip route solo puede ser ejecutada desde un router.</p>");
             break;
         case "dig":
             terminalMessage("<p>dig: utilidad de resolución de nombres de dominio</p>");
             terminalMessage("<p>Sintaxis: dig [@server] &lt;domain&gt;</p>");
             terminalMessage("<p>Ejemplo: dig @8.8.8.8 google.com</p>");
+            terminalMessage("<p><span style='color: red'>Nota</span>: Si no se especifica un servidor, se usará el servidor configurado en el equipo.</p>");
             break;
         case "help":
-            terminalMessage("<p>help: utiliad para mostrar la ayuda del terminal</p>");
+            terminalMessage("<p>help: utilidad para mostrar la ayuda del terminal</p>");
             break;
         case "exit":
             break;
