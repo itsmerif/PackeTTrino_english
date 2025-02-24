@@ -100,7 +100,6 @@ function addRoutingEntry(routerObjectId, destination, netmask, interface, nextho
 
     if (destination !== "0.0.0.0") { //añadimos una nueva regla
 
-        const newRow = document.createElement("tr");
         const gateway = networkObject.getAttribute("ip-" + interface);
 
         if (!destination.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
@@ -127,6 +126,27 @@ function addRoutingEntry(routerObjectId, destination, netmask, interface, nextho
             terminalMessage("Error: La IP de siguiente salto no es accesible.");
             return;
         }
+
+        //primero comprobamos si la regla ya existe
+
+        let rows = table.querySelectorAll("tr");
+
+        if (rows.length > 4) {
+            for (let i = 5; i < rows.length; i++) {
+                let row = rows[i];
+                let cells = row.querySelectorAll("td");
+                if (destination === cells[0].innerHTML && netmask === cells[1].innerHTML) { //bingo, la regla ya existe
+                    cells[2].innerHTML = gateway;
+                    cells[3].innerHTML = interface;
+                    cells[4].innerHTML = nexthop;
+                    return;
+                }
+            }
+        }
+        
+        //si no existe, añadimos una nueva regla
+
+        let newRow = document.createElement("tr");
 
         newRow.innerHTML = `
             <tr>

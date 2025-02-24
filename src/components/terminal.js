@@ -294,11 +294,19 @@ function command_nano(dataId, args) {
             fileContent += `auto lo\niface lo inet loopback\n`;
             fileContent += `\n`;
 
+            //interfaces
+
             for (let i = 0; i < networkObjectIps.length; i++) {
-                fileContent += `\n`;
-                fileContent += `auto ${interfaces[i]}\niface ${interfaces[i]} inet static\n`;
-                fileContent += `address ${networkObjectIps[i]}\n`;
-                fileContent += `netmask ${networkObjectNetmasks[i]}\n`;
+                if (networkObjectIps[i] !== "") {
+                    fileContent += `\n`;
+                    fileContent += `auto ${interfaces[i]}\niface ${interfaces[i]} inet static\n`;
+                    fileContent += `address ${networkObjectIps[i]}\n`;
+                    fileContent += `netmask ${networkObjectNetmasks[i]}\n`;
+                    //rutas de enrutamiento
+                    fileContent += `\n`;
+                    fileContent += getRoutingRules(networkObjectId, interfaces[i]).join("\n");
+                    fileContent += `\n`;
+                }
             }
 
             //actualizamos el contenido del editor
@@ -323,3 +331,27 @@ function closeEditor() {
     document.querySelector(".file-editor").value = "";
 }
 
+function getRoutingRules(routerObjectid, targetinterface) {
+
+    const $routerObject = document.getElementById(routerObjectid);
+    const routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
+    const rows = routingTable.querySelectorAll("tr");
+    const rules = [];
+
+    //ip route add 192.168.1.0/24 via 192.168.1.1
+
+    for (let i = 4; i < rows.length; i++) {
+        let row = rows[i];
+        let cells = row.querySelectorAll("td");
+        let destination = cells[0].innerHTML;
+        let netmask = cells[1].innerHTML;
+        let interface = cells[3].innerHTML;
+        let nextHop = cells[4].innerHTML;
+
+        if (interface === targetinterface && nextHop !== "0.0.0.0") {
+            rules.push(`ip route add ${destination}/${netmaskToCidr(netmask)} via ${nextHop}`);
+        }
+    }
+
+    return rules;
+}

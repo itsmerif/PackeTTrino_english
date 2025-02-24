@@ -2,6 +2,7 @@ function parserNetworkFile() {
 
     const fileEditor = document.querySelector(".file-editor");
     const $networkObject = document.getElementById(document.querySelector(".pc-terminal").dataset.id);
+    const interfaces = ["enp0s3", "enp0s8", "enp0s9"];
     const fileContent = fileEditor.value;
     const unfilteredlines = fileContent.split("\n");
     //eliminamos las lineas vacias
@@ -25,7 +26,7 @@ function parserNetworkFile() {
 
                     if (!isValidIp(ip)) {
                         terminalMessage(`Error en la línea ${i + 2}: IP no válida.`);
-                        return;            
+                        return;
                     }
 
                     if (!isValidIp(netmask)) {
@@ -68,124 +69,93 @@ function parserNetworkFile() {
 
     for (let i = 0; i < lines.length; i++) {
 
-        if (lines[i] === "auto enp0s3" && lines[i + 1] === "iface enp0s3 inet static") { 
+        for (let interface = 0; interface < interfaces.length; interface++) {
 
-            //buscamos la direccion ip y mascara de red
+            if (lines[i] === `auto ${interfaces[interface]}` && lines[i + 1] === `iface ${interfaces[interface]} inet static`) {
 
-            if (!lines[i + 2].match(/^address \S+$/)) {
-                terminalMessage(`Error en la línea ${i + 2}: formato no válido.`);
-                return;
-            }
+                //buscamos la direccion ip y mascara de red
 
-            if (!lines[i + 3].match(/^netmask \S+$/)) {
-                terminalMessage(`Error en la línea ${i + 3}: formato no válido.`);
-                return;
-            }
-
-            let ip = lines[i + 2].split(" ")[1];
-
-            let netmask = lines[i + 3].split(" ")[1];
-
-            if (!isValidIp(ip)){
-                terminalMessage(`Error en la línea ${i + 2}: IP no válida.`);
-                return;
-            }
-
-            if (!isValidIp(netmask)) {
-                terminalMessage(`Error en la línea ${i + 3}: Netmask no válida.`);
-                return;
-            }
-
-            $networkObject.setAttribute("ip-enp0s3", ip);       
-            $networkObject.setAttribute("netmask-enp0s3", netmask);
-
-            //añadimos la nueva configuracion a la tabla de enrutamiento
-
-            rows[1].querySelectorAll("td")[0].innerText = getNetwork(ip, netmask);
-            rows[1].querySelectorAll("td")[1].innerText = netmask;
-            rows[1].querySelectorAll("td")[2].innerText = ip;
-            rows[1].querySelectorAll("td")[3].innerText = "enp0s3";
-            
-            //ahora buscamos las reglas de enrutamiento
-
-            let j = i + 4;
-
-            while (j < lines.length && lines[j].startsWith("ip route add")) { //ip route add 192.168.1.0/24 via 192.168.1.1
-                let destinationCidr; let nextHop; let [destination, destinationNetmask] = [];
-                //destino y mascara de red
-                destinationCidr = lines[j].split(" ")[3];
-                if (!isValidCidrIp(destinationCidr)) {
-                    terminalMessage(`Error en la líneas ${j}: dirección IP en CIDR no válida.`)
-                    return
-                }
-                [destination, destinationNetmask] = parseCidr(lines[j].split(" ")[3]);
-                //compruebo que exista la palabra clave "via"
-                if (lines[j].split(" ")[4] !== "via") {
-                    terminalMessage(`Error en la línea ${j}: se esperaba 'via' `);
+                if (!lines[i + 2].match(/^address \S+$/)) {
+                    terminalMessage(`Error en la línea ${i + 2}: formato no válido.`);
                     return;
                 }
-                //siguiente salto
-                nextHop = lines[j].split(" ")[5];
-                if (!isValidIp(nextHop) || getNetwork(nextHop, netmask) !== getNetwork(ip, netmask)) {
-                    terminalMessage(`Error en la línea ${j}: siguiente salto no válido.`);
+
+                if (!lines[i + 3].match(/^netmask \S+$/)) {
+                    terminalMessage(`Error en la línea ${i + 3}: formato no válido.`);
                     return;
                 }
-                //si se cumple todo esto
-                addRoutingEntry($networkObject.id, destination, destinationNetmask, "enp0s3", nextHop);
-                j++;
+
+                let ip = lines[i + 2].split(" ")[1];
+
+                let netmask = lines[i + 3].split(" ")[1];
+
+                if (!isValidIp(ip)) {
+                    terminalMessage(`Error en la línea ${i + 2}: IP no válida.`);
+                    return;
+                }
+
+                if (!isValidIp(netmask)) {
+                    terminalMessage(`Error en la línea ${i + 3}: Netmask no válida.`);
+                    return;
+                }
+
+                $networkObject.setAttribute(`ip-${interfaces[interface]}`, ip);
+                $networkObject.setAttribute(`netmask-${interfaces[interface]}`, netmask);
+
+                //añadimos la nueva configuracion a la tabla de enrutamiento
+
+                rows[interface+1].querySelectorAll("td")[0].innerText = getNetwork(ip, netmask);
+                rows[interface+1].querySelectorAll("td")[1].innerText = netmask;
+                rows[interface+1].querySelectorAll("td")[2].innerText = ip;
+                rows[interface+1].querySelectorAll("td")[3].innerText = interfaces[interface];
+
+                //ahora buscamos las reglas de enrutamiento
+
+                let j = i + 4;
+
+                while (j < lines.length && lines[j].startsWith("ip route add")) {
+
+                    let destinationCidr; let nextHop; let [destination, destinationNetmask] = [];
+
+                    //destino y mascara de red
+
+                    destinationCidr = lines[j].split(" ")[3];
+
+                    if (!isValidCidrIp(destinationCidr)) {
+                        terminalMessage(`Error en la líneas ${j}: dirección IP en CIDR no válida.`)
+                        return
+                    }
+
+                    [destination, destinationNetmask] = parseCidr(lines[j].split(" ")[3]);
+
+                    //compruebo que exista la palabra clave "via"
+
+                    if (lines[j].split(" ")[4] !== "via") {
+                        terminalMessage(`Error en la línea ${j}: se esperaba 'via' `);
+                        return;
+                    }
+
+                    //siguiente salto
+
+                    nextHop = lines[j].split(" ")[5];
+
+                    if (!isValidIp(nextHop) || getNetwork(nextHop, netmask) !== getNetwork(ip, netmask)) {
+                        terminalMessage(`Error en la línea ${j}: siguiente salto no válido.`);
+                        return;
+                    }
+
+                    //si se cumple todo esto
+
+                    addRoutingEntry($networkObject.id, destination, destinationNetmask, interfaces[interface], nextHop);
+                    j++;
+
+                }
+
+                found = true;
+                terminalMessage("El archivo se ha cargado correctamente.");
+
             }
-
-            found = true;
-            terminalMessage("El archivo se ha cargado correctamente.");
-
         }
-
-        if (lines[i] === "auto enp0s8" && lines[i + 1] === "iface enp0s8 inet static") {
-
-            if (!lines[i + 2].match(/^address \S+$/)) return;
-            if (!lines[i + 3].match(/^netmask \S+$/)) return;
-            let ip = lines[i + 2].split(" ")[1];
-            let netmask = lines[i + 3].split(" ")[1];
-
-            if (!isValidIp(ip)){
-                terminalMessage(`Error en la línea ${i + 2}: IP no válida.`);
-                return;
-            }
-
-            if (!isValidIp(netmask)) {
-                terminalMessage(`Error en la línea ${i + 3}: Netmask no válida.`);
-                return;
-            }
-
-            $networkObject.setAttribute("ip-enp0s8", ip);
-            $networkObject.setAttribute("netmask-enp0s8", netmask);
-            found = true;
-            terminalMessage("El archivo se ha cargado correctamente.");
-        }
-
-        if (lines[i] === "auto enp0s9" && lines[i + 1] === "iface enp0s9 inet static") {
-
-            if (!lines[i + 2].match(/^address \S+$/)) return;
-            if (!lines[i + 3].match(/^netmask \S+$/)) return;
-            let ip = lines[i + 2].split(" ")[1];
-            let netmask = lines[i + 3].split(" ")[1];
-
-            if (!isValidIp(ip)){
-                terminalMessage(`Error en la línea ${i + 2}: IP no válida.`);
-                return;
-            }
-
-            if (!isValidIp(netmask)) {
-                terminalMessage(`Error en la línea ${i + 3}: Netmask no válida.`);
-                return;
-            }
-
-            $networkObject.setAttribute("ip-enp0s9", ip);
-            $networkObject.setAttribute("netmask-enp0s9", netmask);
-            found = true;
-            terminalMessage("El archivo se ha cargado correctamente.");
-        }
-
     }
 
     if (!found) terminalMessage("Error: El archivo contiene errores.");
