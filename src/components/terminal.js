@@ -242,6 +242,8 @@ function command_nano(dataId, args) {
     }
 
     if (fileName === "/etc/network/interfaces") {
+        //añadimos el puntero al editor
+        content.setAttribute("data-file", "/etc/network/interfaces");
         //obtenemos la información del objeto
         const $networkObject = document.getElementById(dataId);
         const networkObjectIp = $networkObject.getAttribute("data-ip");
@@ -265,10 +267,49 @@ function command_nano(dataId, args) {
         content.value = fileContent;
         fileEditorContainer.style.display = "block";
     }
-    
+
 }
 
 function closeEditor() {
+    parserFileEditor();
     document.querySelector(".editor-container").style.display = "none";
     document.querySelector(".file-editor").value = "";
+}
+
+function parserFileEditor() {
+
+    const fileEditor = document.querySelector(".file-editor");
+    const fileName = fileEditor.getAttribute("data-file");
+    const $networkObject = document.getElementById(document.querySelector(".pc-terminal").dataset.id);
+
+    if (fileName === "/etc/network/interfaces") { //parseamos el contenido del archivo
+
+        const fileContent = fileEditor.value;
+        const lines = fileContent.split("\n");
+
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].startsWith("auto enp0s3")) { //miramos las 4 siguientes lineas
+                if (lines[i + 1] === "iface enp0s3 inet static") { //interfaz enp0s3 está configurado como estático
+
+                    const ip = lines[i + 2].split(" ")[1];
+                    const netmask = lines[i + 3].split(" ")[1];
+                    const gateway = lines[i + 4].split(" ")[1];
+
+                    if (!isValidIp(ip) || !isValidIp(netmask) || !isValidIp(gateway)) {
+                        terminalMessage("Error: El archivo contiene errores. Por favor, corrijalo.");
+                        return;
+                    }
+
+                    $networkObject.setAttribute("data-ip", ip);
+                    $networkObject.setAttribute("data-netmask", netmask);
+                    $networkObject.setAttribute("data-gateway", gateway);
+
+                    terminalMessage("El archivo se ha cargado correctamente.");
+                    return;
+                }
+            }
+        }
+
+    }
+
 }

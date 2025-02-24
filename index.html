@@ -121,8 +121,7 @@
     <button type="submit">Guardar</button>
   </form>
 
-  <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;"
-    onmousedown="dragTerminal(event)">
+  <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;" onmousedown="dragTerminal(event)">
     <p>
       <span>%></span>
       <input type="text" onkeydown="sendCommand(event)" autofocus>
@@ -131,10 +130,9 @@
 
     <div class="editor-container" style="display: none;">
       <div class="editor-buttons">
-        <button class="save-btn" onclick="saveFile()">Guardar</button>
-        <button class="close-btn" onclick="closeEditor()">Cerrar</button>
+        <button class="save-btn" onclick="closeEditor()">Guardar y Cerrar</button>
       </div>
-      <textarea class="file-editor" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()"
+      <textarea class="file-editor" data-file="" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()"
         onmouseup="event.stopPropagation()" onkeydown="event.stopPropagation()" onkeyup="event.stopPropagation()"
         ondragstart="event.stopPropagation()">
       </textarea>
