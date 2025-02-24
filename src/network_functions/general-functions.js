@@ -68,8 +68,42 @@ function netmaskToCidr(netmask) {
 
 }
 
+function parseCidr(cidr) {  //192.168.0.0/24
+    let ip = cidr.split("/")[0]; //192.168.0.0
+    let netmask = parseInt(cidr.split("/")[1]); //24
+    let dummy = "";
+    for (let i = 1; i <= netmask; i++) {
+        dummy += "1"; //"11111111....1"
+    }
+    dummy = dummy.padEnd(32, "0"); //"1111111..100....0"
+    let dummy_octets = dummy.match(/.{8}/g) || []; //["11111111", ...,  "100....0"]
+    for (let i = 0; i < dummy_octets.length; i++) {
+        dummy_octets[i] = parseInt(dummy_octets[i], 2).toString(10); //[255, 255, ..., 0]
+    }
+    let netmaskBinary = dummy_octets.join(".")
+
+    return [ip, netmaskBinary];
+}
+
 function isValidIp(ip) {
     return /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(ip);
+}
+
+function isValidCidrIp(cidr) {
+    let ip = cidr.split("/")[0];
+    let netmask = cidr.split("/")[1];
+
+    if (!isValidIp(ip)) {
+        return false;
+    }
+
+    let netmaskInt = parseInt(netmask);
+    
+    if (isNaN(netmaskInt) || netmaskInt < 0 || netmaskInt > 32) {
+        return false;
+    }
+
+    return true;
 }
 
 function getMACTable(switchObjectId) {
