@@ -233,9 +233,7 @@ function terminalKeyboard(event) {
 function command_nano(dataId, args) {
 
     const fileName = args[1];
-    const fileEditorContainer = document.querySelector(".editor-container");
     const networkObjectId = document.querySelector(".pc-terminal").dataset.id;
-    let content = fileEditorContainer.querySelector(".file-editor");
 
     if (!fileName) {
         terminalMessage("Error: El nombre del archivo no puede estar vacío");
@@ -243,77 +241,7 @@ function command_nano(dataId, args) {
     }
 
     if (fileName === "/etc/network/interfaces") {
-
-        if (!networkObjectId.startsWith("router-")) {
-            //añadimos el puntero al editor
-            content.setAttribute("data-file", "/etc/network/interfaces");
-            //obtenemos la información del objeto
-            const $networkObject = document.getElementById(dataId);
-            const networkObjectIp = $networkObject.getAttribute("data-ip");
-            const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
-            const networkObjectGateway = $networkObject.getAttribute("data-gateway");
-            //creamos el contenido del archivo
-            let fileContent;
-            fileContent = `#The loopback network interface\n`;
-            fileContent += `\n`;
-            //loopback
-            fileContent += `auto lo\niface lo inet loopback\n`;
-            fileContent += `\n`;
-            //interfaz enp0s3
-            fileContent += `# The primary network interface\n`;
-            fileContent += `\n`;
-            fileContent += `auto enp0s3\niface enp0s3 inet static\n`;
-            fileContent += `address ${networkObjectIp}\n`;
-            fileContent += `netmask ${networkObjectNetmask}\n`;
-            fileContent += `gateway ${networkObjectGateway}\n`;
-            //actualizamos el contenido del editor
-            content.value = fileContent;
-            fileEditorContainer.style.display = "block";
-
-        } else {
-
-            //añadimos el puntero al editor
-
-            content.setAttribute("data-file", "/etc/network/interfaces");
-
-            //obtenemos la información del objeto
-
-            const $networkObject = document.getElementById(dataId);
-            const networkObjectIps = [$networkObject.getAttribute("ip-enp0s3"), $networkObject.getAttribute("ip-enp0s8"), $networkObject.getAttribute("ip-enp0s9")];
-            const networkObjectNetmasks = [$networkObject.getAttribute("netmask-enp0s3"), $networkObject.getAttribute("netmask-enp0s8"), $networkObject.getAttribute("netmask-enp0s9")];
-            const interfaces =["enp0s3", "enp0s8", "enp0s9"];
-
-            //creamos el contenido del archivo
-
-            let fileContent;
-            fileContent = `#The loopback network interface\n`;
-            fileContent += `\n`;
-
-            //loopback
-
-            fileContent += `auto lo\niface lo inet loopback\n`;
-            fileContent += `\n`;
-
-            //interfaces
-
-            for (let i = 0; i < networkObjectIps.length; i++) {
-                if (networkObjectIps[i] !== "") {
-                    fileContent += `\n`;
-                    fileContent += `auto ${interfaces[i]}\niface ${interfaces[i]} inet static\n`;
-                    fileContent += `address ${networkObjectIps[i]}\n`;
-                    fileContent += `netmask ${networkObjectNetmasks[i]}\n`;
-                    //rutas de enrutamiento
-                    fileContent += `\n`;
-                    fileContent += getRoutingRules(networkObjectId, interfaces[i]).join("\n");
-                    fileContent += `\n`;
-                }
-            }
-
-            //actualizamos el contenido del editor
-            content.value = fileContent;
-            fileEditorContainer.style.display = "block";
-        }
-
+        loadNetworkFile(networkObjectId);
     }
 
 }
@@ -322,9 +250,14 @@ function closeEditor() {
 
     const fileEditor = document.querySelector(".file-editor");
     const fileName = fileEditor.getAttribute("data-file");
+    const networkObjectId = document.querySelector(".pc-terminal").dataset.id;
 
     if (fileName === "/etc/network/interfaces") {
-        routingTableRestore(document.querySelector(".pc-terminal").dataset.id);
+        
+        if (networkObjectId.startsWith("router-")) {
+            routingTableRestore(document.querySelector(".pc-terminal").dataset.id);
+        }
+
         parserNetworkFile();
     }
 
