@@ -324,11 +324,13 @@ function closeEditor() {
     const fileName = fileEditor.getAttribute("data-file");
 
     if (fileName === "/etc/network/interfaces") {
+        routingTableRestore(document.querySelector(".pc-terminal").dataset.id);
         parserNetworkFile();
     }
 
     document.querySelector(".editor-container").style.display = "none";
     document.querySelector(".file-editor").value = "";
+
 }
 
 function getRoutingRules(routerObjectid, targetinterface) {
@@ -343,10 +345,10 @@ function getRoutingRules(routerObjectid, targetinterface) {
     for (let i = 4; i < rows.length; i++) {
         let row = rows[i];
         let cells = row.querySelectorAll("td");
-        let destination = cells[0].innerHTML;
-        let netmask = cells[1].innerHTML;
-        let interface = cells[3].innerHTML;
-        let nextHop = cells[4].innerHTML;
+        let destination = cells[0].innerHTML.trim();
+        let netmask = cells[1].innerHTML.trim();
+        let interface = cells[3].innerHTML.trim();
+        let nextHop = cells[4].innerHTML.trim();
 
         if (interface === targetinterface && nextHop !== "0.0.0.0") {
             rules.push(`ip route add ${destination}/${netmaskToCidr(netmask)} via ${nextHop}`);

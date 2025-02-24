@@ -143,7 +143,7 @@ function addRoutingEntry(routerObjectId, destination, netmask, interface, nextho
                 }
             }
         }
-        
+
         //si no existe, añadimos una nueva regla
 
         let newRow = document.createElement("tr");
@@ -409,5 +409,49 @@ function removeNetwork(networkObjectId, interface) {
     }
 
     terminalMessage("La red ha sido eliminada correctamente.");
+
+}
+
+function routingTableRestore(routerObjectid) {
+
+    const $routerObject = document.getElementById(routerObjectid);
+    const routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
+
+    routingTable.innerHTML = `
+                <tr>
+                    <th>Destination</th>
+                    <th>Netmask</th>
+                    <th>Gateway</th>
+                    <th>Interface</th>
+                    <th>Next Hop</th>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td> 0.0.0.0</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td> 0.0.0.0 </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td> 0.0.0.0 </td>
+                </tr>
+                <tr>
+                    <td> 0.0.0.0 </td>
+                    <td> 0.0.0.0 </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>`;
 
 }

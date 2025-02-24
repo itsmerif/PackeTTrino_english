@@ -5,7 +5,9 @@ function parserNetworkFile() {
     const interfaces = ["enp0s3", "enp0s8", "enp0s9"];
     const fileContent = fileEditor.value;
     const unfilteredlines = fileContent.split("\n");
+
     //eliminamos las lineas vacias
+    
     const lines = unfilteredlines.filter(line => line.trim() !== "");
     let found = false;
 
@@ -51,7 +53,6 @@ function parserNetworkFile() {
                     $networkObject.setAttribute("data-dhcp", "true");
                     found = true;
                     terminalMessage("El archivo se ha cargado correctamente.");
-
                 }
 
             }
