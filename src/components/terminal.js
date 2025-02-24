@@ -234,6 +234,7 @@ function command_nano(dataId, args) {
 
     const fileName = args[1];
     const fileEditorContainer = document.querySelector(".editor-container");
+    const networkObjectId = document.querySelector(".pc-terminal").dataset.id;
     let content = fileEditorContainer.querySelector(".file-editor");
 
     if (!fileName) {
@@ -242,74 +243,83 @@ function command_nano(dataId, args) {
     }
 
     if (fileName === "/etc/network/interfaces") {
-        //añadimos el puntero al editor
-        content.setAttribute("data-file", "/etc/network/interfaces");
-        //obtenemos la información del objeto
-        const $networkObject = document.getElementById(dataId);
-        const networkObjectIp = $networkObject.getAttribute("data-ip");
-        const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
-        const networkObjectGateway = $networkObject.getAttribute("data-gateway");
-        //creamos el contenido del archivo
-        let fileContent;
-        fileContent = `#The loopback network interface\n`;
-        fileContent += `\n`;
-        //loopback
-        fileContent += `auto lo\niface lo inet loopback\n`;
-        fileContent += `\n`;
-        //interfaz enp0s3
-        fileContent += `# The primary network interface\n`;
-        fileContent += `\n`;
-        fileContent += `auto enp0s3\niface enp0s3 inet static\n`;
-        fileContent += `address ${networkObjectIp}\n`;
-        fileContent += `netmask ${networkObjectNetmask}\n`;
-        fileContent += `gateway ${networkObjectGateway}\n`;
-        //actualizamos el contenido del editor
-        content.value = fileContent;
-        fileEditorContainer.style.display = "block";
-    }
 
-}
+        if (!networkObjectId.startsWith("router-")) {
+            //añadimos el puntero al editor
+            content.setAttribute("data-file", "/etc/network/interfaces");
+            //obtenemos la información del objeto
+            const $networkObject = document.getElementById(dataId);
+            const networkObjectIp = $networkObject.getAttribute("data-ip");
+            const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+            const networkObjectGateway = $networkObject.getAttribute("data-gateway");
+            //creamos el contenido del archivo
+            let fileContent;
+            fileContent = `#The loopback network interface\n`;
+            fileContent += `\n`;
+            //loopback
+            fileContent += `auto lo\niface lo inet loopback\n`;
+            fileContent += `\n`;
+            //interfaz enp0s3
+            fileContent += `# The primary network interface\n`;
+            fileContent += `\n`;
+            fileContent += `auto enp0s3\niface enp0s3 inet static\n`;
+            fileContent += `address ${networkObjectIp}\n`;
+            fileContent += `netmask ${networkObjectNetmask}\n`;
+            fileContent += `gateway ${networkObjectGateway}\n`;
+            //actualizamos el contenido del editor
+            content.value = fileContent;
+            fileEditorContainer.style.display = "block";
 
-function closeEditor() {
-    parserFileEditor();
-    document.querySelector(".editor-container").style.display = "none";
-    document.querySelector(".file-editor").value = "";
-}
+        } else {
 
-function parserFileEditor() {
+            //añadimos el puntero al editor
 
-    const fileEditor = document.querySelector(".file-editor");
-    const fileName = fileEditor.getAttribute("data-file");
-    const $networkObject = document.getElementById(document.querySelector(".pc-terminal").dataset.id);
+            content.setAttribute("data-file", "/etc/network/interfaces");
 
-    if (fileName === "/etc/network/interfaces") { //parseamos el contenido del archivo
+            //obtenemos la información del objeto
 
-        const fileContent = fileEditor.value;
-        const lines = fileContent.split("\n");
+            const $networkObject = document.getElementById(dataId);
+            const networkObjectIps = [$networkObject.getAttribute("ip-enp0s3"), $networkObject.getAttribute("ip-enp0s8"), $networkObject.getAttribute("ip-enp0s9")];
+            const networkObjectNetmasks = [$networkObject.getAttribute("netmask-enp0s3"), $networkObject.getAttribute("netmask-enp0s8"), $networkObject.getAttribute("netmask-enp0s9")];
+            const interfaces =["enp0s3", "enp0s8", "enp0s9"];
 
-        for (let i = 0; i < lines.length; i++) {
-            if (lines[i].startsWith("auto enp0s3")) { //miramos las 4 siguientes lineas
-                if (lines[i + 1] === "iface enp0s3 inet static") { //interfaz enp0s3 está configurado como estático
+            //creamos el contenido del archivo
 
-                    const ip = lines[i + 2].split(" ")[1];
-                    const netmask = lines[i + 3].split(" ")[1];
-                    const gateway = lines[i + 4].split(" ")[1];
+            let fileContent;
+            fileContent = `#The loopback network interface\n`;
+            fileContent += `\n`;
 
-                    if (!isValidIp(ip) || !isValidIp(netmask) || !isValidIp(gateway)) {
-                        terminalMessage("Error: El archivo contiene errores. Por favor, corrijalo.");
-                        return;
-                    }
+            //loopback
 
-                    $networkObject.setAttribute("data-ip", ip);
-                    $networkObject.setAttribute("data-netmask", netmask);
-                    $networkObject.setAttribute("data-gateway", gateway);
+            fileContent += `auto lo\niface lo inet loopback\n`;
+            fileContent += `\n`;
 
-                    terminalMessage("El archivo se ha cargado correctamente.");
-                    return;
-                }
+            for (let i = 0; i < networkObjectIps.length; i++) {
+                fileContent += `\n`;
+                fileContent += `auto ${interfaces[i]}\niface ${interfaces[i]} inet static\n`;
+                fileContent += `address ${networkObjectIps[i]}\n`;
+                fileContent += `netmask ${networkObjectNetmasks[i]}\n`;
             }
+
+            //actualizamos el contenido del editor
+            content.value = fileContent;
+            fileEditorContainer.style.display = "block";
         }
 
     }
 
 }
+
+function closeEditor() {
+
+    const fileEditor = document.querySelector(".file-editor");
+    const fileName = fileEditor.getAttribute("data-file");
+
+    if (fileName === "/etc/network/interfaces") {
+        parserNetworkFile();
+    }
+
+    document.querySelector(".editor-container").style.display = "none";
+    document.querySelector(".file-editor").value = "";
+}
+
