@@ -21,8 +21,18 @@ function parserNetworkFile() {
                     let netmask = lines[i + 3].split(" ")[1];
                     let gateway = lines[i + 4].split(" ")[1];
 
-                    if (!isValidIp(ip) || !isValidIp(netmask) || !isValidIp(gateway)) {
-                        terminalMessage("Error: El archivo contiene errores.");
+                    if (!isValidIp(ip)) {
+                        terminalMessage(`Error en la línea ${i + 2}: IP no válida.`);
+                        return;            
+                    }
+
+                    if (!isValidIp(netmask)) {
+                        terminalMessage(`Error en la línea ${i + 3}: Netmask no válida.`);
+                        return;
+                    }
+
+                    if (!isValidIp(gateway)) {
+                        terminalMessage(`Error en la línea ${i + 4}: Gateway no válida.`);
                         return;
                     }
 
@@ -55,14 +65,22 @@ function parserNetworkFile() {
     for (let i = 0; i < lines.length; i++) {
 
         if (lines[i] === "auto enp0s3" && lines[i + 1] === "iface enp0s3 inet static") {
+
             if (!lines[i + 2].match(/^address \S+$/)) return;
             if (!lines[i + 3].match(/^netmask \S+$/)) return;
             let ip = lines[i + 2].split(" ")[1];
             let netmask = lines[i + 3].split(" ")[1];
-            if (!isValidIp(ip) || !isValidIp(netmask)) {
-                terminalMessage("Error: El archivo contiene errores. IP o netmask no válido.");
+
+            if (!isValidIp(ip)){
+                terminalMessage(`Error en la línea ${i + 2}: IP no válida.`);
                 return;
             }
+
+            if (!isValidIp(netmask)) {
+                terminalMessage(`Error en la línea ${i + 3}: Netmask no válida.`);
+                return;
+            }
+
             $networkObject.setAttribute("ip-enp0s3", ip);
             $networkObject.setAttribute("netmask-enp0s3", netmask);
             found = true;
@@ -70,14 +88,22 @@ function parserNetworkFile() {
         }
 
         if (lines[i] === "auto enp0s8" && lines[i + 1] === "iface enp0s8 inet static") {
+            
             if (!lines[i + 2].match(/^address \S+$/)) return;
             if (!lines[i + 3].match(/^netmask \S+$/)) return;
             let ip = lines[i + 2].split(" ")[1];
             let netmask = lines[i + 3].split(" ")[1];
-            if (!isValidIp(ip) || !isValidIp(netmask)) {
-                terminalMessage("Error: El archivo contiene errores. IP o netmask no válido.");
+
+            if (!isValidIp(ip)){
+                terminalMessage(`Error en la línea ${i + 2}: IP no válida.`);
                 return;
             }
+
+            if (!isValidIp(netmask)) {
+                terminalMessage(`Error en la línea ${i + 3}: Netmask no válida.`);
+                return;
+            }
+
             $networkObject.setAttribute("ip-enp0s8", ip);
             $networkObject.setAttribute("netmask-enp0s8", netmask);
             found = true;
@@ -85,14 +111,22 @@ function parserNetworkFile() {
         }
 
         if (lines[i] === "auto enp0s9" && lines[i + 1] === "iface enp0s9 inet static") {
+
             if (!lines[i + 2].match(/^address \S+$/)) return;
             if (!lines[i + 3].match(/^netmask \S+$/)) return;
             let ip = lines[i + 2].split(" ")[1];
             let netmask = lines[i + 3].split(" ")[1];
-            if (!isValidIp(ip) || !isValidIp(netmask)) {
-                terminalMessage("Error: El archivo contiene errores. IP o netmask no válido.");
+
+            if (!isValidIp(ip)){
+                terminalMessage(`Error en la línea ${i + 2}: IP no válida.`);
                 return;
             }
+
+            if (!isValidIp(netmask)) {
+                terminalMessage(`Error en la línea ${i + 3}: Netmask no válida.`);
+                return;
+            }
+
             $networkObject.setAttribute("ip-enp0s9", ip);
             $networkObject.setAttribute("netmask-enp0s9", netmask);
             found = true;
