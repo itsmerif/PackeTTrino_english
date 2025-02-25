@@ -19,17 +19,12 @@ function command_dns(dataId, args) {
         return;
     }
 
-    if (args[1] !== "add" && args[1] !== "del") {
-        terminalMessage("Error: Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]</p>");
-        return;
-    }
-
     if (args[1] === "add") {
 
         if (args[2] !== "-t"){
 
             if (args.length !== 4) {
-                terminalMessage("Error: Sintaxis -> dns <add|del> [ -t <type> ] <domain> <ip|cname>");
+                terminalMessage("Error: Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]</p>");
                 return;
             }
 
@@ -53,7 +48,7 @@ function command_dns(dataId, args) {
         if (args[2] === "-t") {
 
             if (args.length !== 6) {
-                terminalMessage("Error: Sintaxis -> dns <add|del> [ -t <type> ] <domain> <ip|cname>");
+                terminalMessage("Error: Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]</p>");
                 return;
             }
 
@@ -81,10 +76,11 @@ function command_dns(dataId, args) {
     }
 
     if (args[1] === "del") {
-        terminalMessage("Error: Comando no implementado");
+        delDnsEntry(dataId, args[2])
+        return;
     }
 
-    terminalMessage("Error: Sintaxis -> dns <add|del> [ -t <type> ] <domain> <ip|cname>");
+    terminalMessage("Error: Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]</p>");
 }
 
 function addDnsEntry(serverObjectId, newrecord) {
@@ -103,6 +99,27 @@ function addDnsEntry(serverObjectId, newrecord) {
 
     terminalMessage("Comando dns ejecutado correctamente");
 
+}
+
+function delDnsEntry(dataId, targetDomain) {
+    const $serverObject = document.getElementById(dataId);
+    const dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
+    const records = dnsTable.querySelectorAll("tr");
+    let i = 1;
+
+    while ( i < records.length ) {
+        let record = records[i];
+        let cells = record.querySelectorAll("td");
+        let domain = cells[0].innerHTML;
+        if (domain === targetDomain) {
+            dnsTable.removeChild(record);
+            terminalMessage(`Dominio ${targetDomain} borrado correctamente`);
+            return;
+        }
+        i++;
+    }
+
+    terminalMessage("Error: No se encontro el dominio en la tabla de registros DNS");
 }
 
 function isDomainInCache(networkObjectId, targetDomain) {
