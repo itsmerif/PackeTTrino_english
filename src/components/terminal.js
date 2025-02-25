@@ -189,10 +189,25 @@ function command_man(topic) {
             terminalMessage("<p>Ejemplo: dig @8.8.8.8 google.com</p>");
             terminalMessage("<p><span style='color: red'>Nota</span>: Si no se especifica un servidor, se usará el servidor configurado en el equipo.</p>");
             break;
+        case "dns":
+            terminalMessage("<p>dns: utilidad de configuración de DNS (solo en servidores DNS) </p>");
+            terminalMessage("<p>Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]</p>");
+            terminalMessage("<p>Opciones:</p>");
+            terminalMessage("<p>add: añadir un registro</p>");
+            terminalMessage("<p>del: eliminar un registro</p>");
+            terminalMessage("<p>-t &lt;type&gt; : especificar el tipo de registro (A, CNAME, NS). Por defecto es A.</p>");
+            terminalMessage("<p>Ejemplo: dns add google.com 192.168.1.1</p>");
+            terminalMessage("<p>Ejemplo: dns del google.com</p>");
+            terminalMessage("<p>Ejemplo: dns add -t CNAME google.com www.google.com</p>");
+            break;
         case "help":
             terminalMessage("<p>help: utilidad para mostrar la ayuda del terminal</p>");
             break;
         case "exit":
+            terminalMessage("exit: salir del terminal");
+            break;
+        default:
+            terminalMessage("Error: No hay entrada en el manual para esta utilidad.");
             break;
     }
 }

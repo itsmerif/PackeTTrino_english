@@ -14,8 +14,13 @@ function command_dns(dataId, args) {
 
     // sintaxis: dns <add|del> [ -t <type> ] <domain> <ip|cname>
 
+    if (!dataId.startsWith("dns-server")) {
+        terminalMessage("Error: Comando solo implementado en servidores DNS");
+        return;
+    }
+
     if (args[1] !== "add" && args[1] !== "del") {
-        terminalMessage("Error: Sintaxis -> dns <add|del> [ -t <type> ] <domain> <ip|cname>");
+        terminalMessage("Error: Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]</p>");
         return;
     }
 
