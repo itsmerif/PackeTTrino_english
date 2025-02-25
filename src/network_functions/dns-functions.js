@@ -80,6 +80,11 @@ function command_dns(dataId, args) {
         return;
     }
 
+    if (args[1] === "-s") {
+        terminalMessage($serverObject.querySelector(".dns-table").querySelector("table").outerHTML);
+        return;
+    }
+
     terminalMessage("Error: Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]</p>");
 }
 
