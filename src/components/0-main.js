@@ -2,8 +2,8 @@
 
 let itemIndex = 0;
 let quickInfoTimeout;
-let visualMode = false;
 const leaseTimers = {};
+let visualToggle = true;
 
 // funciones de inicio
 
