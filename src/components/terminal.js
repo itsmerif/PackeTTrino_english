@@ -258,11 +258,24 @@ function closeEditor() {
             routingTableRestore(document.querySelector(".pc-terminal").dataset.id);
         }
 
-        parserNetworkFile();
-    }
+        try {
 
-    document.querySelector(".editor-container").style.display = "none";
-    document.querySelector(".file-editor").value = "";
+            parserNetworkFile();
+            document.querySelector(".editor-container").style.display = "none";
+            document.querySelector(".file-editor").value = "";
+
+        } catch (error) {
+
+            document.querySelector(".file-editor-error").innerHTML= error.message;
+            document.querySelector(".file-editor-error").style.display = "block";
+
+            setTimeout(() => {
+                document.querySelector(".file-editor-error").style.display = "none";
+            }, 3000);
+            
+        }
+
+    }
 
 }
 

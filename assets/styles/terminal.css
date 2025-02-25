@@ -132,6 +132,15 @@
     z-index: 101;
 }
 
+.file-editor-error {    
+    position: absolute;
+    display: none;
+    bottom: 0px;
+    right: 50%;
+    z-index: 101;
+    color: red;
+}
+
 .editor-buttons button {
     padding: 8px 16px;
     margin-left: 10px;

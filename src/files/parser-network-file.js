@@ -86,61 +86,67 @@ function parserNetworkFile() {
     const fileContent = fileEditor.value;
     const unfilteredlines = fileContent.split("\n");
 
-    //eliminamos las lineas vacias
-
-    const lines = unfilteredlines.filter(line => line.trim() !== "");
-    let found = false;
-
+    const lines = unfilteredlines
+    .map(line => line.trim().replace(/\s+/g, " ")) //eliminamos los espacios duplicados
+    .filter(line => line !== ""); //eliminamos las lineas vacias
+    
     if (!$networkObject.id.startsWith("router-")) { //para los hosts
 
         for (let i = 0; i < lines.length; i++) {
 
             if (lines[i].startsWith("auto enp0s3")) { //miramos las 4 siguientes lineas
 
-                if (lines[i + 1] === "iface enp0s3 inet static") { //interfaz enp0s3 está configurado como estático
+                if (lines[i + 1] === "iface enp0s3 inet static") {
 
-                    if (!lines[i + 2].match(/^address \S+$/)) return;
-                    if (!lines[i + 3].match(/^netmask \S+$/)) return;
-                    if (!lines[i + 4].match(/^gateway \S+$/)) return;
+                    if (!lines[i + 2].match(/^address \S+$/)) {
+                        throw new Error(`Error en la línea ${i + 2}: formato no válido.`);
+                    }
+
+                    if (!lines[i + 3].match(/^netmask \S+$/)) {
+                        throw new Error(`Error en la línea ${i + 3}: formato no válido.`);
+                    }
+
+                    if (!lines[i + 4].match(/^gateway \S+$/)) {
+                        throw new Error(`Error en la línea ${i + 4}: formato no válido.`);
+                    }
+
                     let ip = lines[i + 2].split(" ")[1];
                     let netmask = lines[i + 3].split(" ")[1];
                     let gateway = lines[i + 4].split(" ")[1];
 
                     if (!isValidIp(ip)) {
-                        terminalMessage(`Error en la línea ${i + 2}: IP no válida.`);
-                        return;
+                        throw new Error(`Error en la línea ${i + 2}: IP no válida.`);
                     }
 
                     if (!isValidIp(netmask)) {
-                        terminalMessage(`Error en la línea ${i + 3}: Netmask no válida.`);
-                        return;
+                        throw new Error(`Error en la línea ${i + 3}: Netmask no válida.`);
                     }
 
-                    if (!isValidIp(gateway)) {
-                        terminalMessage(`Error en la línea ${i + 4}: Gateway no válida.`);
-                        return;
+                    if (!isValidIp(gateway) || getNetwork(gateway, netmask) !== getNetwork(ip, netmask)) {
+                        throw new Error(`Error en la línea ${i + 4}: Gateway no válida.`);
                     }
 
                     $networkObject.setAttribute("data-ip", ip);
                     $networkObject.setAttribute("data-netmask", netmask);
                     $networkObject.setAttribute("data-gateway", gateway);
-                    found = true;
                     terminalMessage("El archivo se ha cargado correctamente.");
                     return;
-                }
 
-                if (lines[i + 1] === "iface enp0s3 inet dhcp") {
+                } else if (lines[i + 1] === "iface enp0s3 inet dhcp") {
+
                     $networkObject.setAttribute("data-dhcp", "true");
                     $networkObject.setAttribute("data-ip", "");
                     $networkObject.setAttribute("data-netmask", "");
                     $networkObject.setAttribute("data-gateway", "");
-                    found = true;
+
+                } else {
+
+                    throw new Error(`Error en la línea ${i + 1}: formato no válido.`);
                 }
 
+                return;
             }
         }
-
-        if (!found) terminalMessage("Error: El archivo contiene errores.");
 
     } else {
 
@@ -158,13 +164,11 @@ function parserNetworkFile() {
                     //buscamos la direccion ip y mascara de red
 
                     if (!lines[i + 2].match(/^address \S+$/)) {
-                        terminalMessage(`Error en la línea ${i + 2}: formato no válido.`);
-                        return;
+                        throw new Error(`Error en la línea ${i + 2}: formato no válido.`);
                     }
 
                     if (!lines[i + 3].match(/^netmask \S+$/)) {
-                        terminalMessage(`Error en la línea ${i + 3}: formato no válido.`);
-                        return;
+                        throw new Error(`Error en la línea ${i + 3}: formato no válido.`);
                     }
 
                     let ip = lines[i + 2].split(" ")[1];
@@ -172,20 +176,15 @@ function parserNetworkFile() {
                     let netmask = lines[i + 3].split(" ")[1];
 
                     if (!isValidIp(ip)) {
-                        terminalMessage(`Error en la línea ${i + 2}: IP no válida.`);
-                        return;
+                        throw new Error(`Error en la línea ${i + 2}: IP no válida.`);
                     }
 
                     if (!isValidIp(netmask)) {
-                        terminalMessage(`Error en la línea ${i + 3}: Netmask no válida.`);
-                        return;
+                        throw new Error(`Error en la línea ${i + 3}: Netmask no válida.`);
                     }
 
                     $networkObject.setAttribute(`ip-${interfaces[interface]}`, ip);
                     $networkObject.setAttribute(`netmask-${interfaces[interface]}`, netmask);
-
-                    //añadimos la nueva configuracion a la tabla de enrutamiento
-
                     rows[interface + 1].querySelectorAll("td")[0].innerText = getNetwork(ip, netmask);
                     rows[interface + 1].querySelectorAll("td")[1].innerText = netmask;
                     rows[interface + 1].querySelectorAll("td")[2].innerText = ip;
@@ -195,7 +194,7 @@ function parserNetworkFile() {
 
                     let j = i + 4;
 
-                    while (j < lines.length && lines[j].startsWith("ip route add")) {
+                    while (j < lines.length && lines[j].startsWith("ip route add")) { //ip route add destination/netmask via nexthop
 
                         let destinationCidr; let nextHop; let [destination, destinationNetmask] = [];
 
@@ -204,8 +203,7 @@ function parserNetworkFile() {
                         destinationCidr = lines[j].split(" ")[3];
 
                         if (!isValidCidrIp(destinationCidr)) {
-                            terminalMessage(`Error en la líneas ${j}: dirección IP en CIDR no válida.`)
-                            return
+                            throw new Error(`Error en la líneas ${j}: dirección IP en CIDR no válida.`)
                         }
 
                         [destination, destinationNetmask] = parseCidr(lines[j].split(" ")[3]);
@@ -213,8 +211,7 @@ function parserNetworkFile() {
                         //compruebo que exista la palabra clave "via"
 
                         if (lines[j].split(" ")[4] !== "via") {
-                            terminalMessage(`Error en la línea ${j}: se esperaba 'via' `);
-                            return;
+                            throw new Error(`Error en la línea ${j}: se esperaba 'via' `);
                         }
 
                         //siguiente salto
@@ -222,8 +219,7 @@ function parserNetworkFile() {
                         nextHop = lines[j].split(" ")[5];
 
                         if (!isValidIp(nextHop) || getNetwork(nextHop, netmask) !== getNetwork(ip, netmask)) {
-                            terminalMessage(`Error en la línea ${j}: siguiente salto no válido.`);
-                            return;
+                            throw new Error(`Error en la línea ${j}: siguiente salto no válido.`);
                         }
 
                         //si se cumple todo esto
@@ -233,14 +229,12 @@ function parserNetworkFile() {
 
                     }
 
-                    found = true;
                     terminalMessage("El archivo se ha cargado correctamente.");
 
                 }
             }
         }
 
-        if (!found) terminalMessage("Error: El archivo contiene errores.");
     }
 
 }
