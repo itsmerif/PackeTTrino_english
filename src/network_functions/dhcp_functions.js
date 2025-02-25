@@ -41,7 +41,8 @@ function dhcp(dataId, args) {
                     return;
                 }
 
-                ping_s("0.0.0.0");
+                terminalMessage("Servidor DHCP encontrado correctamente.");
+                showObjectInfo(dataId);
 
             } catch (error) {
 

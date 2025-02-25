@@ -21,7 +21,6 @@ function sendCommand(event) {
         let newoutput = "";
 
         switch (command) {
-
             case "ping":
                 ping(dataId, args);
                 break;
@@ -45,6 +44,9 @@ function sendCommand(event) {
                 break;
             case "http":
                 command_http(dataId, args);
+                break;
+            case "arp":
+                command_arp(dataId, args);
                 break;
             case "apache":
                 command_apache(dataId, args);
