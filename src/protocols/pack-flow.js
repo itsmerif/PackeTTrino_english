@@ -8,6 +8,7 @@ let dhcpRenewFlag = false;
 let dnsRequestFlag = false;
 let tcpSyncFlag = false;
 let order = 0;
+let visual = false;
 
 //Generadores
 
@@ -19,21 +20,19 @@ function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) 
 
     if (!isSameNetwork) { //el destino no está en la misma red, debemos enviarlo a la puerta de enlace
 
-        //terminalMessage(networkObjectId + ": Destino En Otra Red...");
         const defaultGateway = $networkObject.getAttribute("data-gateway");
 
         if (!defaultGateway) {
-            //terminalMessage(networkObjectId + ": Error: Puerta de Enlace Predetermina No Configurada");
             throw new Error("Error: Puerta de Enlace Predeterminada No Configurada");
         }
 
         const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
 
         if (!defaultGatewayMac) { //no tenemos la ip de la puerta de enlace en nuestra tabla de arp, lo guardamos en el buffer y enviamos un ARP primero
-            //terminalMessage(networkObjectId + ": Gateway No Guardado. Enviando ARP por " + defaultGateway);
             buffer[networkObjectId] = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), "");
             packet = new ArpRequest(ip, defaultGateway, $networkObject.getAttribute("data-mac"));
             addPacketTraffic(packet);
+            if (visual) visualize(switchId, networkObjectId, packet);
             switchProcessor(switchId, networkObjectId, packet);
             return;
         }
@@ -41,6 +40,7 @@ function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) 
         packet = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), defaultGatewayMac);
         icmpFlag = false;
         addPacketTraffic(packet);
+        if (visual) visualize(switchId, networkObjectId, packet);
         switchProcessor(switchId, networkObjectId, packet);
         return;
 
@@ -55,10 +55,12 @@ function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) 
         buffer[networkObjectId] = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), "");
         packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
         addPacketTraffic(packet);
+        if (visual) visualize(switchId, networkObjectId, packet);
         switchProcessor(switchId, networkObjectId, packet);
     } else {
         packet = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), destination_mac);
         addPacketTraffic(packet);
+        if (visual) visualize(switchId, networkObjectId, packet);
         switchProcessor(switchId, networkObjectId, packet);
     }
 
@@ -88,6 +90,7 @@ function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destination) {
             packet = new ArpRequest(ip, defaultGateway, $networkObject.getAttribute("data-mac"));
             arpFlag = false;
             addPacketTraffic(packet);
+            if (visual) visualize(switchId, networkObjectId, packet);
             switchProcessor(switchId, networkObjectId, packet);
             return;
         }
@@ -96,6 +99,7 @@ function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destination) {
         icmpFlag = false;
 
         addPacketTraffic(packet);
+        if (visual) visualize(switchId, networkObjectId, packet);
         switchProcessor(switchId, networkObjectId, packet);
         return;
 
@@ -109,12 +113,14 @@ function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destination) {
         arpFlag = false;
 
         addPacketTraffic(packet);
+        if (visual) visualize(switchId, networkObjectId, packet);
         switchProcessor(switchId, networkObjectId, packet);
     } else {
         packet = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), destination_mac);
         icmpFlag = false;
 
         addPacketTraffic(packet);
+        if (visual) visualize(switchId, networkObjectId, packet);
         switchProcessor(switchId, networkObjectId, packet);
     }
 
@@ -126,6 +132,7 @@ function dhcpDiscoverGenerator(networkObjectId, switchId) {
     let packet = new dhcpDiscover(networkObjectMac);
     //terminalMessage(networkObjectId + ": Enviando DHCP Discover");
     addPacketTraffic(packet);
+    if (visual) visualize(switchId, networkObjectId, packet);
     switchProcessor(switchId, networkObjectId, packet);
     return;
 }
@@ -157,6 +164,7 @@ function dhcpReleaseGenerator(networkObjectId, switchId) {
             buffer[networkObjectId] = newPacket;
             let arpRequest = new ArpRequest(networkObjectIp, defaultGateway, networkObjectMac);
             addPacketTraffic(arpRequest);
+            if (visual) visualize(switchId, networkObjectId, arpRequest);
             switchProcessor(switchId, networkObjectId, arpRequest);
             return;
         }
@@ -164,6 +172,7 @@ function dhcpReleaseGenerator(networkObjectId, switchId) {
         //tenemos la puerta de enlace en la tabla ARP
 
         addPacketTraffic(newPacket);
+        if (visual) visualize(switchId, networkObjectId, newPacket);
         switchProcessor(switchId, networkObjectId, newPacket);
         deleteDhcpInfo(networkObjectId);
         return;
@@ -179,6 +188,7 @@ function dhcpReleaseGenerator(networkObjectId, switchId) {
         buffer[networkObjectId] = newPacket;
         let arpRequest = new ArpRequest(networkObjectIp, dhcpServerIp, networkObjectMac);
         addPacketTraffic(arpRequest);
+        if (visual) visualize(switchId, networkObjectId, arpRequest);
         switchProcessor(switchId, networkObjectId, arpRequest);
         return;
     }
@@ -186,6 +196,7 @@ function dhcpReleaseGenerator(networkObjectId, switchId) {
     //la mac del server está en la tabla arp
 
     addPacketTraffic(newPacket);
+    if (visual) visualize(switchId, networkObjectId, newPacket);
     switchProcessor(switchId, networkObjectId, newPacket);
     deleteDhcpInfo(networkObjectId);
 
@@ -211,12 +222,14 @@ function dhcpRenewGenerator(networkObjectId, switchId) {
             buffer[networkObjectId] = newPacket;
             let arpRequest = new ArpRequest(networkObjectIp, defaultGateway, networkObjectMac);
             addPacketTraffic(arpRequest);
+            if (visual) visualize(switchId, networkObjectId, arpRequest);
             switchProcessor(switchId, networkObjectId, arpRequest);
             return;
         }
 
         //tenemos la puerta de enlace en la tabla de arp
         addPacketTraffic(newPacket);
+        if (visual) visualize(switchId, networkObjectId, arpRequest);
         switchProcessor(switchId, networkObjectId, newPacket);
         return;
 
@@ -231,6 +244,7 @@ function dhcpRenewGenerator(networkObjectId, switchId) {
         buffer[networkObjectId] = newPacket;
         let arpRequest = new ArpRequest(networkObjectIp, dhcpServerIp, networkObjectMac);
         addPacketTraffic(arpRequest);
+        if (visual) visualize(switchId, networkObjectId, arpRequest);
         switchProcessor(switchId, networkObjectId, arpRequest);
         return;
     }
@@ -238,6 +252,7 @@ function dhcpRenewGenerator(networkObjectId, switchId) {
     //la mac del servidor está en la tabla arp
 
     addPacketTraffic(newPacket);
+    if (visual) visualize(switchId, networkObjectId, newPacket);
     switchProcessor(switchId, networkObjectId, newPacket);
 
 }
@@ -267,6 +282,7 @@ function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
             buffer[networkObjectId] = packet;
             let arpRequest = new ArpRequest(networkObjectIp, defaultGateway, networkObjectMac);
             addPacketTraffic(arpRequest);
+            if (visual) visualize(switchId, networkObjectId, arpRequest);
             switchProcessor(switchId, networkObjectId, arpRequest);
             return;
         }
@@ -274,6 +290,7 @@ function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
         //tenemos la puerta de enlace en la tabla de arp
 
         addPacketTraffic(packet);
+        if (visual) visualize(switchId, networkObjectId, packet);
         switchProcessor(switchId, networkObjectId, packet);
         return;
 
@@ -289,11 +306,13 @@ function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
         buffer[networkObjectId] = packet;
         let arpRequest = new ArpRequest(networkObjectIp, dnsServer, networkObjectMac);
         addPacketTraffic(arpRequest);
+        if (visual) visualize(switchId, networkObjectId, arpRequest);
         switchProcessor(switchId, networkObjectId, arpRequest);
         return;
     }
 
     addPacketTraffic(packet);
+    if (visual) visualize(switchId, networkObjectId, packet);
     switchProcessor(switchId, networkObjectId, packet);
 
 }
@@ -323,6 +342,7 @@ function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
             tcpBuffer[networkObjectId] = buffer[networkObjectId].sequence_number; //almacenamos el número de secuencia para el siguiente paquete
             packet = new ArpRequest(networkObjectIp, defaultGateway, networkObjectMac);
             addPacketTraffic(packet);
+            if (visual) visualize(switchId, networkObjectId, packet);
             switchProcessor(switchId, networkObjectId, packet);
             return;
         }
@@ -332,6 +352,7 @@ function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
         packet = new syn(networkObjectIp, ip, networkObjectMac, defaultGatewayMac, port);
         tcpBuffer[networkObjectId] = packet.sequence_number; //almacenamos el número de secuencia para el siguiente paquete
         addPacketTraffic(packet);
+        if (visual) visualize(switchId, networkObjectId, packet);
         switchProcessor(switchId, networkObjectId, packet);
         return;
 
@@ -344,11 +365,13 @@ function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
         tcpBuffer[networkObjectId] = buffer[networkObjectId].sequence_number; //almacenamos el número de secuencia para el siguiente paquete
         packet = new ArpRequest(networkObjectIp, ip, networkObjectMac);
         addPacketTraffic(packet);
+        if (visual) visualize(switchId, networkObjectId, packet);
         switchProcessor(switchId, networkObjectId, packet);
     } else {
         packet = new syn(networkObjectIp, ip, networkObjectMac, destination_mac, port);
         tcpBuffer[networkObjectId] = packet.sequence_number; //almacenamos el número de secuencia para el siguiente paquete
         addPacketTraffic(packet);
+        if (visual) visualize(switchId, networkObjectId, packet);
         switchProcessor(switchId, networkObjectId, packet);
     }
 
@@ -376,14 +399,19 @@ function switchProcessor(switchId, networkObjectId, packet) {
                 let duplicatePacket = structuredClone(packet);
 
                 if (device.startsWith("pc-")) {
+                    if (visual) visualize(switchId, device, duplicatePacket);
                     packetProcessor_PC(switchId, device, duplicatePacket);
                 } else if (device.startsWith("router-")) {
+                    if (visual) visualize(switchId, device, duplicatePacket);
                     packetProcessor_router(switchId, device, duplicatePacket);
                 } else if (device.startsWith("dhcp-server-")) {
+                    if (visual) visualize(switchId, device, duplicatePacket);
                     packetProcessor_dhcp_server(switchId, device, duplicatePacket);
                 } else if (device.startsWith("dhcp-relay-server-")) {
+                    if (visual) visualize(switchId, device, duplicatePacket);
                     packetProcessor_dhcp_relay_server(switchId, device, duplicatePacket);
                 } else if (device.startsWith("dns-server-")) {
+                    if (visual) visualize(switchId, device, duplicatePacket);
                     packetProcessor_dns_server(switchId, device, duplicatePacket);
                 }
             }
@@ -398,14 +426,19 @@ function switchProcessor(switchId, networkObjectId, packet) {
     let duplicatePacket = structuredClone(packet);
 
     if (device.startsWith("pc-")) {
+        if (visual) visualize(switchId, device, duplicatePacket);
         packetProcessor_PC(switchId, device, duplicatePacket);
     } else if (device.startsWith("router-")) {
+        if (visual) visualize(switchId, device, duplicatePacket);
         packetProcessor_router(switchId, device, duplicatePacket);
     } else if (device.startsWith("dhcp-server-")) {
+        if (visual) visualize(switchId, device, duplicatePacket);
         packetProcessor_dhcp_server(switchId, device, duplicatePacket);
     } else if (device.startsWith("dhcp-relay-server-")) {
+        if (visual) visualize(switchId, device, duplicatePacket);
         packetProcessor_dhcp_relay_server(switchId, device, duplicatePacket);
     } else if (device.startsWith("dns-server-")) {
+        if (visual) visualize(switchId, device, duplicatePacket);
         packetProcessor_dns_server(switchId, device, duplicatePacket);
     }
 
@@ -436,6 +469,7 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
         addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
+        if (visual) visualize(switchId, networkObjectId, newPacket);
         switchProcessor(switchId, networkObjectId, newPacket);
         return;
     }
@@ -458,6 +492,7 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
         if (buffer[networkObjectId]) {
             buffer[networkObjectId].destination_mac = isIpInARPTable(networkObjectId, packet.origin_ip);
             addPacketTraffic(buffer[networkObjectId]);
+            if (visual) visualize(switchId, networkObjectId, buffer[networkObjectId]);
             switchProcessor(switchId, networkObjectId, buffer[networkObjectId]);
             if (buffer[networkObjectId].protocol === "dhcp" && buffer[networkObjectId].type === "release") deleteDhcpInfo(networkObjectId);
             delete buffer[networkObjectId];
@@ -512,7 +547,7 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
             newPacket.chaddr = packet.chaddr;
 
             addPacketTraffic(newPacket);
-            //terminalMessage("DHCP REQUEST Enviado")
+            if (visual) visualize(switchId, networkObjectId, newPacket);
             switchProcessor(switchId, networkObjectId, newPacket);
 
         }
@@ -545,6 +580,7 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
         newPacket.ack_number = packet.sequence_number + 1; //el ack debe ser el siguiente número de secuencia
         tcpBuffer[networkObjectId] = newPacket.sequence_number;
         addPacketTraffic(newPacket);
+        if (visual) visualize(switchId, networkObjectId, newPacket);
         switchProcessor(switchId, networkObjectId, newPacket);
         return;
     }
@@ -556,6 +592,7 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
         newPacket.ack_number = packet.sequence_number + 1; //el ack debe ser el siguiente número de secuencia
         newPacket.sequence_number = packet.ack_number - 1; //el paquete debe tener la secuencia correcta
         addPacketTraffic(newPacket);
+        if (visual) visualize(switchId, networkObjectId, newPacket);
         switchProcessor(switchId, networkObjectId, newPacket);
         return;
     }
@@ -619,6 +656,7 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
             addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
             let newPacket = new ArpReply(networkObjectIp, packet.origin_ip, routerObjectMac, packet.origin_mac);
             addPacketTraffic(newPacket);
+            if (visual) visualize(switchId, networkObjectId, newPacket);
             switchProcessor(switchId, networkObjectId, newPacket);
             return;
         }
@@ -633,6 +671,7 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
             //terminalMessage(networkObjectId + ": Enviando ICMP ECHO REPLY");
             let newPacket = new IcmpEchoReply(networkObjectIp, packet.origin_ip, routerObjectMac, packet.origin_mac);
             addPacketTraffic(newPacket);
+            if (visual) visualize(switchId, networkObjectId, newPacket);
             switchProcessor(switchId, networkObjectId, newPacket);
             return;
 
@@ -653,6 +692,7 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
                 buffer[networkObjectId].destination_mac = isIpInARPTable(networkObjectId, packet.origin_ip);
                 //terminalMessage("Enviando paquete en el buffer: " + buffer[networkObjectId].protocol);
                 addPacketTraffic(buffer[networkObjectId]);
+                if (visual) visualize(switchId, networkObjectId, buffer[networkObjectId]);
                 switchProcessor(switchId, networkObjectId, buffer[networkObjectId]);
                 delete buffer[networkObjectId];
                 return;
@@ -699,10 +739,12 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
                     let newPacket = new ArpRequest(gateway, packet.destination_ip, routerObjectMac);
                     arpFlag = false;
                     addPacketTraffic(newPacket);
+                    if (visual) visualize(nextSwitch, networkObjectId, newPacket);
                     switchProcessor(nextSwitch, networkObjectId, newPacket);
                     return;
                 }
                 addPacketTraffic(packet);
+                if (visual) visualize(nextSwitch, networkObjectId, packet);
                 switchProcessor(nextSwitch, networkObjectId, packet);
                 //terminalMessage(networkObjectId + ": Reenviando el paquete directamente...")
                 return;
@@ -737,11 +779,13 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
                         let newPacket = new ArpRequest(gateway, nexthop, routerObjectMac);
                         arpFlag = false;
                         addPacketTraffic(newPacket);
+                        if (visual) visualize(nextSwitch, networkObjectId, newPacket);
                         switchProcessor(nextSwitch, networkObjectId, newPacket);
                         return;
                     }
 
                     addPacketTraffic(packet);
+                    if (visual) visualize(nextSwitch, networkObjectId, packet);
                     switchProcessor(nextSwitch, networkObjectId, packet); //mandamos el paquete al switch
                     return;
                 }
@@ -767,13 +811,14 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
                 buffer[networkObjectId] = packet;
                 let newPacket = new ArpRequest(gateway, nexthop, routerObjectMac);
                 arpFlag = false;
-
                 addPacketTraffic(newPacket);
+                if (visual) visualize(nextSwitch, networkObjectId, newPacket);
                 switchProcessor(nextSwitch, networkObjectId, newPacket);
                 return;
             }
 
             addPacketTraffic(packet);
+            if (visual) visualize(nextSwitch, networkObjectId, packet);
             switchProcessor(nextSwitch, networkObjectId, packet); //mandamos el paquete al switch
             return;
 
@@ -819,6 +864,7 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
         addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
+        if (visual) visualize(switchId, serverObjectId, newPacket);
         switchProcessor(switchId, serverObjectId, newPacket);
         return;
 
@@ -832,6 +878,7 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
         if (buffer[serverObjectId]) {
             buffer[serverObjectId].destination_mac = isIpInARPTable(serverObjectId, packet.origin_ip);
             addPacketTraffic(buffer[serverObjectId]);
+            if (visual) visualize(switchId, serverObjectId, buffer[serverObjectId]);
             switchProcessor(switchId, serverObjectId, buffer[serverObjectId]);
             if (buffer[serverObjectId].protocol === "dhcp" && buffer[serverObjectId].type === "release") deleteDhcpInfo(serverObjectId);
             delete buffer[serverObjectId];
@@ -848,6 +895,7 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
         //terminalMessage(serverObjectId + ": Enviando ICMP ECHO REPLY");
         let newPacket = new IcmpEchoReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
+        if (visual) visualize(switchId, serverObjectId, newPacket);
         switchProcessor(switchId, serverObjectId, newPacket);
         return;
 
@@ -890,6 +938,7 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
 
         //terminalMessage(serverObjectId + ": DHCP OFFER Enviado")
         addPacketTraffic(newPacket);
+        if (visual) visualize(switchId, serverObjectId, newPacket);
         switchProcessor(switchId, serverObjectId, newPacket);
         return;
     }
@@ -922,6 +971,7 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
             addDhcpEntry(serverObjectId, packet.yiaddr, packet.chaddr, packet.hostname);
             //terminalMessage(serverObjectId + ": DHCP ACK Enviado")
             addPacketTraffic(newPacket)
+            if (visual) visualize(switchId, serverObjectId, newPacket);
             switchProcessor(switchId, serverObjectId, newPacket);
             return;
         }
@@ -952,6 +1002,7 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
             );
 
             addPacketTraffic(newPacket);
+            if (visual) visualize(switchId, serverObjectId, newPacket);
             switchProcessor(switchId, serverObjectId, newPacket);
             return;
 
@@ -983,6 +1034,7 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
             addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
             let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
             addPacketTraffic(newPacket);
+            if (visual) visualize(switchId, serverObjectId, newPacket);
             switchProcessor(switchId, serverObjectId, newPacket);
             return;
         }
@@ -999,6 +1051,7 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
             if (buffer[serverObjectId]) {
                 buffer[serverObjectId].destination_mac = isIpInARPTable(serverObjectId, packet.origin_ip);
                 addPacketTraffic(buffer[serverObjectId]);
+                if (visual) visualize(switchId, serverObjectId, buffer[serverObjectId]);
                 switchProcessor(switchId, serverObjectId, buffer[serverObjectId]);
                 delete buffer[serverObjectId];
             }
@@ -1012,6 +1065,7 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
             }
             let newPacket = new IcmpEchoReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
             addPacketTraffic(newPacket);
+            if (visual) visualize(switchId, serverObjectId, newPacket);
             switchProcessor(switchId, serverObjectId, newPacket);
             return;
         }
@@ -1035,6 +1089,7 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
             packet.origin_mac = serverObjectMac;
             packet.destination_mac = packet.chaddr;
             addPacketTraffic(packet);
+            if (visual) visualize(switchId, serverObjectId, packet);
             switchProcessor(switchId, serverObjectId, packet);
             return;
         }
@@ -1047,6 +1102,7 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
             packet.origin_mac = serverObjectMac;
             packet.destination_mac = packet.chaddr;
             addPacketTraffic(packet);
+            if (visual) visualize(switchId, serverObjectId, packet);
             switchProcessor(switchId, serverObjectId, packet);
             return;
         }
@@ -1071,6 +1127,7 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
             buffer[serverObjectId] = packet;
             let newPacket = new ArpRequest(serverObjectIp, defaultGateway, serverObjectMac);
             addPacketTraffic(newPacket);
+            if (visual) visualize(switchId, serverObjectId, newPacket);
             switchProcessor(switchId, serverObjectId, newPacket);
             return;
         }
@@ -1078,6 +1135,7 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
         //la mac de la puerta de enlace esta en la tabla de arp
 
         addPacketTraffic(packet);
+        if (visual) visualize(switchId, serverObjectId, packet);
         switchProcessor(switchId, serverObjectId, packet);
         return;
 
@@ -1091,6 +1149,7 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
         packet.origin_mac = serverObjectMac;
         packet.destination_mac = isIpInARPTable(serverObjectId, defaultGateway);
         addPacketTraffic(packet);
+        if (visual) visualize(switchId, serverObjectId, packet);
         switchProcessor(switchId, serverObjectId, packet);
         return;
     }
@@ -1116,6 +1175,7 @@ function packetProcessor_dns_server(switchId, serverObjectId, packet) {
         addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
+        if (visual) visualize(switchId, serverObjectId, newPacket);
         switchProcessor(switchId, serverObjectId, newPacket);
         return;
     }
@@ -1126,6 +1186,7 @@ function packetProcessor_dns_server(switchId, serverObjectId, packet) {
         if (buffer[serverObjectId]) {
             buffer[serverObjectId].destination_mac = isIpInARPTable(serverObjectId, packet.origin_ip);
             addPacketTraffic(buffer[serverObjectId]);
+            if (visual) visualize(switchId, serverObjectId, buffer[serverObjectId]);
             switchProcessor(switchId, serverObjectId, buffer[serverObjectId]);
             delete buffer[serverObjectId];
         }
@@ -1137,6 +1198,7 @@ function packetProcessor_dns_server(switchId, serverObjectId, packet) {
         }
         let newPacket = new IcmpEchoReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
+        if (visual) visualize(switchId, serverObjectId, newPacket);
         switchProcessor(switchId, serverObjectId, newPacket);
         return;
     }
@@ -1154,6 +1216,7 @@ function packetProcessor_dns_server(switchId, serverObjectId, packet) {
         let newPacket = new dnsReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac, packet.query, answerTranslation);
         newPacket.answer_type = answerType;
         addPacketTraffic(newPacket);
+        if (visual) visualize(switchId, serverObjectId, newPacket);
         switchProcessor(switchId, serverObjectId, newPacket);
         return;
     }
