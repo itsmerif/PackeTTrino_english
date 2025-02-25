@@ -1,6 +1,3 @@
-function visualize(object1, object2, packet) {
-
-
-
-
+function visualize(originObject, destinationObject, packet) {
+    console.log(originObject, destinationObject, packet.protocol);
 }
