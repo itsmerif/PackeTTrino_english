@@ -129,6 +129,7 @@ function command_help() {
     terminalMessage("<li>ping: utilidad para enviar paquetes ICMP Echo Request a dispositivos </li>");
     terminalMessage("<li>dhcp: utilidad para configurar DHCP en dispositivos</li>");
     terminalMessage("<li>firewall: utilidad para configurar cortafuegos en dispositivos</li>");
+    terminalMessage("<li>arp: utilidad para mostrar/administrar la tabla de direcciones MAC-IP</li>");
     terminalMessage("<li>ip: utilidad para mostrar/administrar la configuracion de red o enrutamiento en dispositivos</li>");
     terminalMessage("<li>dig: utilidad para resolver nombres de dominio</li>");
     terminalMessage("<li>nano: utilidad para editar archivos</li>");
@@ -201,6 +202,12 @@ function command_man(topic) {
             terminalMessage("<p>Ejemplo: dns add google.com 192.168.1.1</p>");
             terminalMessage("<p>Ejemplo: dns del google.com</p>");
             terminalMessage("<p>Ejemplo: dns add -t CNAME google.com www.google.com</p>");
+            break;
+        case "arp":
+            terminalMessage("<p>arp: utilidad para mostrar/administrar la tabla de direcciones MAC-IP</p>");
+            terminalMessage("<p>Opciones:</p>");
+            terminalMessage("<p>-n: mostrar la tabla de direcciones MAC-IP</p>");
+            terminalMessage("<p>Ejemplo: arp -n</p>");
             break;
         case "help":
             terminalMessage("<p>help: utilidad para mostrar la ayuda del terminal</p>");

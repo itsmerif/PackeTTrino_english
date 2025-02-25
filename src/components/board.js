@@ -10,7 +10,7 @@ function dragOverBoard(event) {
 function BoardItemDragStart(event) {
 
     const networkObject = event.target.closest(".item-dropped");
-    
+
     //obtengo TODOS los datos del elemento
 
     const networkObjectid = networkObject.id;
@@ -19,9 +19,9 @@ function BoardItemDragStart(event) {
     const mac = networkObject.getAttribute("data-mac");
     const gateway = networkObject.getAttribute("data-gateway");
     const itemType = "item-dropped";
-    const x = networkObject.style.left;   
+    const x = networkObject.style.left;
     const y = networkObject.style.top;
-    
+
     //los transformamos en un string
 
     event.dataTransfer.setData("json", JSON.stringify({
@@ -41,7 +41,7 @@ function dropItem(event) {
     const item = event.dataTransfer.getData("json");
     const itemType = JSON.parse(item).itemType;
     const itemId = JSON.parse(item).itemId;
-    const x = event.clientX;    
+    const x = event.clientX;
     const y = event.clientY;
     const $board = document.querySelector(".board");
 
@@ -81,17 +81,34 @@ function dropItem(event) {
     }
 }
 
-function deleteItem(event) {    
+function deleteItem(event) {
+
     event.stopPropagation();
+
     let networkObject = event.target.closest(".item-dropped") || event.target.closest(".text-annotation");
+
     if (!networkObject.id.startsWith("router-")) {
-        if (!networkObject.getAttribute("data-switch")) {
-            networkObject.remove();
+
+        if (networkObject.id.startsWith("switch-")) {
+
+            if (networkObject.querySelector(".mac-table").querySelector("table").querySelectorAll("tr").length === 1 ) {
+                networkObject.remove();
+            }
+
+        } else {
+
+            if (!networkObject.getAttribute("data-switch")) {
+                networkObject.remove();
+            }
+            
         }
-    }else {
+
+    } else {
+
         if (!networkObject.getAttribute("data-switch-enp0s3") && !networkObject.getAttribute("data-switch-enp0s8") && !networkObject.getAttribute("data-switch-enp0s9")) {
             networkObject.remove();
         }
+
     }
 }
 
