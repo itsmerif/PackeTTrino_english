@@ -120,3 +120,18 @@ function dragStart(event) {
         itemId: networkObjectId
     }));
 }
+
+function getConns(networkObjectId) {
+    const networkObject = document.getElementById(networkObjectId);
+    const connections = document.querySelectorAll("line");
+    let filteredConns = [];
+
+    for (let i = 0; i < connections.length; i++) {
+        let conn = connections[i];
+        if (conn.getAttribute("end-start") === networkObjectId) {
+            filteredConns.push(conn);
+        }
+    }
+
+    return filteredConns;
+}
