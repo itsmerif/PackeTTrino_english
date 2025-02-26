@@ -1298,14 +1298,19 @@ async function visualize(originObject, destinationObject, packet) {
     
     const packetTypeMap = {
         "arp-request": "broadcast",
-        "arp-reply": "arpreply",
-        "dhcp-discover": "discover",
-        "dhcp-request": "request",
-        "dhcp-offer": "offer",
-        "dhcp-ack": "ack",
+        "arp-reply": "unicast",
+        "dhcp-discover": "dhcp",
+        "dhcp-request": "dhcp",
+        "dhcp-offer": "dhcp",
+        "dhcp-ack": "dhcp",
+        "tcp-syn": "tcp",
+        "tcp-syn-ack": "tcp",
+        "tcp-syn-ack-reply": "tcp",
+        "dns-request": "dns",
+        "dns-reply": "dns",
     };
 
-    const type = packetTypeMap[`${packet.protocol}-${packet.type}`] || "unicast";
+    const type = packetTypeMap[`${packet.protocol}-${packet.type}`] || "unicast";z
 
     await movePacket(
         $originObject.style.left, 

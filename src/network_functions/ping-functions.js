@@ -33,6 +33,11 @@ async function ping(dataId, args) {
 
     if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
 
+        if (args[1] === "localhost") { //es el mismo equipo, lo damos por exito
+            ping_s(args[1]);
+            return;
+        }
+
         if (!visualToggle) {
 
             dnsRequestFlag = false;
@@ -46,13 +51,13 @@ async function ping(dataId, args) {
                     try { //intentamos hacer ping a la ip de respuesta
                         icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, isDomainInCachePc(dataId, args[1])[1]);
                     } catch (error) {
-                        ping_f(networkObjectIp);
+                        ping_f(args[1]);
                         return;
                     }
                     if (!icmpFlag) {
-                        ping_f(networkObjectIp);
+                        ping_f(args[1]);
                     } else {
-                        ping_s(networkObjectIp);
+                        ping_s(args[1]);
                     }
                 }
             }, 500);
@@ -85,9 +90,9 @@ async function ping(dataId, args) {
                 await maximizeTerminal();
 
                 if (!icmpFlag) {
-                    ping_f(networkObjectIp);
+                    ping_f(args[1]);
                 } else {
-                    ping_s(networkObjectIp);
+                    ping_s(args[1]);
                 }
             }
 
@@ -104,7 +109,7 @@ async function ping(dataId, args) {
     }
 
     if (args[1] === networkObjectIp) { //es el mismo equipo, lo damos por exito
-        ping_s(networkObjectIp);
+        ping_s(args[1]);
         return;
     }
 
@@ -118,13 +123,13 @@ async function ping(dataId, args) {
             await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, args[1]);
             await maximizeTerminal();
             if (!icmpFlag) {
-                ping_f(networkObjectIp);
+                ping_f(args[1]);
             } else {
-                ping_s(networkObjectIp);
+                ping_s(args[1]);
             }
         } catch (error) {
             await maximizeTerminal();
-            ping_f(networkObjectIp);
+            ping_f(args[1]);
         }
 
     } else { //no se usa visual
@@ -133,12 +138,12 @@ async function ping(dataId, args) {
             icmpFlag = false;
             icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, args[1]);
             if (!icmpFlag) {
-                ping_f(networkObjectIp);
+                ping_f(args[1]);
             } else {
-                ping_s(networkObjectIp);
+                ping_s(args[1]);
             }
         } catch (error) {
-            ping_f(networkObjectIp);
+            ping_f(args[1]);
         }
 
     }
