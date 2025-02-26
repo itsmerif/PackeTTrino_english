@@ -1310,7 +1310,7 @@ async function visualize(originObject, destinationObject, packet) {
         "dns-reply": "dns",
     };
 
-    const type = packetTypeMap[`${packet.protocol}-${packet.type}`] || "unicast";z
+    const type = packetTypeMap[`${packet.protocol}-${packet.type}`] || "unicast";
 
     await movePacket(
         $originObject.style.left, 
