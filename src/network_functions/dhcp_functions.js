@@ -1,4 +1,4 @@
-function dhcp(dataId, args) {
+async function dhcp(dataId, args) {
 
     const $networkObject = document.getElementById(dataId);
     const $networkObjectIp = $networkObject.getAttribute("data-ip");
@@ -27,17 +27,17 @@ function dhcp(dataId, args) {
 
         if (!$networkObjectIp) { //no tenemos una ip, tenemos que buscar uno
 
-            //terminalMessage("Buscando servidor DHCP...");
+            terminalMessage("Buscando servidor DHCP...");
 
             try {
 
                 dhcpDiscoverFlag = false;
                 dhcpRequestFlag = false;
 
-                dhcpDiscoverGenerator(dataId, switchObjectId);
+                await dhcpDiscoverGenerator(dataId, switchObjectId);
 
                 if (dhcpDiscoverFlag === false || dhcpRequestFlag === false) {
-                    ping_f("0.0.0.0");
+                    terminalMessage("Error: No se pudo encontrar un servidor DHCP.");
                     return;
                 }
 

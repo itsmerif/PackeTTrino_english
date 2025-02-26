@@ -126,7 +126,6 @@ async function dhcpDiscoverGenerator(networkObjectId, switchId) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     let packet = new dhcpDiscover(networkObjectMac);
-    //terminalMessage(networkObjectId + ": Enviando DHCP Discover");
     addPacketTraffic(packet);
     await switchProcessor(switchId, networkObjectId, packet);
     return;
@@ -374,24 +373,23 @@ async function switchProcessor(switchId, networkObjectId, packet) {
 
         let devices = getDeviceTable($switchObject.id);
 
-        for (let device of devices) {
+        await Promise.all(devices.map(async (device) => {
             if (device !== networkObjectId) {
-
                 let duplicatePacket = structuredClone(packet);
-
+        
                 if (device.startsWith("pc-")) {
-                    packetProcessor_PC(switchId, device, duplicatePacket);
+                    await packetProcessor_PC(switchId, device, duplicatePacket);
                 } else if (device.startsWith("router-")) {
-                    packetProcessor_router(switchId, device, duplicatePacket);
+                    await packetProcessor_router(switchId, device, duplicatePacket);
                 } else if (device.startsWith("dhcp-server-")) {
-                    packetProcessor_dhcp_server(switchId, device, duplicatePacket);
+                    await packetProcessor_dhcp_server(switchId, device, duplicatePacket);
                 } else if (device.startsWith("dhcp-relay-server-")) {
-                    packetProcessor_dhcp_relay_server(switchId, device, duplicatePacket);
+                    await packetProcessor_dhcp_relay_server(switchId, device, duplicatePacket);
                 } else if (device.startsWith("dns-server-")) {
-                    packetProcessor_dns_server(switchId, device, duplicatePacket);
+                    await packetProcessor_dns_server(switchId, device, duplicatePacket);
                 }
             }
-        }
+        }));
 
         return;
     }
@@ -402,15 +400,15 @@ async function switchProcessor(switchId, networkObjectId, packet) {
     let duplicatePacket = structuredClone(packet);
 
     if (device.startsWith("pc-")) {
-        packetProcessor_PC(switchId, device, duplicatePacket);
+        await packetProcessor_PC(switchId, device, duplicatePacket);
     } else if (device.startsWith("router-")) {
-        packetProcessor_router(switchId, device, duplicatePacket);
+        await packetProcessor_router(switchId, device, duplicatePacket);
     } else if (device.startsWith("dhcp-server-")) {
-        packetProcessor_dhcp_server(switchId, device, duplicatePacket);
+        await packetProcessor_dhcp_server(switchId, device, duplicatePacket);
     } else if (device.startsWith("dhcp-relay-server-")) {
-        packetProcessor_dhcp_relay_server(switchId, device, duplicatePacket);
+        await packetProcessor_dhcp_relay_server(switchId, device, duplicatePacket);
     } else if (device.startsWith("dns-server-")) {
-        packetProcessor_dns_server(switchId, device, duplicatePacket);
+        await packetProcessor_dns_server(switchId, device, duplicatePacket);
     }
 
     return;
