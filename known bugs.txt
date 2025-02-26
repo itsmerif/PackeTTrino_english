@@ -1,0 +1,1 @@
+dhcp check input is on for every pc after clicking on it
