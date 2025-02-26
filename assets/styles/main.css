@@ -58,7 +58,7 @@ img {
     margin-bottom: 4px;
 }
 
-.ping-form input {
+.ping-form input, select {
     width: 100%;
     padding: 12px;
     border: 1px solid #e5e7eb;
@@ -71,7 +71,7 @@ img {
     color: #ffffff;
     border: none;
     cursor: pointer;
-    width: 50%;
+    width: fit-content;
 }
 
 .ping-form input[type="submit"]:hover {

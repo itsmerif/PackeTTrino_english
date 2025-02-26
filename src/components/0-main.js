@@ -46,19 +46,6 @@ function deleteMouse() {
     }
 }
 
-async function pingSim() {
-    const form = document.querySelector(".ping-form");
-    const ip1 = form.ip1.value;
-    const ip2 = form.ip2.value;    
-    const $networkObject = document.querySelector(`[data-ip='${ip1}']`);
-    const switchObjectId = $networkObject.getAttribute("data-switch");
-    try {
-        await icmpRequestPacketGenerator($networkObject.id, switchObjectId, ip1, ip2);
-    } catch (error) {
-        console.error("Error durante el ping:", error);
-    }
-}
-
 function showPingForm() {
     const form = document.querySelector(".ping-form");
     if (form.style.display === "none") {

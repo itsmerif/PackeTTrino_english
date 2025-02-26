@@ -1290,9 +1290,9 @@ function firewallProcessorHost(networkObjectId, packet) {
     return defaultPolicy === "ACCEPT";
 }
 
-async function visualize(originObject, destinationObject, packet) {
+//visualizadores 
 
-    console.log(originObject, destinationObject, packet.protocol);
+async function visualize(originObject, destinationObject, packet) {
 
     const $originObject = document.getElementById(originObject);
     const $destinationObject = document.getElementById(destinationObject);
@@ -1316,5 +1316,23 @@ async function visualize(originObject, destinationObject, packet) {
         $destinationObject.style.top, 
         type
     );
+
+}
+
+async function pingSim() {
+
+    const form = document.querySelector(".ping-form");
+    const originIp = form.ip1.value; //ip de origen
+    const destination = form.ip2.value; 
+    const type = form.querySelector("#packet-type").value;
+    const $networkObject = document.querySelector(`[data-ip='${originIp}']`);
+    const switchObjectId = $networkObject.getAttribute("data-switch");
+
+    switch (type) {
+        case "icmp":
+            await ping($networkObject.id, ["ping", destination]);
+            break;
+    }
+
 
 }
