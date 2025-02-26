@@ -28,10 +28,6 @@ async function ping(dataId, args) {
     //generamos el paquete
 
     cleanPacketTraffic(); //limpiamos la tabla de paquetes
-
-    //gestion de terminal
-
-    if (visualToggle) await minimizeTerminal(); 
     
     //caso 1) el valor introducido es una nombre de dominio
 
@@ -65,13 +61,13 @@ async function ping(dataId, args) {
 
         } else {
 
-
+            await minimizeTerminal();
             dnsRequestFlag = false;
             await dig(dataId, args[1], false);
 
             if (!dnsRequestFlag) {
 
-                terminalMessage("Error: No se pudo resolver el nombre de dominio.");
+                await maximizeTerminal();
 
             } else {
 
@@ -87,7 +83,7 @@ async function ping(dataId, args) {
                 }
 
                 await maximizeTerminal();
-                
+
                 if (!icmpFlag) {
                     ping_f(networkObjectIp);
                 } else {
@@ -120,12 +116,6 @@ async function ping(dataId, args) {
             icmpFlag = false;
             await minimizeTerminal();
             await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, args[1]);
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            let waitTime = 0;
-            while (!icmpFlag) {
-                await new Promise(resolve => setTimeout(resolve, 100));
-                waitTime += 100;
-            }
             await maximizeTerminal();
             if (!icmpFlag) {
                 ping_f(networkObjectIp);
