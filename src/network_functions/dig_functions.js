@@ -22,12 +22,25 @@ async function dig(dataId, domain, verbose = false) {
     const [translationType, translation] = isDomainInCache(dataId, domain);
 
     if (!translation) { //no tenemos la ip en cache, buscamos en el servidor
-
         dnsRequestFlag = false;
-        
-        dnsRequestPacketGenerator(dataId, switchId, domain);
 
-        setTimeout(() => {
+        if (!visualToggle) {           
+            dnsRequestPacketGenerator(dataId, switchId, domain);
+            setTimeout(() => {
+                if (!dnsRequestFlag) {
+                    terminalMessage("Error: No se pudo resolver el nombre de dominio.");
+                } else {
+                    let [translationType, translation] = isDomainInCachePc(dataId, domain);
+                    if (verbose) {
+                        terminalMessage(`Nombre de Dominio: ${domain}`);
+                        terminalMessage(`Tipo de Registro: ${translationType}`);
+                        terminalMessage(`Respuesta: ${translation}`);
+                    }
+                }
+            }, 500);
+        } else {
+            dnsRequestFlag = false;
+            await dnsRequestPacketGenerator(dataId, switchId, domain);
             if (!dnsRequestFlag) {
                 terminalMessage("Error: No se pudo resolver el nombre de dominio.");
             } else {
@@ -38,8 +51,7 @@ async function dig(dataId, domain, verbose = false) {
                     terminalMessage(`Respuesta: ${translation}`);
                 }
             }
-        }, 500);
-
+        }
         return;
     }
 

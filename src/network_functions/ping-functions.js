@@ -29,29 +29,75 @@ async function ping(dataId, args) {
 
     cleanPacketTraffic(); //limpiamos la tabla de paquetes
 
+    //gestion de terminal
+
+    if (visualToggle) await minimizeTerminal(); 
+    
     //caso 1) el valor introducido es una nombre de dominio
 
     if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
-        dnsRequestFlag = false;
-        dig(dataId, args[1], false);
-        setTimeout(() => {
+
+        if (!visualToggle) {
+
+            dnsRequestFlag = false;
+
+            dig(dataId, args[1], false);
+            
+            setTimeout(() => {
+                if (!dnsRequestFlag) {
+                    terminalMessage("Error: No se pudo resolver el nombre de dominio.");
+                } else {
+                    try { //intentamos hacer ping a la ip de respuesta
+                        icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, isDomainInCachePc(dataId, args[1])[1]);
+                    } catch (error) {
+                        ping_f(networkObjectIp);
+                        return;
+                    }
+                    if (!icmpFlag) {
+                        ping_f(networkObjectIp);
+                    } else {
+                        ping_s(networkObjectIp);
+                    }
+                }
+            }, 500);
+
+            return;
+
+        } else {
+
+
+            dnsRequestFlag = false;
+            await dig(dataId, args[1], false);
+
             if (!dnsRequestFlag) {
+
                 terminalMessage("Error: No se pudo resolver el nombre de dominio.");
+
             } else {
-                try { //intentamos hacer ping a la ip de respuesta
-                    icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, isDomainInCachePc(dataId, args[1])[1]);
+
+                try { 
+
+                    await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, isDomainInCachePc(dataId, args[1])[1]);
+
                 } catch (error) {
+
                     ping_f(networkObjectIp);
                     return;
+
                 }
+
+                await maximizeTerminal();
+                
                 if (!icmpFlag) {
                     ping_f(networkObjectIp);
                 } else {
                     ping_s(networkObjectIp);
                 }
             }
-        }, 500);
-        return;
+
+            return;
+
+        }
     }
 
     //caso 2) el valor introducido es una ip

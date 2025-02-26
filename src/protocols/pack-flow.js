@@ -476,7 +476,7 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
         }
 
         //terminalMessage(networkObjectId + ": Enviando ICMP ECHO REPLY");
-        icmpReplyPacketGenerator(networkObjectId, switchId, networkObjectIp, packet.origin_ip);
+        await icmpReplyPacketGenerator(networkObjectId, switchId, networkObjectIp, packet.origin_ip);
         return;
 
     }
