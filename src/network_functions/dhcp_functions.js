@@ -34,7 +34,9 @@ async function dhcp(dataId, args) {
                 dhcpDiscoverFlag = false;
                 dhcpRequestFlag = false;
 
+                if (visualToggle) await minimizeTerminal();
                 await dhcpDiscoverGenerator(dataId, switchObjectId);
+                if (visualToggle) await maximizeTerminal();
 
                 if (dhcpDiscoverFlag === false || dhcpRequestFlag === false) {
                     terminalMessage("Error: No se pudo encontrar un servidor DHCP.");
