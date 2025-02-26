@@ -36,14 +36,14 @@ async function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destina
             buffer[networkObjectId] = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), "");
             packet = new ArpRequest(ip, defaultGateway, $networkObject.getAttribute("data-mac"));
             addPacketTraffic(packet);
-            switchProcessor(switchId, networkObjectId, packet);
+            await switchProcessor(switchId, networkObjectId, packet);
             return;
         }
 
         packet = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), defaultGatewayMac);
         icmpFlag = false;
         addPacketTraffic(packet);
-        switchProcessor(switchId, networkObjectId, packet);
+        await switchProcessor(switchId, networkObjectId, packet);
         return;
 
     }
@@ -57,11 +57,11 @@ async function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destina
         buffer[networkObjectId] = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), "");
         packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
         addPacketTraffic(packet);
-        switchProcessor(switchId, networkObjectId, packet);
+        await switchProcessor(switchId, networkObjectId, packet);
     } else {
         packet = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), destination_mac);
         addPacketTraffic(packet);
-        switchProcessor(switchId, networkObjectId, packet);
+        await switchProcessor(switchId, networkObjectId, packet);
     }
 
 }
@@ -90,7 +90,7 @@ async function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destinati
             packet = new ArpRequest(ip, defaultGateway, $networkObject.getAttribute("data-mac"));
             arpFlag = false;
             addPacketTraffic(packet);
-            switchProcessor(switchId, networkObjectId, packet);
+            await switchProcessor(switchId, networkObjectId, packet);
             return;
         }
 
@@ -98,7 +98,7 @@ async function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destinati
         icmpFlag = false;
 
         addPacketTraffic(packet);
-        switchProcessor(switchId, networkObjectId, packet);
+        await switchProcessor(switchId, networkObjectId, packet);
         return;
 
     }
@@ -111,13 +111,13 @@ async function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destinati
         arpFlag = false;
 
         addPacketTraffic(packet);
-        switchProcessor(switchId, networkObjectId, packet);
+        await switchProcessor(switchId, networkObjectId, packet);
     } else {
         packet = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), destination_mac);
         icmpFlag = false;
 
         addPacketTraffic(packet);
-        switchProcessor(switchId, networkObjectId, packet);
+        await switchProcessor(switchId, networkObjectId, packet);
     }
 
 }
@@ -240,7 +240,7 @@ async function dhcpRenewGenerator(networkObjectId, switchId) {
     //la mac del servidor está en la tabla arp
 
     addPacketTraffic(newPacket);
-    switchProcessor(switchId, networkObjectId, newPacket);
+    await switchProcessor(switchId, networkObjectId, newPacket);
 
 }
 
@@ -442,7 +442,7 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
         addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, networkObjectId, newPacket);
+        await switchProcessor(switchId, networkObjectId, newPacket);
         return;
     }
 
@@ -464,7 +464,7 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
         if (buffer[networkObjectId]) {
             buffer[networkObjectId].destination_mac = isIpInARPTable(networkObjectId, packet.origin_ip);
             addPacketTraffic(buffer[networkObjectId]);
-            switchProcessor(switchId, networkObjectId, buffer[networkObjectId]);
+            await switchProcessor(switchId, networkObjectId, buffer[networkObjectId]);
             if (buffer[networkObjectId].protocol === "dhcp" && buffer[networkObjectId].type === "release") deleteDhcpInfo(networkObjectId);
             delete buffer[networkObjectId];
         }
@@ -519,7 +519,7 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
 
             addPacketTraffic(newPacket);
             //terminalMessage("DHCP REQUEST Enviado")
-            switchProcessor(switchId, networkObjectId, newPacket);
+            await switchProcessor(switchId, networkObjectId, newPacket);
 
         }
 
@@ -551,7 +551,7 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
         newPacket.ack_number = packet.sequence_number + 1; //el ack debe ser el siguiente número de secuencia
         tcpBuffer[networkObjectId] = newPacket.sequence_number;
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, networkObjectId, newPacket);
+        await switchProcessor(switchId, networkObjectId, newPacket);
         return;
     }
 
@@ -562,7 +562,7 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
         newPacket.ack_number = packet.sequence_number + 1; //el ack debe ser el siguiente número de secuencia
         newPacket.sequence_number = packet.ack_number - 1; //el paquete debe tener la secuencia correcta
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, networkObjectId, newPacket);
+        await switchProcessor(switchId, networkObjectId, newPacket);
         return;
     }
 
@@ -627,7 +627,7 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
             addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
             let newPacket = new ArpReply(networkObjectIp, packet.origin_ip, routerObjectMac, packet.origin_mac);
             addPacketTraffic(newPacket);
-            switchProcessor(switchId, networkObjectId, newPacket);
+            await switchProcessor(switchId, networkObjectId, newPacket);
             return;
         }
 
@@ -641,7 +641,7 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
             //terminalMessage(networkObjectId + ": Enviando ICMP ECHO REPLY");
             let newPacket = new IcmpEchoReply(networkObjectIp, packet.origin_ip, routerObjectMac, packet.origin_mac);
             addPacketTraffic(newPacket);
-            switchProcessor(switchId, networkObjectId, newPacket);
+            await switchProcessor(switchId, networkObjectId, newPacket);
             return;
 
         }
@@ -661,7 +661,7 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
                 buffer[networkObjectId].destination_mac = isIpInARPTable(networkObjectId, packet.origin_ip);
                 //terminalMessage("Enviando paquete en el buffer: " + buffer[networkObjectId].protocol);
                 addPacketTraffic(buffer[networkObjectId]);
-                switchProcessor(switchId, networkObjectId, buffer[networkObjectId]);
+                await switchProcessor(switchId, networkObjectId, buffer[networkObjectId]);
                 delete buffer[networkObjectId];
                 return;
             }
@@ -707,11 +707,11 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
                     let newPacket = new ArpRequest(gateway, packet.destination_ip, routerObjectMac);
                     arpFlag = false;
                     addPacketTraffic(newPacket);
-                    switchProcessor(nextSwitch, networkObjectId, newPacket);
+                    await switchProcessor(nextSwitch, networkObjectId, newPacket);
                     return;
                 }
                 addPacketTraffic(packet);
-                switchProcessor(nextSwitch, networkObjectId, packet);
+                await switchProcessor(nextSwitch, networkObjectId, packet);
                 //terminalMessage(networkObjectId + ": Reenviando el paquete directamente...")
                 return;
             }
@@ -745,12 +745,12 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
                         let newPacket = new ArpRequest(gateway, nexthop, routerObjectMac);
                         arpFlag = false;
                         addPacketTraffic(newPacket);
-                        switchProcessor(nextSwitch, networkObjectId, newPacket);
+                        await switchProcessor(nextSwitch, networkObjectId, newPacket);
                         return;
                     }
 
                     addPacketTraffic(packet);
-                    switchProcessor(nextSwitch, networkObjectId, packet); //mandamos el paquete al switch
+                    await switchProcessor(nextSwitch, networkObjectId, packet); //mandamos el paquete al switch
                     return;
                 }
 
@@ -777,12 +777,12 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
                 arpFlag = false;
 
                 addPacketTraffic(newPacket);
-                switchProcessor(nextSwitch, networkObjectId, newPacket);
+                await switchProcessor(nextSwitch, networkObjectId, newPacket);
                 return;
             }
 
             addPacketTraffic(packet);
-            switchProcessor(nextSwitch, networkObjectId, packet); //mandamos el paquete al switch
+            await switchProcessor(nextSwitch, networkObjectId, packet); //mandamos el paquete al switch
             return;
 
         }
@@ -829,7 +829,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
         addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, serverObjectId, newPacket);
+        await switchProcessor(switchId, serverObjectId, newPacket);
         return;
 
     }
@@ -842,7 +842,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
         if (buffer[serverObjectId]) {
             buffer[serverObjectId].destination_mac = isIpInARPTable(serverObjectId, packet.origin_ip);
             addPacketTraffic(buffer[serverObjectId]);
-            switchProcessor(switchId, serverObjectId, buffer[serverObjectId]);
+            await switchProcessor(switchId, serverObjectId, buffer[serverObjectId]);
             if (buffer[serverObjectId].protocol === "dhcp" && buffer[serverObjectId].type === "release") deleteDhcpInfo(serverObjectId);
             delete buffer[serverObjectId];
         }
@@ -858,7 +858,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
         //terminalMessage(serverObjectId + ": Enviando ICMP ECHO REPLY");
         let newPacket = new IcmpEchoReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, serverObjectId, newPacket);
+        await switchProcessor(switchId, serverObjectId, newPacket);
         return;
 
     }
@@ -900,7 +900,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
 
         //terminalMessage(serverObjectId + ": DHCP OFFER Enviado")
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, serverObjectId, newPacket);
+        await switchProcessor(switchId, serverObjectId, newPacket);
         return;
     }
 
@@ -932,7 +932,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
             addDhcpEntry(serverObjectId, packet.yiaddr, packet.chaddr, packet.hostname);
             //terminalMessage(serverObjectId + ": DHCP ACK Enviado")
             addPacketTraffic(newPacket)
-            switchProcessor(switchId, serverObjectId, newPacket);
+            await switchProcessor(switchId, serverObjectId, newPacket);
             return;
         }
 
@@ -962,7 +962,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
             );
 
             addPacketTraffic(newPacket);
-            switchProcessor(switchId, serverObjectId, newPacket);
+            await switchProcessor(switchId, serverObjectId, newPacket);
             return;
 
         }
@@ -995,7 +995,7 @@ async function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packe
             addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
             let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
             addPacketTraffic(newPacket);
-            switchProcessor(switchId, serverObjectId, newPacket);
+            await switchProcessor(switchId, serverObjectId, newPacket);
             return;
         }
 
@@ -1011,7 +1011,7 @@ async function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packe
             if (buffer[serverObjectId]) {
                 buffer[serverObjectId].destination_mac = isIpInARPTable(serverObjectId, packet.origin_ip);
                 addPacketTraffic(buffer[serverObjectId]);
-                switchProcessor(switchId, serverObjectId, buffer[serverObjectId]);
+                await switchProcessor(switchId, serverObjectId, buffer[serverObjectId]);
                 delete buffer[serverObjectId];
             }
 
@@ -1024,7 +1024,7 @@ async function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packe
             }
             let newPacket = new IcmpEchoReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
             addPacketTraffic(newPacket);
-            switchProcessor(switchId, serverObjectId, newPacket);
+            await switchProcessor(switchId, serverObjectId, newPacket);
             return;
         }
 
@@ -1047,7 +1047,7 @@ async function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packe
             packet.origin_mac = serverObjectMac;
             packet.destination_mac = packet.chaddr;
             addPacketTraffic(packet);
-            switchProcessor(switchId, serverObjectId, packet);
+            await switchProcessor(switchId, serverObjectId, packet);
             return;
         }
 
@@ -1059,7 +1059,7 @@ async function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packe
             packet.origin_mac = serverObjectMac;
             packet.destination_mac = packet.chaddr;
             addPacketTraffic(packet);
-            switchProcessor(switchId, serverObjectId, packet);
+            await switchProcessor(switchId, serverObjectId, packet);
             return;
         }
 
@@ -1083,14 +1083,14 @@ async function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packe
             buffer[serverObjectId] = packet;
             let newPacket = new ArpRequest(serverObjectIp, defaultGateway, serverObjectMac);
             addPacketTraffic(newPacket);
-            switchProcessor(switchId, serverObjectId, newPacket);
+            await switchProcessor(switchId, serverObjectId, newPacket);
             return;
         }
 
         //la mac de la puerta de enlace esta en la tabla de arp
 
         addPacketTraffic(packet);
-        switchProcessor(switchId, serverObjectId, packet);
+        await switchProcessor(switchId, serverObjectId, packet);
         return;
 
     }
@@ -1103,7 +1103,7 @@ async function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packe
         packet.origin_mac = serverObjectMac;
         packet.destination_mac = isIpInARPTable(serverObjectId, defaultGateway);
         addPacketTraffic(packet);
-        switchProcessor(switchId, serverObjectId, packet);
+        await switchProcessor(switchId, serverObjectId, packet);
         return;
     }
 
@@ -1130,7 +1130,7 @@ async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
         addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, serverObjectId, newPacket);
+        await switchProcessor(switchId, serverObjectId, newPacket);
         return;
     }
 
@@ -1140,7 +1140,7 @@ async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
         if (buffer[serverObjectId]) {
             buffer[serverObjectId].destination_mac = isIpInARPTable(serverObjectId, packet.origin_ip);
             addPacketTraffic(buffer[serverObjectId]);
-            switchProcessor(switchId, serverObjectId, buffer[serverObjectId]);
+            await switchProcessor(switchId, serverObjectId, buffer[serverObjectId]);
             delete buffer[serverObjectId];
         }
     }
@@ -1151,7 +1151,7 @@ async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
         }
         let newPacket = new IcmpEchoReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, serverObjectId, newPacket);
+        await switchProcessor(switchId, serverObjectId, newPacket);
         return;
     }
 
@@ -1168,7 +1168,7 @@ async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
         let newPacket = new dnsReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac, packet.query, answerTranslation);
         newPacket.answer_type = answerType;
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, serverObjectId, newPacket);
+        await switchProcessor(switchId, serverObjectId, newPacket);
         return;
     }
 
@@ -1316,23 +1316,5 @@ async function visualize(originObject, destinationObject, packet) {
         $destinationObject.style.top, 
         type
     );
-
-}
-
-async function pingSim() {
-
-    const form = document.querySelector(".ping-form");
-    const originIp = form.ip1.value; //ip de origen
-    const destination = form.ip2.value; 
-    const type = form.querySelector("#packet-type").value;
-    const $networkObject = document.querySelector(`[data-ip='${originIp}']`);
-    const switchObjectId = $networkObject.getAttribute("data-switch");
-
-    switch (type) {
-        case "icmp":
-            await ping($networkObject.id, ["ping", destination]);
-            break;
-    }
-
 
 }

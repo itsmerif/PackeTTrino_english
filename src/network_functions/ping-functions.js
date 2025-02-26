@@ -159,3 +159,17 @@ function ping_f(origin) {
     }, 500);
 
 }
+
+async function pingSim() {
+    visualToggle = true;
+    const form = document.querySelector(".ping-form");
+    const originIp = form.ip1.value; //ip de origen
+    const destination = form.ip2.value; 
+    const $networkObject = document.querySelector(`[data-ip='${originIp}']`);
+
+    if (!isValidIp(destination) ){ //lo tomamos como un nombre de dominio
+        await dig($networkObject.id, destination, false);
+    }
+
+    await ping($networkObject.id, ["ping", destination]);
+}

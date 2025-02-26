@@ -13,7 +13,7 @@ function command_dig(dataId, args) {
 
 }
 
-function dig(dataId, domain, verbose = false) {
+async function dig(dataId, domain, verbose = false) {
 
     cleanPacketTraffic()
 
