@@ -1273,3 +1273,31 @@ function firewallProcessorHost(networkObjectId, packet) {
     // si no hay regla que coincida, se aplica la política por defecto
     return defaultPolicy === "ACCEPT";
 }
+
+async function visualize(originObject, destinationObject, packet) {
+
+    if (!visualToggle) return;
+
+    const $originObject = document.getElementById(originObject);
+    const $destinationObject = document.getElementById(destinationObject);
+    
+    const packetTypeMap = {
+        "arp-request": "broadcast",
+        "arp-reply": "arpreply",
+        "dhcp-discover": "discover",
+        "dhcp-request": "request",
+        "dhcp-offer": "offer",
+        "dhcp-ack": "ack",
+    };
+
+    const type = packetTypeMap[`${packet.protocol}-${packet.type}`] || "default";
+
+    await movePacket(
+        $originObject.style.left, 
+        $originObject.style.top, 
+        $destinationObject.style.left, 
+        $destinationObject.style.top, 
+        type
+    );
+
+}
