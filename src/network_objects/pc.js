@@ -96,6 +96,7 @@ function showPcForm(id) {
         document.querySelector(".pc-form #dhcp").checked = true;
         document.querySelector(".pc-form").querySelectorAll("input[type='text']").forEach(input => input.disabled = true);
     } else {
+        document.querySelector(".pc-form").querySelectorAll("input[type='text']").forEach(input => input.disabled = false);
         document.querySelector(".pc-form #dhcp").checked = false;
     }
 

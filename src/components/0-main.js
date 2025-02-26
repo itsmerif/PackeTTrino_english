@@ -3,7 +3,6 @@ let itemIndex = 0;
 let quickInfoTimeout;
 const leaseTimers = {};
 
-
 // funciones de inicio
 
 function sleep(ms) {
@@ -15,7 +14,7 @@ async function init() {
     await sleep(500);
     document.querySelector(".pc-terminal").addEventListener("keydown", terminalKeyboard);
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm);
-    document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm);
+    document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm); //deshabilitar opciones si esta en modo dhcp
     document.getElementById("item-panel").querySelector(".traffic").addEventListener("click", showPacketTraffic);
     document.addEventListener("keydown", (event) => { if (event.key === "Escape") { document.querySelector(".packet-traffic").style.display = "none"; } });
     document.querySelector(".filter-traffic").querySelector("input").addEventListener("keydown", (event) => { if (event.key === "Enter") { filterPacketTraffic(); } });
