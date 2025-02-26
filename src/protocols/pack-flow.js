@@ -8,10 +8,12 @@ let dhcpRenewFlag = false;
 let dnsRequestFlag = false;
 let tcpSyncFlag = false;
 let order = 0;
+let visualToggle = false;
+let visualSpeed = 1000;
 
 //Generadores
 
-function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) {
+async function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const isSameNetwork = getNetwork(ip, $networkObject.getAttribute("data-netmask")) === getNetwork(destination, $networkObject.getAttribute("data-netmask"));
@@ -64,7 +66,7 @@ function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) 
 
 }
 
-function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destination) {
+async function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destination) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const isSameNetwork = getNetwork(ip, $networkObject.getAttribute("data-netmask")) === getNetwork(destination, $networkObject.getAttribute("data-netmask"));
@@ -120,17 +122,17 @@ function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destination) {
 
 }
 
-function dhcpDiscoverGenerator(networkObjectId, switchId) {
+async function dhcpDiscoverGenerator(networkObjectId, switchId) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     let packet = new dhcpDiscover(networkObjectMac);
     //terminalMessage(networkObjectId + ": Enviando DHCP Discover");
     addPacketTraffic(packet);
-    switchProcessor(switchId, networkObjectId, packet);
+    await switchProcessor(switchId, networkObjectId, packet);
     return;
 }
 
-function dhcpReleaseGenerator(networkObjectId, switchId) {
+async function dhcpReleaseGenerator(networkObjectId, switchId) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("data-ip");
@@ -157,14 +159,14 @@ function dhcpReleaseGenerator(networkObjectId, switchId) {
             buffer[networkObjectId] = newPacket;
             let arpRequest = new ArpRequest(networkObjectIp, defaultGateway, networkObjectMac);
             addPacketTraffic(arpRequest);
-            switchProcessor(switchId, networkObjectId, arpRequest);
+            await switchProcessor(switchId, networkObjectId, arpRequest);
             return;
         }
 
         //tenemos la puerta de enlace en la tabla ARP
 
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, networkObjectId, newPacket);
+        await switchProcessor(switchId, networkObjectId, newPacket);
         deleteDhcpInfo(networkObjectId);
         return;
 
@@ -179,19 +181,19 @@ function dhcpReleaseGenerator(networkObjectId, switchId) {
         buffer[networkObjectId] = newPacket;
         let arpRequest = new ArpRequest(networkObjectIp, dhcpServerIp, networkObjectMac);
         addPacketTraffic(arpRequest);
-        switchProcessor(switchId, networkObjectId, arpRequest);
+        await switchProcessor(switchId, networkObjectId, arpRequest);
         return;
     }
 
     //la mac del server está en la tabla arp
 
     addPacketTraffic(newPacket);
-    switchProcessor(switchId, networkObjectId, newPacket);
+    await switchProcessor(switchId, networkObjectId, newPacket);
     deleteDhcpInfo(networkObjectId);
 
 }
 
-function dhcpRenewGenerator(networkObjectId, switchId) {
+async function dhcpRenewGenerator(networkObjectId, switchId) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("data-ip");
@@ -211,13 +213,13 @@ function dhcpRenewGenerator(networkObjectId, switchId) {
             buffer[networkObjectId] = newPacket;
             let arpRequest = new ArpRequest(networkObjectIp, defaultGateway, networkObjectMac);
             addPacketTraffic(arpRequest);
-            switchProcessor(switchId, networkObjectId, arpRequest);
+            await switchProcessor(switchId, networkObjectId, arpRequest);
             return;
         }
 
         //tenemos la puerta de enlace en la tabla de arp
         addPacketTraffic(newPacket);
-        switchProcessor(switchId, networkObjectId, newPacket);
+        await switchProcessor(switchId, networkObjectId, newPacket);
         return;
 
     }
@@ -231,7 +233,7 @@ function dhcpRenewGenerator(networkObjectId, switchId) {
         buffer[networkObjectId] = newPacket;
         let arpRequest = new ArpRequest(networkObjectIp, dhcpServerIp, networkObjectMac);
         addPacketTraffic(arpRequest);
-        switchProcessor(switchId, networkObjectId, arpRequest);
+        await switchProcessor(switchId, networkObjectId, arpRequest);
         return;
     }
 
@@ -242,7 +244,7 @@ function dhcpRenewGenerator(networkObjectId, switchId) {
 
 }
 
-function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
+async function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
@@ -267,14 +269,14 @@ function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
             buffer[networkObjectId] = packet;
             let arpRequest = new ArpRequest(networkObjectIp, defaultGateway, networkObjectMac);
             addPacketTraffic(arpRequest);
-            switchProcessor(switchId, networkObjectId, arpRequest);
+            await switchProcessor(switchId, networkObjectId, arpRequest);
             return;
         }
 
         //tenemos la puerta de enlace en la tabla de arp
 
         addPacketTraffic(packet);
-        switchProcessor(switchId, networkObjectId, packet);
+        await switchProcessor(switchId, networkObjectId, packet);
         return;
 
     }
@@ -289,16 +291,16 @@ function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
         buffer[networkObjectId] = packet;
         let arpRequest = new ArpRequest(networkObjectIp, dnsServer, networkObjectMac);
         addPacketTraffic(arpRequest);
-        switchProcessor(switchId, networkObjectId, arpRequest);
+        await switchProcessor(switchId, networkObjectId, arpRequest);
         return;
     }
 
     addPacketTraffic(packet);
-    switchProcessor(switchId, networkObjectId, packet);
+    await switchProcessor(switchId, networkObjectId, packet);
 
 }
 
-function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
+async function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("data-ip");
@@ -323,7 +325,7 @@ function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
             tcpBuffer[networkObjectId] = buffer[networkObjectId].sequence_number; //almacenamos el número de secuencia para el siguiente paquete
             packet = new ArpRequest(networkObjectIp, defaultGateway, networkObjectMac);
             addPacketTraffic(packet);
-            switchProcessor(switchId, networkObjectId, packet);
+            await switchProcessor(switchId, networkObjectId, packet);
             return;
         }
 
@@ -332,7 +334,7 @@ function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
         packet = new syn(networkObjectIp, ip, networkObjectMac, defaultGatewayMac, port);
         tcpBuffer[networkObjectId] = packet.sequence_number; //almacenamos el número de secuencia para el siguiente paquete
         addPacketTraffic(packet);
-        switchProcessor(switchId, networkObjectId, packet);
+        await switchProcessor(switchId, networkObjectId, packet);
         return;
 
     }
@@ -344,19 +346,21 @@ function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
         tcpBuffer[networkObjectId] = buffer[networkObjectId].sequence_number; //almacenamos el número de secuencia para el siguiente paquete
         packet = new ArpRequest(networkObjectIp, ip, networkObjectMac);
         addPacketTraffic(packet);
-        switchProcessor(switchId, networkObjectId, packet);
+        await switchProcessor(switchId, networkObjectId, packet);
     } else {
         packet = new syn(networkObjectIp, ip, networkObjectMac, destination_mac, port);
         tcpBuffer[networkObjectId] = packet.sequence_number; //almacenamos el número de secuencia para el siguiente paquete
         addPacketTraffic(packet);
-        switchProcessor(switchId, networkObjectId, packet);
+        await switchProcessor(switchId, networkObjectId, packet);
     }
 
 }
 
 //Procesadores 
 
-function switchProcessor(switchId, networkObjectId, packet) {
+async function switchProcessor(switchId, networkObjectId, packet) {
+
+    if (visualToggle) await visualize(networkObjectId, switchId, packet);
 
     const $switchObject = document.getElementById(switchId);
 
@@ -412,7 +416,9 @@ function switchProcessor(switchId, networkObjectId, packet) {
     return;
 }
 
-function packetProcessor_PC(switchId, networkObjectId, packet) {
+async function packetProcessor_PC(switchId, networkObjectId, packet) {
+
+    if (visualToggle) await visualize(switchId, networkObjectId, packet);
 
     //cortafuegos
 
@@ -569,7 +575,9 @@ function packetProcessor_PC(switchId, networkObjectId, packet) {
 
 }
 
-function packetProcessor_router(switchId, networkObjectId, packet) {
+async function packetProcessor_router(switchId, networkObjectId, packet) {
+
+    if (visualToggle) await visualize(switchId, networkObjectId, packet);
 
     //cortafuegos
 
@@ -787,8 +795,10 @@ function packetProcessor_router(switchId, networkObjectId, packet) {
 
 }
 
-function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
+async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
     
+    if (visualToggle) await visualize(switchId, serverObjectId, packet);
+
     //cortafuegos
 
     if (!firewallProcessorHost(serverObjectId, packet)) return;
@@ -959,7 +969,9 @@ function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
     }
 }
 
-function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
+async function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
+
+    if (visualToggle) await visualize(switchId, serverObjectId, packet);
 
     //cortafuegos
 
@@ -1097,7 +1109,9 @@ function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packet) {
 
 }
 
-function packetProcessor_dns_server(switchId, serverObjectId, packet) {
+async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
+
+    if (visualToggle) await visualize(switchId, serverObjectId, packet);
 
     if (!firewallProcessorHost(serverObjectId, packet)) return;
 
@@ -1159,6 +1173,8 @@ function packetProcessor_dns_server(switchId, serverObjectId, packet) {
     }
 
 }
+
+//cortafuegos
 
 function firewallProcessorRouter(networkObjectId, packet) {
 
@@ -1276,10 +1292,11 @@ function firewallProcessorHost(networkObjectId, packet) {
 
 async function visualize(originObject, destinationObject, packet) {
 
-    if (!visualToggle) return;
+    console.log(originObject, destinationObject, packet.protocol);
 
     const $originObject = document.getElementById(originObject);
     const $destinationObject = document.getElementById(destinationObject);
+    
     
     const packetTypeMap = {
         "arp-request": "broadcast",
@@ -1290,7 +1307,7 @@ async function visualize(originObject, destinationObject, packet) {
         "dhcp-ack": "ack",
     };
 
-    const type = packetTypeMap[`${packet.protocol}-${packet.type}`] || "default";
+    const type = packetTypeMap[`${packet.protocol}-${packet.type}`] || "unicast";
 
     await movePacket(
         $originObject.style.left, 

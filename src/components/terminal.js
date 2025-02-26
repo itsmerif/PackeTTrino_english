@@ -60,6 +60,9 @@ function sendCommand(event) {
             case "man":
                 command_man(args[1]);
                 break;
+            case "visual":
+                command_visual(args);
+                break;
             case "exit":
                 event.target.value = "";
                 document.querySelector(".pc-terminal").style.display = "none";
@@ -326,4 +329,60 @@ function getRoutingRules(routerObjectid, targetinterface) {
     }
 
     return rules;
+}
+
+async function minimizeTerminal() {
+    return new Promise(resolve => {
+        const terminal = document.querySelector(".pc-terminal");
+        if (!terminal) return resolve();
+        const rect = terminal.getBoundingClientRect();
+        const targetWidth = rect.width*0.3;
+        const targetHeight = rect.height*0.3;
+        const windowHeight = window.innerHeight;
+        terminal.style.transition = "all 1s ease-in-out";
+        terminal.style.width = `${targetWidth}px`;
+        terminal.style.height = `${targetHeight}px`;
+        terminal.style.top = `${windowHeight - targetHeight}px`;
+        terminal.style.left = "100%";
+        terminal.style.transform = "translate(-100%, 0)";
+        terminal.addEventListener("transitionend", resolve, { once: true });
+    });
+}
+
+async function maximizeTerminal() {
+    return new Promise(resolve => {
+        const terminal = document.querySelector(".pc-terminal");
+        if (!terminal) return resolve();
+        terminal.style.transition = "all 1s ease-in-out";
+        terminal.style.width = "1000px";
+        terminal.style.height = "500px";
+        terminal.style.top = "40%";
+        terminal.style.left = "50%";
+        terminal.style.transform = "translate(-50%, -50%)";
+        terminal.addEventListener("transitionend", () => {
+            terminal.style.transition = "none";
+            resolve();
+        }, { once: true });
+    });
+}
+
+function command_visual(args) {
+
+    if (args[1] === "on") {
+        visualToggle = true;
+        terminalMessage(`<p>Visual mode: ON</p>`);
+        return;
+    }
+
+    if (args[1] === "off") {
+        visualToggle = false;
+        terminalMessage(`<p>Visual mode: OFF</p>`);
+        return;
+    }
+
+    if (args[1] === "speed") {
+        visualSpeed = parseInt(args[2], 10);
+        terminalMessage(`<p>Visual speed: ${visualSpeed}ms</p>`);
+        return;
+    }
 }

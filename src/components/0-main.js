@@ -1,9 +1,8 @@
 //variables globales
-
 let itemIndex = 0;
 let quickInfoTimeout;
 const leaseTimers = {};
-let visualToggle = true;
+
 
 // funciones de inicio
 
@@ -50,10 +49,11 @@ function deleteMouse() {
 async function pingSim() {
     const form = document.querySelector(".ping-form");
     const ip1 = form.ip1.value;
-    const ip2 = form.ip2.value;
+    const ip2 = form.ip2.value;    
+    const $networkObject = document.querySelector(`[data-ip='${ip1}']`);
+    const switchObjectId = $networkObject.getAttribute("data-switch");
     try {
-        await ping(ip1, ip2, true);
-        await ping(ip2, ip1, true);
+        await icmpRequestPacketGenerator($networkObject.id, switchObjectId, ip1, ip2);
     } catch (error) {
         console.error("Error durante el ping:", error);
     }
@@ -163,53 +163,6 @@ function showTerminal(event) {
     //ocultamos las opciones avanzadas
     const modal = networkObject.querySelector(".advanced-options-modal");
     modal.style.display = "none";
-}
-
-async function minimizeTerminal() {
-    const terminal = document.querySelector(".pc-terminal");
-    if (!terminal) return;
-
-    // Obtener el tamaño de la ventana y la terminal
-    const rect = terminal.getBoundingClientRect();
-    const originalWidth = rect.width;
-    const originalHeight = rect.height;
-
-    // Calcular el nuevo tamaño (30%)
-    const targetWidth = originalWidth * 0.3;
-    const targetHeight = originalHeight * 0.3;
-    const windowHeight = window.innerHeight;
-
-    // Aplicar animación con transición
-    terminal.style.transition = "all 1s ease-in-out";
-    terminal.style.width = `${targetWidth}px`;
-    terminal.style.height = `${targetHeight}px`;
-
-    // Mover a la esquina inferior derecha
-    terminal.style.top = `${windowHeight - targetHeight}px`;
-    terminal.style.left = "100%";
-    terminal.style.transform = "translate(-100%, 0)";
-
-}
-
-async function maximizeTerminal() {
-    const terminal = document.querySelector(".pc-terminal");
-    if (!terminal) return;
-
-    // Aplicar animación con transición
-    terminal.style.transition = "all 1s ease-in-out";
-
-    // Restaurar tamaño original
-    terminal.style.width = "1000px";
-    terminal.style.height = "500px";
-
-    // Restaurar posición original (centrado)
-    terminal.style.top = "40%";
-    terminal.style.left = "50%";
-    terminal.style.transform = "translate(-50%, -50%)";
-
-    setTimeout(() => {
-        terminal.style.transition = "none";
-    }, 1000);
 }
 
 function dragPingForm(event) {
