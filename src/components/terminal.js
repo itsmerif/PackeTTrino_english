@@ -269,8 +269,13 @@ function command_nano(dataId, args) {
 
     if (fileName === "/etc/network/interfaces") {
         loadNetworkFile(networkObjectId);
+        return;
     }
 
+    if (fileName === "/etc/resolv.conf") {
+        loadResolvConf(networkObjectId);
+        return;
+    }
 }
 
 function closeEditor() {
@@ -280,7 +285,7 @@ function closeEditor() {
     const networkObjectId = document.querySelector(".pc-terminal").dataset.id;
 
     if (fileName === "/etc/network/interfaces") {
-        
+
         if (networkObjectId.startsWith("router-")) {
             routingTableRestore(document.querySelector(".pc-terminal").dataset.id);
         }
@@ -293,17 +298,41 @@ function closeEditor() {
 
         } catch (error) {
 
-            document.querySelector(".file-editor-error").innerHTML= error.message;
+            document.querySelector(".file-editor-error").innerHTML = error.message;
             document.querySelector(".file-editor-error").style.display = "block";
 
             setTimeout(() => {
                 document.querySelector(".file-editor-error").style.display = "none";
             }, 3000);
-            
+
         }
+
+        return;
 
     }
 
+    if (fileName === "/etc/resolv.conf") {
+
+        try {
+
+            parserResolvConf();
+            document.querySelector(".editor-container").style.display = "none";
+            document.querySelector(".file-editor").value = "";
+
+        } catch (error) {
+
+            document.querySelector(".file-editor-error").innerHTML = error.message;
+            document.querySelector(".file-editor-error").style.display = "block";
+
+            setTimeout(() => {
+                document.querySelector(".file-editor-error").style.display = "none";
+            }, 3000);
+
+            return;
+
+        }
+
+    }
 }
 
 function getRoutingRules(routerObjectid, targetinterface) {
@@ -336,8 +365,8 @@ async function minimizeTerminal() {
         const terminal = document.querySelector(".pc-terminal");
         if (!terminal) return resolve();
         const rect = terminal.getBoundingClientRect();
-        const targetWidth = rect.width*0.3;
-        const targetHeight = rect.height*0.3;
+        const targetWidth = rect.width * 0.3;
+        const targetHeight = rect.height * 0.3;
         const windowHeight = window.innerHeight;
         terminal.style.transition = "all 1s ease-in-out";
         terminal.style.width = `${targetWidth}px`;
