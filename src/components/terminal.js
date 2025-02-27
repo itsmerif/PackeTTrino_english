@@ -232,6 +232,12 @@ function terminalKeyboard(event) {
         document.querySelector(".terminal-output").innerHTML = "";
     }
 
+    if (event.ctrlKey && event.key === "s") {
+        event.preventDefault();
+        closeEditor();
+        document.querySelector(".pc-terminal").querySelector(".terminal-input").focus();
+    }
+
     if (event.key === "Escape") {
         event.preventDefault();
         clearInterval(window.pingInterval);
@@ -269,6 +275,7 @@ function command_nano(dataId, args) {
 
     if (fileName === "/etc/network/interfaces") {
         loadNetworkFile(networkObjectId);
+        document.querySelector(".file-editor").focus();
         return;
     }
 

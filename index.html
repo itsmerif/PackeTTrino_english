@@ -124,7 +124,7 @@
   <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;" onmousedown="dragTerminal(event)">
     <p>
       <span>%></span>
-      <input type="text" onkeydown="sendCommand(event)" autofocus>
+      <input type="text" class="terminal-input" onkeydown="sendCommand(event)" autofocus>
     </p>
     <div class="terminal-output"></div>
 
@@ -136,10 +136,11 @@
       <p class="file-editor-error" onmousedown="event.stopPropagation()"
       onmouseup="event.stopPropagation()"></p>
       <textarea class="file-editor" data-file="" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()"
-        onmouseup="event.stopPropagation()" onkeydown="event.stopPropagation()" onkeyup="event.stopPropagation()"
+        onmouseup="event.stopPropagation()"
         ondragstart="event.stopPropagation()">
       </textarea>
     </div>
+
   </div>
 
   <form class="ping-form" onsubmit="pingSim(); return false;" style="display: none;" onmousedown="dragPingForm(event)">
