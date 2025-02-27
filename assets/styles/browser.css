@@ -1,0 +1,140 @@
+.pc-browser {
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f3f4f6;
+    color: #333;
+    width: 60dvw;
+    height: 700px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+    overflow: hidden;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.browser-header {
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #ddd;
+}
+
+.browser-controls {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background-color: #e1e1e1;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.control {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.close {
+    background-color: #ff5f56;
+}
+
+.minimize {
+    background-color: #ffbd2e;
+}
+
+.maximize {
+    background-color: #27c93f;
+}
+
+.browser-tabs {
+    display: flex;
+    padding: 0 10px;
+    background-color: #dee1e6;
+}
+
+.tab {
+    padding: 8px 15px;
+    background-color: #f2f2f2;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    margin-right: 2px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.tab.active {
+    background-color: #fff;
+}
+
+.browser-address-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f2f2f2;
+    padding: 8px 10px;
+}
+
+.address-bar-icons {
+    display: flex;
+}
+
+.icon {
+    padding: 0 8px;
+    color: #5f6368;
+    cursor: pointer;
+}
+
+.address-input {
+    flex-grow: 1;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 8px 15px;
+    margin: 0 8px;
+    font-size: 14px;
+    color: #333;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.browser-content {
+    flex-grow: 1;
+    background-color: #fff;
+    overflow-y: auto;
+}
+
+.empty-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 100px;
+}
+
+.search-box {
+    width: 60%;
+    padding: 12px 20px;
+    background-color: #f1f3f4;
+    border-radius: 24px;
+    margin: 20px 0 40px;
+    text-align: center;
+    color: #888;
+}
+
+.shortcuts {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.shortcut {
+    width: 80px;
+    height: 80px;
+    background-color: #f1f3f4;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}

@@ -122,10 +122,12 @@
   </form>
 
   <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;" onmousedown="dragTerminal(event)">
+
     <p>
       <span>%></span>
       <input type="text" class="terminal-input" onkeydown="sendCommand(event)" autofocus>
     </p>
+    
     <div class="terminal-output"></div>
 
     <div class="editor-container" style="display: none;">
@@ -141,6 +143,44 @@
       </textarea>
     </div>
 
+  </div>
+
+  <div class="pc-browser">
+    <div class="browser-header">
+      <div class="browser-controls">
+        <span class="control close"></span>
+        <span class="control minimize"></span>
+        <span class="control maximize"></span>
+      </div>
+      <div class="browser-tabs">
+        <div class="tab active">Nueva pestaña</div>
+        <div class="tab">+</div>
+      </div>
+      <div class="browser-address-bar">
+        <div class="address-bar-icons">
+          <span class="icon back">◀</span>
+          <span class="icon forward">▶</span>
+          <span class="icon refresh">↻</span>
+        </div>
+        <div class="address-input">https://www.ejemplo.com</div>
+        <div class="address-bar-icons">
+          <span class="icon star">★</span>
+          <span class="icon menu">⋮</span>
+        </div>
+      </div>
+    </div>
+    <div class="browser-content">
+      <div class="empty-page">
+        <h2>Nueva pestaña</h2>
+        <div class="search-box">Buscar en Google o escribir dirección web</div>
+        <div class="shortcuts">
+          <div class="shortcut">Gmail</div>
+          <div class="shortcut">YouTube</div>
+          <div class="shortcut">Maps</div>
+          <div class="shortcut">Drive</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <form class="ping-form" onsubmit="pingSim(); return false;" style="display: none;" onmousedown="dragPingForm(event)">
