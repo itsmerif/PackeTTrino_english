@@ -161,7 +161,7 @@
           <button class="icon forward" aria-label="Adelante">▶</button>
           <button class="icon refresh" aria-label="Actualizar">↻</button>
         </div>
-        <input type="text" class="address-input" placeholder="https://www.ejemplo.com" aria-label="Barra de direcciones" onkeydown="browserSearch(event)">
+        <input type="text" class="address-input" placeholder="https://www.ejemplo.com" aria-label="Barra de direcciones" onkeydown="browserSearch(event)" onmousedown="event.stopPropagation()">
         <div class="address-bar-icons">
           <button class="icon star" aria-label="Marcar como favorito">★</button>
           <button class="icon menu" aria-label="Menú">⋮</button>

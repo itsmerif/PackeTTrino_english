@@ -1,0 +1,1 @@
+volver al inicio en el browser -> no debe recargar la pagina entera sino el navegador
