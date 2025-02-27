@@ -232,12 +232,6 @@ function terminalKeyboard(event) {
         document.querySelector(".terminal-output").innerHTML = "";
     }
 
-    if (event.ctrlKey && event.key === "s") {
-        event.preventDefault();
-        closeEditor();
-        document.querySelector(".pc-terminal").querySelector(".terminal-input").focus();
-    }
-
     if (event.key === "Escape") {
         event.preventDefault();
         clearInterval(window.pingInterval);
@@ -263,10 +257,23 @@ function terminalKeyboard(event) {
     }
 }
 
+function fileEditorKeyboard(event) {
+
+    if (event.ctrlKey && event.key === "s") {
+        event.preventDefault();
+        savewebContent();
+        document.querySelector(".editor-container").style.display = "none";
+        document.querySelector(".file-editor").value = "";
+        document.querySelector(".pc-terminal").querySelector("input").focus();
+    }
+
+}
+
 function command_nano(dataId, args) {
 
     const fileName = args[1];
     const networkObjectId = document.querySelector(".pc-terminal").dataset.id;
+    const fileEditor = document.querySelector(".file-editor");
 
     if (!fileName) {
         terminalMessage("Error: El nombre del archivo no puede estar vacío");
@@ -274,22 +281,33 @@ function command_nano(dataId, args) {
     }
 
     if (fileName === "/etc/network/interfaces") {
+        fileEditor.setAttribute("data-file", "/etc/network/interfaces");
         loadNetworkFile(networkObjectId);
         document.querySelector(".file-editor").focus();
         return;
     }
 
     if (fileName === "/etc/resolv.conf") {
+        fileEditor.setAttribute("data-file", "/etc/resolv.conf");
         loadResolvConf(networkObjectId);
         document.querySelector(".file-editor").focus();
         return;
     }
+
+    if (fileName === "/var/www/html/index.html" || fileName === "-n") {
+        fileEditor.setAttribute("data-file", "/var/www/html/index.html");
+        loadApacheIndexContent(networkObjectId);
+        document.querySelector(".file-editor").focus();
+        return;
+    }
+
+    terminalMessage("Error: El archivo no existe.");
 }
 
 function closeEditor() {
 
     const fileEditor = document.querySelector(".file-editor");
-    const fileName = fileEditor.getAttribute("data-file").trim();
+    const fileName = fileEditor.getAttribute("data-file");
     const networkObjectId = document.querySelector(".pc-terminal").dataset.id;
 
     if (fileName === "/etc/network/interfaces") {
@@ -338,6 +356,13 @@ function closeEditor() {
 
         }
     }
+
+    if (fileName === "/var/www/html/index.html") {
+        savewebContent();
+        document.querySelector(".editor-container").style.display = "none";
+        document.querySelector(".file-editor").value = "";
+    }
+
 }
 
 function getRoutingRules(routerObjectid, targetinterface) {
