@@ -145,7 +145,7 @@
 
   </div>
 
-  <div class="pc-browser">
+  <div class="pc-browser" onmousedown="dragBroswer(event)" data-id="">
     <div class="browser-header">
       <div class="browser-controls">
         <span class="control close"></span>
@@ -213,11 +213,15 @@
   </article>
 
   <script src="./src/animations/move-packet.js"></script>
+
   <script src="./src/components/panel-items.json"></script>
   <script src="./src/components/terminal.js"></script>
   <script src="./src/components/text.js"></script>
   <script src="./src/components/0-main.js"></script>
   <script src="./src/components/board.js"></script>
+  <script src="./src/components/cable.js"></script>
+  <script src="./src/components/browser.js"></script>
+
   <script src="./src/network_functions/general-functions.js"></script>
   <script src="./src/network_functions/dhcp_functions.js"></script>
   <script src="./src/network_functions/arp_functions.js"></script>
@@ -227,17 +231,19 @@
   <script src="./src/network_functions/tcp-functions.js"></script>
   <script src="./src/network_functions/http-functions.js"></script>
   <script src="./src/network_functions/apache-functions.js"></script>
-  <script src="./src/components/cable.js"></script>
+  <script src="./src/network_functions/firewall-functions.js"></script>
+  <script src="./src/network_functions/dns-functions.js"></script>
+
   <script src="./src/network_objects/dhcp-relay-agent.js"></script>
   <script src="./src/network_objects/dhcpserver.js"></script>
   <script src="./src/network_objects/pc.js"></script>
   <script src="./src/network_objects/router.js"></script>
   <script src="./src/network_objects/switch.js"></script>
   <script src="./src/network_objects/dnsServer.js"></script>
+
   <script src="./src/protocols/pack-flow.js"></script>
   <script src="./src/protocols/packets.js"></script>
-  <script src="./src/network_functions/firewall-functions.js"></script>
-  <script src="./src/network_functions/dns-functions.js"></script>
+
   <script src="./src/files/parser-network-file.js"></script>
   <script src="./src/files/parser-resolve-file.js"></script>
 
