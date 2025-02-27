@@ -37,6 +37,8 @@
     border-radius: 50%;
     margin-right: 8px;
     cursor: pointer;
+    border: none;
+    padding: 0;
 }
 
 .close {
@@ -65,10 +67,13 @@
     margin-right: 2px;
     font-size: 13px;
     cursor: pointer;
+    border: none;
+    border-bottom: 1px solid transparent;
 }
 
 .tab.active {
     background-color: #fff;
+    border-bottom: 1px solid #fff;
 }
 
 .browser-address-bar {
@@ -86,6 +91,13 @@
     padding: 0 8px;
     color: #5f6368;
     cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 14px;
+}
+
+.icon:hover {
+    color: #000;
 }
 
 .address-input {
@@ -97,6 +109,13 @@
     font-size: 14px;
     color: #333;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.address-input:focus {
+    box-shadow: 0 1px 3px rgba(66, 133, 244, 0.3);
+    border-color: #4285f4;
 }
 
 .browser-content {
@@ -119,7 +138,16 @@
     border-radius: 24px;
     margin: 20px 0 40px;
     text-align: center;
-    color: #888;
+    color: #555;
+    border: 1px solid transparent;
+    outline: none;
+    font-size: 16px;
+}
+
+.search-box:focus {
+    background-color: #fff;
+    box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+    border-color: rgba(223, 225, 229, 0);
 }
 
 .shortcuts {
@@ -137,4 +165,10 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    border: none;
+    font-size: 14px;
+}
+
+.shortcut:hover {
+    background-color: #e8eaed;
 }

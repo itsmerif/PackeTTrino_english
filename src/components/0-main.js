@@ -276,10 +276,13 @@ function filterPacketTraffic() {
 function closeEveryThing(event) {
 
     if (event.key === "Escape") {
+        //cerramos todos los formularios
         let forms = document.querySelectorAll("form");
         for (let i = 0; i < forms.length; i++) {
             forms[i].style.display = "none";
         }
+        //cerramos el navegador
+        document.querySelector(".pc-browser").style.display = "none";
     }
 
 }

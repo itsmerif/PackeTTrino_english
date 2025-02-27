@@ -145,41 +145,30 @@
 
   </div>
 
-  <div class="pc-browser" onmousedown="dragBroswer(event)" data-id="">
+  <div class="pc-browser" onmousedown="dragBroswer(event)" data-id="" style="display: none;">
     <div class="browser-header">
       <div class="browser-controls">
-        <span class="control close"></span>
-        <span class="control minimize"></span>
-        <span class="control maximize"></span>
+        <button class="control close" aria-label="Cerrar" onclick="closeBrowser(event)"></button>
+        <button class="control minimize" aria-label="Minimizar"></button>
+        <button class="control maximize" aria-label="Maximizar"></button>
       </div>
       <div class="browser-tabs">
-        <div class="tab active">Nueva pestaña</div>
-        <div class="tab">+</div>
+        <button class="tab active">Nueva pestaña</button>
       </div>
       <div class="browser-address-bar">
         <div class="address-bar-icons">
-          <span class="icon back">◀</span>
-          <span class="icon forward">▶</span>
-          <span class="icon refresh">↻</span>
+          <button class="icon back" aria-label="Atrás">◀</button>
+          <button class="icon forward" aria-label="Adelante">▶</button>
+          <button class="icon refresh" aria-label="Actualizar">↻</button>
         </div>
-        <div class="address-input">https://www.ejemplo.com</div>
+        <input type="text" class="address-input" placeholder="https://www.ejemplo.com" aria-label="Barra de direcciones">
         <div class="address-bar-icons">
-          <span class="icon star">★</span>
-          <span class="icon menu">⋮</span>
+          <button class="icon star" aria-label="Marcar como favorito">★</button>
+          <button class="icon menu" aria-label="Menú">⋮</button>
         </div>
       </div>
     </div>
     <div class="browser-content">
-      <div class="empty-page">
-        <h2>Nueva pestaña</h2>
-        <div class="search-box">Buscar en Google o escribir dirección web</div>
-        <div class="shortcuts">
-          <div class="shortcut">Gmail</div>
-          <div class="shortcut">YouTube</div>
-          <div class="shortcut">Maps</div>
-          <div class="shortcut">Drive</div>
-        </div>
-      </div>
     </div>
   </div>
 

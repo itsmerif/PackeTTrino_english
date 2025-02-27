@@ -61,6 +61,7 @@ function createPcObject(x, y) {
             <button onclick="showTerminal(event)">Modo Terminal</button>
             <button onclick="showARPTable(event)">Ver Tabla ARP</button>
             <button onclick="showDnsTable(event)">Ver Tabla DNS</button>
+            <button onclick="openBrowser(event)">Navegador</button>
             <button onclick="deleteItem(event)">Eliminar</button>
         </div>
 
