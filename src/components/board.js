@@ -135,18 +135,3 @@ function getConns(networkObjectId) {
 
     return filteredConns;
 }
-
-function openBrowser(event) {
-    event.stopPropagation();
-    event.preventDefault();
-    const $networkObject = event.target.closest(".item-dropped"); //obtengo el objeto mas cercano
-    $networkObject.querySelector(".advanced-options-modal").style.display = "none"; //ocultamos el modal de opciones avanzadas
-    document.querySelector(".pc-browser").style.display = "flex"; //mostramos el navegador
-    document.querySelector(".pc-browser").setAttribute("data-id", $networkObject.id); //establecemos el id del navegador
-}
-
-function closeBrowser(event) {
-    event.stopPropagation();
-    event.preventDefault();
-    document.querySelector(".pc-browser").style.display = "none"; //ocultamos el navegador
-}

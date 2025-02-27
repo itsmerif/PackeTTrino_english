@@ -274,7 +274,6 @@ function filterPacketTraffic() {
 }
 
 function closeEveryThing(event) {
-
     if (event.key === "Escape") {
         //cerramos todos los formularios
         let forms = document.querySelectorAll("form");
@@ -282,7 +281,9 @@ function closeEveryThing(event) {
             forms[i].style.display = "none";
         }
         //cerramos el navegador
+        document.querySelector(".browser-content").innerHTML = `<img src="./assets/browser/aminsearch.png" alt="logo"></img>`; //recuperamos el contenido original del navegador
+        document.querySelector(".address-input").value = ""; //limpiamos la entrada de direccion
+        document.querySelector(".browser-content").style.display = "none";
         document.querySelector(".pc-browser").style.display = "none";
     }
-
 }

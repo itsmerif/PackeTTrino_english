@@ -31,3 +31,37 @@ function dragBroswer(event) {
     document.addEventListener('mouseup', stopDraggingBrowser);
 
 }
+
+function browserSearch(event) {
+    if (event.key === 'Enter') {
+        const $searchInput = event.target;
+        const $browserContent = document.querySelector(".browser-content");
+        let search = $searchInput.value.trim();
+        if (search === "localhost") {
+            fetch("apache.html")
+                .then(response => response.text())
+                .then(html => {
+                    $browserContent.innerHTML = html;
+                })
+                .catch(error => console.error("Error cargando el archivo:", error));
+        }
+    }
+}
+
+function openBrowser(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    const $networkObject = event.target.closest(".item-dropped"); //obtengo el objeto mas cercano
+    $networkObject.querySelector(".advanced-options-modal").style.display = "none"; //ocultamos el modal de opciones avanzadas
+    document.querySelector(".pc-browser").style.display = "flex"; //mostramos el navegador
+    document.querySelector(".pc-browser").setAttribute("data-id", $networkObject.id); //establecemos el id del navegador
+}
+
+function closeBrowser(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    console.log("cerrando");
+    document.querySelector(".browser-content").innerHTML = `<img src="./assets/browser/aminsearch.png" alt="logo"></img>`; //recuperamos el contenido original del navegador
+    document.querySelector(".address-input").value = ""; //limpiamos la entrada de direccion
+    document.querySelector(".pc-browser").style.display = "none"; //ocultamos el navegador
+}
