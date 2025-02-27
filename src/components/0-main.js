@@ -12,11 +12,11 @@ function sleep(ms) {
 async function init() {
     getPanelItems();
     await sleep(500);
-    document.querySelector(".pc-terminal").addEventListener("keydown", terminalKeyboard);
-    document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm);
+    document.querySelector(".pc-terminal").addEventListener("keydown", terminalKeyboard); //añadimos eventos de teclado al terminal
+    document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm); //añadimos eventos de clic al item ping del panel
     document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm); //deshabilitar opciones si esta en modo dhcp
-    document.getElementById("item-panel").querySelector(".traffic").addEventListener("click", showPacketTraffic);
-    document.addEventListener("keydown", (event) => { if (event.key === "Escape") { document.querySelector(".packet-traffic").style.display = "none"; } });
+    document.getElementById("item-panel").querySelector(".traffic").addEventListener("click", showPacketTraffic); //añadimos eventos de clic al item de la tabla de tráfico
+    document.addEventListener("keydown", closeEveryThing);
     document.querySelector(".filter-traffic").querySelector("input").addEventListener("keydown", (event) => { if (event.key === "Enter") { filterPacketTraffic(); } });
     removePropagationPingform();
 }
@@ -36,6 +36,7 @@ function getPanelItems() {
             });
         });
 }
+
 function deleteMouse() {
     let cursor = document.body.style.cursor;
     if (cursor.includes("cTargetX")) {
@@ -267,6 +268,17 @@ function filterPacketTraffic() {
             $tr.style.display = "table-row";
         } else {
             $tr.style.display = "none";
+        }
+    }
+
+}
+
+function closeEveryThing(event) {
+
+    if (event.key === "Escape") {
+        let forms = document.querySelectorAll("form");
+        for (let i = 0; i < forms.length; i++) {
+            forms[i].style.display = "none";
         }
     }
 
