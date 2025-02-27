@@ -281,6 +281,7 @@ function command_nano(dataId, args) {
 
     if (fileName === "/etc/resolv.conf") {
         loadResolvConf(networkObjectId);
+        document.querySelector(".file-editor").focus();
         return;
     }
 }
@@ -288,7 +289,7 @@ function command_nano(dataId, args) {
 function closeEditor() {
 
     const fileEditor = document.querySelector(".file-editor");
-    const fileName = fileEditor.getAttribute("data-file");
+    const fileName = fileEditor.getAttribute("data-file").trim();
     const networkObjectId = document.querySelector(".pc-terminal").dataset.id;
 
     if (fileName === "/etc/network/interfaces") {
@@ -335,10 +336,7 @@ function closeEditor() {
                 document.querySelector(".file-editor-error").style.display = "none";
             }, 3000);
 
-            return;
-
         }
-
     }
 }
 

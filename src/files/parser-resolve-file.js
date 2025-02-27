@@ -9,6 +9,7 @@ function loadResolvConf(networkObjectId) {
     const serverDns = $networkObject.getAttribute("data-dns-server");
     const fileEditorContainer = document.querySelector(".editor-container");
     let content = fileEditorContainer.querySelector(".file-editor");
+    content.setAttribute("data-file", "/etc/resolv.conf");
 
     let fileContent;
     fileContent = `#Here you can add your own nameservers to the DNS resolver\n`;
@@ -23,21 +24,26 @@ function loadResolvConf(networkObjectId) {
 
 
 function parserResolvConf() {
-
-    const fileEditor = document.querySelector(".file-editor");
     const $networkObject = document.getElementById(document.querySelector(".pc-terminal").dataset.id);
+    const fileEditor = document.querySelector(".file-editor");
     const fileContent = fileEditor.value;
     const unfilteredlines = fileContent.split("\n");
-    const lines = unfilteredlines.map(line => line.trim().replace(/\s+/g, " ")).filter(line => line !== ""); //eliminamos los espacios duplicados y las lineas vacias
+    const lines = unfilteredlines.map(line => line.trim().replace(/\s+/g, " ")).filter(line => line !== "");
 
-    const ipServer = lines[1].split(" ")[1];
+    for (let i = 0; i < lines.length; i++) {
 
-    if (!isValidIp(ipServer)) {
-        throw new Error(`Error en la línea 1: IP no válida.`);
+        if (lines[i].startsWith("nameserver")) {
+
+            let ip = lines[i].split(" ")[1];
+
+            if (!isValidIp(ip)) {
+                throw new Error(`Error en la línea ${i + 1}: IP no válida.`);
+            }
+
+            $networkObject.setAttribute("data-dns-server", ip);
+            terminalMessage("El archivo se ha cargado correctamente.");
+            return;
+            
+        }
     }
-
-    $networkObject.setAttribute("data-dns-server", ipServer);
-    terminalMessage("El archivo se ha cargado correctamente.");
-    return;
-
 }
