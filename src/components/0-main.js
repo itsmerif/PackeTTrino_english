@@ -283,7 +283,6 @@ function closeEveryThing(event) {
         //cerramos el navegador
         document.querySelector(".browser-content").innerHTML = `<img src="./assets/browser/aminsearch.png" alt="logo"></img>`; //recuperamos el contenido original del navegador
         document.querySelector(".address-input").value = ""; //limpiamos la entrada de direccion
-        document.querySelector(".browser-content").style.display = "none";
-        document.querySelector(".pc-browser").style.display = "none";
+        document.querySelector(".pc-browser").style.display = "none"; //ocultamos el navegador
     }
 }
