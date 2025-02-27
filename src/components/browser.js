@@ -33,33 +33,31 @@ function dragBroswer(event) {
 }
 
 function browserSearch(event) {
+
     if (event.key === 'Enter') {
+
         const $searchInput = event.target;
         const $browserContent = document.querySelector(".browser-content");
         let search = $searchInput.value.trim();
 
         if (search === "localhost") {
-            fetch("./assets/browser/localhost.html")
+            fetch(`./assets/browser/localhost.html`)
                 .then(response => response.text())
                 .then(html => {
                     $browserContent.innerHTML = html;
                 })
-                .catch(error => $browserContent.innerHTML = `
-                        <div class="bg-elements">
-                            <div class="circle circle-1"></div>
-                            <div class="circle circle-2"></div>
-                            <div class="circle circle-3"></div>
-                        </div>
+                .catch(error => console.log(error));
 
-                        <div class="container">
-                            <div class="error-code">404</div>
-                            <h1>¡Página no encontrada!</h1>
-                            <p>La página que estás buscando no existe o ha sido movida a otra ubicación.</p>
-                            <a href="/" class="btn">Volver al inicio</a>
-                        </div>`
-                );
+            return;
         }
 
+        $browserContent.innerHTML = `
+            <div class="container">
+                <div class="error-code">404</div>
+                <h1>¡Página no encontrada!</h1>
+                <p>La página que estás buscando no existe o ha sido movida a otra ubicación.</p>
+                <a href="/" class="btn">Volver al inicio</a>
+            </div>`;
     }
 }
 
