@@ -7,9 +7,7 @@ function loadApacheIndexContent(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId); //recuperamos el objeto
     let webContent = $networkObject.getAttribute("web-content"); //obtenemos el contenido web
     let content = fileEditorContainer.querySelector(".file-editor");
-
-    //formateamos el contenido
-    webContent = webContent.replace(/>/g, ">\n"); //p se convierte en salto de linea
+    webContent = webContent.replace(/></g, '>\n<'); //formateamos el contenido
     content.value = webContent; //cargamos el contenido
     fileEditorContainer.style.display = "block"; //mostramos el editor
 }

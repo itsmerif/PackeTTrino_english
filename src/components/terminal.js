@@ -259,15 +259,29 @@ function terminalKeyboard(event) {
 
 function fileEditorKeyboard(event) {
 
+    event.stopPropagation();
+    
+    const textarea = event.target;
+
     if (event.ctrlKey && event.key === "s") {
         event.preventDefault();
         savewebContent();
         document.querySelector(".editor-container").style.display = "none";
-        document.querySelector(".file-editor").value = "";
+        textarea.value = "";
         document.querySelector(".pc-terminal").querySelector("input").focus();
+        return;
+    }
+
+    if (event.key === "Tab") {
+        event.preventDefault();
+        let start = textarea.selectionStart;
+        let end = textarea.selectionEnd;
+        textarea.value = textarea.value.substring(0, start) + "\t" + textarea.value.substring(end);
+        textarea.selectionStart = textarea.selectionEnd = start + 1;
     }
 
 }
+
 
 function command_nano(dataId, args) {
 

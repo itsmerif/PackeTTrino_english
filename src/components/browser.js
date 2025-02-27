@@ -51,6 +51,13 @@ function browserSearch(event) {
             return;
         }
 
+        if (search === "amin.com") {
+            let $networkObject = document.getElementById(document.querySelector(".pc-browser").getAttribute("data-id"));
+            let webContent = $networkObject.getAttribute("web-content");
+            $browserContent.innerHTML = webContent;
+            return;
+        }
+
         $browserContent.innerHTML = `
             <div class="container">
                 <div class="error-code">404</div>
