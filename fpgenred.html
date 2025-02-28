@@ -1,0 +1,830 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="shortcut icon" href="images/favicon.gif" type="image/x-icon" />
+    <title>Francisco Periáñez Gómez | Página personal</title>
+    <meta name="author" content="Francisco Periañez Gomez" />
+    <meta name="keywords"
+        content="Francisco Periañez Gomez, Francico Periáñez Gómez, Francisco, Periáñez, Periañez, Gómez, Gomez, ASIR, Virtualbox, Piragüismo, Piragua, IES Mar de Cádiz,  GNU/Linux, Linux, Cron, Seguridad Informática, Seguridad Informatica, Seguridad, Debian, Configuración de la red, VirtualBox, DHCP, BIND, ISC, DNS" />
+    <meta name="description" content="Página personal de Francisco Periáñez Gómez" />
+</head>
+<style>
+    * {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    a {
+        color: #002b72;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: none;
+        color: #000000;
+    }
+
+    body {
+        background-color: #7eb9f3;
+        font: 12px Arial, Helvetica, sans-serif;
+        color: #000000;
+    }
+
+    #site_shadow {
+        background: url(images/bg_shadow.png);
+        background-repeat: repeat-y;
+        background-position: center;
+    }
+
+    #content {
+        margin: 0 auto;
+        width: 1014px;
+        text-align: left;
+        background-color: #ffffff;
+    }
+
+    #main {
+
+        width: 985px;
+        margin: 0 auto;
+        clear: both;
+        padding-left: 18px;
+        padding-right: 11px;
+
+    }
+
+    #mainbot {
+        background: url(images/mainbot.jpg) no-repeat bottom left;
+    }
+
+    #header {
+        width: 1014px;
+        height: 292px;
+        background: url(images/header.jpg);
+        background-repeat: no-repeat;
+        background-position: left;
+    }
+
+    #logo {
+        width: 100%;
+        text-align: left;
+        padding-top: 40px;
+        padding-left: 20px;
+        height: 170px;
+    }
+
+    #logo a {
+        text-decoration: none;
+        text-transform: lowercase;
+        font-style: italic;
+        font-weight: normal;
+        font-size: 18px;
+        color: #ffffff;
+        padding-right: 40px;
+    }
+
+    #logo H2 a {
+        font-size: 12px;
+    }
+
+    #menu {
+        width: 100%;
+        height: 67px;
+        margin: 0 auto;
+    }
+
+    #menu ul {
+        list-style: none;
+        padding-top: 4px;
+        padding-left: 0px;
+    }
+
+    #menu li {
+        display: inline;
+    }
+
+    #menu a {
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: center;
+        text-decoration: none;
+        color: #ffffff;
+        font-weight: normal;
+        font-size: 14px;
+        float: left;
+        width: 100px;
+        height: 34px;
+        display: block;
+        margin-top: 6px;
+        padding-top: 15px;
+    }
+
+    #menu a:hover {
+        height: 34px;
+        color: #ffffff;
+        padding-top: 2px;
+        text-decoration: underline;
+    }
+
+    #left {
+        width: 270px;
+        padding-top: 18px;
+    }
+
+    #left .company ul li a {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #328cc3;
+        font-size: 12px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    #left a:hover {
+        color: #4f9ccb;
+    }
+
+    #left H3 {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        height: 30px;
+        font-weight: normal;
+        padding-top: 14px;
+        color: #ffffff;
+        background: url(images/title_left.jpg);
+        background-repeat: repeat-x;
+        text-align: center;
+    }
+
+    .ul_bg {
+        background: url(images/ul_bg.jpg);
+        background-repeat: no-repeat;
+        background-position: top left;
+        min-height: 40px;
+    }
+
+    .categories {
+        list-style: none;
+        padding-left: 0px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    .categories li {
+        background: url(images/ls.png) 0px 4px;
+        background-repeat: no-repeat;
+        padding-left: 20px;
+        margin-left: 11px;
+        height: 25px;
+        padding-top: 2px;
+        margin-top: 3px;
+    }
+
+    .categories li a {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        color: #000000;
+    }
+
+    #left .company {
+        padding-top: 20px;
+    }
+
+    .numleft {
+        background: url(images/numbg.png);
+        background-repeat: no-repeat;
+        background-position: left top;
+        float: left;
+        width: 37px;
+        min-height: 37px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        font-weight: bold;
+        color: #ffffff;
+        text-align: center;
+        margin: 0px 8px 0px 8px;
+    }
+
+    .numleft p {
+        padding-top: 10px;
+    }
+
+    .newsright {
+        padding-left: 53px;
+        padding-right: 10px;
+    }
+
+    .newsright a {
+        color: #008cbe;
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+    #right {
+        float: right;
+        width: 696px;
+        background-color: #eeeeee;
+        margin-top: 10px;
+        padding-bottom: 15px;
+    }
+
+    #right ol {
+        margin-left: 30px;
+    }
+
+    #right a {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        font-weight: bold;
+        color: #328cc3;
+    }
+
+    #right a:hover {
+        color: #000000;
+        text-decoration: none;
+    }
+
+    #right H4 {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 18px;
+        height: 30px;
+        font-weight: normal;
+        padding-top: 10px;
+        color: #008cbe;
+        background: url(images/title_right.png);
+        background-repeat: no-repeat;
+        background-position: bottom;
+        text-align: left;
+        padding-left: 30px;
+        margin-bottom: 10px;
+    }
+
+    #right h5 {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        font-style: italic;
+        text-decoration: underline;
+        color: #008cbe;
+        font-weight: normal;
+        padding-left: 15px;
+    }
+
+    .col {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .col1,
+    .col2,
+    .col3 {
+        background: url(images/title_right1.png);
+        background-repeat: no-repeat;
+        background-position: 0px 2px;
+        float: left;
+        width: 33.3%;
+    }
+
+    #cen {
+        background: url(images/cenbg.jpg) top left;
+        padding-bottom: 5px;
+    }
+
+    #right p {
+        margin: 0;
+        padding: 0;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 12px;
+    }
+
+    #right ul li p {
+        padding-left: 0px;
+    }
+
+    #right ul {
+        list-style: none;
+        padding-left: 8px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    #right ul li {
+        background: url(images/ls3.jpg) 0px 3px;
+        background-repeat: no-repeat;
+        padding-left: 20px;
+        padding-bottom: 5px;
+        margin-bottom: 3px;
+        padding-top: 2px;
+    }
+
+    #right ul li a {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #328cc3;
+        font-size: 12px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    #right .read,
+    #left .company .read,
+    #right .read {
+        padding-top: 5px;
+        padding-bottom: 20px;
+        text-align: right;
+    }
+
+    #right .read a,
+    #left .company .read a,
+    #right .read a {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        color: #000000;
+        text-decoration: none;
+        font-weight: normal;
+        margin-right: 15px;
+        padding-right: 7px;
+        background: url(images/read.png);
+        background-repeat: no-repeat;
+        background-position: right;
+        display: block;
+        height: 17px;
+        width: 80px;
+        float: right;
+    }
+
+    #right .read a:hover,
+    #left .company .read a:hover,
+    #right .read a:hover {
+        color: #ffffff;
+    }
+
+    #footer {
+        height: 50px;
+        width: 1014px;
+        clear: both;
+        padding-top: 15px;
+        background: url(images/footer.jpg);
+        background-repeat: no-repeat;
+        background-position: center;
+        margin-top: 10px;
+    }
+
+    #footer p {
+        margin: 0;
+        font-size: 10px;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    #footer a {
+        color: #ffffff;
+    }
+</style>
+
+<body>
+    <div id="site_shadow">
+        <div id="content">
+            <!-- header begins -->
+            <div id="header">
+                <div id="logo"></div>
+                <div id="menu">
+                    <ul>
+                        <li id="button1">
+                            <a href="#">Inicio</a>
+                        </li>
+                        <li id="button2">
+                            <a href="https://fpg.milaulas.com">Moodle</a>
+                        </li>
+                        <li id="button3">
+                            <a href="https://www.fpgenred.es/MisFAQ">Mis FAQ</a>
+                        </li>
+                        <!--
+                        <li id="button4"><a href="http://fpg.hol.es/blog">Blog</a></li>
+-->
+                    </ul>
+                </div>
+            </div>
+            <!-- header ends -->
+            <!-- content begins -->
+            <div id="main">
+                <div id="right">
+                    <h4>Tutorial para la configuración del servicio HTTP/HTTPS usando Apache</h4>
+                    <img src="images/Apache.png" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">En este tutorial se describe el protocolo HTTP/HTTPS y su
+                        configuración en GNU/LINUX utilizando el software servidor Apache.
+                    </p>
+                    <div class="read">
+                        <a href="https://www.fpgenred.es/HTTP/">Tutorial &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                    <p>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </p>
+                    <h4>Tutorial breve de Proxmox para mis alumnos</h4>
+                    <img src="images/Proxmox.png" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">Este tutorial está pensado para recordar a mis alumnos las acciones
+                        fundamentales que necesitan saber para trabajar con Proxmox en la realización de los ejercicios
+                        prácticos donde utilizamos dicha herramienta.
+                    </p>
+                    <div class="read">
+                        <a href="https://www.fpgenred.es/proxmox/">Tutorial &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                    <p>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </p>
+                    <h4>Tutorial de systemd</h4>
+                    <img src="images/systemd.png" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">En este tutorial se describe el sistema systemd utilizado
+                        actualmente en la mayoría de las distribuciones de GNU/Linux.
+                    </p>
+                    <div class="read">
+                        <a href="https://www.fpgenred.es/systemd/">Tutorial &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                    <p>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </p>
+                    <h4>Tutorial para la configuración del servicio DNS usando el software BIND de ISC</h4>
+                    <img src="images/bind.jpg" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">En este tutorial se describe el protocolo DNS y su configuración en
+                        GNU/LINUX utilizando el software BIND de ISC.
+                    </p>
+                    <div class="read">
+                        <a href="https://www.fpgenred.es/DNS/">Tutorial &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                    <p>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </p>
+                    <h4>Manual: Seguridad informática II</h4>
+                    <img src="images/SeguridadInformatica-II.jpg" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">Conjunto de apuntes dedicados a la seguridad informática con los que
+                        trabajo en mis clases.
+                    </p>
+                    <div class="read">
+                        <a href="https://www.fpgenred.es/Seguridad-Informatica-II">Manual &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                    <p>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </p>
+                    <h4>Tutorial de Cron</h4>
+                    <img src="images/cron.png" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">
+                        Este tutorial describe el programador de tareas <em>cron</em>
+                        de unix, concretamente el <em>vixie-cron</em>
+                        para Debian GNU/Linux. Además, se tratan otros comandos como: <em>anacron</em>
+                        , <em>at</em>
+                        y <em>batch</em>
+                        .
+
+                    </p>
+                    <div class="read">
+                        <a href="https://www.fpgenred.es/cron">Tutorial &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                    <p>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </p>
+                    <h4>Manual: Seguridad informática I</h4>
+                    <img src="images/SeguridadInformatica-I.jpg" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">Conjunto de apuntes dedicados a la seguridad informática con los que
+                        trabajo en mis clases.
+                    </p>
+                    <div class="read">
+                        <a href="https://www.fpgenred.es/Seguridad-Informatica-I">Manual &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                    <p>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </p>
+                    <h4>Utilidad: Fast Questions in Moodle v1.0 (FQM)</h4>
+                    <img src="images/fqm.jpg" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">FQM es una herramienta que he desarrollado con el objetivo de crear
+                        de una forma rápida preguntas para ser utilizadas en los test de Moodle.
+                    </p>
+                    <p style="text-align: justify;">En mi actividad docente uso Moodle desde hace varios años, y por
+                        supuesto, la potente herramienta de test que incorpora, ideal para evaluar ciertos contenidos de
+                        las asignaturas que imparto. Los test de Moodle tienen muchas posibilidades de construcción y de
+                        configuración, pero yo sólo uso un subconjunto de ellas, y viendo que en el proceso de creación
+                        de las preguntas repito mucho los pasos que son necesarios para construirlas, me planteé si
+                        podía crear algo para mejorar mi productividad a la hora de escribirlas, y FQM es el resultado.
+                    </p>
+                    <div class="read">
+                        <a href="http://fpg.66ghz.com/FQM">Utilidad &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                    <h4>Guía de referencia de comandos GNU/Linux</h4>
+                    <img src="images/guia-comandos-linux.jpg" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">Esta guía está pensada para ser un apoyo en mis clases sobre los
+                        comandos GNU/Linux que utilizamos y de los que frecuentemente necesitamos ayuda sobre sus
+                        opciones y usos más habituales. Su contenido será dinámico y se irá ampliando paulatinamente.
+                    </p>
+                    <div class="read">
+                        <a href="https://www.fpgenred.es/GuiaComandosLinux">Tutorial &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                    <p>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </p>
+                    <h4>Utilidad: Lista de palabras en inglés</h4>
+                    <img src="images/bandera.png" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">Con esta utilidad que he desarrollado se puede crear a partir de un
+                        fichero de texto con palabras en inglés su correspondiente fichero de sonido con dichas
+                        palabras.
+                    </p>
+                    <div class="read">
+                        <a href="http://fpg.hol.es/lpenglish">Utilidad &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                    <p>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </p>
+                    <h4>Tutorial para la configuración del servicio DHCP usando el software de ISC</h4>
+                    <img src="images/isc.png" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">En este tutorial se describe el protocolo DHCP y su configuración en
+                        GNU/LINUX utilizando el software de ISC (cliente, servidor y relay agent).
+                    </p>
+                    <div class="read">
+                        <a href="https://www.fpgenred.es/DHCP">Tutorial &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                    <p>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </p>
+                    <h4>Tutorial para la configuración de la red en Debian GNU/Linux</h4>
+                    <img src="images/debian.png" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">Con este tutorial pretendo cubrir la mayoría de los aspectos
+                        relacionados con la configuración de una red en sistemas Debian GNU/Linux.
+                    </p>
+                    <div class="read">
+                        <a href="https://www.fpgenred.es/DebianRed">Tutorial &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                    <p>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </p>
+                    <h4>Tutorial de GNU/Linux</h4>
+                    <img src="images/GNU-Linux.png" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">He comenzado a elaborar un tutorial sobre GNU/Linux empleando la
+                        documentación que ya tengo hecha en paquetes IMS y que utilizo
+                        con Moodle en mis clases. Conforme vaya sacando algo de tiempo, iré completándolo.
+                    </p>
+                    <div class="read">
+                        <a href="https://www.fpgenred.es/GNU-Linux">Tutorial &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                    <p>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </p>
+                    <h4>Tutorial de VirtualBox</h4>
+                    <img src="images/TutorialVirtualBox.png" alt="" title=""
+                        style="float: left; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;" />
+                    <p style="text-align: justify;">He elaborado un tutorial de VirtualBox para mis alumnos, que pongo a
+                        disposición de cualquiera que esté
+                        interesado en él. No es definitivo, va a seguir creciendo.
+                    </p>
+                    <p style="text-align: justify;">Este software de virtualización es el que utilizo en las asignaturas
+                        que imparto del ciclo superior
+                        de Administración de Sistemas Informáticos en Red, y bajo mi punto de vista, considero que es un
+                        buen
+                        programa para la docencia donde se necesita virtualizar sistemas operativos, por lo menos, hasta
+                        ahora,
+                        ha cubierto todas mis necesidades.
+                    </p>
+                    <div class="read">
+                        <a href="https://www.fpgenred.es/VirtualBox">Tutorial &nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                </div>
+                <div id="left">
+                    <h3>Docencia en el IES Mar de Cádiz</h3>
+                    <div class="ul_bg">
+                        <ul class="categories">
+                            <li>
+                                <a href="https://fpg.milaulas.com/course/view.php?id=3&lang=es">Planificación y
+                                    administración de redes</a>
+                            </li>
+                            <li>
+                                <a href="https://fpg.milaulas.com/course/view.php?id=5&lang=es">Servicios de red e
+                                    Internet</a>
+                            </li>
+                            <li>
+                                <a href="https://fpg.milaulas.com/course/view.php?id=4&lang=es">Seguridad y alta
+                                    disponibilidad</a>
+                            </li>
+                            <li>
+                                <a href="https://fpg.milaulas.com/course/view.php?id=2&lang=es">Horas de libre
+                                    configuración</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <h3>Docencia en la Universidad de Cádiz</h3>
+                    <div class="ul_bg">
+                        <ul class="categories">
+                            <li>
+                                <a href="https://campusvirtual.uca.es/">Fundamentos de informática (GeIDIyDP)</a>
+                            </li>
+                            <li>
+                                <a href="https://campusvirtual.uca.es/">Informática aplicada a la inge. (GeANeIM)</a>
+                            </li>
+                            <li>
+                                <a href="https://campusvirtual.uca.es/">Introducción a la programación (GII)</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <h3>Manuales y tutoriales</h3>
+                    <div class="ul_bg">
+                        <ul class="categories">
+                            <li>
+                                <a href="https://www.fpgenred.es/GuiaComandosLinux">Guía de comandos de GNU/Linux</a>
+                            </li>
+                            <li>
+                                <a href="https://www.fpgenred.es/Seguridad-Informatica-I">Seguridad informática I</a>
+                            </li>
+                            <li>
+                                <a href="https://www.fpgenred.es/Seguridad-Informatica-II">Seguridad informática II</a>
+                            </li>
+                            <li>
+                                <a href="https://www.fpgenred.es/cron">Tutorial de cron</a>
+                            </li>
+                            <li>
+                                <a href="https://www.fpgenred.es/GNU-Linux">Tutorial de GNU/Linux</a>
+                            </li>
+                            <li>
+                                <a href="https://www.fpgenred.es/DebianRed">Tutorial de la red en Debian</a>
+                            </li>
+                            <li>
+                                <a href="https://www.fpgenred.es/systemd">Tutorial de systemd</a>
+                            </li>
+                            <li>
+                                <a href="https://www.fpgenred.es/VirtualBox">Tutorial de VirtualBox</a>
+                            </li>
+                            <li>
+                                <a href="https://www.fpgenred.es/DHCP">Tutorial del servicio DHCP</a>
+                            </li>
+                            <li>
+                                <a href="https://www.fpgenred.es/DNS">Tutorial del servicio DNS</a>
+                            </li>
+                            <li>
+                                <a href="https://www.fpgenred.es/HTTP">Tutorial del servicio HTTP/HTTPS</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <h3>Utilidades</h3>
+                    <div class="ul_bg">
+                        <ul class="categories">
+                            <li>
+                                <a href="http://fpg.66ghz.com/FQM">FQM (Fast Questions in Moodle)</a>
+                            </li>
+                            <li>
+                                <a href="http://fpg.hol.es/lpenglish">Lista de palabras en inglés</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <h3>Enlaces de interés</h3>
+                    <div class="ul_bg">
+                        <ul class="categories">
+                            <li>
+                                <a href="http://www.aapri.es/">AAPRI</a>
+                            </li>
+                            <li>
+                                <a href="https://campusvirtual.uca.es/">Campus virtual de la UCA</a>
+                            </li>
+                            <li>
+                                <a href="https://www.netacad.com/es">Cisco Networking Academy</a>
+                            </li>
+                            <li>
+                                <a href="https://webmerlin.uca.es">Correo web de la UCA</a>
+                            </li>
+                            <li>
+                                <a href="http://www.eltiempo.es/el-puerto-de-santa-maria.html">El tiempo en El
+                                    Puerto</a>
+                            </li>
+                            <li>
+                                <a href="http://www.ies-mardecadiz.com">IES Mar de Cádiz</a>
+                            </li>
+                            <li>
+                                <a
+                                    href="https://e5.onthehub.com/WebStore/Welcome.aspx?ws=e802b1d5-a617-e611-941a-b8ca3a5db7a1">Microsoft
+                                    Imagine - IES Mar de Cádiz</a>
+                            </li>
+                            <li>
+                                <a href="https://www.juntadeandalucia.es/educacion/portaldocente/">Portal del personal
+                                    docente</a>
+                            </li>
+                            <li>
+                                <a href="http://www.mediafire.com/fpg-compartido">Recursos para mis asignaturas</a>
+                            </li>
+                            <li>
+                                <a
+                                    href="http://www.juntadeandalucia.es/educacion/portalseneca/web/seneca/inicio">SENECA</a>
+                            </li>
+                            <li>
+                                <a href="http://www.tablademareas.com/es/cadiz/el-puerto-de-santa-maria">Tabla de mareas
+                                    de El Puerto</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="clear:both"></div>
+            </div>
+            <!--content ends -->
+            <!--footer begins -->
+            <div id="footer">
+                <div align="center"></div>
+                <p>Actualizado el 8 de febrero de 2025</p>
+            </div>
+            <!-- footer ends-->
+        </div>
+    </div>
+</body>
+
+</html>

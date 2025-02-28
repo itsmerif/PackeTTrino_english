@@ -1,2 +1,1 @@
 cerrar trafico de paquetes al hacer ES
-recibo web cuando apache esta apagado
