@@ -1,5 +1,6 @@
 let buffer = {}; //buffer de paquetes
 let tcpBuffer = {}; //buffer de numeros de secuencia TCP
+let browserBuffer = {}; //buffer de paquetes http
 let arpFlag = false;
 let icmpFlag = false;
 let dhcpDiscoverFlag = false;
@@ -286,7 +287,6 @@ async function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
     packet = new dnsRequest(networkObjectIp, dnsServer, networkObjectMac, destination_mac, domain);
 
     if (!destination_mac) { //la mac del servidor no está en la tabla arp
-        console.log(packet);
         buffer[networkObjectId] = packet;
         let arpRequest = new ArpRequest(networkObjectIp, dnsServer, networkObjectMac);
         addPacketTraffic(arpRequest);
@@ -299,13 +299,13 @@ async function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
 
 }
 
-async function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
+async function tcpSynPacketGenerator(networkObjectId, switchId, destination, port) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("data-ip");
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
-    const isSameNetwork = getNetwork(ip, networkObjectNetmask) === getNetwork(networkObjectIp, networkObjectNetmask);
+    const isSameNetwork = getNetwork(destination, networkObjectNetmask) === getNetwork(networkObjectIp, networkObjectNetmask);
     let packet;
 
     if (!isSameNetwork) { //el destino no está en la misma red, debemos enviarlo a la puerta de enlace
@@ -320,7 +320,7 @@ async function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
         const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
 
         if (!defaultGatewayMac) {
-            buffer[networkObjectId] = new syn(networkObjectIp, ip, networkObjectMac, defaultGatewayMac, port);
+            buffer[networkObjectId] = new syn(networkObjectIp, destination, networkObjectMac, defaultGatewayMac, port);
             tcpBuffer[networkObjectId] = buffer[networkObjectId].sequence_number; //almacenamos el número de secuencia para el siguiente paquete
             packet = new ArpRequest(networkObjectIp, defaultGateway, networkObjectMac);
             addPacketTraffic(packet);
@@ -330,7 +330,7 @@ async function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
 
         //tenemos la puerta de enlace en la tabla de arp
 
-        packet = new syn(networkObjectIp, ip, networkObjectMac, defaultGatewayMac, port);
+        packet = new syn(networkObjectIp, destination, networkObjectMac, defaultGatewayMac, port);
         tcpBuffer[networkObjectId] = packet.sequence_number; //almacenamos el número de secuencia para el siguiente paquete
         addPacketTraffic(packet);
         await switchProcessor(switchId, networkObjectId, packet);
@@ -338,20 +338,46 @@ async function tcpSynPacketGenerator(networkObjectId, switchId, ip, port) {
 
     }
 
-    const destination_mac = isIpInARPTable(networkObjectId, ip);
+    const destination_mac = isIpInARPTable(networkObjectId, destination);
 
     if (!destination_mac) {
-        buffer[networkObjectId] = new syn(networkObjectIp, ip, networkObjectMac, destination_mac, port);
+        buffer[networkObjectId] = new syn(networkObjectIp, destination, networkObjectMac, destination_mac, port);
         tcpBuffer[networkObjectId] = buffer[networkObjectId].sequence_number; //almacenamos el número de secuencia para el siguiente paquete
-        packet = new ArpRequest(networkObjectIp, ip, networkObjectMac);
+        packet = new ArpRequest(networkObjectIp, destination, networkObjectMac);
         addPacketTraffic(packet);
         await switchProcessor(switchId, networkObjectId, packet);
     } else {
-        packet = new syn(networkObjectIp, ip, networkObjectMac, destination_mac, port);
+        packet = new syn(networkObjectIp, destination, networkObjectMac, destination_mac, port);
         tcpBuffer[networkObjectId] = packet.sequence_number; //almacenamos el número de secuencia para el siguiente paquete
         addPacketTraffic(packet);
         await switchProcessor(switchId, networkObjectId, packet);
     }
+
+}
+
+async function httpRequestPacketGenerator(networkObjectId, switchId, destinationIp) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+    const isSameNetwork = getNetwork(destinationIp, networkObjectNetmask) === getNetwork(networkObjectIp, networkObjectNetmask);
+
+    if (!isSameNetwork) { //el destino no está en la misma red, debemos enviarlo a la puerta de enlace
+        const defaultGateway = $networkObject.getAttribute("data-gateway");
+        const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
+        let newPacket = new httpRequest(networkObjectIp, destinationIp, networkObjectMac, defaultGatewayMac, 80, "GET");
+        addPacketTraffic(newPacket);
+        await switchProcessor(switchId, networkObjectId, newPacket);
+        return;
+    }
+
+    //están en la misma red
+
+    const destination_mac = isIpInARPTable(networkObjectId, destinationIp);
+    let newPacket = new httpRequest(networkObjectIp, destinationIp, networkObjectMac, destination_mac, 80, "GET");
+    addPacketTraffic(newPacket);
+    await switchProcessor(switchId, networkObjectId, newPacket);
 
 }
 
@@ -463,7 +489,7 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
             buffer[networkObjectId].destination_mac = isIpInARPTable(networkObjectId, packet.origin_ip);
             addPacketTraffic(buffer[networkObjectId]);
             await switchProcessor(switchId, networkObjectId, buffer[networkObjectId]);
-            if (buffer[networkObjectId].protocol === "dhcp" && buffer[networkObjectId].type === "release") deleteDhcpInfo(networkObjectId);
+            //if (buffer[networkObjectId].protocol === "dhcp" && buffer[networkObjectId].type === "release") deleteDhcpInfo(networkObjectId);
             delete buffer[networkObjectId];
         }
     }
@@ -571,6 +597,22 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
         return;
     }
 
+    if (packet.protocol === "http" && packet.type === "request") {
+        if (packet.destination_ip !== networkObjectIp) return; //comprobamos si el paquete es para mi respecto a ip
+        if ($networkObject.getAttribute("web-server") === "off") return; //comprobamos si el servidor web esta encendido
+        //generamos el paquete
+        let newPacket = new httpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
+        newPacket.body = $networkObject.getAttribute("web-content");
+        addPacketTraffic(newPacket);
+        await switchProcessor(switchId, networkObjectId, newPacket);
+        return;
+    }
+
+    if (packet.protocol === "http" && packet.type === "reply") {
+        if (packet.destination_ip !== networkObjectIp) return; //comprobamos si el paquete es para mi respecto a ip
+        browserBuffer[networkObjectId] = packet;
+        return;
+    }
 }
 
 async function packetProcessor_router(switchId, networkObjectId, packet) {

@@ -1,4 +1,4 @@
-function command_http(id, args) {
+async function command_http(id, args) {
 
     const $networkObject = document.getElementById(id);
     const networkObjectIp = $networkObject.getAttribute("data-ip");
@@ -21,25 +21,42 @@ function command_http(id, args) {
         return;
     }
 
-    if (!args[1].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
-        terminalMessage("Error: La IP introducida no es válida.");
-        return;
-    }
-
-    http(id, args[1]);
+    await http(id, args[1]);
 
 }
 
-
-function http(networkObjectId, destination) {
+async function http(networkObjectId, arg) {
 
     cleanPacketTraffic(); //limpiamos el registro de paquetes
+
+    let destinationIp;
+
+    //si es un dominio, buscamos la ip con una peticion dns
+    
+    if (!isValidIp(arg)) { //asumimos que sea un dominio
+
+        dnsRequestFlag = false;
+
+        await dig(networkObjectId, arg, false);
+        
+        if (!dnsRequestFlag) {
+            terminalMessage("Error: No se pudo resolver el nombre de dominio.");
+            return;
+        }
+
+        destinationIp = isDomainInCachePc(networkObjectId, arg)[1];
+
+    } else { //es una ip válida
+
+        destinationIp = arg;
+
+    }
 
     //http viaja por tcp, necesitamos establecer la conexión
 
     tcpSyncFlag = false;
 
-    tcp(networkObjectId, destination, 80);
+    await tcp(networkObjectId, destinationIp, 80);
 
     setTimeout(() => {
 
@@ -48,10 +65,15 @@ function http(networkObjectId, destination) {
             return;
         }
 
-        terminalMessage(networkObjectId + ": Conexión establecida con éxito.");
-
-        //httpRequestPacketGenerator(networkObjectId, switchId, destination, "/");
-
     }, 500);
+
+    //hemos establecido la conexión, enviamos el paquete
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const switchId = $networkObject.getAttribute("data-switch");
+    await httpRequestPacketGenerator(networkObjectId, switchId, destinationIp);
+    let htmlReply = browserBuffer[networkObjectId];
+    let content = htmlReply.body;
+    document.querySelector(".browser-content").innerHTML = content;
 
 }

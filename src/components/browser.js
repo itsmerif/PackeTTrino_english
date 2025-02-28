@@ -33,38 +33,11 @@ function dragBroswer(event) {
 }
 
 function browserSearch(event) {
-
     if (event.key === 'Enter') {
-
         const $searchInput = event.target;
-        const $browserContent = document.querySelector(".browser-content");
+        const $networkObject = document.getElementById(document.querySelector(".pc-browser").getAttribute("data-id"));
         let search = $searchInput.value.trim();
-
-        if (search === "localhost") {
-            fetch(`./assets/browser/localhost.html`)
-                .then(response => response.text())
-                .then(html => {
-                    $browserContent.innerHTML = html;
-                })
-                .catch(error => console.log(error));
-
-            return;
-        }
-
-        if (search === "amin.com") {
-            let $networkObject = document.getElementById(document.querySelector(".pc-browser").getAttribute("data-id"));
-            let webContent = $networkObject.getAttribute("web-content");
-            $browserContent.innerHTML = webContent;
-            return;
-        }
-
-        $browserContent.innerHTML = `
-            <div class="container">
-                <div class="error-code">404</div>
-                <h1>¡Página no encontrada!</h1>
-                <p>La página que estás buscando no existe o ha sido movida a otra ubicación.</p>
-                <a href="/" class="btn">Volver al inicio</a>
-            </div>`;
+        http($networkObject.id, search);
     }
 }
 

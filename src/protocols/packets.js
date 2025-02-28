@@ -215,7 +215,7 @@ class Ack extends packet {
 }
 
 class httpRequest extends packet {
-    constructor(origin_ip, destination_ip, origin_mac, destination_mac, port, method, path) {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, port, method) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
         this.transport_protocol = "tcp";
         this.protocol = "http";
@@ -223,9 +223,18 @@ class httpRequest extends packet {
         this.type = "request";
         this.sport = port;
         this.dport = 80;
-        this.sequence_number = Math.floor(Math.random()*100000);
-        this.ack_number = 0;
         this.method = method;
-        this.path = path;
+    }
+}
+
+class httpReply extends packet {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac) {
+        super(origin_ip, destination_ip, origin_mac, destination_mac);
+        this.transport_protocol = "tcp";
+        this.protocol = "http";
+        this.ttl = 64;
+        this.type = "reply";
+        this.header = "content-type: text/html";
+        this.body = "";
     }
 }
