@@ -28,6 +28,7 @@ async function command_http(id, args) {
 async function http(networkObjectId, arg) {
 
     cleanPacketTraffic(); //limpiamos el registro de paquetes
+    delete browserBuffer[networkObjectId]; //limpiamos el buffer de paquetes http
 
     let destinationIp;
 
