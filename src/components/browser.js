@@ -32,12 +32,22 @@ function dragBroswer(event) {
 
 }
 
-function browserSearch(event) {
+async function browserSearch(event) {
     if (event.key === 'Enter') {
         const $searchInput = event.target;
         const $networkObject = document.getElementById(document.querySelector(".pc-browser").getAttribute("data-id"));
         let search = $searchInput.value.trim();
-        http($networkObject.id, search);
+        try {
+            await http($networkObject.id, search);
+        } catch (error) {
+            document.querySelector(".browser-content").innerHTML = `
+            <div class="container">
+                <div class="error-code">404</div>
+                <h1>¡Página no encontrada!</h1>
+                <p>La página que estás buscando no existe o ha sido movida a otra ubicación.</p>
+                <a href="/" class="btn">Volver al inicio</a>
+            </div>`;
+        }
     }
 }
 

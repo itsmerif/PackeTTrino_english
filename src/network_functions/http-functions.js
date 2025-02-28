@@ -40,8 +40,7 @@ async function http(networkObjectId, arg) {
         await dig(networkObjectId, arg, false);
         
         if (!dnsRequestFlag) {
-            terminalMessage("Error: No se pudo resolver el nombre de dominio.");
-            return;
+            throw new Error("Error: No se pudo resolver el nombre de dominio.");
         }
 
         destinationIp = isDomainInCachePc(networkObjectId, arg)[1];
@@ -61,8 +60,7 @@ async function http(networkObjectId, arg) {
     setTimeout(() => {
 
         if (!tcpSyncFlag) {
-            terminalMessage(networkObjectId + ": No se pudo establecer la conexión.");
-            return;
+            throw new Error(networkObjectId + ": No se pudo establecer la conexión.");
         }
 
     }, 500);
@@ -72,7 +70,17 @@ async function http(networkObjectId, arg) {
     const $networkObject = document.getElementById(networkObjectId);
     const switchId = $networkObject.getAttribute("data-switch");
     await httpRequestPacketGenerator(networkObjectId, switchId, destinationIp);
+
+    //esperamos a que el servidor web responda
+
     let htmlReply = browserBuffer[networkObjectId];
+
+    if (!htmlReply) {
+        throw new Error("Error: No se ha recibido respuesta del servidor web.");
+    }
+
+    //si todo salió bien, mostramos el contenido
+    
     let content = htmlReply.body;
     document.querySelector(".browser-content").innerHTML = content;
 
