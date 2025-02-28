@@ -1,3 +1,52 @@
+//constantes de navegador
+
+const $homepage = `
+<html>
+    <head>
+        <title>Amin Search</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <style>
+        body {
+            margin: 0;
+            display: grid;
+            place-items: center;
+            height: 70vh;
+        }
+    </style>
+    <body>
+        <img src="./assets/browser/aminsearch.png" alt="logo">
+    </body>
+</html>`;
+
+const $error404 = `
+<html>
+    <head>
+        <title>Amin Search</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <style>
+        body {
+            margin: 0;
+            display: grid;
+            place-items: center;
+            height: 70vh;
+        }
+    </style>
+    <body>
+        <div class="container">
+            <div class="error-code">404</div>
+            <h1>¡Página no encontrada!</h1>
+            <p>La página que estás buscando no existe o ha sido movida a otra ubicación.</p>
+            <a href="/" class="btn">Volver al inicio</a>
+        </div>
+    </body>
+</html>`;
+
+//funciones de navegador
+
 function dragBroswer(event) {
 
     event.preventDefault();
@@ -40,13 +89,7 @@ async function browserSearch(event) {
         try {
             await http($networkObject.id, search);
         } catch (error) {
-            document.querySelector(".browser-content").innerHTML = `
-            <div class="container">
-                <div class="error-code">404</div>
-                <h1>¡Página no encontrada!</h1>
-                <p>La página que estás buscando no existe o ha sido movida a otra ubicación.</p>
-                <a href="/" class="btn">Volver al inicio</a>
-            </div>`;
+            document.querySelector(".browser-content").srcdoc = $error404;
         }
     }
 }
@@ -56,6 +99,7 @@ function openBrowser(event) {
     event.preventDefault();
     const $networkObject = event.target.closest(".item-dropped"); //obtengo el objeto mas cercano
     $networkObject.querySelector(".advanced-options-modal").style.display = "none"; //ocultamos el modal de opciones avanzadas
+    document.querySelector(".browser-content").srcdoc = $homepage //recuperamos el contenido original del navegador
     document.querySelector(".pc-browser").style.display = "flex"; //mostramos el navegador
     document.querySelector(".pc-browser").setAttribute("data-id", $networkObject.id); //establecemos el id del navegador
 }

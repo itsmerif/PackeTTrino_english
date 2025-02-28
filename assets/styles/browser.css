@@ -123,6 +123,9 @@
     background-color: #fff;
     overflow-y: auto;
     padding: 10px;
+    border: none;
+    outline: none;
+    appearance: none;
 }
 
 .empty-page {

@@ -82,6 +82,6 @@ async function http(networkObjectId, arg) {
     //si todo salió bien, mostramos el contenido
     
     let content = htmlReply.body;
-    document.querySelector(".browser-content").innerHTML = content;
-
+    const $browserContent = document.querySelector(".browser-content");
+    $browserContent.srcdoc = content;
 }
