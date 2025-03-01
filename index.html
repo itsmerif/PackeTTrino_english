@@ -5,10 +5,23 @@
   <meta charset="UTF-8">
   <title>PackeTTrino</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./assets/styles/main.css">
+  <link rel="stylesheet" href="./assets/styles/0-main.css">
 </head>
 
 <body onload="init()">
+
+  <div id="loading-screen">
+    <div class="loader-container">
+      <div class="loader-animation">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+      </div>
+      <h1>PackeTTrino</h1>
+      <p>Simulador de Redes</p>
+      <p> By Amín Pérez <span>(2025)</span> </p>
+    </div>
+  </div>
 
   <div id="root">
     <section class="board" ondragover="dragOverBoard(event)" ondrop="dropItem(event)" onclick="closeAllModals()">
@@ -121,25 +134,24 @@
     <button type="submit">Guardar</button>
   </form>
 
-  <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;" onmousedown="dragTerminal(event)">
+  <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;"
+    onmousedown="dragTerminal(event)">
 
     <p>
       <span>%></span>
       <input type="text" class="terminal-input" onkeydown="sendCommand(event)" autofocus>
     </p>
-    
+
     <div class="terminal-output"></div>
 
     <div class="editor-container" style="display: none;">
       <div class="editor-buttons">
         <button class="save-btn" onclick="closeEditor()" onmousedown="event.stopPropagation()"
-        onmouseup="event.stopPropagation()">Guardar y Cerrar</button>
+          onmouseup="event.stopPropagation()">Guardar y Cerrar</button>
       </div>
-      <p class="file-editor-error" onmousedown="event.stopPropagation()"
-      onmouseup="event.stopPropagation()"></p>
+      <p class="file-editor-error" onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation()"></p>
       <textarea class="file-editor" data-file="" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()"
-        onmouseup="event.stopPropagation()"
-        ondragstart="event.stopPropagation()" onkeydown="fileEditorKeyboard(event)">
+        onmouseup="event.stopPropagation()" ondragstart="event.stopPropagation()" onkeydown="fileEditorKeyboard(event)">
       </textarea>
     </div>
 
@@ -161,7 +173,8 @@
           <button class="icon forward" aria-label="Adelante">▶</button>
           <button class="icon refresh" aria-label="Actualizar">↻</button>
         </div>
-        <input type="text" class="address-input" placeholder="https://www.ejemplo.com" aria-label="Barra de direcciones" onkeydown="browserSearch(event)" onmousedown="event.stopPropagation()">
+        <input type="text" class="address-input" placeholder="https://www.ejemplo.com" aria-label="Barra de direcciones"
+          onkeydown="browserSearch(event)" onmousedown="event.stopPropagation()">
         <div class="address-bar-icons">
           <button class="icon star" aria-label="Marcar como favorito">★</button>
           <button class="icon menu" aria-label="Menú">⋮</button>
