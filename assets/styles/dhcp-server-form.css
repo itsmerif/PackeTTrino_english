@@ -9,18 +9,29 @@
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    flex-wrap: wrap;
     gap: 15px;
+    width: 320px;
+}
+
+.dhcp-form div {
+    display: flex;
+    gap: 5px;
+}
+
+.dhcp-form div label {
+    text-align: center;
+    margin: auto;
 }
 
 .dhcp-form input, select {
-    width: 100%;
+    width: 100px;
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
     text-align: center;
+    flex: 1;
 }
 
 .dhcp-form input:focus {
@@ -29,7 +40,7 @@
 }
 
 .dhcp-form button {
-    width: 50%;
+    width: 30%;
     padding: 10px;
     background-color: rgb(223, 191, 12);
     border: none;
@@ -37,6 +48,7 @@
     color: #333;
     font-weight: 500;
     cursor: pointer;
+    margin: auto;
 }
 
 .dhcp-form button:hover {
@@ -52,5 +64,6 @@
 .dhcp-form p {
     text-transform: uppercase;
     font-weight: bolder;
+    margin: auto;
 }
 
