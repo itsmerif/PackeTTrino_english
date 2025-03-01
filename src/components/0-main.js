@@ -10,7 +10,7 @@ function sleep(ms) {
 }
 
 async function init() {
-    setTimeout(hideLoadingScreen, 500);
+    setTimeout(hideLoadingScreen, 1250);
     getPanelItems();
     await sleep(500);
     document.querySelector(".pc-terminal").addEventListener("keydown", terminalKeyboard); //añadimos eventos de teclado al terminal
