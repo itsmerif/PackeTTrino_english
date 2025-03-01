@@ -1,4 +1,6 @@
-.dhcp-form {
+/*relay form*/
+
+.dhcp-relay-form {
     position: absolute;
     top: 40%;
     left: 50%;
@@ -14,7 +16,7 @@
     gap: 15px;
 }
 
-.dhcp-form input, select {
+.dhcp-relay-form input, select {
     width: 100%;
     padding: 8px 12px;
     border: 1px solid #ddd;
@@ -23,12 +25,12 @@
     text-align: center;
 }
 
-.dhcp-form input:focus {
+.dhcp-relay-form input:focus {
     outline: none;
     border-color: #666;
 }
 
-.dhcp-form button {
+.dhcp-relay-form button {
     width: 50%;
     padding: 10px;
     background-color: rgb(223, 191, 12);
@@ -39,18 +41,17 @@
     cursor: pointer;
 }
 
-.dhcp-form button:hover {
+.dhcp-relay-form button:hover {
     background-color: rgb(203, 171, 0);
 }
 
-.dhcp-form label {
+.dhcp-relay-form label {
     align-self: flex-start;
     font-weight: 500;
     color: #333;
 }
 
-.dhcp-form p {
+.dhcp-relay-form p {
     text-transform: uppercase;
     font-weight: bolder;
 }
-

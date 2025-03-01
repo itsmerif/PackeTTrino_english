@@ -1,2 +1,6 @@
 cerrar trafico de paquetes al hacer ES
 problemas con los modales -> a veces no se ven si el elemento esta demasiado en el borde de la ventana
+poder usar ESC para salir del editor de texto
+añadir dns-server a los dhcp -> cambiar manera en la que se gestiona el dhcp
+cerrar la terminal al hacer ESC
+permitir hacer resize tanto de la terminal como del navegador
