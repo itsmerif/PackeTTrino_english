@@ -1,5 +1,3 @@
-//discover -> offer -> request -> ack
-
 function createDhcpServerObject(x, y) {
 
     const board = document.querySelector(".board");
@@ -31,6 +29,7 @@ function createDhcpServerObject(x, y) {
     networkObject.setAttribute("data-range-end", "");
     networkObject.setAttribute("offer-gateway", "");
     networkObject.setAttribute("offer-netmask", "");
+    networkObject.setAttribute("offer-dns", "");
 
     //server grafico
 
@@ -145,6 +144,7 @@ function showDhcpSpecs(event) {
     const rangeEnd = networkObject.getAttribute("data-range-end");
     const offerGateway = networkObject.getAttribute("offer-gateway");
     const offerNetmask = networkObject.getAttribute("offer-netmask");
+    const offerDns = networkObject.getAttribute("offer-dns");
 
     //mostramos el formulario
     document.querySelector(".dhcp-form #ip-dhcp").value = ip;
@@ -155,6 +155,7 @@ function showDhcpSpecs(event) {
     document.getElementById("form-dhcp-item-id").innerHTML = itemId;
     document.querySelector(".dhcp-form #offer-gateway").value = offerGateway;
     document.querySelector(".dhcp-form #offer-netmask").value = offerNetmask;
+    document.querySelector(".dhcp-form #offer-dns").value = offerDns;
 
     //ocultamos y mostramos
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
@@ -175,6 +176,7 @@ function saveDhcpSpecs(event) {
     const newRangeEnd = document.querySelector(".dhcp-form #range-end").value;
     const newOfferGateway = document.querySelector(".dhcp-form #offer-gateway").value;
     const newOfferNetmask = document.querySelector(".dhcp-form #offer-netmask").value;
+    const newOfferDns = document.querySelector(".dhcp-form #offer-dns").value;
 
     //guardamos los nuevos atributos en el server
 
@@ -185,6 +187,7 @@ function saveDhcpSpecs(event) {
     networkObject.setAttribute("data-range-end", newRangeEnd);
     networkObject.setAttribute("offer-gateway", newOfferGateway);
     networkObject.setAttribute("offer-netmask", newOfferNetmask);
+    networkObject.setAttribute("offer-dns", newOfferDns);
 
     //ocultamos el formulario
 

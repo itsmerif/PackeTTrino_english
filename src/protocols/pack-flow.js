@@ -854,6 +854,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
 
     const gatewayOffer = $serverObject.getAttribute("offer-gateway");
     const netmaskOffer = $serverObject.getAttribute("offer-netmask");
+    const dnsOffer = $serverObject.getAttribute("offer-dns");
     const networkOffer = getNetwork(gatewayOffer, netmaskOffer); //obtengo la red a la que ofrece
 
     //comportamiento de pc
@@ -924,7 +925,8 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
             packet.origin_mac, //destination mac
             packet.chaddr, //chaddr
             gatewayOffer, //gateway offer
-            netmaskOffer //netmask offer
+            netmaskOffer, //netmask offer
+            dnsOffer //dns offer
         );
 
         //comprobamos si proviene de un agente de retransmision
@@ -956,6 +958,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
                 serverObjectIp, //server ip
                 gatewayOffer, //gateway offer
                 netmaskOffer, //netmask offer
+                dnsOffer, //dns offer
                 packet.hostname //hostname
             );
 
@@ -998,6 +1001,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
                 serverObjectIp, //server ip
                 defaultGateway, //gateway offer
                 networkOffer, //netmask offer
+                dnsOffer, //dns offer
                 packet.hostname //hostname
             );
 

@@ -261,10 +261,12 @@ function setDhcpInfo(networkObjectId, packet) {
     let newGateway = packet.gateway;
     let newNetmask = packet.netmask;
     let newServer = packet.siaddr;
+    let newDns = packet.dns;
     $networkObject.setAttribute("data-ip", newIp);
     $networkObject.setAttribute("data-gateway", newGateway);
     $networkObject.setAttribute("data-netmask", newNetmask);
     $networkObject.setAttribute("data-dhcp-server", newServer);
+    $networkObject.setAttribute("data-dns-server", newDns);
 }
 
 function deleteDhcpInfo(networkObjectId) {
