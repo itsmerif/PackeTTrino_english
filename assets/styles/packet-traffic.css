@@ -1,6 +1,6 @@
 .packet-traffic {
     position: absolute;
-    top:15%;
+    top:40%;
     left: 50%;
     transform: translateX(-50%);
     display: none;
@@ -14,8 +14,8 @@
     border-radius: 8px;
     text-align: center;
     z-index: 2;
-    /*opacity: 0;
-    animation: fadeInPacketTraffic 0.3s ease forwards;*/
+    opacity: 0;
+    animation: fadeInPacketTraffic 0.3s ease forwards;
     border: 1px solid #ddd;
     min-width: 220px;
     max-height: 500px;

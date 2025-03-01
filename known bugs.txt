@@ -1,1 +1,2 @@
 cerrar trafico de paquetes al hacer ES
+problemas con los modales -> a veces no se ven si el elemento esta demasiado en el borde de la ventana

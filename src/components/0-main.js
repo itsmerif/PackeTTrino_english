@@ -10,17 +10,7 @@ function sleep(ms) {
 }
 
 async function init() {
-    
-    function hideLoadingScreen() {
-        const loadingScreen = document.getElementById('loading-screen');
-        loadingScreen.style.opacity = '0';
-        setTimeout(() => {
-            loadingScreen.style.display = 'none';
-        }, 500);
-    }
-
-    setTimeout(hideLoadingScreen, 1500);
-
+    setTimeout(hideLoadingScreen, 500);
     getPanelItems();
     await sleep(500);
     document.querySelector(".pc-terminal").addEventListener("keydown", terminalKeyboard); //añadimos eventos de teclado al terminal
@@ -298,3 +288,10 @@ function closeEveryThing(event) {
     }
 }
 
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loading-screen');
+    loadingScreen.style.opacity = '0';
+    setTimeout(() => {
+        loadingScreen.style.display = 'none';
+    }, 500);
+}
