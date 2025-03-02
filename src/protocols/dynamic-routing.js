@@ -1,10 +1,12 @@
 let nodes = {};
+let nodesNetmask = {};
 let nodesIp = {};
 
 function getNodes() {
 
     nodes = {};
     nodesIp = {};
+    nodesNetmask = {};
 
     const $routerElements = document.querySelectorAll('.router');
 
@@ -16,9 +18,11 @@ function getNodes() {
             const cells = routingRules[j].querySelectorAll('td');
             if (!nodes[$router.id]) nodes[$router.id] = [];
             if (!nodesIp[$router.id]) nodesIp[$router.id] = [];
+            if (!nodesNetmask[$router.id]) nodesNetmask[$router.id] = [];
             if (cells[0].innerText !== '') {
-                nodes[$router.id].push(cells[0].innerText);
-                nodesIp[$router.id].push(cells[2].innerText);
+                nodes[$router.id].push(cells[0].innerText); //guardamos los nodos
+                nodesNetmask[$router.id].push(cells[1].innerText); //guardamos las netmasks
+                nodesIp[$router.id].push(cells[2].innerText); //guardamos las IPs
             }
         }
     }
@@ -37,7 +41,6 @@ function getAllNetworks() {
 }
 
 function findShortestPath(startNetwork, endNetwork) {
-
     getNodes();
 
     const networkTopology = nodes;
@@ -45,40 +48,46 @@ function findShortestPath(startNetwork, endNetwork) {
     const distances = {};
     const previous = {};
     const unvisited = new Set();
-    
-    for (const node in graph) { //inicio todas las distancias como infinito
+
+    // Normalizar entrada: si startNetwork o endNetwork son interfaces
+    // de un mismo router, elegir una interfaz consistente
+    const startRouters = getRoutersForNetwork(startNetwork);
+    const endRouters = getRoutersForNetwork(endNetwork);
+
+    // Inicialización de Dijkstra
+    for (const node in graph) {
         distances[node] = Infinity;
         previous[node] = null;
         unvisited.add(node);
     }
-    
-    distances[startNetwork] = 0; //la distancia desde el nodo inicial a sí mismo es 0
-    
+
+    distances[startNetwork] = 0;
+
     while (unvisited.size > 0) {
 
         // Encontrar el nodo no visitado con la menor distancia
         let current = null;
         let minDistance = Infinity;
-        
+
         for (const node of unvisited) {
             if (distances[node] < minDistance) {
                 minDistance = distances[node];
                 current = node;
             }
         }
-        
+
         // Si no hay camino posible o hemos llegado al destino
         if (current === null || current === endNetwork) {
             break;
         }
-        
+
         // Marcar como visitado
         unvisited.delete(current);
-        
+
         // Actualizar distancias de los vecinos
         for (const neighbor of graph[current]) {
             const distance = distances[current] + 1; // Cada salto tiene un peso de 1
-            
+
             if (distance < distances[neighbor]) {
                 distances[neighbor] = distance;
                 previous[neighbor] = current;
@@ -89,21 +98,31 @@ function findShortestPath(startNetwork, endNetwork) {
     // Reconstruir el camino con los identificadores
     const pathNodes = [];
     let current = endNetwork;
-    
+
     while (current !== null) {
         pathNodes.unshift(current);
         current = previous[current];
     }
-    
+
     // Convertir el camino de nodos a IPs
     const pathIPs = mapPathToIPs(pathNodes);
-    
-    return  pathIPs;
+
+    return pathIPs;
+}
+
+function getRoutersForNetwork(network) {
+    const routers = [];
+    for (const routerId in nodes) {
+        if (nodes[routerId].includes(network)) {
+            routers.push(routerId);
+        }
+    }
+    return routers;
 }
 
 function mapPathToIPs(pathNodes) {
     const pathIPs = [];
-    
+
     for (let i = 0; i < pathNodes.length - 1; i++) {
         const currentNode = pathNodes[i];
         const nextNode = pathNodes[i + 1];
@@ -129,24 +148,35 @@ function mapPathToIPs(pathNodes) {
 }
 
 function buildGraphFromNetwork(networkTopology) {
-
     const graph = {};
+    const routerMap = {}; // Para mapear redes a sus routers
 
-    for (const router in networkTopology) {  //Inicializar el grafo con todas las redes
-        for (const ip of networkTopology[router]) {
-            if (!graph[ip]) {
-                graph[ip] = [];
+    // Inicializar el grafo con todas las redes
+    for (const router in networkTopology) {
+        for (const network of networkTopology[router]) {
+            if (!graph[network]) {
+                graph[network] = [];
             }
+
+            // Registrar qué router maneja esta red
+            if (!routerMap[network]) {
+                routerMap[network] = [];
+            }
+            routerMap[network].push(router);
         }
     }
 
-    for (const router in networkTopology) {  //Conectar redes que están en el mismo router
-        const networks = networkTopology[router];
+    // Conectar redes entre diferentes routers
+    for (const network in routerMap) {
+        const routers = routerMap[network];
 
-        for (let i = 0; i < networks.length; i++) {
-            for (let j = 0; j < networks.length; j++) {
-                if (i !== j) {
-                    graph[networks[i]].push(networks[j]);
+        for (const router of routers) {
+            // Obtener todas las otras redes accesibles desde este router
+            const routerNetworks = networkTopology[router];
+
+            for (const connectedNetwork of routerNetworks) {
+                if (connectedNetwork !== network) {
+                    graph[network].push(connectedNetwork);
                 }
             }
         }
@@ -158,13 +188,62 @@ function buildGraphFromNetwork(networkTopology) {
 function getNextHop(startNetwork) {
 
     const networks = getAllNetworks();
-    let nextHop;
+    const nextHop = [];
 
     for (let i = 0; i < networks.length; i++) {
-        nextHop = null;
-        const path = findShortestPath(startNetwork, networks[i]);
-        if (path.length > 0 && path[1]) {
-            console.log(networks[i] + " : " + path[1]);
+        const targetNetwork = networks[i];
+        const path = findShortestPath(startNetwork, targetNetwork);
+
+        if (path.length > 0) {
+            let netmask = null;
+            for (const routerId in nodes) {
+                const networkIndex = nodes[routerId].indexOf(targetNetwork);
+                if (networkIndex !== -1) {
+                    netmask = nodesNetmask[routerId][networkIndex];
+                    break;
+                }
+            }
+
+            if (path[1]) {
+                nextHop.push([targetNetwork, netmask, path[1]]);
+            }
+        }
+    }
+
+    return nextHop;
+}
+
+function getRoutes(routerId) {
+    const $router = document.getElementById(routerId); //obtengo el router
+    const validNetworks = [];
+    const routingTable = $router.querySelector('.routing-table').querySelector('table');
+    const routingRules = routingTable.querySelectorAll('tr');
+    let matrix = [];
+
+    for (let i = 1; i < 4; i++) {
+
+        const cells = routingRules[i].querySelectorAll('td');
+
+        const destination = cells[0].innerText;
+
+        if (destination !== '') {
+            let netmask = cells[1].innerText;
+            let network = getNetwork(destination, netmask);
+            validNetworks.push([network, netmask]); //guardamos las redes a las que el router está conectado de forma directa
+            matrix.push(getNextHop(destination));
+        }
+
+    }
+
+    matrix = matrix.reduce((a, b) => a.concat(b), []); //juntamos las matrices de todas las redes
+
+    for (let i = 0; i < matrix.length; i++) {
+        let possibleHop = matrix[i][2];
+        for (let j = 0; j < validNetworks.length; j++) {           
+            if (getNetwork(possibleHop, validNetworks[j][1]) === validNetworks[j][0]) {
+                matrix[i].push(validNetworks[j][0]);
+                break;
+            }
         }
     }
 }
