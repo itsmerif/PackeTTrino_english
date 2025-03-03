@@ -228,22 +228,104 @@ function getRoutes(routerId) {
 
         if (destination !== '') {
             let netmask = cells[1].innerText;
-            let network = getNetwork(destination, netmask);
-            validNetworks.push([network, netmask]); //guardamos las redes a las que el router está conectado de forma directa
+            let interface = cells[3].innerText;
+            let gateway = cells[2].innerText;
+            validNetworks.push([destination, netmask, gateway, interface]); //guardamos las redes a las que el router está conectado de forma directa
             matrix.push(getNextHop(destination));
         }
 
     }
 
     matrix = matrix.reduce((a, b) => a.concat(b), []); //juntamos las matrices de todas las redes
+    
+
+    //compruebo que los siguientes saltos formen parte de alguna de las redes
+
+    let flag = false;
 
     for (let i = 0; i < matrix.length; i++) {
-        let possibleHop = matrix[i][2];
-        for (let j = 0; j < validNetworks.length; j++) {           
-            if (getNetwork(possibleHop, validNetworks[j][1]) === validNetworks[j][0]) {
-                matrix[i].push(validNetworks[j][0]);
+
+        let nextHop = matrix[i][2];
+        flag = false;
+
+        for (let j = 0; j < validNetworks.length; j++) {
+            let network = validNetworks[j][0];
+            let netmask = validNetworks[j][1];
+            if (getNetwork(nextHop, netmask) === network) { //el siguiente salto es parte de la red, lo damos por bueno, y añadimos la interfaz y gateway a esa fila
+                flag = true;
+                matrix[i].push(validNetworks[j][2]);
+                matrix[i].push(validNetworks[j][3]);
                 break;
             }
         }
+
+        if (!flag) { //elimino esa entrada de la matriz
+            matrix.splice(i, 1);
+            i--;
+        }
+
     }
+
+    return removeDuplicateRows(matrix);
+}
+
+function removeDuplicateRows(matrix) {
+
+    if (!matrix.length) return [];
+    
+    const uniqueMatrix = [];
+    const seen = new Set();
+    
+    for (let i = 0; i < matrix.length; i++) {
+        const rowStr = JSON.stringify(matrix[i]);
+        
+        if (!seen.has(rowStr)) {
+            seen.add(rowStr);
+            uniqueMatrix.push(matrix[i]);
+        }
+    }
+    
+    return uniqueMatrix;
+}
+
+function autoInputRules($routerObjectId) {
+
+    const $routerObject = document.getElementById($routerObjectId);
+    const routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
+    const matrix = getRoutes($routerObjectId);
+
+    for (let i = 0; i<matrix.length; i++) {
+
+        let destination = matrix[i][0];
+        let netmask = matrix[i][1];
+        let nexthop = matrix[i][2];
+        let gateway = matrix[i][3];
+        let interface = matrix[i][4];
+
+        let newRow = document.createElement("tr");
+
+        newRow.innerHTML = `
+            <tr>
+                <td>${destination}</td>
+                <td>${netmask}</td>
+                <td>${gateway}</td>
+                <td>${interface}</td>
+                <td>${nexthop}</td>
+            </tr>`;
+        routingTable.appendChild(newRow);
+
+    }
+
+
+}
+
+function dynamicRouting() {
+
+    const $routers = document.querySelectorAll(".router");
+
+    for (let i = 0; i < $routers.length -1; i++) {
+        autoInputRules($routers[i].id);
+    }
+
+    console.log("dynamic routing complete");
 }
