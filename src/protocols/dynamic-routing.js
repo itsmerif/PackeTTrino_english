@@ -266,7 +266,7 @@ function getRoutes(routerId) {
 
     }
 
-    return removeDuplicateRows(matrix);
+    return groupByDefaultRules(removeDuplicateRows(matrix));
 }
 
 function removeDuplicateRows(matrix) {
@@ -290,33 +290,55 @@ function removeDuplicateRows(matrix) {
 
 function autoInputRules($routerObjectId) {
 
-    const $routerObject = document.getElementById($routerObjectId);
-    const routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
     const matrix = getRoutes($routerObjectId);
 
-    for (let i = 0; i<matrix.length; i++) {
-
+    for (let i = 0; i < matrix.length; i++) {
         let destination = matrix[i][0];
         let netmask = matrix[i][1];
         let nexthop = matrix[i][2];
-        let gateway = matrix[i][3];
         let interface = matrix[i][4];
+        addRoutingEntry($routerObjectId, destination, netmask, interface, nexthop);
+    }
+    
+}
 
-        let newRow = document.createElement("tr");
+function groupByDefaultRules(matrix) {
 
-        newRow.innerHTML = `
-            <tr>
-                <td>${destination}</td>
-                <td>${netmask}</td>
-                <td>${gateway}</td>
-                <td>${interface}</td>
-                <td>${nexthop}</td>
-            </tr>`;
-        routingTable.appendChild(newRow);
+    const hopCounter = {};
+    let newMatrix = [];
 
+    for (let i = 0; i < matrix.length; i++) {
+        let nextHop = matrix[i][2];     
+        hopCounter[nextHop] =  { 
+            count: hopCounter[nextHop] ? hopCounter[nextHop].count + 1 : 1,
+            gateway: matrix[i][3],
+            interface: matrix[i][4] 
+        };
     }
 
+    let maxCount = Math.max(...Object.values(hopCounter).map(hop => hop.count));
+    let maxInst = Object.keys(hopCounter).filter(key => hopCounter[key].count === maxCount);
 
+    if (maxCount > 1) { //hemos encontrado un canditato a regla por defecto
+
+        let maxInstGateway = hopCounter[maxInst[0]].gateway;
+        let maxInstInterface = hopCounter[maxInst[0]].interface;
+
+        for (let i = 0; i < matrix.length; i++) {
+            let nextHop = matrix[i][2];
+            let j = 0;
+            if (nextHop !== maxInst[0]) {
+                newMatrix[j] = matrix[i];
+                j++;
+            }
+        }
+
+        newMatrix[newMatrix.length] = ["0.0.0.0", "0.0.0.0", maxInst[0], maxInstGateway, maxInstInterface];
+
+        return newMatrix;
+    }
+
+    return matrix;
 }
 
 function dynamicRouting() {
