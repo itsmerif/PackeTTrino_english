@@ -409,7 +409,7 @@ function getRoutingRules(routerObjectid, targetinterface) {
 async function minimizeTerminal() {
     return new Promise(resolve => {
         const terminal = document.querySelector(".pc-terminal");
-        if (!terminal) return resolve();
+        if (!terminal || terminal.style.display === "none") return resolve();
         const rect = terminal.getBoundingClientRect();
         const targetWidth = rect.width * 0.3;
         const targetHeight = rect.height * 0.3;
@@ -427,7 +427,7 @@ async function minimizeTerminal() {
 async function maximizeTerminal() {
     return new Promise(resolve => {
         const terminal = document.querySelector(".pc-terminal");
-        if (!terminal) return resolve();
+        if (!terminal || terminal.style.display === "none") return resolve();
         terminal.style.transition = "all 1s ease-in-out";
         terminal.style.width = "1000px";
         terminal.style.height = "500px";

@@ -203,14 +203,14 @@ function ping_f(origin) {
 
 async function pingSim() {
     visualToggle = true;
+    console.log("pingSim");
     const form = document.querySelector(".ping-form");
     const originIp = form.ip1.value; //ip de origen
     const destination = form.ip2.value; 
-    const $networkObject = document.querySelector(`[data-ip='${originIp}']`);
-
-    if (!isValidIp(destination) ){ //lo tomamos como un nombre de dominio
-        await dig($networkObject.id, destination, false);
+    const speed = form.speed.value;
+    if (speed) {
+        visualSpeed = parseInt(speed, 10);
     }
-
+    const $networkObject = document.querySelector(`[data-ip='${originIp}']`);
     await ping($networkObject.id, ["ping", destination]);
 }

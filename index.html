@@ -126,7 +126,6 @@
     <button type="submit">Guardar</button>
   </form>
   
-
   <form class="dns-form" onsubmit="saveDnsSpecs(event); return false;" style="display: none;">
     <p id="form-dns-item-id"></p>
     <label for="ip">IP:</label>
@@ -217,6 +216,8 @@
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
     <label for="ip2">Destino</label>
     <input type="text" id="ip2" name="ip2" placeholder="192.168.1.1, www.google.com">
+    <label for="speed">Tiempo de Animación (ms)</label>
+    <input type="text" id="speed" name="speed" placeholder="1000">
     <input type="submit" value="Enviar Paquete">
   </form>
 
