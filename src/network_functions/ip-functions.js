@@ -68,23 +68,30 @@ function command_Ip(id, args) {
             return;
         }
 
-        if (args.length !== 8) {
-            terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
-            return;
-        }
-
-        if (args[2] !== "add" && args[2] !== "del" || args[5] !== "via") {
-            terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
-            return;
-        }
-
         if (args[2] === "add") {
+
+            if (args.length !== 8) {
+                terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
+                return;
+            }
+    
+            if (args[2] !== "add" && args[2] !== "del" || args[5] !== "via") {
+                terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
+                return;
+            }
+
             addRoutingEntry(id, args[3], args[4], args[6], args[7]);
             return;
         }
 
-        if (args[2] === "del") {
-            removeRoutingEntry(id, args[3], args[4], args[6], args[7]);
+        if (args[2] === "del") { //sintaxis: ip route del [destination] [netmask]
+
+            if (args.length !== 5) {
+                terminalMessage('Error de argumentos. Sintaxis: ip route del [destination] [netmask]');
+                return;
+            }
+
+            removeRoutingEntry(id, args[3], args[4]);
             return;
         }
     }
@@ -193,7 +200,6 @@ function addRoutingEntry(routerObjectId, destination, netmask, interface, nextho
 }
 
 function removeRoutingEntry(routerObjectId, destination, netmask) {
-
     const networkObject = document.getElementById(routerObjectId);
     const table = networkObject.querySelector(".routing-table").querySelector("table");
     const rows = table.querySelectorAll("tr");
@@ -203,11 +209,10 @@ function removeRoutingEntry(routerObjectId, destination, netmask) {
         const cells = row.querySelectorAll("td");
 
         if (cells[0].innerHTML === destination && cells[1].innerHTML === netmask) {
-            table.removeChild(row);
+            row.parentNode.removeChild(row);
             terminalMessage("La regla ha sido eliminada correctamente.");
             return;
         }
-
     }
 
     terminalMessage("Error: La regla no existe.");

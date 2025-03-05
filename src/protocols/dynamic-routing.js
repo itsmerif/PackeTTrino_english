@@ -266,6 +266,7 @@ function getRoutes(routerId) {
 
     }
 
+    ////console.log(matrix);
     return groupByDefaultRules(removeDuplicateRows(matrix));
 }
 
@@ -285,6 +286,7 @@ function removeDuplicateRows(matrix) {
         }
     }
     
+    ////console.log(uniqueMatrix);
     return uniqueMatrix;
 }
 
@@ -323,21 +325,23 @@ function groupByDefaultRules(matrix) {
 
         let maxInstGateway = hopCounter[maxInst[0]].gateway;
         let maxInstInterface = hopCounter[maxInst[0]].interface;
+        let j = 0;
 
         for (let i = 0; i < matrix.length; i++) {
             let nextHop = matrix[i][2];
-            let j = 0;
             if (nextHop !== maxInst[0]) {
+                //console.log(nextHop);
                 newMatrix[j] = matrix[i];
                 j++;
             }
+            ////console.log(newMatrix);
         }
 
         newMatrix[newMatrix.length] = ["0.0.0.0", "0.0.0.0", maxInst[0], maxInstGateway, maxInstInterface];
-
         return newMatrix;
     }
 
+    ////console.log(matrix);
     return matrix;
 }
 

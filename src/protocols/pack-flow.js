@@ -523,7 +523,7 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
 
         if (packet.chaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
 
-            //console.log("DHCP Discover");
+            ////console.log("DHCP Discover");
 
             dhcpDiscoverFlag = true;
 
@@ -709,7 +709,7 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
         }
 
         if (packet.protocol === "icmp" && packet.type === "reply") {
-            console.log("ICMP REPLY");
+            //console.log("ICMP REPLY");
             icmpFlag = true;
             return;
         }
@@ -1021,7 +1021,7 @@ async function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packe
 
     if (!firewallProcessorHost(serverObjectId, packet)) return;
 
-    ////console.log(`packetProcessor_dhcp_relay_server(${switchId}, ${serverObjectId}, ${packet})`);
+    //////console.log(`packetProcessor_dhcp_relay_server(${switchId}, ${serverObjectId}, ${packet})`);
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");
     const serverObjectIp = $serverObject.getAttribute("data-ip");
@@ -1159,7 +1159,7 @@ async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
 
     if (!firewallProcessorHost(serverObjectId, packet)) return;
 
-    //console.log(packet);
+    ////console.log(packet);
 
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");

@@ -123,6 +123,7 @@ function dragTerminal(event) {
 
 function terminalMessage(message) {
     const terminal = document.querySelector(".pc-terminal");
+    if (terminal.style.display === "none") return;
     const output = document.querySelector(".terminal-output");
     const messageElement = document.createElement("p");
     messageElement.className = "terminal-message";

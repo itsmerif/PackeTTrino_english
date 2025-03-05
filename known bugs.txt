@@ -6,3 +6,4 @@ cerrar la terminal al hacer ESC -> hay que hacer focus para que lo detecte
 permitir hacer resize tanto de la terminal como del navegador
 tener en cuenta el ttl de los paquetes
 incorporar traceroute
+se abre procesos de ping por terminal cuando la terminal no esta funcionando
