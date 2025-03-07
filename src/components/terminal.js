@@ -67,7 +67,7 @@ function sendCommand(event) {
                 command_test(args);
                 break;
             case "traceroute":
-                command_traceroute(args);
+                command_traceroute(dataId, args);
                 break;
             case "exit":
                 event.target.value = "";

@@ -1,17 +1,26 @@
-let buffer = {}; //buffer de paquetes
-let tcpBuffer = {}; //buffer de numeros de secuencia TCP
+//variables de animaciones
+let visualToggle = false;
+let visualSpeed = 1000;
+//variables generales de hosts
+let buffer = {}; //buffer general de paquetes para cada objeto de red
 let browserBuffer = {}; //buffer de paquetes http
+//variables de arp
 let arpFlag = false;
 let icmpFlag = false;
+//variables de dhcp
 let dhcpDiscoverFlag = false;
 let dhcpRequestFlag = false;
 let dhcpRenewFlag = false;
 let dnsRequestFlag = false;
+//variables de tcp
+let tcpBuffer = {}; //buffer de numeros de secuencia TCP
 let tcpSyncFlag = false;
 let order = 0;
-let visualToggle = false;
-let visualSpeed = 1000;
-let trace = false;
+//variables de traceroute
+let trace =  false; //se activa el modo traceroute
+let traceReturn = false; //retorno del icmp con time exceeded
+let traceBuffer = []; //buffer de saltos
+let traceFlag = false; //bandera de traceroute
 
 //Generadores
 
@@ -382,6 +391,59 @@ async function httpRequestPacketGenerator(networkObjectId, switchId, destination
 
 }
 
+//generadores especiales
+
+async function customPacketGenerator(networkObjectId, packet) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const switchId = $networkObject.getAttribute("data-switch");
+    const destination_ip = packet.destination_ip;
+    const isSameNetwork = getNetwork(networkObjectIp, $networkObject.getAttribute("data-netmask")) === getNetwork(destination_ip, $networkObject.getAttribute("data-netmask"));
+    let destination_mac;
+
+    if (!isSameNetwork) {
+
+        const defaultGateway = $networkObject.getAttribute("data-gateway");
+
+        if (!defaultGateway) {
+            throw new Error("Error: Puerta de Enlace Predeterminada No Configurada");
+        }
+
+        const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
+
+        if (!defaultGatewayMac) {
+            buffer[networkObjectId] = packet;
+            let newPacket = new ArpRequest(networkObjectIp, defaultGateway, $networkObject.getAttribute("data-mac"));
+            addPacketTraffic(newPacket);
+            await switchProcessor(switchId, networkObjectId, newPacket);
+            return;
+        }
+
+        packet.destination_mac = defaultGatewayMac;
+        icmpFlag = false;
+        addPacketTraffic(packet);
+        await switchProcessor(switchId, networkObjectId, packet);
+        return;
+
+    }
+
+    //están en la misma red
+
+    packet.destination_mac = isIpInARPTable(networkObjectId, destination_ip);
+
+    if (!destination_mac) {
+        buffer[networkObjectId] = packet;
+        let newPacket = new ArpRequest(networkObjectIp, destination_ip, $networkObject.getAttribute("data-mac"));
+        addPacketTraffic(newPacket);
+        await switchProcessor(switchId, networkObjectId, newPacket);
+    } else {
+        addPacketTraffic(packet);
+        await switchProcessor(switchId, networkObjectId, packet);
+    }
+
+}
+
 //Procesadores 
 
 async function switchProcessor(switchId, networkObjectId, packet) {
@@ -508,16 +570,27 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
 
     }
 
+    if (packet.protocol === "icmp" && packet.type === "time-exceeded") {
+        if (packet.destination_ip !== networkObjectIp) return;
+        if (trace) {
+            traceReturn = true;
+            traceBuffer.push(packet.origin_ip);
+        }
+    }
+
     if (packet.protocol === "icmp" && packet.type === "reply") {
 
         if (packet.destination_ip !== networkObjectIp) {
-            //terminalMessage(networkObjectId + ": Destino No Coincide");
             throw new Error("Destino No Coincide");
         }
-        //terminalMessage(networkObjectId + ": ICMP ECHO REPLY recibido.");
-
 
         icmpFlag = true;
+
+        if (trace){ //estamos en modo traceroute
+            traceBuffer.push(packet.origin_ip);
+            traceFlag = true; //confirmamos que hemos encontrado el destino
+        }
+
     }
 
     if (packet.protocol === "dhcp" && packet.type === "offer") {
