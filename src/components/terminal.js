@@ -132,7 +132,7 @@ function terminalMessage(message) {
     messageElement.className = "terminal-message";
     messageElement.innerHTML = message;
     output.appendChild(messageElement);
-    terminal.scrollTop = output.scrollHeight;
+    //terminal.scrollTop = output.scrollHeight;
 }
 
 function command_help() {
