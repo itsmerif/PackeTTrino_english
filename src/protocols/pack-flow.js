@@ -11,6 +11,7 @@ let tcpSyncFlag = false;
 let order = 0;
 let visualToggle = false;
 let visualSpeed = 1000;
+let trace = false;
 
 //Generadores
 
@@ -653,6 +654,17 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
             break;
     }
 
+    //el paquete pasa, tenemos que mirar el TTL y reducirlo
+
+    if (packet.ttl && !availableIps.includes(packet.origin_ip))  {          
+        packet.ttl--;
+        if (packet.ttl < 1) {
+            packet = new IcmpTimeExceeded(networkObjectIp, packet.origin_ip, routerObjectMac, routerObjectMac); //alteracion de la verdad!!!
+        }
+    }
+
+    //procesamiento del paquete
+
     const isSameNetwork = getNetwork(packet.destination_ip, networkObjectNetmask) === getNetwork(networkObjectIp, networkObjectNetmask);
 
     if (availableIps.includes(packet.destination_ip)) { //paquete con destino al router
@@ -688,18 +700,13 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
 
         if (packet.protocol === "arp" && packet.type === "reply") {
 
-            if (packet.destination_ip !== networkObjectIp) {
-                //terminalMessage(networkObjectId + ": Respuesta ARP invalida");
-                return;
-            }
+            if (packet.destination_ip !== networkObjectIp || packet.destination_mac !== routerObjectMac) return;
 
             arpFlag = true;
             addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
-            //terminalMessage(networkObjectId + ": El equipo con ip " + packet.origin_ip + " ha sido agregado a la tabla de ARP");
 
             if (buffer[networkObjectId]) {
                 buffer[networkObjectId].destination_mac = isIpInARPTable(networkObjectId, packet.origin_ip);
-                //terminalMessage("Enviando paquete en el buffer: " + buffer[networkObjectId].protocol);
                 addPacketTraffic(buffer[networkObjectId]);
                 await switchProcessor(switchId, networkObjectId, buffer[networkObjectId]);
                 delete buffer[networkObjectId];

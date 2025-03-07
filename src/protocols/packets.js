@@ -11,7 +11,6 @@ class ArpRequest extends packet {
     constructor(origin_ip, destination_ip, origin_mac) {
         super(origin_ip, destination_ip, origin_mac, "ff:ff:ff:ff:ff:ff");;
         this.protocol = "arp";
-        this.ttl = 64;
         this.type = "request";
     }
 }
@@ -20,7 +19,6 @@ class ArpReply extends packet {
     constructor(origin_ip, destination_ip, origin_mac, destination_mac) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
         this.protocol = "arp";
-        this.ttl = 64;
         this.type = "reply";
     }
 }
@@ -40,6 +38,15 @@ class IcmpEchoReply extends packet {
         this.protocol = "icmp";
         this.ttl = 64;
         this.type = "reply";
+    }
+}
+
+class IcmpTimeExceeded extends packet {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac) {
+        super(origin_ip, destination_ip, origin_mac, destination_mac);
+        this.protocol = "icmp";
+        this.ttl = 64;
+        this.type = "time-exceeded";
     }
 }
 

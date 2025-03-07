@@ -66,6 +66,9 @@ function sendCommand(event) {
             case "test":
                 command_test(args);
                 break;
+            case "traceroute":
+                command_traceroute(args);
+                break;
             case "exit":
                 event.target.value = "";
                 document.querySelector(".pc-terminal").style.display = "none";
@@ -237,13 +240,7 @@ function terminalKeyboard(event) {
     }
 
     if (event.key === "Escape") {
-        event.preventDefault();
-        clearInterval(window.pingInterval);
-        terminalBuffer = [];
-        currentCommandIndex = 0;
-        document.querySelector(".pc-terminal").style.display = "none";
-        document.querySelector(".terminal-output").innerHTML = "";
-        document.querySelector(".pc-terminal").querySelector("input").value = "";
+        closeTerminal(event);
     }
 
     if (event.key === "ArrowUp") {
@@ -505,4 +502,14 @@ function getopts(options, argString) {
 
     return output;
 
+}
+
+function closeTerminal(event) {
+    event.preventDefault();
+    clearInterval(window.pingInterval);
+    terminalBuffer = [];
+    currentCommandIndex = 0;
+    document.querySelector(".pc-terminal").style.display = "none";
+    document.querySelector(".terminal-output").innerHTML = "";
+    document.querySelector(".pc-terminal").querySelector("input").value = "";
 }
