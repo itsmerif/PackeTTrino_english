@@ -52,11 +52,5 @@
         "image": "./assets/panel/traffic.png",
         "draggable": false,
         "size": "100%"
-    },
-    {
-        "name": "dynrouting",
-        "image": "./assets/panel/dynrouter.png",
-        "draggable": false,
-        "size": "100%"
     }
 ]

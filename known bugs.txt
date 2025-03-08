@@ -1,9 +1,7 @@
-solucionar filtro de paquetes
 problemas con los modales -> a veces no se ven si el elemento esta demasiado en el borde de la ventana
 poder usar ESC para salir del editor de texto
 permitir hacer resize tanto de la terminal como del navegador
-tener en cuenta el ttl de los paquetes
-incorporar traceroute
 no puedes encontrar ip por dhcp si tienes todavia la ip estatica
 al hacer dhcp -release el equipo no pierde la ip
 los routers se pueden mover conectados
+enrutamiento automático hacia una red
