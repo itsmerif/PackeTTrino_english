@@ -40,7 +40,6 @@ const $error404 = `
             <div class="error-code">404</div>
             <h1>¡Página no encontrada!</h1>
             <p>La página que estás buscando no existe o ha sido movida a otra ubicación.</p>
-            <a href="/" class="btn">Volver al inicio</a>
         </div>
     </body>
 </html>`;
@@ -111,4 +110,39 @@ function closeBrowser(event) {
     document.querySelector(".browser-content").innerHTML = `<img src="./assets/browser/aminsearch.png" alt="logo"></img>`; //recuperamos el contenido original del navegador
     document.querySelector(".address-input").value = ""; //limpiamos la entrada de direccion
     document.querySelector(".pc-browser").style.display = "none"; //ocultamos el navegador
+}
+
+async function minimizeBrowser() {
+    return new Promise(resolve => {
+        const browser = document.querySelector(".pc-browser");
+        if (!browser || browser.style.display === "none") return resolve();
+        const rect = browser.getBoundingClientRect();
+        const targetWidth = rect.width * 0.3;
+        const targetHeight = rect.height * 0.3;
+        const windowHeight = window.innerHeight;
+        browser.style.transition = "all 0.5s ease-in-out";
+        browser.style.width = `${targetWidth}px`;
+        browser.style.height = `${targetHeight}px`;
+        browser.style.top = `${windowHeight - targetHeight}px`;
+        browser.style.left = "0%";
+        browser.style.transform = "translate(0%, 0)";
+        browser.addEventListener("transitionend", resolve, { once: true }); 
+    });
+}
+
+async function maximizeBrowser() {
+    return new Promise(resolve => {
+        const browser = document.querySelector(".pc-browser");
+        if (!browser || browser.style.display === "none") return;
+        browser.style.transition = "all 0.5s ease-in-out";
+        browser.style.width = "60dvw";
+        browser.style.height = "700px";
+        browser.style.top = "40%";
+        browser.style.left = "50%";
+        browser.style.transform = "translate(-50%, -50%)";
+        browser.addEventListener("transitionend", () => {
+            browser.style.transition = "none";
+            resolve();
+        }, { once: true });
+    });
 }
