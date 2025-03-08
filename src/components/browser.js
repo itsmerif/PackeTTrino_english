@@ -106,16 +106,19 @@ function openBrowser(event) {
 function closeBrowser(event) {
     event.stopPropagation();
     event.preventDefault();
-    console.log("cerrando");
-    document.querySelector(".browser-content").innerHTML = `<img src="./assets/browser/aminsearch.png" alt="logo"></img>`; //recuperamos el contenido original del navegador
-    document.querySelector(".address-input").value = ""; //limpiamos la entrada de direccion
-    document.querySelector(".pc-browser").style.display = "none"; //ocultamos el navegador
+    const browser = document.querySelector(".pc-browser");
+    if (browser.style.left !== "0%") {
+        document.querySelector(".browser-content").innerHTML = `<img src="./assets/browser/aminsearch.png" alt="logo"></img>`; //recuperamos el contenido original del navegador
+        document.querySelector(".address-input").value = ""; //limpiamos la entrada de direccion
+        document.querySelector(".pc-browser").style.display = "none"; //ocultamos el navegador
+    }
 }
 
 async function minimizeBrowser() {
+    const browser = document.querySelector(".pc-browser");
+    if (!browser || browser.style.display === "none") return resolve();
+    if (browser.style.left === "0px") return resolve();
     return new Promise(resolve => {
-        const browser = document.querySelector(".pc-browser");
-        if (!browser || browser.style.display === "none") return resolve();
         const rect = browser.getBoundingClientRect();
         const targetWidth = rect.width * 0.3;
         const targetHeight = rect.height * 0.3;

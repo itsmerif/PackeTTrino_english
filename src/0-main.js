@@ -186,13 +186,8 @@ function closeEveryThing(event) {
         for (let i = 0; i < forms.length; i++) {
             forms[i].style.display = "none";
         }
-        //cerramos el navegador
-        document.querySelector(".browser-content").innerHTML = `<img src="./assets/browser/aminsearch.png" alt="logo"></img>`; //recuperamos el contenido original del navegador
-        document.querySelector(".address-input").value = ""; //limpiamos la entrada de direccion
-        document.querySelector(".pc-browser").style.display = "none"; //ocultamos el navegador
-        //cerramos el panel de trafico
+        closeBrowser(event);
         document.querySelector(".packet-traffic").style.display = "none";
-        //cerramos la terminal
         closeTerminal(event);
     }
 }

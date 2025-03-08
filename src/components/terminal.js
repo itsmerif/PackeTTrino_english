@@ -506,10 +506,11 @@ function getopts(options, argString) {
 
 function closeTerminal(event) {
     event.preventDefault();
+    const terminal = document.querySelector(".pc-terminal");
     clearInterval(window.pingInterval);
     terminalBuffer = [];
     currentCommandIndex = 0;
-    document.querySelector(".pc-terminal").style.display = "none";
+    terminal.style.display = "none";
     document.querySelector(".terminal-output").innerHTML = "";
-    document.querySelector(".pc-terminal").querySelector("input").value = "";
+    terminal.querySelector("input").value = "";
 }
