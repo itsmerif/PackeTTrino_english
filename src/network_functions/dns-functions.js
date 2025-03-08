@@ -117,7 +117,7 @@ function delDnsEntry(dataId, targetDomain) {
         let cells = record.querySelectorAll("td");
         let domain = cells[0].innerHTML;
         if (domain === targetDomain) {
-            dnsTable.removeChild(record);
+            record.remove();
             terminalMessage(`Dominio ${targetDomain} borrado correctamente`);
             return;
         }

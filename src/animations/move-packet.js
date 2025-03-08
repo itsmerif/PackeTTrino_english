@@ -17,9 +17,9 @@ async function movePacket(x1, y1, x2, y2, type) {
 
         function animateMove(time) {
             if (!startTime) startTime = time;
-            const progress = (time - startTime) / visualSpeed;
-            const currentX = x1 + (x2 - x1) * Math.min(progress, 1);
-            const currentY = y1 + (y2 - y1) * Math.min(progress, 1);
+            const progress = (time - startTime)/visualSpeed;
+            const currentX = x1 + (x2 - x1)*Math.min(progress, 1);
+            const currentY = y1 + (y2 - y1)*Math.min(progress, 1);
             img.setAttribute("x", currentX);
             img.setAttribute("y", currentY);
 

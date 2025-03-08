@@ -33,6 +33,7 @@ body {
     flex-direction: column;
     box-sizing: border-box;
     position: relative;
+    overflow: hidden;
 }
 
 img {

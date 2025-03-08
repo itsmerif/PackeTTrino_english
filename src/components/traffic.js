@@ -1,6 +1,5 @@
 function addPacketTraffic(packet) {
     const $table = document.querySelector(".packet-traffic table");
-    let transportProtocol = packet.transport_protocol || "N/A";
     let protocol = packet.protocol || "N/A";
     let type = packet.type;
     let destinationIP = packet.destination_ip;
@@ -11,7 +10,6 @@ function addPacketTraffic(packet) {
 
     $table.innerHTML += `
         <tr>
-            <td>${transportProtocol}</td>
             <td>${protocol}</td>
             <td>${type}</td>
             <td>${originIP}</td>

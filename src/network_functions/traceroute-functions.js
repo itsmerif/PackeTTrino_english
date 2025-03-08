@@ -43,13 +43,26 @@ async function traceroute(dataId, destination, numeric = false) {
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     let hops = numeric ? 1 : "";
 
+
+    if (visualToggle) await minimizeTerminal();
+
+    //comprobamos si el destino es una ip o un nombre de dominio
+
+    if (!isValidIp(destination)) {
+        try {
+            await dig(dataId, destination, false);
+            destination = isDomainInCachePc(dataId, destination)[1];
+        }catch (error) {
+            terminalMessage("Error: No se pudo resolver el nombre de dominio.");
+            return;
+        }
+    }
+
     //generamos el primer paquete
 
     let packet = new IcmpEchoRequest(networkObjectIp, destination, networkObjectMac, "");
     packet.ttl = 1;
     traceBuffer = [networkObjectIp]; //se agrega el origen al buffer de traceroute
-
-    if (visualToggle) await minimizeTerminal();
 
     await customPacketGenerator(dataId, packet);
 

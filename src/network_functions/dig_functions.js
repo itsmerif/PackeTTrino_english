@@ -8,7 +8,7 @@ function command_dig(dataId, args) {
     }
 
     terminalMessage("Buscando información de dominio...");
-    
+
     dig(dataId, args[1], true);
 
 }
@@ -17,39 +17,22 @@ async function dig(dataId, domain, verbose = false) {
 
     cleanPacketTraffic()
 
-    const $networkObject= document.getElementById(dataId);
+    const $networkObject = document.getElementById(dataId);
     const switchId = $networkObject.getAttribute("data-switch");
     const [translationType, translation] = isDomainInCache(dataId, domain);
 
     if (!translation) { //no tenemos la ip en cache, buscamos en el servidor
         dnsRequestFlag = false;
-
-        if (!visualToggle) {           
-            dnsRequestPacketGenerator(dataId, switchId, domain);
-            setTimeout(() => {
-                if (!dnsRequestFlag) {
-                    terminalMessage("Error: No se pudo resolver el nombre de dominio.");
-                } else {
-                    let [translationType, translation] = isDomainInCachePc(dataId, domain);
-                    if (verbose) {
-                        terminalMessage(`Nombre de Dominio: ${domain}`);
-                        terminalMessage(`Tipo de Registro: ${translationType}`);
-                        terminalMessage(`Respuesta: ${translation}`);
-                    }
-                }
-            }, 500);
+        await dnsRequestPacketGenerator(dataId, switchId, domain);
+        if (!dnsRequestFlag) {
+            if (verbose) terminalMessage("Error: No se pudo resolver el nombre de dominio.");
+            throw new Error("Error: No se pudo resolver el nombre de dominio.");
         } else {
-            dnsRequestFlag = false;
-            await dnsRequestPacketGenerator(dataId, switchId, domain);
-            if (!dnsRequestFlag) {
-                terminalMessage("Error: No se pudo resolver el nombre de dominio.");
-            } else {
-                let [translationType, translation] = isDomainInCachePc(dataId, domain);
-                if (verbose) {
-                    terminalMessage(`Nombre de Dominio: ${domain}`);
-                    terminalMessage(`Tipo de Registro: ${translationType}`);
-                    terminalMessage(`Respuesta: ${translation}`);
-                }
+            let [translationType, translation] = isDomainInCachePc(dataId, domain);
+            if (verbose) {
+                terminalMessage(`Nombre de Dominio: ${domain}`);
+                terminalMessage(`Tipo de Registro: ${translationType}`);
+                terminalMessage(`Respuesta: ${translation}`);
             }
         }
         return;
@@ -72,7 +55,7 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
     const records = dnsTable.querySelectorAll("tr");
     let i = 1;
 
-    while ( i < records.length ) {
+    while (i < records.length) {
 
         let row = records[i];
         let cells = row.querySelectorAll("td");
@@ -88,7 +71,7 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
                 let [translationType, translation] = isDomainInCachePc(networkObjectId, value);
                 return [translationType, translation];
             }
-            
+
         }
 
         i++;
