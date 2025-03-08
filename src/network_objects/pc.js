@@ -76,8 +76,6 @@ function createPcObject(x, y) {
     networkObject.setAttribute("onclick", "showPcForm('" + networkObject.id + "')");
     networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
     networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
-    //networkObject.setAttribute("onmouseover", "showquickInfo(event)");
-    //networkObject.setAttribute("onmouseout", "hidequickInfo(event)");
     board.appendChild(networkObject);
     itemIndex++;
 }

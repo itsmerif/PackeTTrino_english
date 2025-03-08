@@ -1,4 +1,5 @@
 //variables globales
+
 let itemIndex = 0;
 let quickInfoTimeout;
 const leaseTimers = {};
@@ -10,7 +11,7 @@ function sleep(ms) {
 }
 
 async function init() {
-    setTimeout(hideLoadingScreen, 1250);
+    setTimeout(hideLoadingScreen, 200);
     getPanelItems();
     await sleep(500);
     document.querySelector(".pc-terminal").addEventListener("keydown", terminalKeyboard); //añadimos eventos de teclado al terminal
