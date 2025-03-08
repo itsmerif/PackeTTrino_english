@@ -743,12 +743,6 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
     if (availableIps.includes(packet.destination_ip)) { //paquete con destino al router
 
         if (packet.protocol === "arp" && packet.type === "request") {
-
-            if (packet.destination_ip !== networkObjectIp) {
-                //terminalMessage(networkObjectId + ": Solicitud ARP ignorada");
-                return;
-            }
-            //terminalMessage(networkObjectId + ": Enviando un Respuesta ARP");
             addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
             let newPacket = new ArpReply(networkObjectIp, packet.origin_ip, routerObjectMac, packet.origin_mac);
             addPacketTraffic(newPacket);
@@ -757,27 +751,15 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
         }
 
         if (packet.protocol === "icmp" && packet.type === "request") {
-
-            if (packet.destination_ip !== networkObjectIp) {
-                //terminalMessage(networkObjectId + ": Solicitud ICMP ignorada");
-                return;
-            }
-
-            //terminalMessage(networkObjectId + ": Enviando ICMP ECHO REPLY");
             let newPacket = new IcmpEchoReply(networkObjectIp, packet.origin_ip, routerObjectMac, packet.origin_mac);
             addPacketTraffic(newPacket);
             await switchProcessor(switchId, networkObjectId, newPacket);
             return;
-
         }
 
         if (packet.protocol === "arp" && packet.type === "reply") {
-
-            if (packet.destination_ip !== networkObjectIp || packet.destination_mac !== routerObjectMac) return;
-
             arpFlag = true;
             addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
-
             if (buffer[networkObjectId]) {
                 buffer[networkObjectId].destination_mac = isIpInARPTable(networkObjectId, packet.origin_ip);
                 addPacketTraffic(buffer[networkObjectId]);
@@ -785,11 +767,9 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
                 delete buffer[networkObjectId];
                 return;
             }
-
         }
 
         if (packet.protocol === "icmp" && packet.type === "reply") {
-            //console.log("ICMP REPLY");
             icmpFlag = true;
             return;
         }
