@@ -49,6 +49,8 @@ async function traceroute(dataId, destination, numeric = false) {
     packet.ttl = 1;
     traceBuffer = [networkObjectIp]; //se agrega el origen al buffer de traceroute
 
+    if (visualToggle) await minimizeTerminal();
+
     await customPacketGenerator(dataId, packet);
 
     while (traceReturn) {
@@ -58,6 +60,8 @@ async function traceroute(dataId, destination, numeric = false) {
         hops = numeric ? hops + 1 : "";
         await customPacketGenerator(dataId, packet);
     }
+
+    if (visualToggle) await maximizeTerminal();
 
     if (traceFlag) {
         terminalMessage(hops + " " + traceBuffer[traceBuffer.length - 2].toString().padEnd(15," ") + traceBuffer[traceBuffer.length - 1].toString());
