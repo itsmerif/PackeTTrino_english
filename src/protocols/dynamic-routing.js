@@ -353,7 +353,6 @@ function dynamicRouting() {
         autoInputRules($routers[i].id);
     }
 
-    console.log("dynamic routing complete");
 }
 
 //funciones de modal
@@ -365,8 +364,8 @@ function showDynamicRoutingModal() {
     <div class="dynamic-routing-modal-overlay"></div>
     <div class="dynamic-routing-modal">
       <p>⚠︎ ¿Estás seguro de que quieres activar la funcionalidad de Enrutamiento Automático?</p>
-      <button class="btn-accept">Sí, quiero activar la funcionalidad de Enrutamiento Automático</button>
-      <button class="btn-reject">No, quiero enrrutar mis redes manualmente</button>
+      <button class="btn-accept">Sí, quiero enrrutar de forma automática</button>
+      <button class="btn-reject">No, volver al panel</button>
     </div>`
     modalComponent.querySelector(".btn-accept").addEventListener("click", dynamicRoutingHandler);
     modalComponent.querySelector(".btn-reject").addEventListener("click", closeDynamicRoutingModal);
@@ -378,8 +377,15 @@ function closeDynamicRoutingModal() {
     modalComponent.remove();
 }
 
-function dynamicRoutingHandler() {
+async function dynamicRoutingHandler() {
     const modalComponent = document.querySelector(".dynamic-routing-modal-container");
+    modalComponent.querySelector(".dynamic-routing-modal").remove();
+    modalComponent.innerHTML += `<div class="loader"></div>`;
     dynamicRouting();
-    modalComponent.remove();
+    return new Promise(resolve => {
+        setTimeout(() => {
+            modalComponent.remove();
+            resolve();
+        }, 1500);
+    });
 }
