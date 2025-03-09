@@ -328,3 +328,13 @@ async function broadcastSwitch(switchObjectId, excludeId) {
     }
 
 }
+
+function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, match => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[match]));
+}

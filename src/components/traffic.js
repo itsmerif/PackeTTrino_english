@@ -180,7 +180,7 @@ function showPacketFields(event) {
         <table>
             <tr>
                 <th>Aplicación</th>
-                ${$packetPrint[6].map(field => `<td>${field}</td>`).join("")}
+                ${$packetPrint[6].map(field => `<td>${escapeHtml(field)}</td>`).join("")}
             </tr>
             <tr>
                 <th>Presentación</th>
@@ -220,3 +220,4 @@ function closePacketFieldsModal() {
     const modalComponent = document.querySelector(".packet-fields-modal-container");
     modalComponent.remove();
 }
+
