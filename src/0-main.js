@@ -16,7 +16,7 @@ async function init() {
     await sleep(500);
     document.querySelector(".pc-terminal").addEventListener("keydown", terminalKeyboard); //añadimos eventos de teclado al terminal
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm); //añadimos eventos de clic al item ping del panel
-    document.getElementById("item-panel").querySelector(".dynrouting").addEventListener("click", dynamicRouting); //añadimos eventos de doble clic al item ping del panel
+    document.getElementById("item-panel").querySelector(".dynrouting").addEventListener("click", showDynamicRoutingModal); //añadimos eventos de doble clic al item ping del panel
     document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm); //deshabilitar opciones si esta en modo dhcp
     document.getElementById("item-panel").querySelector(".traffic").addEventListener("click", showPacketTraffic); //añadimos eventos de clic al item de la tabla de tráfico
     document.addEventListener("keydown", closeEveryThing);

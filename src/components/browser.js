@@ -44,7 +44,7 @@ const $error404 = `
     </body>
 </html>`;
 
-const forbidden403 = `
+const $forbidden403 = `
 <!DOCTYPE html>
 <html style="height:100%">
     <head>
@@ -104,7 +104,7 @@ async function browserSearch(event) {
         try {
             await http($networkObject.id, search);
         } catch (error) {
-            document.querySelector(".browser-content").srcdoc = $error404;
+            document.querySelector(".browser-content").srcdoc = $forbidden403;
         }
     }
 }

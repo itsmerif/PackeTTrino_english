@@ -355,3 +355,8 @@ function dynamicRouting() {
 
     console.log("dynamic routing complete");
 }
+
+function showDynamicRoutingModal() {
+    const modal = document.querySelector(".dynamic-routing-modal");
+    modal.style.display = "flex";
+}
