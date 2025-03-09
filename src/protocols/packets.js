@@ -4,6 +4,7 @@ class packet {
         this.destination_ip = destination_ip;
         this.origin_mac = origin_mac;
         this.destination_mac = destination_mac;
+        this.xid = Math.floor(Math.random() * 10000);
     }
 }
 
