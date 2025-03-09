@@ -356,7 +356,30 @@ function dynamicRouting() {
     console.log("dynamic routing complete");
 }
 
+//funciones de modal
+
 function showDynamicRoutingModal() {
-    const modal = document.querySelector(".dynamic-routing-modal");
-    modal.style.display = "flex";
+    const modalComponent = document.createElement("div");
+    modalComponent.classList.add("dynamic-routing-modal-container");
+    modalComponent.innerHTML = `
+    <div class="dynamic-routing-modal-overlay"></div>
+    <div class="dynamic-routing-modal">
+      <p>⚠︎ ¿Estás seguro de que quieres activar la funcionalidad de Enrutamiento Automático?</p>
+      <button class="btn-accept">Sí, quiero activar la funcionalidad de Enrutamiento Automático</button>
+      <button class="btn-reject">No, quiero enrrutar mis redes manualmente</button>
+    </div>`
+    modalComponent.querySelector(".btn-accept").addEventListener("click", dynamicRoutingHandler);
+    modalComponent.querySelector(".btn-reject").addEventListener("click", closeDynamicRoutingModal);
+    document.body.appendChild(modalComponent);
+}
+
+function closeDynamicRoutingModal() {
+    const modalComponent = document.querySelector(".dynamic-routing-modal-container");
+    modalComponent.remove();
+}
+
+function dynamicRoutingHandler() {
+    const modalComponent = document.querySelector(".dynamic-routing-modal-container");
+    dynamicRouting();
+    modalComponent.remove();
 }
