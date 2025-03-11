@@ -86,7 +86,7 @@ async function traceroute(dataId, destination, numeric = false) {
 }
 
 function traceRouteFail(origin, seq, numeric = false) {
-    if (document.querySelector(".pc-terminal").style.display === "none") return;
+    if (document.querySelector(".terminal-component").style.display === "none") return;
     seq = numeric ? seq + 1 : "";
     terminalMessage(seq + " " + origin.toString().padEnd(15," ") + " *\n");
     window.pingInterval = setInterval(() => {

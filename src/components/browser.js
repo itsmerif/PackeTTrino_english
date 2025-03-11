@@ -65,7 +65,7 @@ const $forbidden403 = `
 function dragBroswer(event) {
 
     event.preventDefault();
-    const browser = event.target.closest(".pc-browser");
+    const browser = event.target.closest(".browser-component");
     let rect = browser.getBoundingClientRect();
     let offsetX = event.clientX - rect.left;
     let offsetY = event.clientY - rect.top;
@@ -99,7 +99,7 @@ function dragBroswer(event) {
 async function browserSearch(event) {
     if (event.key === 'Enter') {
         const $searchInput = event.target;
-        const $networkObject = document.getElementById(document.querySelector(".pc-browser").getAttribute("data-id"));
+        const $networkObject = document.getElementById(document.querySelector(".browser-component").getAttribute("data-id"));
         let search = $searchInput.value.trim();
         try {
             await http($networkObject.id, search);
@@ -115,23 +115,23 @@ function openBrowser(event) {
     const $networkObject = event.target.closest(".item-dropped"); //obtengo el objeto mas cercano
     $networkObject.querySelector(".advanced-options-modal").style.display = "none"; //ocultamos el modal de opciones avanzadas
     document.querySelector(".browser-content").srcdoc = $homepage //recuperamos el contenido original del navegador
-    document.querySelector(".pc-browser").style.display = "flex"; //mostramos el navegador
-    document.querySelector(".pc-browser").setAttribute("data-id", $networkObject.id); //establecemos el id del navegador
+    document.querySelector(".browser-component").style.display = "flex"; //mostramos el navegador
+    document.querySelector(".browser-component").setAttribute("data-id", $networkObject.id); //establecemos el id del navegador
 }
 
 function closeBrowser(event) {
     event.stopPropagation();
     event.preventDefault();
-    const browser = document.querySelector(".pc-browser");
+    const browser = document.querySelector(".browser-component");
     if (browser.style.left !== "0px" && browser.style.left !== "0%") {
         document.querySelector(".browser-content").innerHTML = `<img src="./assets/browser/aminsearch.png" alt="logo"></img>`; //recuperamos el contenido original del navegador
         document.querySelector(".address-input").value = ""; //limpiamos la entrada de direccion
-        document.querySelector(".pc-browser").style.display = "none"; //ocultamos el navegador
+        document.querySelector(".browser-component").style.display = "none"; //ocultamos el navegador
     }
 }
 
 async function minimizeBrowser() {
-    const browser = document.querySelector(".pc-browser");
+    const browser = document.querySelector(".browser-component");
     if (!browser || browser.style.display === "none") return resolve();
     if (browser.style.left === "0px" || browser.style.left === "0%") return resolve();
     return new Promise(resolve => {
@@ -151,7 +151,7 @@ async function minimizeBrowser() {
 
 async function maximizeBrowser() {
     return new Promise(resolve => {
-        const browser = document.querySelector(".pc-browser");
+        const browser = document.querySelector(".browser-component");
         if (!browser || browser.style.display === "none") return;
         browser.style.transition = "all 0.5s ease-in-out";
         browser.style.width = "60dvw";

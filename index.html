@@ -10,6 +10,8 @@
 
 <body onload="init()">
 
+  <!-- PANTALLA DE INICIO -->
+
   <div id="loading-screen">
     <div class="loader-container">
       <div class="loader-animation">
@@ -22,6 +24,8 @@
       <p> By Amín Pérez <span>(2025)</span> </p>
     </div>
   </div>
+
+  <!-- SECCION PRINCIPAL -->
 
   <div id="root">
     <section class="board" ondragover="dragOverBoard(event)" ondrop="dropItem(event)" onclick="closeAllModals()">
@@ -41,6 +45,8 @@
       </article>
     </section>
   </div>
+
+  <!-- FORMULARIOS -->
 
   <form class="pc-form" onsubmit="savePcSpecs(event); return false;" style="display: none;">
     <p id="form-item-id"></p>
@@ -64,19 +70,19 @@
   <form class="router-form" onsubmit="saveRouterSpecs(event); return false;" style="display: none;">
     <p id="form-router-item-id"></p>
     <label for="ip-enp0s3">Enp0s3:</label>
-    <input type="text" id="ip-enp0s3" name="ip-enp0s3" placeholder="192.168.1.1"
+    <input type="text" id="ip-enp0s3" name="ip-enp0s3"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <input type="text" name="netmask-enp0s3" id="netmask-enp0s3" placeholder="255.255.255.0"
+    <input type="text" name="netmask-enp0s3" id="netmask-enp0s3"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="ip-enp0s8">Enp0s8:</label>
-    <input type="text" id="ip-enp0s8" name="ip-enp0s8" placeholder="192.168.1.1"
+    <input type="text" id="ip-enp0s8" name="ip-enp0s8"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <input type="text" name="netmask-enp0s8" id="netmask-enp0s8" placeholder="255.255.255.0"
+    <input type="text" name="netmask-enp0s8" id="netmask-enp0s8"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <label for="ip-enp0s9">Enp0s9:</label>
-    <input type="text" id="ip-enp0s9" name="ip-enp0s9" placeholder="192.168.1.1"
+    <input type="text" id="ip-enp0s9" name="ip-enp0s9"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <input type="text" name="netmask-enp0s9" id="netmask-enp0s9" placeholder="255.255.255.0"
+    <input type="text" name="netmask-enp0s9" id="netmask-enp0s9"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <button type="submit">Guardar</button>
   </form>
@@ -164,7 +170,20 @@
     <button type="submit">Guardar</button>
   </form>
 
-  <div class="pc-terminal" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;"
+  <form class="ping-form" onsubmit="pingSim(); return false;" style="display: none;" onmousedown="dragPingForm(event)">
+    <label for="ip1">Origen</label>
+    <input type="text" id="ip1" name="ip1" placeholder="192.168.1.1"
+      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+    <label for="ip2">Destino</label>
+    <input type="text" id="ip2" name="ip2" placeholder="192.168.1.1, www.google.com">
+    <label for="speed">Tiempo de Animación (ms)</label>
+    <input type="text" id="speed" name="speed" placeholder="1000">
+    <input type="submit" value="Enviar Paquete">
+  </form>
+
+  <!-- COMPONENTES PRECARGADOS -->
+
+  <div class="terminal-component" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;"
     onmousedown="dragTerminal(event)">
 
     <p>
@@ -187,7 +206,7 @@
 
   </div>
 
-  <div class="pc-browser" onmousedown="dragBroswer(event)" data-id="" style="display: none;">
+  <div class="browser-component" onmousedown="dragBroswer(event)" data-id="" style="display: none;">
     <div class="browser-header">
       <div class="browser-controls">
         <button class="control close" aria-label="Cerrar" onclick="closeBrowser(event)"></button>
@@ -215,17 +234,6 @@
     </iframe>
   </div>
 
-  <form class="ping-form" onsubmit="pingSim(); return false;" style="display: none;" onmousedown="dragPingForm(event)">
-    <label for="ip1">Origen</label>
-    <input type="text" id="ip1" name="ip1" placeholder="192.168.1.1"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
-    <label for="ip2">Destino</label>
-    <input type="text" id="ip2" name="ip2" placeholder="192.168.1.1, www.google.com">
-    <label for="speed">Tiempo de Animación (ms)</label>
-    <input type="text" id="speed" name="speed" placeholder="1000">
-    <input type="submit" value="Enviar Paquete">
-  </form>
-  
   <article class="packet-traffic">
     <div class="filter-traffic">
       <input type="text">
@@ -245,6 +253,7 @@
     </table>
   </article>
 
+  <!-- SCRIPT PRINCIPAL -->
   <script src="./src/0-main.js"></script>
   <!-- ANIMACIONES -->
   <script src="./src/animations/move-packet.js"></script>

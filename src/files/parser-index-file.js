@@ -13,7 +13,7 @@ function loadApacheIndexContent(networkObjectId) {
 
 
 function savewebContent() {
-    const $networkObject = document.getElementById(document.querySelector(".pc-terminal").dataset.id);
+    const $networkObject = document.getElementById(document.querySelector(".terminal-component").dataset.id);
     const fileEditor = document.querySelector(".file-editor");
     const fileContent = fileEditor.value;
     $networkObject.setAttribute("web-content", fileContent);

@@ -1,4 +1,4 @@
-.pc-terminal {
+.terminal-component {
     position: fixed;
     top: 40%;
     left: 50%;
@@ -15,18 +15,18 @@
     transition: none;
 }
 
-.pc-terminal.dragging {
+.terminal-component.dragging {
     transform: none;
     transition: none;
 }
 
-.pc-terminal * {
+.terminal-component * {
     font-family: monospace;
     font-size: 20px;
     padding: 20px;
 }
 
-.pc-terminal input {
+.terminal-component input {
     border: none;
     outline: none;
     background-color: transparent;
@@ -49,12 +49,12 @@
     padding: 3px;
 }
 
-.pc-terminal p {
+.terminal-component p {
     display: flex;
     align-items: center;
 }
 
-.pc-terminal span {
+.terminal-component span {
     width: fit-content;
     padding: 0px;
 }

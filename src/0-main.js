@@ -14,7 +14,7 @@ async function init() {
     setTimeout(hideLoadingScreen, 200);
     getPanelItems();
     await sleep(500);
-    document.querySelector(".pc-terminal").addEventListener("keydown", terminalKeyboard); //añadimos eventos de teclado al terminal
+    document.querySelector(".terminal-component").addEventListener("keydown", terminalKeyboard); //añadimos eventos de teclado al terminal
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm); //añadimos eventos de clic al item ping del panel
     document.getElementById("item-panel").querySelector(".dynrouting").addEventListener("click", showDynamicRoutingModal); //añadimos eventos de doble clic al item ping del panel
     document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm); //deshabilitar opciones si esta en modo dhcp
@@ -137,7 +137,7 @@ function showTerminal(event) {
     const networkObject = event.target.closest(".item-dropped");
 
     //mostramos el terminal usando el id del elemento
-    const terminal = document.querySelector(".pc-terminal");
+    const terminal = document.querySelector(".terminal-component");
     terminal.setAttribute("data-id", networkObject.id);
     terminal.style.display = "block";
 

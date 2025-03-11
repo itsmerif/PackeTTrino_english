@@ -178,7 +178,7 @@ function router_ping(dataId, args) {
 }
 
 function ping_s(origin) {
-    const terminal = document.querySelector(".pc-terminal");
+    const terminal = document.querySelector(".terminal-component");
     if (terminal.style.display === "none") return;
     const terminalOutput = document.querySelector(".terminal-output");
     terminalOutput.innerHTML += `64 bytes from ${origin}: icmp_seq=1 ttl=64 time=0.030 ms\n`
@@ -191,7 +191,7 @@ function ping_s(origin) {
 }
 
 function ping_f(origin) {
-    const terminal = document.querySelector(".pc-terminal");
+    const terminal = document.querySelector(".terminal-component");
     if (terminal.style.display === "none") return;
     const terminalOutput = document.querySelector(".terminal-output");
     terminalOutput.innerHTML += `From ${origin} icmp_seq=1 Destination Host Unreachable\n`

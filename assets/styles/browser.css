@@ -1,4 +1,4 @@
-.pc-browser {
+.browser-component {
     position: fixed;
     top: 45%;
     left: 50%;
@@ -178,7 +178,7 @@
 }
 
 
-.pc-browser img {
+.browser-component img {
     width: 70%;
     position: absolute;
     top: 50%;

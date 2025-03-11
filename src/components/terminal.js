@@ -3,7 +3,7 @@ let currentCommandIndex = 0;
 
 function sendCommand(event) {
 
-    const terminal = event.target.closest('.pc-terminal');
+    const terminal = event.target.closest('.terminal-component');
     const dataId = terminal.dataset.id;
     const originIP = document.getElementById(dataId).getAttribute("data-ip");
 
@@ -14,7 +14,7 @@ function sendCommand(event) {
         const input = event.target.value.trim(); //obtenemos la entrada eliminando los espacios en blanco
         terminalBuffer.push(input); //añadimos el comando en el buffer
         currentCommandIndex++; //actualizamos el indice del cursos de comandos
-        document.querySelector(".pc-terminal").querySelector("input").value = ""; //limpiamos la entrada
+        document.querySelector(".terminal-component").querySelector("input").value = ""; //limpiamos la entrada
         const args = input.split(" "); //dividimos la entrada en argumentos separados por espacios
         const command = args[0]; //el primer argumento es el comando
 
@@ -71,7 +71,7 @@ function sendCommand(event) {
                 break;
             case "exit":
                 event.target.value = "";
-                document.querySelector(".pc-terminal").style.display = "none";
+                document.querySelector(".terminal-component").style.display = "none";
                 terminalBuffer = [];
                 currentCommandIndex = 0;
                 break;
@@ -85,7 +85,7 @@ function sendCommand(event) {
 }
 
 function clickTerminal(event) {
-    const terminal = event.target.closest(".pc-terminal");
+    const terminal = event.target.closest(".terminal-component");
     const input = terminal.querySelector("input");
     input.focus();
 }
@@ -93,7 +93,7 @@ function clickTerminal(event) {
 function dragTerminal(event) {
 
     event.preventDefault();
-    const terminal = event.target.closest(".pc-terminal");
+    const terminal = event.target.closest(".terminal-component");
     let rect = terminal.getBoundingClientRect();
     let offsetX = event.clientX - rect.left;
     let offsetY = event.clientY - rect.top;
@@ -125,7 +125,7 @@ function dragTerminal(event) {
 }
 
 function terminalMessage(message) {
-    const terminal = document.querySelector(".pc-terminal");
+    const terminal = document.querySelector(".terminal-component");
     if (terminal.style.display === "none") return;
     const output = document.querySelector(".terminal-output");
     const messageElement = document.createElement("p");
@@ -247,14 +247,14 @@ function terminalKeyboard(event) {
         event.preventDefault();
         if (currentCommandIndex === 0) return;
         currentCommandIndex--;
-        document.querySelector(".pc-terminal").querySelector("input").value = terminalBuffer[currentCommandIndex];
+        document.querySelector(".terminal-component").querySelector("input").value = terminalBuffer[currentCommandIndex];
     }
 
     if (event.key === "ArrowDown") {
         event.preventDefault();
         if (currentCommandIndex === terminalBuffer.length) return;
         currentCommandIndex++;
-        document.querySelector(".pc-terminal").querySelector("input").value = terminalBuffer[currentCommandIndex] || "";
+        document.querySelector(".terminal-component").querySelector("input").value = terminalBuffer[currentCommandIndex] || "";
     }
 }
 
@@ -269,7 +269,7 @@ function fileEditorKeyboard(event) {
         savewebContent();
         document.querySelector(".editor-container").style.display = "none";
         textarea.value = "";
-        document.querySelector(".pc-terminal").querySelector("input").focus();
+        document.querySelector(".terminal-component").querySelector("input").focus();
         return;
     }
 
@@ -286,7 +286,7 @@ function fileEditorKeyboard(event) {
 function command_nano(dataId, args) {
 
     const fileName = args[1];
-    const networkObjectId = document.querySelector(".pc-terminal").dataset.id;
+    const networkObjectId = document.querySelector(".terminal-component").dataset.id;
     const fileEditor = document.querySelector(".file-editor");
 
     if (!fileName) {
@@ -322,12 +322,12 @@ function closeEditor() {
 
     const fileEditor = document.querySelector(".file-editor");
     const fileName = fileEditor.getAttribute("data-file");
-    const networkObjectId = document.querySelector(".pc-terminal").dataset.id;
+    const networkObjectId = document.querySelector(".terminal-component").dataset.id;
 
     if (fileName === "/etc/network/interfaces") {
 
         if (networkObjectId.startsWith("router-")) {
-            routingTableRestore(document.querySelector(".pc-terminal").dataset.id);
+            routingTableRestore(document.querySelector(".terminal-component").dataset.id);
         }
 
         try {
@@ -406,7 +406,7 @@ function getRoutingRules(routerObjectid, targetinterface) {
 
 async function minimizeTerminal() {
     return new Promise(resolve => {
-        const terminal = document.querySelector(".pc-terminal");
+        const terminal = document.querySelector(".terminal-component");
         if (!terminal || terminal.style.display === "none") return resolve();
         const rect = terminal.getBoundingClientRect();
         const targetWidth = rect.width * 0.3;
@@ -424,7 +424,7 @@ async function minimizeTerminal() {
 
 async function maximizeTerminal() {
     return new Promise(resolve => {
-        const terminal = document.querySelector(".pc-terminal");
+        const terminal = document.querySelector(".terminal-component");
         if (!terminal || terminal.style.display === "none") return resolve();
         terminal.style.transition = "all 1s ease-in-out";
         terminal.style.width = "1000px";
@@ -506,7 +506,7 @@ function getopts(options, argString) {
 
 function closeTerminal(event) {
     event.preventDefault();
-    const terminal = document.querySelector(".pc-terminal");
+    const terminal = document.querySelector(".terminal-component");
     clearInterval(window.pingInterval);
     terminalBuffer = [];
     currentCommandIndex = 0;

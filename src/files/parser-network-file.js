@@ -1,7 +1,7 @@
 function loadNetworkFile(dataId) {
 
     const fileEditorContainer = document.querySelector(".editor-container");
-    const networkObjectId = document.querySelector(".pc-terminal").dataset.id;
+    const networkObjectId = document.querySelector(".terminal-component").dataset.id;
     let content = fileEditorContainer.querySelector(".file-editor");
     
     if (!networkObjectId.startsWith("router-")) {
@@ -81,7 +81,7 @@ function loadNetworkFile(dataId) {
 function parserNetworkFile() {
 
     const fileEditor = document.querySelector(".file-editor");
-    const $networkObject = document.getElementById(document.querySelector(".pc-terminal").dataset.id);
+    const $networkObject = document.getElementById(document.querySelector(".terminal-component").dataset.id);
     const interfaces = ["enp0s3", "enp0s8", "enp0s9"];
     const fileContent = fileEditor.value;
     const unfilteredlines = fileContent.split("\n");
