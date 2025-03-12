@@ -12,6 +12,7 @@
     flex-wrap: wrap;
     gap: 15px;
     width: 500px;
+    z-index: 1000;
 }
 
 .dhcp-form div {

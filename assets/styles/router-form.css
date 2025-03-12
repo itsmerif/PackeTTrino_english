@@ -12,6 +12,7 @@
     align-items: center;
     justify-content: center;
     gap: 15px;
+    z-index: 1000;
 }
 
 .router-form input, select {
