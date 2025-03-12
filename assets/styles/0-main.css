@@ -19,6 +19,7 @@
 @import url('./dhcp-relay-form.css');
 @import url('./dynamic-routing-modal.css');
 @import url('./general-settings.css');
+@import url('./buttons.css');
 
 body {
     margin: 0px;
