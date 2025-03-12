@@ -1421,6 +1421,10 @@ async function visualize(originObject, destinationObject, packet) {
         "dns-reply": "dns",
     };
 
+    if (ignoreArpTraffic) {
+        if (packet.protocol === "arp") return;
+    }
+
     const type = packetTypeMap[`${packet.protocol}-${packet.type}`] || "unicast";
 
     await movePacket(

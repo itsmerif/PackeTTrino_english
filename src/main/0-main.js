@@ -4,6 +4,10 @@ let itemIndex = 0;
 let quickInfoTimeout;
 const leaseTimers = {};
 
+//opciones globales
+
+let ignoreArpTraffic = false;
+
 // funciones de inicio
 
 function sleep(ms) {
