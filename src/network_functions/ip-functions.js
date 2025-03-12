@@ -167,14 +167,14 @@ function showObjectInfo(id) {
 
         const ip = $networkObject.getAttribute("data-ip");
         const netmask = $networkObject.getAttribute("data-netmask");
-        const gateway = $networkObject.getAttribute("data-gateway");
         const mac = $networkObject.getAttribute("data-mac");
 
-        terminalMessage(`Dirección IP: ${ip}`);
-        terminalMessage(`Puerta de Enlace: ${gateway}`);
-        terminalMessage(`Máscara de Red: ${netmask}`);
-        terminalMessage(`Dirección Física: ${mac}`);
-
+        terminalMessage("1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000");
+        terminalMessage("    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00");
+        terminalMessage("    inet 127.0.0.1/8 scope host lo");
+        terminalMessage("2: enp0s3: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000");
+        terminalMessage(`    link/ether ${mac} brd ff:ff:ff:ff:ff:ff`);
+        if (ip) terminalMessage(`    inet ${ip}/${netmaskToCidr(netmask)} brd 192.168.1.255 scope global dynamic enp0s3`);
         return;
 
     }
@@ -189,13 +189,18 @@ function showObjectInfo(id) {
         const netmaskEnp0s9 = $networkObject.getAttribute("netmask-enp0s9");
         const mac = $networkObject.getAttribute("data-mac");
 
-        terminalMessage(`Dirección IP Enp0s3: ${ipEnp0s3}`);
-        terminalMessage(`Máscara de Red Enp0s3: ${netmaskEnp0s3}`);
-        terminalMessage(`Dirección IP Enp0s8: ${ipEnp0s8}`);
-        terminalMessage(`Máscara de Red Enp0s8: ${netmaskEnp0s8}`);
-        terminalMessage(`Dirección IP Enp0s9: ${ipEnp0s9}`);
-        terminalMessage(`Máscara de Red Enp0s9: ${netmaskEnp0s9}`);
-        terminalMessage(`Dirección Física: ${mac}`);
+        terminalMessage("1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000");
+        terminalMessage("    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00");
+        terminalMessage("    inet 127.0.0.1/8 scope host lo");
+        terminalMessage("2: enp0s3: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000");
+        terminalMessage(`    link/ether ${mac} brd ff:ff:ff:ff:ff:ff`);
+        if (ipEnp0s3) terminalMessage(`    inet ${ipEnp0s3}/${netmaskToCidr(netmaskEnp0s3)} brd ${getBroadcastIp(ipEnp0s3, netmaskEnp0s3)} scope global dynamic enp0s3`);
+        terminalMessage("3: enp0s8: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000");
+        terminalMessage(`    link/ether ${mac} brd ff:ff:ff:ff:ff:ff`);
+        if (ipEnp0s8) terminalMessage(`    inet ${ipEnp0s8}/${netmaskToCidr(netmaskEnp0s8)} brd ${getBroadcastIp(ipEnp0s8, netmaskEnp0s8)} scope global dynamic enp0s8`);
+        terminalMessage("4: enp0s9: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000");
+        terminalMessage(`    link/ether ${mac} brd ff:ff:ff:ff:ff:ff`);
+        if (ipEnp0s9) terminalMessage(`    inet ${ipEnp0s9}/${netmaskToCidr(netmaskEnp0s9)} brd ${getBroadcastIp(ipEnp0s9, netmaskEnp0s9)} scope global dynamic enp0s9`);
 
         return;
     }

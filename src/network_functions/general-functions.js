@@ -9,6 +9,13 @@ function getNetwork(ip, netmask) {
     return network.join('.'); //juntamos los resultados 
 }
 
+function getBroadcastIp(ip, netmask) {
+    let ipBinary = (ip.split('.').map(octet => parseInt(octet, 10).toString(2).padStart(8, '0'))).join('');
+    let netmaskCidr = netmaskToCidr(netmask);
+    let broadcast = (ipBinary.slice(0, netmaskCidr).padEnd(32, '1').match(/.{8}/g) || []).map(octet => parseInt(octet, 2).toString(10)).join('.');
+    return broadcast;
+}
+
 function getRandomMac() {
     //genero los 48 bits aleatorios
     let macString = "";

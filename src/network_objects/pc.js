@@ -1,27 +1,27 @@
 function createPcObject(x, y) {
 
-    const board = document.querySelector(".board");
-    const networkObject = document.createElement("article");
+    const $board = document.querySelector(".board");
+    const $networkObject = document.createElement("article");
 
     //caracteristicas generales
-    networkObject.id = `pc-${itemIndex}`;
-    networkObject.style.left = `${x}px`;
-    networkObject.style.top = `${y}px`;
-    networkObject.classList.add("item-dropped", "pc");
-    networkObject.setAttribute("data-ip", "");
-    networkObject.setAttribute("data-netmask", "");
-    networkObject.setAttribute("data-mac", getRandomMac());
-    networkObject.setAttribute("data-gateway", "");
-    networkObject.setAttribute("data-switch", "");
-    networkObject.setAttribute("data-dhcp", false);
-    networkObject.setAttribute("data-dns-server", "");
-    networkObject.setAttribute("data-dhcp-server", "");
-    networkObject.setAttribute("firewall-default-policy", "ACCEPT");
-    networkObject.setAttribute("web-server", "off");
-    networkObject.setAttribute("web-content", "");
+    $networkObject.id = `pc-${itemIndex}`;
+    $networkObject.style.left = `${x}px`;
+    $networkObject.style.top = `${y}px`;
+    $networkObject.classList.add("item-dropped", "pc");
+    $networkObject.setAttribute("data-ip", "");
+    $networkObject.setAttribute("data-netmask", "");
+    $networkObject.setAttribute("data-mac", getRandomMac());
+    $networkObject.setAttribute("data-gateway", "");
+    $networkObject.setAttribute("data-switch", "");
+    $networkObject.setAttribute("data-dhcp", false);
+    $networkObject.setAttribute("data-dns-server", "");
+    $networkObject.setAttribute("data-dhcp-server", "");
+    $networkObject.setAttribute("firewall-default-policy", "ACCEPT");
+    $networkObject.setAttribute("web-server", "off");
+    $networkObject.setAttribute("web-content", "");
 
     //contenido
-    networkObject.innerHTML = `
+    $networkObject.innerHTML = `
         <img src="./assets/board/pc.png" alt="pc" draggable="true">
 
         <article class="arp-table" onclick="event.stopPropagation()">
@@ -34,7 +34,7 @@ function createPcObject(x, y) {
             <button onclick="closeARPTable(event)">Cerrar</button>
         </article>
 
-        <article class="dns-table">
+        <article class="dns-table" onclick="event.stopPropagation()">
             <table>
                 <tr>
                     <th>Domain</th>
@@ -62,7 +62,7 @@ function createPcObject(x, y) {
         <div class="advanced-options-modal" onclick="event.stopPropagation()">
             <button onclick="showTerminal(event)">Modo Terminal</button>
             <button onclick="showARPTable(event)">Ver Tabla ARP</button>
-            <button onclick="showDnsTable(event)">Ver Tabla DNS</button>
+            <button onclick="showDnsTable(event)">Ver Caché DNS</button>
             <button onclick="openBrowser(event)">Navegador</button>
             <button onclick="deleteItem(event)">Eliminar</button>
         </div>
@@ -73,10 +73,10 @@ function createPcObject(x, y) {
     `;
 
     //eventos
-    networkObject.setAttribute("onclick", "showPcForm('" + networkObject.id + "')");
-    networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
-    networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
-    board.appendChild(networkObject);
+    $networkObject.setAttribute("onclick", "showPcForm('" + $networkObject.id + "')");
+    $networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
+    $networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
+    $board.appendChild($networkObject);
     itemIndex++;
 }
 
