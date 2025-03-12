@@ -99,6 +99,7 @@ function createDnsServerObject(x, y) {
     networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
     networkObject.setAttribute("onclick", "showDnsTable(event)");
     networkObjectArpTable.setAttribute("onclick", "(event) => { event.stopPropagation(); }");
+    advancedOptions.setAttribute("onclick", "event.stopPropagation()");
 
     $board.appendChild(networkObject);
     itemIndex++;

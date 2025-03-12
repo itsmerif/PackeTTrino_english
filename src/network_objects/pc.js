@@ -59,7 +59,7 @@ function createPcObject(x, y) {
             </table>
         </article>
 
-        <div class="advanced-options-modal">
+        <div class="advanced-options-modal" onclick="event.stopPropagation()">
             <button onclick="showTerminal(event)">Modo Terminal</button>
             <button onclick="showARPTable(event)">Ver Tabla ARP</button>
             <button onclick="showDnsTable(event)">Ver Tabla DNS</button>

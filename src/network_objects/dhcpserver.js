@@ -103,6 +103,7 @@ function createDhcpServerObject(x, y) {
     networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
     networkObject.setAttribute("oncontextmenu", "showAdvancedOptionsDHCP(event)");
     networkObject.setAttribute("onclick", "showDhcpTable(event)");
+    advancedOptions.setAttribute("onclick", "event.stopPropagation()");
 
     board.appendChild(networkObject);
     itemIndex++;

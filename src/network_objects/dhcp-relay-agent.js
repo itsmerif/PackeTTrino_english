@@ -77,6 +77,7 @@ function createDhcpRelayObject(x, y) {
 
     networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
     networkObject.setAttribute("oncontextmenu", "showAdvancedOptionsDHCPRelay(event)");
+    advancedOptions.setAttribute("onclick", "event.stopPropagation()");
 
     board.appendChild(networkObject);
     itemIndex++;

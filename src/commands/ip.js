@@ -1,6 +1,6 @@
 function command_Ip(id, args) {
 
-    if (args[1] === "addr" || args[1] === "a") { //mostramos la informacion del equipo, solo puede ser ejecutado desde un pc
+    if (args[1] === "addr" || args[1] === "a") {
 
         if (args.length === 2) {
             showObjectInfo(id);
@@ -61,7 +61,7 @@ function command_Ip(id, args) {
 
     }
 
-    if (args[1] === "route" || args[1] === "r") { //añadir reglas de enrutamiento, solo puede ser ejecutado desde un router
+    if (args[1] === "route" || args[1] === "r") { 
 
         if (args.length === 2) {
             printRoutingTable(id);
@@ -71,12 +71,12 @@ function command_Ip(id, args) {
         if (args[2] === "add") {
 
             if (args.length !== 8) {
-                terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
+                terminalMessage('Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]');
                 return;
             }
     
-            if (args[2] !== "add" && args[2] !== "del" || args[5] !== "via") {
-                terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
+            if (args[2] !== "add" && ( args[2] !== "del" || args[5] !== "via")) {
+                terminalMessage('Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]');
                 return;
             }
 
@@ -84,7 +84,7 @@ function command_Ip(id, args) {
             return;
         }
 
-        if (args[2] === "del") { //sintaxis: ip route del [destination] [netmask]
+        if (args[2] === "del") {
 
             if (args.length !== 5) {
                 terminalMessage('Error de argumentos. Sintaxis: ip route del [destination] [netmask]');

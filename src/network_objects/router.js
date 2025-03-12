@@ -134,6 +134,7 @@ function createRouterObject(x, y) {
     networkObject.setAttribute("oncontextmenu", "showAdvancedOptionsRouter(event)");
     networkObject.setAttribute("onclick", "showRoutingTable(event)");
     networkObjectRoutingTable.setAttribute("onclick", "event.stopPropagation()");
+    networkObjectAdvancedOptions.setAttribute("onclick", "event.stopPropagation()");
 
     //añadir el elemento al tablero y aumentar el indice global
 
