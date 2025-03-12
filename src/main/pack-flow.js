@@ -1400,8 +1400,13 @@ async function visualize(originObject, destinationObject, packet) {
 
     const $originObject = document.getElementById(originObject);
     const $destinationObject = document.getElementById(destinationObject);
+    const destinationIp = $destinationObject.getAttribute("data-ip") 
+    || $destinationObject.getAttribute("ip-enp0s3") 
+    || $destinationObject.getAttribute("ip-enp0s8") 
+    || $destinationObject.getAttribute("ip-enp0s9");
     
-    
+    if (destinationIp === packet.origin_ip) return; //el paquete es generado por el mismo equipo
+
     const packetTypeMap = {
         "arp-request": "broadcast",
         "arp-reply": "unicast",

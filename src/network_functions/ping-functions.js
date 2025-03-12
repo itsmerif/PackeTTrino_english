@@ -51,15 +51,24 @@ function ping_f(origin) {
 }
 
 async function pingSim() {
+
     visualToggle = true;
-    console.log("pingSim");
+
     const form = document.querySelector(".ping-form");
     const originIp = form.ip1.value; //ip de origen
     const destination = form.ip2.value; 
     const speed = form.speed.value;
+
     if (speed) {
         visualSpeed = parseInt(speed, 10);
     }
-    const $networkObject = document.querySelector(`[data-ip='${originIp}']`);
+
+    const $networkObject = document.querySelector(`[data-ip='${originIp}']`) 
+    || document.querySelector(`[ip-enp0s3='${originIp}']`)
+    || document.querySelector(`[ip-enp0s8='${originIp}']`)
+    || document.querySelector(`[ip-enp0s9='${originIp}']`);
+
+    if (!$networkObject) return;
     await ping($networkObject.id, ["ping", destination]);
+
 }
