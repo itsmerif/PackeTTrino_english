@@ -81,17 +81,28 @@ function dropItem(event) {
         //compruebo si existe alguna conexión
         
         if (itemId.startsWith("router-")) {
+
             const conns = [ networkObject.getAttribute("data-switch-enp0s3"), networkObject.getAttribute("data-switch-enp0s8"), networkObject.getAttribute("data-switch-enp0s9") ];
+            
             if ( conns[0] === "" && conns[1] === "" && conns[2] === "" ) {
                 networkObject.style.left = `${x}px`;
                 networkObject.style.top = `${y}px`;
             }
-        }else {
+
+        } else if (!itemId.startsWith("switch-")) {
+
             const conn = networkObject.getAttribute("data-switch");
+
             if (conn === "") {
                 networkObject.style.left = `${x}px`;
                 networkObject.style.top = `${y}px`;
             }
+
+        }else {
+
+            networkObject.style.left = `${x}px`;
+            networkObject.style.top = `${y}px`;
+            
         }
     }
 }
