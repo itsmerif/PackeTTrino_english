@@ -17,6 +17,7 @@ async function init() {
     document.querySelector(".terminal-component").addEventListener("keydown", terminalKeyboard); //añadimos eventos de teclado al terminal
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm); //añadimos eventos de clic al item ping del panel
     document.getElementById("item-panel").querySelector(".dynrouting").addEventListener("click", showDynamicRoutingModal); //añadimos eventos de doble clic al item ping del panel
+    document.getElementById("item-panel").querySelector(".settings").addEventListener("click", showOptions); //añadimos eventos de doble clic al item ping del panel
     document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm); //deshabilitar opciones si esta en modo dhcp
     document.getElementById("item-panel").querySelector(".traffic").addEventListener("click", showPacketTraffic); //añadimos eventos de clic al item de la tabla de tráfico
     document.addEventListener("keydown", closeEveryThing);
@@ -28,7 +29,7 @@ function getPanelItems() {
     fetch("./src/components/panel-items.json")
         .then(response => response.json())
         .then(data => {
-            const panel = document.getElementById("item-panel");
+            const panel = document.querySelector(".item-panel-elements");
             data.forEach(item => {
                 const itemElement = document.createElement("article");
                 itemElement.classList.add("item", item.name);

@@ -36,9 +36,9 @@
         "size": "100%"
     },
     {
-        "name": "ping",
-        "image": "./assets/panel/bus.png",
-        "draggable": false,
+        "name": "dnsserver",
+        "image": "./assets/panel/dns.png",
+        "draggable": true,
         "size": "100%"
     },
     {
@@ -50,6 +50,18 @@
     {
         "name": "traffic",
         "image": "./assets/panel/traffic.png",
+        "draggable": false,
+        "size": "100%"
+    },
+    {
+        "name": "ping",
+        "image": "./assets/panel/bus.png",
+        "draggable": false,
+        "size": "100%"
+    },
+    {
+        "name": "settings",
+        "image": "./assets/panel/settings.png",
         "draggable": false,
         "size": "100%"
     }

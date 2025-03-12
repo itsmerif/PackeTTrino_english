@@ -175,7 +175,7 @@ function showPacketFields(event) {
     const modalComponent = document.createElement("div");
     modalComponent.classList.add("packet-fields-modal-container");
     modalComponent.innerHTML = `
-    <div class="dynamic-routing-modal-overlay"></div>
+    <div class="modal-overlay"></div>
     <div class="packet-fields-modal">
         <table>
             <tr>

@@ -361,7 +361,7 @@ function showDynamicRoutingModal() {
     const modalComponent = document.createElement("div");
     modalComponent.classList.add("dynamic-routing-modal-container");
     modalComponent.innerHTML = `
-    <div class="dynamic-routing-modal-overlay"></div>
+    <div class="modal-overlay"></div>
     <div class="dynamic-routing-modal">
       <p>⚠︎ ¿Estás seguro de que quieres activar la funcionalidad de Enrutamiento Automático?</p>
       <button class="btn-accept">Sí, quiero enrrutar de forma automática</button>
