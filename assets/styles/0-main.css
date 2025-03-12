@@ -55,6 +55,7 @@ img {
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    z-index: 2;
 }
 
 .ping-form label {
