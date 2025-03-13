@@ -14,9 +14,16 @@ function createPcObject(x, y) {
     $networkObject.setAttribute("data-gateway", "");
     $networkObject.setAttribute("data-switch", "");
     $networkObject.setAttribute("data-dhcp", false);
-    $networkObject.setAttribute("data-dns-server", "");
     $networkObject.setAttribute("data-dhcp-server", "");
+    $networkObject.setAttribute("data-dns-server", "");
+
+    $networkObject.setAttribute("data-etc-hosts",`{
+        "127.0.0.1": ["localhost"]
+    }`);
+
     $networkObject.setAttribute("firewall-default-policy", "ACCEPT");
+
+    //servidor web
     $networkObject.setAttribute("web-server", "off");
     $networkObject.setAttribute("web-content", "");
 

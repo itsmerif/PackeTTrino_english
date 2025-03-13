@@ -30,6 +30,21 @@ function command_nano(dataId, args) {
         return;
     }
 
+    if (fileName === "/etc/hosts") {
+
+        fileEditor.setAttribute("data-file", "/etc/hosts");
+
+        if (networkObjectId.startsWith("pc-")) {
+            loadEtcHostsContent(networkObjectId);
+        } else {
+            terminalMessage("Error: No se puede editar el archivo /etc/hosts en el equipo " + networkObjectId);
+        }
+
+        document.querySelector(".file-editor").focus();
+        return;
+
+    }
+
     terminalMessage("Error: El archivo no existe.");
 }
 
@@ -118,4 +133,25 @@ function closeEditor() {
         document.querySelector(".file-editor").value = "";
     }
 
+    if (fileName === "/etc/hosts") {
+
+        try {
+
+            parserEtcHosts();
+            document.querySelector(".editor-container").style.display = "none";
+            document.querySelector(".file-editor").value = "";
+            terminalMessage("El archivo se ha cargado correctamente.");
+
+        } catch (error) {
+
+            document.querySelector(".file-editor-error").innerHTML = error.message;
+            document.querySelector(".file-editor-error").style.display = "block";
+
+            setTimeout(() => {
+                document.querySelector(".file-editor-error").style.display = "none";
+            }, 3000);
+
+        }
+
+    }
 }
