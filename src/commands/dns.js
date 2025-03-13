@@ -107,9 +107,14 @@ function dns_SOA(dataId, args) {
         return;
     }
 
+    if (isSOA(dataId, args[4])) {
+        terminalMessage("Error: Ya existe un registro de SOA para este dominio.");
+        return;
+    }
+
     let record = new dnsRecord(args[4], "SOA", args[5]);
     addDnsEntry(dataId, record);
-    terminalMessage("Nueva Zona agregada correctamente");
+    terminalMessage("Registro SOA agregado correctamente para el dominio " + args[4]);
 
 }
 
@@ -168,10 +173,7 @@ function dns_A(dataId, args) {
     }
 
     let record = new dnsRecord(args[4], "A", args[5]);
-    let recordReverse = new dnsRecord(args[5], "PTR", args[4]);
     addDnsEntry(dataId, record);
-    addDnsEntry(dataId, recordReverse);
-
 }
 
 function dns_CNAME(dataId, args) {
@@ -183,5 +185,33 @@ function dns_CNAME(dataId, args) {
 
     let record = new dnsRecord(args[4], "CNAME", args[5]);
     addDnsEntry(dataId, record);
+
+}
+
+function isSOA(dataId, targetDomain) {
+
+    const $networkObject = document.getElementById(dataId);
+    const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
+    const records = dnsTable.querySelectorAll("tr");
+
+    let i = 1;
+
+    while (i < records.length) {
+
+        let row = records[i];
+        let cells = row.querySelectorAll("td");
+        let domain = cells[0].innerHTML;
+        let type = cells[1].innerHTML;
+        let value = cells[2].innerHTML;
+
+        if (domain === targetDomain && type === "SOA") {
+            return true;
+        }
+
+        i++;
+
+    }
+
+    return false;
 
 }
