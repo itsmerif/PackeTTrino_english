@@ -57,11 +57,8 @@ function fileEditorKeyboard(event) {
 
     if (event.ctrlKey && event.key === "s") {
         event.preventDefault();
-        savewebContent();
-        document.querySelector(".editor-container").style.display = "none";
-        textarea.value = "";
+        closeEditor();
         document.querySelector(".terminal-component").querySelector("input").focus();
-        return;
     }
 
     if (event.key === "Tab") {
