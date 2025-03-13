@@ -113,6 +113,10 @@ function isValidCidrIp(cidr) {
     return true;
 }
 
+function isValidDomain(domain) {
+    return /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])\.?$/.test(domain);
+}
+
 function getMACTable(switchObjectId) {
 
     const switchOriginObject = document.getElementById(switchObjectId);
