@@ -20,8 +20,6 @@ function addDnsEntry(serverObjectId, newrecord) {
         </tr>`;
     dnsTable.appendChild(newRow);
 
-    terminalMessage("Comando dns ejecutado correctamente");
-
 }
 
 function delDnsEntry(dataId, targetDomain) {
@@ -50,6 +48,9 @@ function isDomainInCache(networkObjectId, targetDomain) {
     const $networkObject = document.getElementById(networkObjectId);
     const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
     const records = dnsTable.querySelectorAll("tr");
+    let FQDN_targetDomain = targetDomain;
+    if (!isValidIp) FQDN_targetDomain= targetDomain + "." ;
+
     let i = 1;
 
     while ( i < records.length ) {
@@ -60,7 +61,7 @@ function isDomainInCache(networkObjectId, targetDomain) {
         let type = cells[1].innerHTML;
         let value = cells[2].innerHTML;
 
-        if (domain === targetDomain) {
+        if (domain === FQDN_targetDomain) {
             return [type, value];
         }
 

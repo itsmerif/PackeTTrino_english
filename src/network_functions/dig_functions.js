@@ -1,25 +1,38 @@
 async function dig(dataId, domain, verbose = false) {
 
-    cleanPacketTraffic()
+    cleanPacketTraffic();
 
     const $networkObject = document.getElementById(dataId);
     const switchId = $networkObject.getAttribute("data-switch");
-    const [translationType, translation] = isDomainInCache(dataId, domain);
+    const [translationType, translation] = isDomainInCache(dataId, domain); //buscamos en la tabla de cache del equipo
 
     if (!translation) { //no tenemos la ip en cache, buscamos en el servidor
+
         dnsRequestFlag = false;
+
+        if (!isValidIp(domain) && !domain.endsWith(".")){ //si no es ip, añadimos el punto al final para que sea un FQDN
+            domain = domain + ".";
+        } 
+
         await dnsRequestPacketGenerator(dataId, switchId, domain);
+
         if (!dnsRequestFlag) {
+
             if (verbose) terminalMessage("Error: No se pudo resolver el nombre de dominio.");
             throw new Error("Error: No se pudo resolver el nombre de dominio.");
+
         } else {
+
             let [translationType, translation] = isDomainInCachePc(dataId, domain);
+
             if (verbose) {
                 terminalMessage(`Nombre de Dominio: ${domain}`);
                 terminalMessage(`Tipo de Registro: ${translationType}`);
                 terminalMessage(`Respuesta: ${translation}`);
             }
+
         }
+
         return;
     }
 
@@ -38,6 +51,13 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
     const $networkObject = document.getElementById(networkObjectId);
     const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
     const records = dnsTable.querySelectorAll("tr");
+
+    if (!isValidIp(targetDomain) && !targetDomain.endsWith(".")) {  //si no es ip, añadimos el punto al final para que sea un FQDN
+        targetDomain = targetDomain + "." ;
+    }
+
+    terminalMessage("targetDomain: " + targetDomain);
+
     let i = 1;
 
     while (i < records.length) {
@@ -50,7 +70,7 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
 
         if (domain === targetDomain) {
 
-            if (type === "A") return [type, value];
+            if (type === "A" || type === "PTR") return [type, value];
 
             if (type === "CNAME") {
                 let [translationType, translation] = isDomainInCachePc(networkObjectId, value);

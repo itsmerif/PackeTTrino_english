@@ -59,6 +59,7 @@ function command_man(topic) {
             terminalMessage("<p>Opciones:</p>");
             terminalMessage("<p>add: añadir un registro</p>");
             terminalMessage("<p>del: eliminar un registro</p>");
+            terminalMessage("<p>-s: mostrar la tabla de registros</p>");
             terminalMessage("<p>-t &lt;type&gt; : especificar el tipo de registro (A, CNAME, NS). Por defecto es A.</p>");
             terminalMessage("<p>Ejemplo: dns add google.com 192.168.1.1</p>");
             terminalMessage("<p>Ejemplo: dns del google.com</p>");
