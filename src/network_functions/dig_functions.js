@@ -4,15 +4,11 @@ async function dig(dataId, domain, verbose = false) {
 
     const $networkObject = document.getElementById(dataId);
     const switchId = $networkObject.getAttribute("data-switch");
-    const [translationType, translation] = isDomainInCache(dataId, domain); //buscamos en la tabla de cache del equipo
+    let [translationType, translation] = isDomainInCachePc(dataId, domain); //buscamos en la tabla de cache del equipo
 
     if (!translation) { //no tenemos la ip en cache, buscamos en el servidor
 
         dnsRequestFlag = false;
-
-        if (!isValidIp(domain) && !domain.endsWith(".")){ //si no es ip, añadimos el punto al final para que sea un FQDN
-            domain = domain + ".";
-        } 
 
         await dnsRequestPacketGenerator(dataId, switchId, domain);
 
@@ -23,13 +19,9 @@ async function dig(dataId, domain, verbose = false) {
 
         } else {
 
-            let [translationType, translation] = isDomainInCachePc(dataId, domain);
+            [translationType, translation] = isDomainInCachePc(dataId, domain);
 
-            if (verbose) {
-                terminalMessage(`Nombre de Dominio: ${domain}`);
-                terminalMessage(`Tipo de Registro: ${translationType}`);
-                terminalMessage(`Respuesta: ${translation}`);
-            }
+            if (verbose) generateDnsOuput(domain, translationType, translation);
 
         }
 
@@ -38,51 +30,23 @@ async function dig(dataId, domain, verbose = false) {
 
     dnsRequestFlag = true;
 
-    if (verbose) {
-        terminalMessage(`Nombre de Dominio: ${domain}`);
-        terminalMessage(`Tipo de Registro: ${translationType}`);
-        terminalMessage(`Respuesta: ${translation}`);
-    }
+    if (verbose) generateDnsOuput(domain, translationType, translation);
 
 }
 
-function isDomainInCachePc(networkObjectId, targetDomain) {
+function generateDnsOuput(domain, translationType, translation)  {
 
-    const $networkObject = document.getElementById(networkObjectId);
-    const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
-    const records = dnsTable.querySelectorAll("tr");
+    const currentDate = new Date();
+    const currentDateString = currentDate.toString();
 
-    if (!isValidIp(targetDomain) && !targetDomain.endsWith(".")) {  //si no es ip, añadimos el punto al final para que sea un FQDN
-        targetDomain = targetDomain + "." ;
-    }
-
-    terminalMessage("targetDomain: " + targetDomain);
-
-    let i = 1;
-
-    while (i < records.length) {
-
-        let row = records[i];
-        let cells = row.querySelectorAll("td");
-        let domain = cells[0].innerHTML;
-        let type = cells[1].innerHTML;
-        let value = cells[2].innerHTML;
-
-        if (domain === targetDomain) {
-
-            if (type === "A" || type === "PTR") return [type, value];
-
-            if (type === "CNAME") {
-                let [translationType, translation] = isDomainInCachePc(networkObjectId, value);
-                return [translationType, translation];
-            }
-
-        }
-
-        i++;
-
-    }
-
-    return [false, false];
-
+    terminalMessage(`<p>QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1</p>`);
+    terminalMessage(`<p>QUESTION SECTION: </p>`);
+    terminalMessage(`<p>${domain.padEnd(15, " ")}` + " IN " + `${translationType} </p>`);
+    terminalMessage(`ANSWER SECTION:`);
+    terminalMessage(`<p style="color: #86ff33;" >${domain.padEnd(15, " ")}` + " 86400 IN " + `${translationType}` + " " + `${translation} </p>`);
+    terminalMessage("<p>Query time: 4 msec<p>");
+    terminalMessage("<p>SERVER: 172.16.24.130#53(172.16.24.130) (UDP)</p>");
+    terminalMessage("<p>WHEN: "+ currentDateString +"</p>");
+    terminalMessage("<p>MSG SIZE  rcvd: 87</p>");
+    
 }

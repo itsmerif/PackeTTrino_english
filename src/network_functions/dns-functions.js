@@ -49,7 +49,10 @@ function isDomainInCache(networkObjectId, targetDomain) {
     const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
     const records = dnsTable.querySelectorAll("tr");
     let FQDN_targetDomain = targetDomain;
-    if (!isValidIp) FQDN_targetDomain= targetDomain + "." ;
+
+    if (!isValidIp(targetDomain) && !targetDomain.endsWith(".")) {  //si no es ip, añadimos el punto al final para que sea un FQDN
+        FQDN_targetDomain = FQDN_targetDomain + "." ;
+    }
 
     let i = 1;
 
@@ -63,6 +66,46 @@ function isDomainInCache(networkObjectId, targetDomain) {
 
         if (domain === FQDN_targetDomain) {
             return [type, value];
+        }
+
+        i++;
+
+    }
+
+    return [false, false];
+
+}
+
+function isDomainInCachePc(networkObjectId, targetDomain) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
+    const records = dnsTable.querySelectorAll("tr");
+    let FQDN_targetDomain = targetDomain;
+
+    if (!isValidIp(targetDomain) && !targetDomain.endsWith(".")) {  //si no es ip, añadimos el punto al final para que sea un FQDN
+        FQDN_targetDomain = FQDN_targetDomain + "." ;
+    }
+
+    let i = 1;
+
+    while (i < records.length) {
+
+        let row = records[i];
+        let cells = row.querySelectorAll("td");
+        let domain = cells[0].innerHTML;
+        let type = cells[1].innerHTML;
+        let value = cells[2].innerHTML;
+
+        if (domain === targetDomain) {
+
+            if (type === "A" || type === "PTR") return [type, value];
+
+            if (type === "CNAME") {
+                let [translationType, translation] = isDomainInCachePc(networkObjectId, value);
+                return [translationType, translation];
+            }
+
         }
 
         i++;
