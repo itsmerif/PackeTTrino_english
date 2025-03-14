@@ -201,14 +201,16 @@
     <div class="terminal-output"></div>
 
     <div class="editor-container" style="display: none;">
+
       <div class="editor-buttons">
-        <button class="save-btn" onclick="closeEditor()" onmousedown="event.stopPropagation()"
-          onmouseup="event.stopPropagation()">Guardar y Cerrar</button>
+        <button class="save-btn nano-btn" onclick="closeEditor()" onmousedown="event.stopPropagation()"
+          onmouseup="event.stopPropagation()"> ^S Guardar y Cerrar </button>
       </div>
       <p class="file-editor-error" onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation()"></p>
       <textarea class="file-editor" data-file="" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()"
         onmouseup="event.stopPropagation()" ondragstart="event.stopPropagation()" onkeydown="fileEditorKeyboard(event)">
       </textarea>
+      <div class="editor-frame"></div>
     </div>
 
   </div>

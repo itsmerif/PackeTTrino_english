@@ -85,9 +85,9 @@
 
 /*file editor*/
 
-.file-editor {
+.file-editor { /*esto es el text area*/
     position: absolute;
-    top: 0;
+    bottom: 0;
     left: 0;
     background: white;
     color: black;
@@ -96,7 +96,7 @@
     padding: 20px 30px;
     margin: 0px;
     width: calc(100%);
-    height: calc(100%);
+    height: calc(93%);
     border: none;
     outline: none;
     resize: none;
@@ -153,11 +153,11 @@
     transition: all 0.2s ease;
 }
 
-.save-btn {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.save-btn:hover {
-    background-color: #45a049;
+.editor-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% - 40px);
+    background-color: #000000;
+    z-index: 101;
 }
