@@ -3,6 +3,7 @@ function command_nano(dataId, args) {
     const fileName = args[1];
     const networkObjectId = document.querySelector(".terminal-component").dataset.id;
     const fileEditor = document.querySelector(".file-editor");
+    const frameTitle = document.querySelector(".editor-frame").querySelector("span");
 
     if (!fileName) {
         terminalMessage("Error: El nombre del archivo no puede estar vacío");
@@ -11,6 +12,7 @@ function command_nano(dataId, args) {
 
     if (fileName === "/etc/network/interfaces") {
         fileEditor.setAttribute("data-file", "/etc/network/interfaces");
+        frameTitle.innerHTML = "/etc/network/interfaces";
         loadNetworkFile(networkObjectId);
         document.querySelector(".file-editor").focus();
         return;
@@ -18,6 +20,7 @@ function command_nano(dataId, args) {
 
     if (fileName === "/etc/resolv.conf") {
         fileEditor.setAttribute("data-file", "/etc/resolv.conf");
+        frameTitle.innerHTML = "/etc/resolv.conf";
         loadResolvConf(networkObjectId);
         document.querySelector(".file-editor").focus();
         return;
@@ -25,6 +28,7 @@ function command_nano(dataId, args) {
 
     if (fileName === "/var/www/html/index.html" || fileName === "-n") {
         fileEditor.setAttribute("data-file", "/var/www/html/index.html");
+        frameTitle.innerHTML = "/var/www/html/index.html";
         loadApacheIndexContent(networkObjectId);
         document.querySelector(".file-editor").focus();
         return;
@@ -33,6 +37,7 @@ function command_nano(dataId, args) {
     if (fileName === "/etc/hosts") {
 
         fileEditor.setAttribute("data-file", "/etc/hosts");
+        frameTitle.innerHTML = "/etc/hosts";
 
         if (networkObjectId.startsWith("pc-")) {
             loadEtcHostsContent(networkObjectId);
