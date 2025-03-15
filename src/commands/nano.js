@@ -1,20 +1,24 @@
 function command_nano(dataId, args) {
 
     const fileName = args[1];
-    const networkObjectId = document.querySelector(".terminal-component").dataset.id;
-    const fileEditor = document.querySelector(".file-editor");
-    const frameTitle = document.querySelector(".editor-frame").querySelector("span");
 
     if (!fileName) {
         terminalMessage("Error: El nombre del archivo no puede estar vacío");
         return;
     }
 
+    const networkObjectId = document.querySelector(".terminal-component").dataset.id;
+    const fileEditor = document.querySelector(".file-editor");
+    const frameTitle = document.querySelector(".editor-frame").querySelector("span");
+    document.querySelector(".editor-buttons").addEventListener("mousedown", event => {
+        event.stopPropagation();
+    });
+
+
     if (fileName === "/etc/network/interfaces") {
         fileEditor.setAttribute("data-file", "/etc/network/interfaces");
         frameTitle.innerHTML = "/etc/network/interfaces";
         loadNetworkFile(networkObjectId);
-        document.querySelector(".file-editor").focus();
         return;
     }
 
@@ -22,7 +26,6 @@ function command_nano(dataId, args) {
         fileEditor.setAttribute("data-file", "/etc/resolv.conf");
         frameTitle.innerHTML = "/etc/resolv.conf";
         loadResolvConf(networkObjectId);
-        document.querySelector(".file-editor").focus();
         return;
     }
 
@@ -30,7 +33,6 @@ function command_nano(dataId, args) {
         fileEditor.setAttribute("data-file", "/var/www/html/index.html");
         frameTitle.innerHTML = "/var/www/html/index.html";
         loadApacheIndexContent(networkObjectId);
-        document.querySelector(".file-editor").focus();
         return;
     }
 
@@ -45,7 +47,6 @@ function command_nano(dataId, args) {
             terminalMessage("Error: No se puede editar el archivo /etc/hosts en el equipo " + networkObjectId);
         }
 
-        document.querySelector(".file-editor").focus();
         return;
 
     }

@@ -87,7 +87,7 @@
 
 .file-editor { /*esto es el text area*/
     position: absolute;
-    bottom: 0;
+    top: 5%;
     left: 0;
     background: white;
     color: black;
@@ -96,7 +96,7 @@
     padding: 20px 30px;
     margin: 0px;
     width: calc(100%);
-    height: calc(93%);
+    height: calc(85%);
     border: none;
     outline: none;
     resize: none;
@@ -156,11 +156,13 @@
 
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    margin-left: 10px;
+    margin: 0px;
     padding: 0px;
+    padding-left: 10px;
     gap: 10px;
     box-sizing: border-box;
+    background-color: white;
+    width: calc(100% - 8px);
 
     p {
         color: black;

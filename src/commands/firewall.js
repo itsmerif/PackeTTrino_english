@@ -110,4 +110,6 @@ function command_firewall(networkObjectId, args) {
         showFirewallRules(networkObjectId);
         return;
     }
+
+    
 }
