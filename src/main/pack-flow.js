@@ -432,7 +432,7 @@ async function customPacketGenerator(networkObjectId, packet) {
 
     packet.destination_mac = isIpInARPTable(networkObjectId, destination_ip);
 
-    if (!destination_mac) {
+    if (!packet.destination_mac) {
         buffer[networkObjectId] = packet;
         let newPacket = new ArpRequest(networkObjectIp, destination_ip, $networkObject.getAttribute("data-mac"));
         addPacketTraffic(newPacket);
