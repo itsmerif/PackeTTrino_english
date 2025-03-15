@@ -274,6 +274,7 @@ async function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
         const defaultGateway = $networkObject.getAttribute("data-gateway");
         const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
         packet = new dnsRequest(networkObjectIp, dnsServer, networkObjectMac, defaultGatewayMac, domain);
+        packet.answer_type = "A";
 
         if (!defaultGatewayMac) { //no tenemos la ip de la puerta de enlace en nuestra tabla de arp, lo guardamos en el buffer y enviamos un ARP primero
             buffer[networkObjectId] = packet;
@@ -295,6 +296,7 @@ async function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
 
     const destination_mac = isIpInARPTable(networkObjectId, dnsServer);
     packet = new dnsRequest(networkObjectIp, dnsServer, networkObjectMac, destination_mac, domain);
+    packet.answer_type = "A";
 
     if (!destination_mac) { //la mac del servidor no está en la tabla arp
         buffer[networkObjectId] = packet;
@@ -518,14 +520,9 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
     const networkObjectIp = $networkObject.getAttribute("data-ip");
     const isSameNetwork = getNetwork(packet.destination_ip, $networkObject.getAttribute("data-netmask")) === getNetwork(networkObjectIp, $networkObject.getAttribute("data-netmask"));
 
+    if (packet.destination_ip !== networkObjectIp || packet.destination_mac !== networkObjectMac) return;
+    
     if (packet.protocol === "arp" && packet.type === "request") {
-
-        if (packet.destination_ip !== networkObjectIp) {
-            //terminalMessage(networkObjectId + ": Solicitud ARP ignorada");
-            return;
-        }
-
-        //terminalMessage(networkObjectId + ": Enviando un Respuesta ARP");
         addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
@@ -632,15 +629,8 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "dns" && packet.type === "reply") {
-
-        if (packet.answer) {
-            addDnsCacheEntry(networkObjectId, packet.query, packet.answer_type, packet.answer);
-            dnsRequestFlag = true;
-        }
-
-        //terminalMessage("DNS Reply Recibido");
-        //terminalMessage("Tipo de Registro: " + packet.answer_type + ", Respuesta: " + packet.answer);
-
+        dnsRequestFlag = true;
+        buffer[networkObjectId] = packet;
     }
 
     if (packet.protocol === "tcp" && packet.type === "syn") {
@@ -1268,9 +1258,9 @@ async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
 
     if (packet.protocol === "dns" && packet.type === "request") {
         if (packet.destination_ip !== serverObjectIp) return;
-        let [answerType, answerTranslation] = isDomainInCache(serverObjectId, packet.query);
+        let answerTranslation = isDomainInCache(serverObjectId, packet.query)[1];
         let newPacket = new dnsReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac, packet.query, answerTranslation);
-        newPacket.answer_type = answerType;
+        newPacket.answer_type = packet.answer_type;
         addPacketTraffic(newPacket);
         await switchProcessor(switchId, serverObjectId, newPacket);
         return;

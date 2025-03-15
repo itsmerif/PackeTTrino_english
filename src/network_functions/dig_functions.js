@@ -19,9 +19,7 @@ async function dig(dataId, domain, verbose = false) {
 
         } else {
 
-            [translationType, translation] = isDomainInCachePc(dataId, domain);
-
-            if (verbose) generateDnsOuput(domain, translationType, translation);
+            dnsResolver(buffer[dataId], dataId, verbose);
 
         }
 
@@ -34,19 +32,28 @@ async function dig(dataId, domain, verbose = false) {
 
 }
 
-function generateDnsOuput(domain, translationType, translation)  {
+function dnsResolver(packet, dataId, verbose) {
+    let query = packet.query;
+    let answer = (!packet.answer) ? "" : packet.answer;
+    let answer_type = packet.answer_type;
+    let authority = packet.authority || "0";
+    let server_ip = packet.origin_ip;
+    if (answer) addDnsCacheEntry(dataId, packet.query, packet.answer_type, packet.answer);
+    if (verbose) generateDnsOuput(query, answer_type, answer, authority, server_ip);
+}
 
+function generateDnsOuput(query, answer_type, answer, authority, server_ip)  {
     const currentDate = new Date();
     const currentDateString = currentDate.toString();
+    let answerBoolean = (!answer) ? "0" : "1";
 
-    terminalMessage(`<p>QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1</p>`);
+    terminalMessage(`<p>QUERY: 1, ANSWER: ${answerBoolean}, AUTHORITY: ${authority}, ADDITIONAL: 1</p>`);
     terminalMessage(`<p>QUESTION SECTION: </p>`);
-    terminalMessage(`<p>${domain.padEnd(15, " ")}` + " IN " + `${translationType} </p>`);
+    terminalMessage(`<p>${query.padEnd(15, " ")}` + " IN " + `${answer_type} </p>`);
     terminalMessage(`ANSWER SECTION:`);
-    terminalMessage(`<p style="color: #86ff33;" >${domain.padEnd(15, " ")}` + " 86400 IN " + `${translationType}` + " " + `${translation} </p>`);
+    terminalMessage(`<p style="color: #86ff33;" >${query.padEnd(15, " ")}` + " 86400 IN " + `${answer_type}` + " " + `${answer} </p>`);
     terminalMessage("<p>Query time: 4 msec<p>");
-    terminalMessage("<p>SERVER: 172.16.24.130#53(172.16.24.130) (UDP)</p>");
+    terminalMessage(`<p>SERVER: ${server_ip}#53(${server_ip}) (UDP)</p>`);
     terminalMessage("<p>WHEN: "+ currentDateString +"</p>");
-    terminalMessage("<p>MSG SIZE  rcvd: 87</p>");
-    
+    terminalMessage("<p>MSG SIZE  rcvd: 87</p>"); 
 }
