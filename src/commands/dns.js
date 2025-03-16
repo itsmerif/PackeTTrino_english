@@ -195,6 +195,7 @@ function dns_A(dataId, args) {
 
     let record = new dnsRecord(args[4], "A", args[5]);
     addDnsEntry(dataId, record);
+    terminalMessage("Registro A agregado correctamente para el dominio " + args[4]);
 }
 
 function dns_CNAME(dataId, args) {

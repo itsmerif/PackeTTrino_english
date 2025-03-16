@@ -50,3 +50,36 @@ function generateDnsOuput(query, answer_type, answer, authority, server_ip)  {
     terminalMessage("<p>WHEN: "+ currentDateString +"</p>");
     terminalMessage("<p>MSG SIZE  rcvd: 87</p>"); 
 }
+
+async function domainNameResolution(dataId, domain) {
+
+    let response;
+
+    //primero miramos en el /etc/hosts
+
+    response = isDomainInEtcHosts(dataId, domain);
+    if (response) return response;
+
+    //no se encuentra en el /etc/hosts, buscamos en la cache, y si no, en el servidor
+
+    try {
+        await dig(dataId, domain, false);
+        return isDomainInCachePc(dataId, domain)[1];
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+
+}
+
+function isDomainInEtcHosts(dataId, domain) {
+    const $networkObject = document.getElementById(dataId);
+    const etcHostFile = $networkObject.getAttribute("data-etc-hosts");
+    let etcHostsEntries = JSON.parse(etcHostFile);
+    for (let ip in etcHostsEntries) {
+        if (etcHostsEntries[ip].includes(domain)) {
+            return ip;
+        }
+    }
+    return false;
+}

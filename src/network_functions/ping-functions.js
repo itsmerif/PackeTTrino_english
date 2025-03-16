@@ -132,34 +132,3 @@ async function pingSim() {
 
 }
 
-async function domainNameResolution(dataId, domain) {
-
-    let response;
-
-    //primero miramos en el /etc/hosts
-
-    response = isDomainInEtcHosts(dataId, domain);
-    if (response) return response;
-
-    //no se encuentra en el /etc/hosts, buscamos en la cache, y si no, en el servidor
-
-    try {
-        await dig(dataId, domain, false);
-        return isDomainInCachePc(dataId, domain)[1];
-    } catch (error) {
-        return false;
-    }
-
-}
-
-function isDomainInEtcHosts(dataId, domain) {
-    const $networkObject = document.getElementById(dataId);
-    const etcHostFile = $networkObject.getAttribute("data-etc-hosts");
-    let etcHostsEntries = JSON.parse(etcHostFile);
-    for (let ip in etcHostsEntries) {
-        if (etcHostsEntries[ip].includes(domain)) {
-            return ip;
-        }
-    }
-    return false;
-}

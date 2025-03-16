@@ -104,6 +104,7 @@ async function browserSearch(event) {
         try {
             await http($networkObject.id, search);
         } catch (error) {
+            console.log(error);
             document.querySelector(".browser-content").srcdoc = $forbidden403;
         }
     }

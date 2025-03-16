@@ -5,4 +5,3 @@ permitir hacer resize tanto de la terminal como del navegador
 no puedes encontrar ip por dhcp si tienes todavia la ip estatica
 al hacer dhcp -release el equipo no pierde la ip
 enrutamiento automático hacia una red
-problemas con el traceroute directo

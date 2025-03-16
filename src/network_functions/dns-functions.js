@@ -83,7 +83,7 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
     const records = dnsTable.querySelectorAll("tr");
     let FQDN_targetDomain = targetDomain;
 
-    if (!isValidIp(targetDomain) && !targetDomain.endsWith(".")) {  //si no es ip, añadimos el punto al final para que sea un FQDN
+    if (!targetDomain.endsWith(".")) {  //añadimos el punto al final para que sea un FQDN
         FQDN_targetDomain = FQDN_targetDomain + "." ;
     }
 
@@ -97,7 +97,7 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
         let type = cells[1].innerHTML;
         let value = cells[2].innerHTML;
 
-        if (domain === targetDomain) {
+        if (domain === FQDN_targetDomain) {
 
             if (type === "A" || type === "PTR") return [type, value];
 
@@ -121,6 +121,7 @@ function addDnsCacheEntry(networkObjectId, domain, type, value) {
     const $networkObject = document.getElementById(networkObjectId);
     const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
     const newRow = document.createElement("tr");
+    if (!domain.endsWith(".")) domain = domain + "."; //los nombres se guardan como FQDN
 
     newRow.innerHTML = `
         <tr>
