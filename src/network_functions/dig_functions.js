@@ -16,32 +16,23 @@ async function dig(dataId, domain, verbose = false) {
             if (verbose) terminalMessage("Error: No se pudo resolver el nombre de dominio.");
             throw new Error("Error: No se pudo resolver el nombre de dominio.");
         } else {
-            dnsResolver(buffer[dataId], dataId, verbose);
+            let packet = buffer[dataId];
+            let query = packet.query;
+            let answer = (!packet.answer) ? "" : packet.answer;
+            let answer_type = packet.answer_type;
+            let authority = packet.authority || "0";
+            let server_ip = packet.origin_ip;       
+            if (!answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
+            addDnsCacheEntry(dataId, packet.query, packet.answer_type, packet.answer);      
+            if (verbose) generateDnsOuput(query, answer_type, answer, authority, server_ip);
         }
 
         return;
     }
 
     dnsRequestFlag = true;
-
     if (verbose) generateDnsOuput(domain, translationType, translation);
 
-}
-
-function dnsResolver(packet, dataId, verbose) {
-    let query = packet.query;
-    let answer = (!packet.answer) ? "" : packet.answer;
-    let answer_type = packet.answer_type;
-    let authority = packet.authority || "0";
-    let server_ip = packet.origin_ip;
-
-    if (answer) {
-        addDnsCacheEntry(dataId, packet.query, packet.answer_type, packet.answer);
-    }else {
-        throw new Error("Error: No se pudo resolver el nombre de dominio.");
-    }
-
-    if (verbose) generateDnsOuput(query, answer_type, answer, authority, server_ip);
 }
 
 function generateDnsOuput(query, answer_type, answer, authority, server_ip)  {

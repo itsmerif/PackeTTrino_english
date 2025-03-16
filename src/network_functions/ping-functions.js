@@ -11,43 +11,14 @@ async function ping(dataId, args) {
 
         if (visualToggle) await minimizeTerminal();
 
-        //primero miramos en el /etc/hosts
-
-        let ipInEtcHosts = isDomainInEtcHosts(dataId, args[1]);
-
-        if (ipInEtcHosts) {
-
-            try {
-                await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, ipInEtcHosts);
-            } catch (error) {
-                ping_f(networkObjectIp);
-                return;
-            }
-    
-            if (visualToggle) await maximizeTerminal();
-    
-            if (!icmpFlag) {
-                ping_f(args[1]);
-            } else {
-                ping_s(args[1]);
-            }
-
-            return;
-
-        }
-
-        //no se encuentra en el /etc/hosts, intentamos con el servidor
-
-        try {
-            await dig(dataId, args[1], false);
-        } catch (error) {
-            terminalMessage("Error: No se pudo resolver el nombre de dominio.");
-            if (visualToggle) await maximizeTerminal();
-            return;
+        let destinationIp = await domainNameResolution(dataId, args[1]);
+        if (!destinationIp) { //no se pudo resolver el dominio
+            ping_f(networkObjectIp);
+            return; 
         }
 
         try {
-            await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, isDomainInCachePc(dataId, args[1])[1]);
+            await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, destinationIp);
         } catch (error) {
             ping_f(networkObjectIp);
             return;
@@ -75,8 +46,6 @@ async function ping(dataId, args) {
         ping_s(args[1]);
         return;
     }
-
-    //ejecucion
 
     if (visualToggle) {
 
@@ -200,5 +169,25 @@ function isDomainInEtcHosts(dataId, domain) {
     }
 
    return false;
+
+}
+
+async function domainNameResolution(dataId, domain) {
+
+    let response;
+
+    //primero miramos en el /etc/hosts
+
+    response = isDomainInEtcHosts(dataId, domain);
+    if (response) return response;
+
+    //no se encuentra en el /etc/hosts, buscamos en la cache, y si no, en el servidor
+
+    try {
+        await dig(dataId, domain, false);  
+        return isDomainInCachePc(dataId, domain)[1];
+    } catch (error) {
+        return false;
+    }
 
 }
