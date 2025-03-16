@@ -1,21 +1,42 @@
 function command_dns(dataId, args) {
 
     const $serverObject = document.getElementById(dataId);
-    const validTypes = ["NS", "A", "CNAME", "PTR"];
     const forbiddenChars = ["\\", "/", "ñ"]
 
     // sintaxis: dns <add|del> [ -t <type> ] <domain> <ip|cname>
 
-    if (!dataId.startsWith("dns-server")) {
+    if (args.length === 1) {
+        terminalMessage("Error: Sintaxis: dns &lt;-s&gt; ");
+        return;
+    }
+
+    if (!dataId.startsWith("dns-server")) { //solo puede mostrar la caché o eliminarla
+
+        if (args[1] === "-s" || args[1] === "--show") {
+            terminalMessage($serverObject.querySelector(".dns-table").querySelector("table").outerHTML);
+            return;
+        }
+
+        if (args[1] === "-f" || args[1] === "--flush") {
+            $serverObject.querySelector(".dns-table").querySelector("table").innerHTML = `
+                    <tr>
+                        <th>Dominio</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                    </tr>`;
+            terminalMessage("La tabla de registros DNS ha sido limpiada correctamente.");
+            return;
+        }
+
         terminalMessage("Error: Comando solo implementado en servidores DNS");
         return;
     }
 
     if (args[1] === "add") {
 
-        if (args[2] !== "-t"){
+        if (args[2] !== "-t"){ //por defecto es tipo A
 
-            if (args.length !== 4) {
+            if (args.length !== 4) { //dns add domain ip
                 terminalMessage("Error: Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]</p>");
                 return;
             }
@@ -27,7 +48,7 @@ function command_dns(dataId, args) {
                 } 
             });
 
-            if (!args[3].match(/^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/)){
+            if (!isValidIp(args[3])) {
                 terminalMessage("Error: IP Invalida");
                 return;
             }

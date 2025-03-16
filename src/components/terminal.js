@@ -22,7 +22,7 @@ function sendCommand(event) {
 
         switch (command) {
             case "ping":
-                ping(dataId, args);
+                command_ping(dataId, args);
                 break;
             case "dhcp":
                 dhcp(dataId, args);

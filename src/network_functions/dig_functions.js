@@ -12,15 +12,11 @@ async function dig(dataId, domain, verbose = false) {
 
         await dnsRequestPacketGenerator(dataId, switchId, domain);
 
-        if (!dnsRequestFlag) {
-
+        if (!dnsRequestFlag) { //el servidor no respondio
             if (verbose) terminalMessage("Error: No se pudo resolver el nombre de dominio.");
             throw new Error("Error: No se pudo resolver el nombre de dominio.");
-
         } else {
-
             dnsResolver(buffer[dataId], dataId, verbose);
-
         }
 
         return;
@@ -38,7 +34,13 @@ function dnsResolver(packet, dataId, verbose) {
     let answer_type = packet.answer_type;
     let authority = packet.authority || "0";
     let server_ip = packet.origin_ip;
-    if (answer) addDnsCacheEntry(dataId, packet.query, packet.answer_type, packet.answer);
+
+    if (answer) {
+        addDnsCacheEntry(dataId, packet.query, packet.answer_type, packet.answer);
+    }else {
+        throw new Error("Error: No se pudo resolver el nombre de dominio.");
+    }
+
     if (verbose) generateDnsOuput(query, answer_type, answer, authority, server_ip);
 }
 
