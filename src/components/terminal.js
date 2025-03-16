@@ -110,9 +110,11 @@ function dragTerminal(event) {
         let maxY = window.innerHeight - terminal.offsetHeight;
         terminal.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
         terminal.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+        document.body.style.cursor = "grabbing";
     }
 
     function stopDragging() {
+        document.body.style.cursor = "default";
         document.removeEventListener('mousemove', moveTerminal);
         document.removeEventListener('mouseup', stopDragging);
         const input = terminal.querySelector('input');
