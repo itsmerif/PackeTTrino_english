@@ -519,10 +519,9 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     const networkObjectIp = $networkObject.getAttribute("data-ip");
     const isSameNetwork = getNetwork(packet.destination_ip, $networkObject.getAttribute("data-netmask")) === getNetwork(networkObjectIp, $networkObject.getAttribute("data-netmask"));
-
-    if (packet.destination_ip !== networkObjectIp || packet.destination_mac !== networkObjectMac) return;
     
     if (packet.protocol === "arp" && packet.type === "request") {
+        if (packet.destination_ip !== networkObjectIp) return;
         addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);

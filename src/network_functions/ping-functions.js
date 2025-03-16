@@ -9,12 +9,34 @@ async function ping(dataId, args) {
 
     if (!isValidIp(args[1])) { //el valor introducido es una nombre de dominio
 
-        if (args[1] === "localhost") { //es el mismo equipo, lo damos por exito
-            ping_s(args[1]);
+        if (visualToggle) await minimizeTerminal();
+
+        //primero miramos en el /etc/hosts
+
+        let ipInEtcHosts = isDomainInEtcHosts(dataId, args[1]);
+
+        if (ipInEtcHosts) {
+
+            try {
+                await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, ipInEtcHosts);
+            } catch (error) {
+                ping_f(networkObjectIp);
+                return;
+            }
+    
+            if (visualToggle) await maximizeTerminal();
+    
+            if (!icmpFlag) {
+                ping_f(args[1]);
+            } else {
+                ping_s(args[1]);
+            }
+
             return;
+
         }
 
-        if (visualToggle) await minimizeTerminal();
+        //no se encuentra en el /etc/hosts, intentamos con el servidor
 
         try {
             await dig(dataId, args[1], false);
@@ -163,5 +185,20 @@ async function pingSim() {
 
     if (!$networkObject) return;
     await ping($networkObject.id, ["ping", destination]);
+
+}
+
+function isDomainInEtcHosts(dataId, domain) {
+    const $networkObject = document.getElementById(dataId);
+    const etcHostFile = $networkObject.getAttribute("data-etc-hosts");
+    let etcHostsEntries = JSON.parse(etcHostFile);
+
+    for (let ip in etcHostsEntries) {
+        if (etcHostsEntries[ip].includes(domain)) {
+            return ip;
+        }
+    }
+
+   return false;
 
 }

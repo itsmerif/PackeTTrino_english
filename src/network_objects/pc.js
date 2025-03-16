@@ -111,7 +111,7 @@ function showPcForm(id) {
     document.querySelector(".pc-form").style.display = "flex";
 }
 
-function savePcSpecs(event) {
+async function savePcSpecs(event) {
     event.preventDefault();
     const networkObject = document.getElementById(document.getElementById("form-item-id").innerHTML);
     const newIp = document.querySelector(".pc-form #ip").value;
@@ -124,6 +124,7 @@ function savePcSpecs(event) {
     networkObject.setAttribute("data-gateway", newGateway);
     networkObject.setAttribute("data-dhcp", newDhcp);
     networkObject.setAttribute("data-dns-server", newDnsServer);
+    if (newDhcp) await dhcp(networkObject.id, ["dhcp", "-renew"]);
     document.querySelector(".pc-form").style.display = "none";
 }
 
