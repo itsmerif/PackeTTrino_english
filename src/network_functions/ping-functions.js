@@ -128,7 +128,7 @@ async function pingSim() {
         || document.querySelector(`[ip-enp0s9='${originIp}']`);
 
     if (!$networkObject) return;
-    await ping($networkObject.id, ["ping", destination]);
+    await command_ping($networkObject.id, ["ping", destination]);
 
 }
 
