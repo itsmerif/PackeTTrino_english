@@ -10,7 +10,7 @@ async function ping(dataId, args) {
 
     if (visualToggle) await minimizeTerminal();
     
-    if (!isValidIp(args[1])) { 
+    if (!isValidIp(destinationIp)) { 
 
         destinationIp = await domainNameResolution(dataId, args[1]);
 
@@ -53,21 +53,23 @@ async function ping(dataId, args) {
 
 }
 
-function router_ping(dataId, args) {
+async function router_ping(dataId, args) {
 
     const $routerObject = document.getElementById(dataId);
     const routerObjectIp = $routerObject.getAttribute("ip-enp0s3"); //obtenemos una ip válida del router, cualquiera
     const switchId = $routerObject.getAttribute("data-switch-enp0s3");
     const destinationIp = args[1];
-
     let newPacket = new IcmpEchoRequest(routerObjectIp, destinationIp, $routerObject.getAttribute("data-mac"), "");
     icmpFlag = false;
-    cleanPacketTraffic(); //limpiamos la tabla de paquetes
+
+    cleanPacketTraffic();
+
+    if (visualToggle) await minimizeTerminal();
 
     try {
-        console.log("Ping desde router....");
-        packetProcessor_router(switchId, dataId, newPacket);
+        await packetProcessor_router(switchId, dataId, newPacket);
     } catch (error) {
+        if (visualToggle) await maximizeTerminal();
         ping_f(routerObjectIp);
         return;
     }
@@ -77,6 +79,8 @@ function router_ping(dataId, args) {
     } else {
         ping_s(routerObjectIp);
     }
+
+    if (visualToggle) await maximizeTerminal();
 
 }
 
@@ -128,21 +132,6 @@ async function pingSim() {
 
 }
 
-function isDomainInEtcHosts(dataId, domain) {
-    const $networkObject = document.getElementById(dataId);
-    const etcHostFile = $networkObject.getAttribute("data-etc-hosts");
-    let etcHostsEntries = JSON.parse(etcHostFile);
-
-    for (let ip in etcHostsEntries) {
-        if (etcHostsEntries[ip].includes(domain)) {
-            return ip;
-        }
-    }
-
-    return false;
-
-}
-
 async function domainNameResolution(dataId, domain) {
 
     let response;
@@ -161,4 +150,16 @@ async function domainNameResolution(dataId, domain) {
         return false;
     }
 
+}
+
+function isDomainInEtcHosts(dataId, domain) {
+    const $networkObject = document.getElementById(dataId);
+    const etcHostFile = $networkObject.getAttribute("data-etc-hosts");
+    let etcHostsEntries = JSON.parse(etcHostFile);
+    for (let ip in etcHostsEntries) {
+        if (etcHostsEntries[ip].includes(domain)) {
+            return ip;
+        }
+    }
+    return false;
 }
