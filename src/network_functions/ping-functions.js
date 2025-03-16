@@ -4,71 +4,49 @@ async function ping(dataId, args) {
     const networkObjectIp = $networkObject.getAttribute("data-ip");
     const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
     const switchObjectId = $networkObject.getAttribute("data-switch");
+    let destinationIp = args[1];
 
     cleanPacketTraffic();
 
-    if (!isValidIp(args[1])) { //el valor introducido es un nombre de dominio
-
-        if (visualToggle) await minimizeTerminal();
-
-        let destinationIp = await domainNameResolution(dataId, args[1]);
-        if (!destinationIp) { //no se pudo resolver el dominio
-            ping_f(networkObjectIp);
-            return;
-        }
-
-        //comprobamos si el destino es el mismo equipo o de la red 127.0.0.0/8
-
-        if (destinationIp === networkObjectIp || getNetwork(destinationIp, "255.0.0.0") === "127.0.0.0") {
-            ping_s(args[1]);
-            return;
-        }
-
-        try {
-            await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, destinationIp);
-        } catch (error) {
-            if (visualToggle) await maximizeTerminal();
-            ping_f(networkObjectIp);
-            return;
-        }
-
-        if (!icmpFlag) {
-            ping_f(args[1]);
-        } else {
-            ping_s(args[1]);
-        }
-
-        if (visualToggle) await maximizeTerminal();
-
-        return;
-    }
-
-    //el valor introducido es una ip
-
-    if (args[1] === getNetwork(args[1], networkObjectNetmask)) { //no se le permite hacer ping a la red
-        terminalMessage("Error: La IP de destino introducida no es válida.");
-        return;
-    }
-
-    if (args[1] === networkObjectIp || getNetwork(args[1], "255.0.0.0") === "127.0.0.0") {
-        ping_s(args[1]);
-        return;
-    }
-
     if (visualToggle) await minimizeTerminal();
+    
+    if (!isValidIp(args[1])) { 
+
+        destinationIp = await domainNameResolution(dataId, args[1]);
+
+        if (!destinationIp) { //no se pudo resolver el dominio
+            if (visualToggle) await maximizeTerminal();
+            ping_f(destinationIp);
+            return;
+        }
+        
+    }
+
+    if (destinationIp === getNetwork(destinationIp, networkObjectNetmask)) { //no se le permite hacer ping a una red
+        if (visualToggle) await maximizeTerminal();
+        ping_f(destinationIp);
+        return;
+    }
+
+    if (destinationIp === networkObjectIp || getNetwork(destinationIp, "255.0.0.0") === "127.0.0.0") {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        if (visualToggle) await maximizeTerminal();
+        ping_s(destinationIp);
+        return;
+    }
 
     try {
-        await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, args[1]);
+        await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, destinationIp);
     } catch (error) {
         if (visualToggle) await maximizeTerminal();
-        ping_f(args[1]);
+        ping_f(destinationIp);
         return;
     }
     
     if (!icmpFlag) {
-        ping_f(args[1]);
+        ping_f(destinationIp);
     } else {
-        ping_s(args[1]);
+        ping_s(destinationIp);
     }
 
     if (visualToggle) await maximizeTerminal();
