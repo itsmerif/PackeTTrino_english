@@ -30,13 +30,6 @@ async function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destina
     const isSameNetwork = getNetwork(ip, $networkObject.getAttribute("data-netmask")) === getNetwork(destination, $networkObject.getAttribute("data-netmask"));
     let destination_mac; let packet;
 
-    //comprobamos si el destino es el mismo equipo o de la red 127.0.0.0/8
-
-    if (destination === ip || getNetwork(destination, "255.0.0.0") === "127.0.0.0") {
-        icmpFlag = true;
-        return;
-    }
-
     if (!isSameNetwork) { //el destino no está en la misma red, debemos enviarlo a la puerta de enlace
 
         //terminalMessage(networkObjectId + ": Destino En Otra Red...");

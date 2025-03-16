@@ -7,24 +7,30 @@ async function ping(dataId, args) {
 
     cleanPacketTraffic();
 
-    if (!isValidIp(args[1])) { //el valor introducido es una nombre de dominio
+    if (!isValidIp(args[1])) { //el valor introducido es un nombre de dominio
 
         if (visualToggle) await minimizeTerminal();
 
         let destinationIp = await domainNameResolution(dataId, args[1]);
         if (!destinationIp) { //no se pudo resolver el dominio
             ping_f(networkObjectIp);
-            return; 
+            return;
+        }
+
+        //comprobamos si el destino es el mismo equipo o de la red 127.0.0.0/8
+
+        if (destinationIp === networkObjectIp || getNetwork(destinationIp, "255.0.0.0") === "127.0.0.0") {
+            ping_s(args[1]);
+            return;
         }
 
         try {
             await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, destinationIp);
         } catch (error) {
+            if (visualToggle) await maximizeTerminal();
             ping_f(networkObjectIp);
             return;
         }
-
-        if (visualToggle) await maximizeTerminal();
 
         if (!icmpFlag) {
             ping_f(args[1]);
@@ -32,53 +38,40 @@ async function ping(dataId, args) {
             ping_s(args[1]);
         }
 
+        if (visualToggle) await maximizeTerminal();
+
         return;
     }
 
-    //caso 2) el valor introducido es una ip
+    //el valor introducido es una ip
 
-    if (args[1] === getNetwork(networkObjectIp, networkObjectNetmask)) { //no se le permite hacer ping a la red
+    if (args[1] === getNetwork(args[1], networkObjectNetmask)) { //no se le permite hacer ping a la red
         terminalMessage("Error: La IP de destino introducida no es válida.");
         return;
     }
 
-    if (args[1] === networkObjectIp) { //es el mismo equipo, lo damos por exito
+    if (args[1] === networkObjectIp || getNetwork(args[1], "255.0.0.0") === "127.0.0.0") {
         ping_s(args[1]);
         return;
     }
 
-    if (visualToggle) {
+    if (visualToggle) await minimizeTerminal();
 
-        try {
-            icmpFlag = false;
-            await minimizeTerminal();
-            await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, args[1]);
-            await maximizeTerminal();
-            if (!icmpFlag) {
-                ping_f(args[1]);
-            } else {
-                ping_s(args[1]);
-            }
-        } catch (error) {
-            await maximizeTerminal();
-            ping_f(args[1]);
-        }
-
-    } else { //no se usa visual
-
-        try {
-            icmpFlag = false;
-            icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, args[1]);
-            if (!icmpFlag) {
-                ping_f(args[1]);
-            } else {
-                ping_s(args[1]);
-            }
-        } catch (error) {
-            ping_f(args[1]);
-        }
-
+    try {
+        await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, args[1]);
+    } catch (error) {
+        if (visualToggle) await maximizeTerminal();
+        ping_f(args[1]);
+        return;
     }
+    
+    if (!icmpFlag) {
+        ping_f(args[1]);
+    } else {
+        ping_s(args[1]);
+    }
+
+    if (visualToggle) await maximizeTerminal();
 
 }
 
@@ -168,7 +161,7 @@ function isDomainInEtcHosts(dataId, domain) {
         }
     }
 
-   return false;
+    return false;
 
 }
 
@@ -184,7 +177,7 @@ async function domainNameResolution(dataId, domain) {
     //no se encuentra en el /etc/hosts, buscamos en la cache, y si no, en el servidor
 
     try {
-        await dig(dataId, domain, false);  
+        await dig(dataId, domain, false);
         return isDomainInCachePc(dataId, domain)[1];
     } catch (error) {
         return false;
