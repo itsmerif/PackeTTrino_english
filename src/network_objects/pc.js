@@ -156,8 +156,10 @@ function disableOptionsPcForm(event) {
     const input = event.target;
     if (input.checked) {
         document.querySelector(".pc-form").querySelectorAll("input[type='text']").forEach(input => input.disabled = true);
+        document.querySelector(".pc-form").querySelector("button").innerHTML = "Renovar";
     } else {
         document.querySelector(".pc-form").querySelectorAll("input[type='text']").forEach(input => input.disabled = false);
+        document.querySelector(".pc-form").querySelector("button").innerHTML = "Guardar";
     }
 }
 
