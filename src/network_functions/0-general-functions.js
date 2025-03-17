@@ -349,3 +349,63 @@ function escapeHtml(str) {
         "'": '&#39;'
     }[match]));
 }
+
+function getopts(options, string) {
+
+    options = options.replace(/ /g, "");
+
+    if (options.charAt(0) !== ":") {
+        throw new Error("Error de sintaxis");
+    }
+
+    let optionsObject = {};
+    
+    for (let i = 0; i < options.length; i++) {
+        if (options.charAt(i) !== ":") optionsObject["-" + options.charAt(i)] = (options.charAt(i+1) === ":") ? "value" : "novalue";
+    }
+
+    string = string.split(" ");
+
+    response = {};
+
+    for (let i = 0; i < string.length; i++) {
+        if (optionsObject[string[i]]) {
+            response[string[i]] = "";
+            if (optionsObject[string[i]] === "value") {
+                response[string[i]] = string[i+1];
+                i++;
+            }
+        }else {
+            throw new Error("Opcion no reconocida");
+        }
+    }
+
+    return response;
+}
+
+function catchopts(options,string) {
+
+    let optionsObject = {};
+    
+    for (let i = 0; i < options.length; i++) {
+       optionsObject["-" + options[i].slice(0,-1)] = (options[i].endsWith(":")) ? "value" : "novalue";
+    }
+
+    string = string.trim().split(" ");
+
+    response = {};
+
+    for (let i = 0; i < string.length; i++) {
+        if (optionsObject[string[i]]) {
+            response[string[i]] = "";
+            if (optionsObject[string[i]] === "value") {
+                response[string[i]] = string[i+1];
+                i++;
+            }
+        }else {
+            throw new Error("Opcion no reconocida");
+        }
+    }
+
+    return response;
+}
