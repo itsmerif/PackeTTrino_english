@@ -27,8 +27,8 @@ function sendCommand(event) {
             case "dhcp":
                 dhcp(dataId, args);
                 break;
-            case "firewall":
-                command_firewall(dataId, args);
+            case "iptables":
+                iptables(dataId, args);
                 break;
             case "ip":
                 command_Ip(dataId, args, originIP);
@@ -222,50 +222,6 @@ async function maximizeTerminal() {
     });
 }
 
-function getopts(options, argString) {
-
-    //obtenemos las opciones y sus valores
-    const validOptions = [];
-    const optionsValues = {};
-
-    for (let i = 0; i < options.length; i++) {
-        if (options[i] !== ":") { //la añadimos como opcion valida
-            validOptions.push("-" + options[i]);
-            if (options[i+1] === ":") { //esta opcion lleva un valor
-                optionsValues["-" + options[i]] = "value";
-            } else {
-                optionsValues["-" + options[i]] = "novalue";
-            }
-        }
-    }
-
-    const input = argString.split(" ").filter(arg => arg !== ""); //eliminamos los argumentos que estén vacíos
-    let output = Object.fromEntries(validOptions.map(validOption => [validOption, "*"])); //inicializamos el objeto de salida
-    let i = 1;
-
-    while ( i < input.length) {
-        if (validOptions.includes(input[i])) { //es una opcion valida
-            if (optionsValues[input[i]] === "value") { //la opcion lleva un valor
-                if (!input[i+1] || validOptions.includes(input[i+1])) { //la opcion no lleva un valor o el valor es una opcion valida
-                    console.log("Error: sintaxis no valida");
-                    return false;
-                }
-                output[input[i]] = input[i+1];
-                i += 2;
-            } else { //la opcion no lleva un valor
-                output[input[i]] = "novalue";
-                i++;
-            }
-        } else { //no es una opcion valida
-            console.log("Error: opcion no valida");
-            return false;
-        }
-    }
-
-    return output;
-
-}
-
 function closeTerminal(event) {
     event.preventDefault();
     const terminal = document.querySelector(".terminal-component");
@@ -276,3 +232,4 @@ function closeTerminal(event) {
     document.querySelector(".terminal-output").innerHTML = "";
     terminal.querySelector("input").value = "";
 }
+
