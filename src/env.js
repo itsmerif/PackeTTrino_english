@@ -8,7 +8,7 @@ let ignoreArpTraffic = false;
 
 //variables de animaciones
 let visualToggle = false;
-let visualSpeed = 1000;
+let visualSpeed = 300;
 
 //variables generales de hosts
 let buffer = {}; //buffer general de paquetes para cada objeto de red
