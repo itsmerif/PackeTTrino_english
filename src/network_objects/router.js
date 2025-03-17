@@ -109,7 +109,8 @@ function createRouterObject(x, y) {
                     <th>Protocol</th>
                     <th>Origin IP</th>
                     <th>Destination IP</th>
-                    <th>Port</th>
+                    <th>Source Port</th>
+                    <th>Destination Port</th>
                     <th>Action</th>
                 </tr>
             </table>

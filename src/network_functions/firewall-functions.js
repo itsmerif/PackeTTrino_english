@@ -1,145 +1,79 @@
-class FirewallRule {
-    constructor(chain, protocol, origin, destination, port, action) {
-        this.chain = chain;
-        this.protocol = protocol;
-        this.origin = origin;
-        this.destination = destination;
-        this.port = port;
-        this.action = action;
+class iptablesRule {
+    constructor() {
+        this.chain = "";
+        this.p = "*";
+        this.s = "*";
+        this.d = "*";
+        this.sport = "*";
+        this.dport = "*";
+        this.j = "";
     }
 }
 
-function command_firewall(networkObjectId, args) {
+function iptables(networkObjectId, args) {
 
-    const $networkObject = document.getElementById(networkObjectId);
     const validChains = ["INPUT", "OUTPUT", "FORWARD"];
     const validProtocols = ["tcp", "udp", "icmp"];
     const validActions = ["ACCEPT", "DROP", "REJECT"];
-    const validPolicies = ["ACCEPT", "DROP"];
 
-    if (args[1] === "add") {
+    let object = catchopts(
+        ["A:", "p:", "s:", "d:", "-sport:", "-dport:", "j:"],
+        args.slice(1).join(" ")
+    );
 
-        //comando -> firewall add -A <chain> -p <protocol> --dport <port> -s <origin> -d <destination> -j <action>
-        //               0     1   2    3     4     5          6      7    8    9      10     11       12     13
+    let rule = new iptablesRule();
 
-        //evaluacion de claves
-
-        if (args.length !== 14) {
-            terminalMessage("Error: Sintaxis: firewall add -A <chain> -p <protocol> --dport <port> -s <origin> -d <destination>  -j <action>");
-            return;
+    for (let option in object) {
+        switch (option) {
+            case "-A":
+                if (!validChains.includes(object["-A"])) {terminalMessage("Error: cadena no reconocida"); return;}
+                rule.chain = object["-A"]
+                break;
+            case "-p":
+                if (!validProtocols.includes(object["-p"])) {terminalMessage("Error: protocolo no reconocida"); return;}
+                rule.p = object["-p"]
+                break;
+            case "-s":
+                if (!isValidIp(object["-s"])) {terminalMessage("Error: ip de origen no válida"); return;}
+                rule.s = object["-s"]
+                break;
+            case "-d":
+                if (!isValidIp(object["-d"])) {terminalMessage("Error: ip de destino no válida"); return;}
+                rule.d = object["-d"]
+                break;
+            case "--sport":
+                if (!object["--sport"].match(/^\d+$/)) {terminalMessage("Error: puerto de origen no válido"); return;}
+                rule.sport = object["--sport"]
+                break;
+            case "--dport":
+                if (!object["--dport"].match(/^\d+$/)) {terminalMessage("Error: puerto de destino no válido"); return;}
+                rule.dport = object["--dport"]
+                break;
+            case "-j":
+                if (!validActions.includes(object["-j"])) {terminalMessage("Error: acción no reconocida"); return;}
+                rule.j = object["-j"]
+                break;
         }
-
-        if (args[2] !== "-A" || args[4] !== "-p" || args[6] !== "--dport" || args[8] !== "-s" || args[10] !== "-d" || args[12] !== "-j") {
-            terminalMessage("Error: Sintaxis: firewall add -A <chain> -p <protocol> --dport <port> -s <origin> -d <destination> -j <action>");
-            return;
-        }
-
-        //evaluacion de valores obligatorios
-
-        if (!validChains.includes(args[3])) {
-            terminalMessage("Error: La cadena introducida no es válida.");
-            return;
-        }
-
-        if (!validProtocols.includes(args[5])) {
-            terminalMessage("Error: El protocolo introducido no es válido.");
-            return;
-        }
-
-        if (!validActions.includes(args[13])) {
-            terminalMessage("Error: La acción introducida no es válida.");
-            return;
-        }
-
-        //evaluacion de valores opcionales
-
-        if (!args[7].match(/^\d+$/) && args[7] !== "*") {
-            terminalMessage("Error: El puerto introducido no es válido.");
-            return;
-        }
-
-        if (!args[9].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/) && args[9] !== "*") {
-            terminalMessage("Error: La IP de origen introducida no es válida.");
-            return;
-        }
-
-        if (!args[11].match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/) && args[11] !== "*") {
-            terminalMessage("Error: La IP de destino introducida no es válida.");
-            return;
-        }
-
-        //creamos la regla
-
-        let chain = args[3];
-        let protocol = args[5];
-        let port = args[7];
-        let origin = args[9];
-        let destination = args[11];
-        let action = args[13];
-
-        let newRule = new FirewallRule(chain, protocol, origin, destination, port, action);
-        addFirewallRule(networkObjectId, newRule);
     }
 
-    if (args[1] === "del") {
+    addFirewallRule(networkObjectId, rule);
 
-        //comando -> firewall del <ruleId>
-
-        //evaluacion de claves
-
-        if (args.length !== 3) {
-            terminalMessage("Error: Sintaxis: firewall del <ruleId>");
-            return;
-        }
-
-        if (!args[2].match(/^\d+$/)) {
-            terminalMessage("Error: El id introducido no es válido.");
-            return;
-        }
-        
-        deleteFirewallRule(networkObjectId, args[2]);
-    }
-
-    if (args[1] === "default") {
-
-        if (args.length !== 3) {
-            terminalMessage("Error: Sintaxis: firewall default <policy>");
-            return;
-        }
-
-        if (!validPolicies.includes(args[2])) {
-            terminalMessage("Error: La política introducida no es válida.");
-            return;
-        }
-
-        $networkObject.setAttribute("firewall-default-policy", args[2]);
-        terminalMessage("Comando firewall ejecutado correctamente");
-        
-    }
-
-    if (args[1] === "-n") {
-        showFirewallRules(networkObjectId);
-        return;
-    }
-
-    
 }
 
 function addFirewallRule(routerObjectId, newRule) {
     const $networkObject = document.getElementById(routerObjectId);
     const ruleTable = $networkObject.querySelector(".firewall-table").querySelector("table");
-    const rows = ruleTable.querySelectorAll("tr");
-    let ruleId = rows.length;
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
         <tr>
-            <td>${ruleId}</td>
+            <td>id</td>
             <td>${newRule.chain}</td>
-            <td>${newRule.protocol}</td>
-            <td>${newRule.origin}</td>
-            <td>${newRule.destination}</td>
-            <td>${newRule.port}</td>
-            <td>${newRule.action}</td>
+            <td>${newRule.p}</td>
+            <td>${newRule.s}</td>
+            <td>${newRule.d}</td>
+            <td>${newRule.sport}</td>
+            <td>${newRule.dport}</td>
+            <td>${newRule.j}</td>
         </tr>`;
     ruleTable.appendChild(newRow);
     terminalMessage("Comando firewall ejecutado correctamente");
