@@ -167,6 +167,7 @@ function checkIpinDhcp(serverObjectId, newip) {
 
 function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
     const serverObject = document.getElementById(serverObjectId);
+    const leaseTime = serverObject.getAttribute("offer-lease-time");
     const table = serverObject.querySelector(".dhcp-table").querySelector("table");
     const newRow = document.createElement("tr");
 
@@ -174,7 +175,7 @@ function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
         <td>${newip}</td>
         <td>${newmac}</td>
         <td>${newhostname}</td>
-        <td class="lease-time">3600</td>`;
+        <td class="lease-time">${leaseTime}</td>`;
     table.appendChild(newRow);
 
     // Si el temporizador no existe, inicia uno
@@ -185,6 +186,7 @@ function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
 
 function updateDhcpEntry(serverObjectId, newip) {
     const serverObject = document.getElementById(serverObjectId);
+    const leaseTime = serverObject.getAttribute("offer-lease-time");
     const table = serverObject.querySelector(".dhcp-table").querySelector("table");
     const rows = table.querySelectorAll("tr");
 
@@ -194,7 +196,7 @@ function updateDhcpEntry(serverObjectId, newip) {
         let ip = cells[0].innerHTML;
 
         if (ip === newip) {
-            cells[3].innerHTML = "3600";
+            cells[3].innerHTML = leaseTime;
             return;
         }
     }

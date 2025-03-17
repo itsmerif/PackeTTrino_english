@@ -30,6 +30,7 @@ function createDhcpServerObject(x, y) {
     networkObject.setAttribute("offer-gateway", "");
     networkObject.setAttribute("offer-netmask", "");
     networkObject.setAttribute("offer-dns", "");
+    networkObject.setAttribute("offer-lease-time", "");
 
     //server grafico
 
@@ -146,6 +147,7 @@ function showDhcpSpecs(event) {
     const offerGateway = networkObject.getAttribute("offer-gateway");
     const offerNetmask = networkObject.getAttribute("offer-netmask");
     const offerDns = networkObject.getAttribute("offer-dns");
+    const offerLeaseTime = networkObject.getAttribute("offer-lease-time");
 
     //mostramos el formulario
     document.querySelector(".dhcp-form #ip-dhcp").value = ip;
@@ -157,6 +159,7 @@ function showDhcpSpecs(event) {
     document.querySelector(".dhcp-form #offer-gateway").value = offerGateway;
     document.querySelector(".dhcp-form #offer-netmask").value = offerNetmask;
     document.querySelector(".dhcp-form #offer-dns").value = offerDns;
+    document.querySelector(".dhcp-form #offer-lease-time").value = offerLeaseTime;
 
     //ocultamos y mostramos
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
@@ -178,6 +181,7 @@ function saveDhcpSpecs(event) {
     const newOfferGateway = document.querySelector(".dhcp-form #offer-gateway").value;
     const newOfferNetmask = document.querySelector(".dhcp-form #offer-netmask").value;
     const newOfferDns = document.querySelector(".dhcp-form #offer-dns").value;
+    const newOfferLeaseTime = document.querySelector(".dhcp-form #offer-lease-time").value;
 
     //guardamos los nuevos atributos en el server
 
@@ -189,6 +193,7 @@ function saveDhcpSpecs(event) {
     networkObject.setAttribute("offer-gateway", newOfferGateway);
     networkObject.setAttribute("offer-netmask", newOfferNetmask);
     networkObject.setAttribute("offer-dns", newOfferDns);
+    networkObject.setAttribute("offer-lease-time", newOfferLeaseTime);
 
     //ocultamos el formulario
 
