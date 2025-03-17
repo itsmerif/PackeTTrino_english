@@ -18,10 +18,10 @@ async function command_dig(dataId, args) {
         return;
     }
 
-    if (args[1].startsWith("@")) { //consulta directa a un server en concreto
+    if (args[1].startsWith("@")) { //consulta directa a un server en concreto (ignorando el uso de cache)
 
         try {
-            await dig(dataId, args[2], true, args[1].slice(1));
+            await dig(dataId, args[2], true, args[1].slice(1), false);
         }catch(error){
             console.log(error);
         }
@@ -44,13 +44,15 @@ async function command_dig(dataId, args) {
 
 }
 
-async function dig(dataId, domain, verbose = false, dnsServer = "") {
+async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = true) {
 
     cleanPacketTraffic();
 
     const $networkObject = document.getElementById(dataId);
     const switchId = $networkObject.getAttribute("data-switch");
-    let [answer_type, answer, server_ip] = isDomainInCachePc(dataId, domain); //buscamos en la tabla de cache del equipo
+    let [answer_type, answer, server_ip] = [false, false, false];
+
+    if (useCache)  [answer_type, answer, server_ip]= isDomainInCachePc(dataId, domain); //buscamos en la tabla de cache del equipo
 
     if (!answer) { //no tenemos la ip en cache, buscamos en el servidor
 
@@ -70,7 +72,7 @@ async function dig(dataId, domain, verbose = false, dnsServer = "") {
             let server_ip = packet.origin_ip;
             if (verbose) generateDnsOuput(query, answer_type, answer, authority, server_ip);    
             if (!answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
-            addDnsCacheEntry(dataId, query, answer_type, answer, server_ip);      
+            if (useCache) addDnsCacheEntry(dataId, query, answer_type, answer, server_ip);      
         }
 
         return;

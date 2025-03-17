@@ -1,7 +1,3 @@
-let nodes = {};
-let nodesNetmask = {};
-let nodesIp = {};
-
 function getNodes() {
 
     nodes = {};
