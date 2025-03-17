@@ -254,13 +254,13 @@ async function dhcpRenewGenerator(networkObjectId, switchId) {
 
 }
 
-async function dnsRequestPacketGenerator(networkObjectId, switchId, domain) {
+async function dnsRequestPacketGenerator(networkObjectId, switchId, domain, dnsServer = "") {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     const networkObjectIp = $networkObject.getAttribute("data-ip");
     const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
-    const dnsServer = $networkObject.getAttribute("data-dns-server");
+    if (!dnsServer) dnsServer = $networkObject.getAttribute("data-dns-server"); //si no se especificó el servidor dns, usamos el que tenemos en el objeto
     const isSameNetwork = getNetwork(networkObjectIp, networkObjectNetmask) === getNetwork(dnsServer, networkObjectNetmask);
     let packet;
 
