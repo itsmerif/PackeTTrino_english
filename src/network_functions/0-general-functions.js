@@ -388,7 +388,11 @@ function catchopts(options,string) {
     let optionsObject = {};
     
     for (let i = 0; i < options.length; i++) {
-       optionsObject["-" + options[i].slice(0,-1)] = (options[i].endsWith(":")) ? "value" : "novalue";
+        if (options[i].endsWith(":")) {
+            optionsObject["-" + options[i].slice(0,-1)] = "value";
+        } else {
+            optionsObject["-" + options[i]] = "novalue";
+        }
     }
 
     string = string.trim().split(" ");
