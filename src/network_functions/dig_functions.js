@@ -2,6 +2,8 @@ async function command_dig(dataId, args) {
 
     // sintaxis: dig [@server] [-x] <ip|domain>
 
+    if (visualToggle) await minimizeTerminal();
+
     if (args[1] === "-x") { //consulta inversa
         
         if (args.length !== 3) {
@@ -15,10 +17,13 @@ async function command_dig(dataId, args) {
             console.log(error);
         }
 
+        if (visualToggle) await maximizeTerminal();
+
         return;
     }
 
     if (args[1].startsWith("@")) { //consulta directa a un server en concreto (ignorando el uso de cache)
+
 
         try {
             await dig(dataId, args[2], true, args[1].slice(1), false);
@@ -26,6 +31,8 @@ async function command_dig(dataId, args) {
             console.log(error);
         }
 
+        if (visualToggle) await maximizeTerminal();
+        
         return;
     }
 
@@ -37,11 +44,12 @@ async function command_dig(dataId, args) {
     }
     
     try {
-        dig(dataId, args[1], true);
+        await dig(dataId, args[1], true);
     }catch(error){
         console.log(error);
     }
 
+    if (visualToggle) await maximizeTerminal();
 }
 
 async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = true) {
