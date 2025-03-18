@@ -7,6 +7,7 @@ function sleep(ms) {
 async function init() {
     setTimeout(hideLoadingScreen, 0);
     getPanelItems();
+    createBasicNetwork();
     await sleep(500);
     document.querySelector(".terminal-component").addEventListener("keydown", terminalKeyboard); //añadimos eventos de teclado al terminal
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm); //añadimos eventos de clic al item ping del panel

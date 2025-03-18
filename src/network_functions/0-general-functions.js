@@ -38,8 +38,8 @@ function ipToBinary(ip) {
     let blocks = ip.split(".");
     let blocksBinary = [];
 
-    for (let i = 0; i<blocks.length; i++) {
-        blocksBinary[i] = parseInt(blocks[i]).toString(2).padStart(8,"0");
+    for (let i = 0; i < blocks.length; i++) {
+        blocksBinary[i] = parseInt(blocks[i]).toString(2).padStart(8, "0");
     }
 
     let ipBinary = blocksBinary.join('')
@@ -52,8 +52,8 @@ function binaryToIp(binary) {
     let blocks = binary.match(/.{8}/g);
     let blocksIp = [];
 
-    for (let i=0; i<blocks.length; i++) {
-        blocksIp[i] = parseInt(blocks[i],2).toString(10)
+    for (let i = 0; i < blocks.length; i++) {
+        blocksIp[i] = parseInt(blocks[i], 2).toString(10)
     }
 
     let ip = blocksIp.join(".")
@@ -105,7 +105,7 @@ function isValidCidrIp(cidr) {
     }
 
     let netmaskInt = parseInt(netmask);
-    
+
     if (isNaN(netmaskInt) || netmaskInt < 0 || netmaskInt > 32) {
         return false;
     }
@@ -148,14 +148,14 @@ function isMacTableEmpty(switchObjectId) {
 
     if (matriz.length === 1) {
         return true;
-    }else {
+    } else {
         return false;
     }
 
 }
 
 function getRouterIp(routerObjectId, switchObjectId) {
-    
+
     const router = document.getElementById(routerObjectId);
     let ip = "";
 
@@ -170,7 +170,7 @@ function getRouterIp(routerObjectId, switchObjectId) {
     } else if (router.getAttribute("data-switch-enp0s9") === switchObjectId) {
 
         ip = router.getAttribute("ip-enp0s9");
-        
+
     }
 
     return ip;
@@ -190,7 +190,7 @@ function isMacInMACTable(switchObjectId, macAddress) {
         }
 
     }
-    
+
     return false;
 
 }
@@ -205,7 +205,7 @@ function getRoutingTable(routerObjectId) {
 
 }
 
-function ipCheck(switchObjectId,networkObjectId, ip) {
+function ipCheck(switchObjectId, networkObjectId, ip) {
 
     const networkObject = document.getElementById(networkObjectId);
     let networkObjectIp = "";
@@ -242,17 +242,17 @@ function getDeviceFromMac(switchObjectId, mac) {
     }
 }
 
-function macCheck( networkObjectId, mac )  {
+function macCheck(networkObjectId, mac) {
 
     const networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = networkObject.getAttribute("data-mac");
-    
+
     if (networkObjectMac === mac) {
         return true;
     }
 
     return false;
-    
+
 }
 
 function isMacinNetwork(switchObjectId, mac) {
@@ -290,7 +290,7 @@ function getDeviceTable(switchObjectId) {
         devicesArray.push(devices[i].innerHTML);
     }
 
-    return devicesArray; 
+    return devicesArray;
 
 }
 
@@ -313,7 +313,7 @@ function isIpInNetwork(switchObjectId, ipAddress) {
         }
 
         if (ip === ipAddress) {
-            return [ devices[i], mac ];
+            return [devices[i], mac];
         }
 
     }
@@ -334,7 +334,7 @@ async function broadcastSwitch(switchObjectId, excludeId) {
             const x = networkObject.style.left;
             const y = networkObject.style.top;
             movePacket(switchObject.style.left, switchObject.style.top, x, y, "broadcast");
-        
+
         }
     }
 
@@ -359,9 +359,9 @@ function getopts(options, string) {
     }
 
     let optionsObject = {};
-    
+
     for (let i = 0; i < options.length; i++) {
-        if (options.charAt(i) !== ":") optionsObject["-" + options.charAt(i)] = (options.charAt(i+1) === ":") ? "value" : "novalue";
+        if (options.charAt(i) !== ":") optionsObject["-" + options.charAt(i)] = (options.charAt(i + 1) === ":") ? "value" : "novalue";
     }
 
     string = string.split(" ");
@@ -372,10 +372,10 @@ function getopts(options, string) {
         if (optionsObject[string[i]]) {
             response[string[i]] = "";
             if (optionsObject[string[i]] === "value") {
-                response[string[i]] = string[i+1];
+                response[string[i]] = string[i + 1];
                 i++;
             }
-        }else {
+        } else {
             throw new Error("Opcion no reconocida");
         }
     }
@@ -383,13 +383,13 @@ function getopts(options, string) {
     return response;
 }
 
-function catchopts(options,string) {
+function catchopts(options, string) {
 
     let optionsObject = {};
-    
+
     for (let i = 0; i < options.length; i++) {
         if (options[i].endsWith(":")) {
-            optionsObject["-" + options[i].slice(0,-1)] = "value";
+            optionsObject["-" + options[i].slice(0, -1)] = "value";
         } else {
             optionsObject["-" + options[i]] = "novalue";
         }
@@ -403,10 +403,10 @@ function catchopts(options,string) {
         if (optionsObject[string[i]]) {
             response[string[i]] = "";
             if (optionsObject[string[i]] === "value") {
-                response[string[i]] = string[i+1];
+                response[string[i]] = string[i + 1];
                 i++;
             }
-        }else {
+        } else {
             throw new Error("Opcion no reconocida");
         }
     }
@@ -415,53 +415,80 @@ function catchopts(options,string) {
 }
 
 function createBasicNetwork() {
-    createRouterObject(500,400);
-    createSwitchObject(300,550);
-    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
-    createPcObject(200,700);
-    createDhcpRelayObject(100,600);
-    simularDragAndDrop(getLastElement(".dhcp-relay"), getLastElement(".switch"));
-    simularDragAndDrop(getLastElement(".pc"), getLastElement(".switch"));
-    createSwitchObject(300,300);
-    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
-    createDhcpServerObject(100,300);
-    simularDragAndDrop(getLastElement(".dhcp-server"), getLastElement(".switch"));
-    createSwitchObject(700,300);
-    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
-    createRouterObject(600,150);
-    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
-    createSwitchObject(900,150);
-    createPcObject(1100,125);
-    simularDragAndDrop(getLastElement(".pc"), getLastElement(".switch"));
-    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
-    createRouterObject(1000,300);
-    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch", -2));
-    createRouterObject(700,500);
-    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch", -2));
-    createSwitchObject(600,600);
-    createPcObject(550,725);
-    simularDragAndDrop(getLastElement(".pc"), getLastElement(".switch"));
-    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
-    createSwitchObject(1200,225);
-    simularDragAndDrop(getLastElement(".router", -2), getLastElement(".switch"));
-    createSwitchObject(1000,500);
-    simularDragAndDrop(getLastElement(".router", -2), getLastElement(".switch"));
-    createRouterObject(1400,225);
-    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch",-2));
-    createSwitchObject(1600,225);
-    createPcObject(1750,180);
-    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
-    simularDragAndDrop(getLastElement(".pc"), getLastElement(".switch"));
-    createRouterObject(1200,550);
-    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch",-2));
-    createSwitchObject(1400,450);
-    createSwitchObject(1400,650);
-    createDnsServerObject(1600,450);
-    createDnsServerObject(1600,650);
-    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
-    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch",-2));
-    simularDragAndDrop(getLastElement(".dns-server"), getLastElement(".switch"));
-    simularDragAndDrop(getLastElement(".dns-server",-2), getLastElement(".switch",-2));
+    createRouterObject(500, 400);
+    setRouterIps(getLastElement(".router"), "192.168.1.1/24", "193.168.1.1/24", "172.16.1.1/24");
+    createSwitchObject(300, 550);
+    createConn(getLastElement(".router"), getLastElement(".switch"));
+    createPcObject(200, 700);
+    createDhcpRelayObject(100, 600);
+    createConn(getLastElement(".dhcp-relay"), getLastElement(".switch"));
+    createConn(getLastElement(".pc"), getLastElement(".switch"));
+    createSwitchObject(300, 300);
+    createConn(getLastElement(".router"), getLastElement(".switch"));
+    createDhcpServerObject(100, 300);
+    createConn(getLastElement(".dhcp-server"), getLastElement(".switch"));
+    createSwitchObject(700, 300);
+    createConn(getLastElement(".router"), getLastElement(".switch"));
+    createRouterObject(600, 150);
+    setRouterIps(getLastElement(".router"), "172.16.1.2/24", "194.168.1.1/24");
+    createConn(getLastElement(".router"), getLastElement(".switch"));
+    createSwitchObject(900, 150);
+    createPcObject(1100, 125);
+    createConn(getLastElement(".pc"), getLastElement(".switch"));
+    createConn(getLastElement(".router"), getLastElement(".switch"));
+    createRouterObject(1000, 300);
+    setRouterIps(getLastElement(".router"), "192.168.1.1/24", "193.168.1.1/24", "172.16.1.1/24");
+    createConn(getLastElement(".router"), getLastElement(".switch", -2));
+    createRouterObject(700, 500);
+    setRouterIps(getLastElement(".router"), "192.168.1.1/24", "193.168.1.1/24", "172.16.1.1/24");
+    createConn(getLastElement(".router"), getLastElement(".switch", -2));
+    createSwitchObject(600, 600);
+    createPcObject(550, 725);
+    createConn(getLastElement(".pc"), getLastElement(".switch"));
+    createConn(getLastElement(".router"), getLastElement(".switch"));
+    createSwitchObject(1200, 225);
+    createConn(getLastElement(".router", -2), getLastElement(".switch"));
+    createSwitchObject(1000, 500);
+    createConn(getLastElement(".router", -2), getLastElement(".switch"));
+    createRouterObject(1400, 225);
+    setRouterIps(getLastElement(".router"), "192.168.1.1/24", "193.168.1.1/24", "172.16.1.1/24");
+    createConn(getLastElement(".router"), getLastElement(".switch", -2));
+    createSwitchObject(1600, 225);
+    createPcObject(1750, 180);
+    createConn(getLastElement(".router"), getLastElement(".switch"));
+    createConn(getLastElement(".pc"), getLastElement(".switch"));
+    createRouterObject(1200, 550);
+    setRouterIps(getLastElement(".router"), "192.168.1.1/24", "193.168.1.1/24", "172.16.1.1/24");
+    createConn(getLastElement(".router"), getLastElement(".switch", -2));
+    createSwitchObject(1400, 450);
+    createSwitchObject(1400, 650);
+    createDnsServerObject(1600, 450);
+    createDnsServerObject(1600, 650);
+    createConn(getLastElement(".router"), getLastElement(".switch"));
+    createConn(getLastElement(".router"), getLastElement(".switch", -2));
+    createConn(getLastElement(".dns-server"), getLastElement(".switch"));
+    createConn(getLastElement(".dns-server", -2), getLastElement(".switch", -2));
+    //anotaciones de texto
+    createTextObject(150, 475);
+    getLastElement(".text-annotation").querySelector("input").value = "192.168.1.0/24";
+    createTextObject(200, 225);
+    getLastElement(".text-annotation").querySelector("input").value = "193.168.1.0/24";
+    createTextObject(450, 275);
+    getLastElement(".text-annotation").querySelector("input").value = "172.16.1.0/16";
+    createTextObject(800, 75);
+    getLastElement(".text-annotation").querySelector("input").value = "194.168.1.0/24";
+    createTextObject(450, 500);
+    getLastElement(".text-annotation").querySelector("input").value = "10.0.0.0/8";
+    createTextObject(1175, 150);
+    getLastElement(".text-annotation").querySelector("input").value = "194.168.1.0/24";
+    createTextObject(1500, 150);
+    getLastElement(".text-annotation").querySelector("input").value = "12.0.0.0/8";
+    createTextObject(800, 500);
+    getLastElement(".text-annotation").querySelector("input").value = "13.0.0.0/8";
+    createTextObject(1300, 350);
+    getLastElement(".text-annotation").querySelector("input").value = "1.0.0.0/8";
+    createTextObject(1300, 700);
+    getLastElement(".text-annotation").querySelector("input").value = "8.0.0.0/8";
 }
 
 function getLastElement(selector, position = -1) {
@@ -469,35 +496,68 @@ function getLastElement(selector, position = -1) {
     return elements[elements.length + position];
 }
 
-function simularDragAndDrop(elementoOrigen, elementoDestino) {
+function createConn(elementoOrigen, elementoDestino) {
 
     const dragstartEvent = new DragEvent('dragstart', {
         bubbles: true,
         cancelable: true,
         view: window
     });
-    
+
     const dataTransfer = new DataTransfer();
 
     Object.defineProperty(dragstartEvent, 'dataTransfer', {
         value: dataTransfer,
         writable: false
     });
-    
+
     elementoOrigen.dispatchEvent(dragstartEvent);
-    
+
     const dropEvent = new DragEvent('drop', {
         bubbles: true,
         cancelable: true,
         view: window,
         dataTransfer: dataTransfer
     });
-    
+
     elementoDestino.dispatchEvent(dropEvent);
-    
+
     return {
         originElement: elementoOrigen,
         targetElement: elementoDestino,
         dataTransfer: dataTransfer
     };
+}
+
+function setRouterIps($router, ip1, ip2 = "", ip3 = "") {
+
+    let [newIpEnp0s3, newNetmaskEnp0s3] = parseCidr(ip1);
+    let [newIpEnp0s8, newNetmaskEnp0s8] = parseCidr(ip2);
+    let [newIpEnp0s9, newNetmaskEnp0s9] = parseCidr(ip3);
+
+    $router.setAttribute("ip-enp0s3", newIpEnp0s3);
+    $router.setAttribute("ip-enp0s8", newIpEnp0s8);
+    $router.setAttribute("ip-enp0s9", newIpEnp0s9);
+    $router.setAttribute("netmask-enp0s3", newNetmaskEnp0s3);
+    $router.setAttribute("netmask-enp0s8", newNetmaskEnp0s8);
+    $router.setAttribute("netmask-enp0s9", newNetmaskEnp0s9);
+
+    const routingTable = $router.querySelector(".routing-table").querySelector("table");
+    const rows = routingTable.querySelectorAll("tr");
+
+    const interfaces = [
+        { ip: newIpEnp0s3, netmask: newNetmaskEnp0s3, interface: "enp0s3" },
+        { ip: newIpEnp0s8, netmask: newNetmaskEnp0s8, interface: "enp0s8" },
+        { ip: newIpEnp0s9, netmask: newNetmaskEnp0s9, interface: "enp0s9" }
+    ];
+
+    interfaces.forEach((iface, index) => {
+        const row = rows[index + 1];
+        const cells = row.querySelectorAll("td");
+        if (getNetwork(iface.ip, iface.netmask) !== "0.0.0.0") cells[0].innerHTML = getNetwork(iface.ip, iface.netmask);
+        cells[1].innerHTML = iface.netmask;
+        cells[2].innerHTML = iface.ip;
+        cells[3].innerHTML = iface.interface;
+    });
+
 }
