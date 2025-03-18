@@ -413,3 +413,91 @@ function catchopts(options,string) {
 
     return response;
 }
+
+function createBasicNetwork() {
+    createRouterObject(500,400);
+    createSwitchObject(300,550);
+    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
+    createPcObject(200,700);
+    createDhcpRelayObject(100,600);
+    simularDragAndDrop(getLastElement(".dhcp-relay"), getLastElement(".switch"));
+    simularDragAndDrop(getLastElement(".pc"), getLastElement(".switch"));
+    createSwitchObject(300,300);
+    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
+    createDhcpServerObject(100,300);
+    simularDragAndDrop(getLastElement(".dhcp-server"), getLastElement(".switch"));
+    createSwitchObject(700,300);
+    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
+    createRouterObject(600,150);
+    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
+    createSwitchObject(900,150);
+    createPcObject(1100,125);
+    simularDragAndDrop(getLastElement(".pc"), getLastElement(".switch"));
+    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
+    createRouterObject(1000,300);
+    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch", -2));
+    createRouterObject(700,500);
+    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch", -2));
+    createSwitchObject(600,600);
+    createPcObject(550,725);
+    simularDragAndDrop(getLastElement(".pc"), getLastElement(".switch"));
+    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
+    createSwitchObject(1200,225);
+    simularDragAndDrop(getLastElement(".router", -2), getLastElement(".switch"));
+    createSwitchObject(1000,500);
+    simularDragAndDrop(getLastElement(".router", -2), getLastElement(".switch"));
+    createRouterObject(1400,225);
+    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch",-2));
+    createSwitchObject(1600,225);
+    createPcObject(1750,180);
+    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
+    simularDragAndDrop(getLastElement(".pc"), getLastElement(".switch"));
+    createRouterObject(1200,550);
+    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch",-2));
+    createSwitchObject(1400,450);
+    createSwitchObject(1400,650);
+    createDnsServerObject(1600,450);
+    createDnsServerObject(1600,650);
+    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch"));
+    simularDragAndDrop(getLastElement(".router"), getLastElement(".switch",-2));
+    simularDragAndDrop(getLastElement(".dns-server"), getLastElement(".switch"));
+    simularDragAndDrop(getLastElement(".dns-server",-2), getLastElement(".switch",-2));
+}
+
+function getLastElement(selector, position = -1) {
+    const elements = document.querySelectorAll(selector);
+    return elements[elements.length + position];
+}
+
+function simularDragAndDrop(elementoOrigen, elementoDestino) {
+
+    const dragstartEvent = new DragEvent('dragstart', {
+        bubbles: true,
+        cancelable: true,
+        view: window
+    });
+    
+    const dataTransfer = new DataTransfer();
+
+    Object.defineProperty(dragstartEvent, 'dataTransfer', {
+        value: dataTransfer,
+        writable: false
+    });
+    
+    elementoOrigen.dispatchEvent(dragstartEvent);
+    
+    const dropEvent = new DragEvent('drop', {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+        dataTransfer: dataTransfer
+    });
+    
+    elementoDestino.dispatchEvent(dropEvent);
+    
+    return {
+        originElement: elementoOrigen,
+        targetElement: elementoDestino,
+        dataTransfer: dataTransfer
+    };
+}
