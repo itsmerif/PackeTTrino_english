@@ -35,7 +35,13 @@
     </section>
 
     <section id="item-panel">
-
+      
+      <div class="schema-selector">
+        <select id="schema-selector" onchange="changeSchema(event)">
+          <option value="network-one">Elije una red</option>
+          <option value="net-one">Red de prueba</option>
+        </select>
+      </div>
       <div class="file-options">
         <button onclick="downloadState()"> Descargar Esquema </button>
         <input type="file" id="fileInput" accept=".html" data-content="Seleccionar archivo">
@@ -321,6 +327,8 @@
   <script src="./src/files/parser-resolve-file.js"></script>
   <script src="./src/files/parser-index-file.js"></script>
   <script src="./src/files/parser-etc-hosts.js"></script>
+  <!--PLANTILLAS-->
+  <script src="./schemes/network-one.js"></script>
 </body>
 
 </html>

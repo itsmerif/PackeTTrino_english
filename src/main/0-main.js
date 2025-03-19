@@ -7,7 +7,6 @@ function sleep(ms) {
 async function init() {
     setTimeout(hideLoadingScreen, 1000);
     getPanelItems();
-    //createBasicNetwork();
     await sleep(500);
     document.querySelector(".terminal-component").addEventListener("keydown", terminalKeyboard); //añadimos eventos de teclado al terminal
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm); //añadimos eventos de clic al item ping del panel
@@ -194,4 +193,13 @@ function hideLoadingScreen() {
     setTimeout(() => {
         loadingScreen.style.display = 'none';
     }, 500);
+}
+
+function changeSchema(event) {
+    const schema = event.target.value;
+    if (confirm("¿Estás seguro de que quieres cambiar el esquema?")) {
+        if (schema === "net-one") {
+            createBasicNetwork();
+        }
+    }
 }
