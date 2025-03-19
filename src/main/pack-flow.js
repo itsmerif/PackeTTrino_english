@@ -1030,6 +1030,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
                 packet.hostname //hostname
             );
 
+            newPacket.destination_ip = packet.origin_ip;
             addPacketTraffic(newPacket);
             await switchProcessor(switchId, serverObjectId, newPacket);
             return;
