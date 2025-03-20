@@ -1,58 +1,67 @@
 async function command_dig(dataId, args) {
+    let opt_x = false;
+    let opt_t = false;
+    let opt_server = false;
+    let domain;
+    let dnsServer = "";
+    let useCache = true;
+    let query_type = "A";
+    const validTypes = ["A", "SOA", "PTR", "NS", "AAAA", "MX"];
+    let object = catchopts(["-x", "-t:", "@:"], args);
 
-    // sintaxis: dig [@server] [-x] <ip|domain>
+    for (option in object) {
+        switch (option) {
+            case "-x":
+                opt_x = true;
+                query_type = "PTR";
+                break;
+            case "-t":
+                opt_t = true;
+                query_type = object["-t"];
+                break;
+            case "@":
+                opt_server = true;
+                dnsServer = object["@"];
+                useCache = false;
+                break;
+        }
+    }
+
+    args = args.slice(object['IND']) //nos quedamos con el resto de argumentos si contar opciones
+    domain = args[0]; //el primer argumento es el dominio
+
+    if (opt_t && !validTypes.includes(query_type.toUpperCase())) {
+        terminalMessage("Error: tipo de registro desconocido.")
+        return;
+    }
+
+    if (!opt_x && !isValidDomain(domain)) {
+        terminalMessage("Error: el dominio no es válido.");
+        return;
+    }
+
+    if (opt_x && !isValidIp(domain)) {
+        terminalMessage("Error: ip no válida para la consulta inversa.");
+        return;
+    }
+
+    if (opt_server && !isValidIp(dnsServer)) {
+        terminalMessage("Error: ip del servidor no válida.");
+        return;
+    }
 
     if (visualToggle) await minimizeTerminal();
 
-    if (args[1] === "-x") { //consulta inversa
-        
-        if (args.length !== 3) {
-            terminalMessage("Error: Sintaxis -> dig -x &lt;ip&gt;");
-            return;
-        }
-
-        try {
-            await dig(dataId, args[2], true);
-        }catch(error){
-            console.log(error);
-        }
-
-        if (visualToggle) await maximizeTerminal();
-
-        return;
-    }
-
-    if (args[1].startsWith("@")) { //consulta directa a un server en concreto (ignorando el uso de cache)
-
-
-        try {
-            await dig(dataId, args[2], true, args[1].slice(1), false);
-        }catch(error){
-            console.log(error);
-        }
-
-        if (visualToggle) await maximizeTerminal();
-        
-        return;
-    }
-
-    //consulta directa al server por defecto
-
-    if (args.length !== 2) {
-        terminalMessage("Error: Sintaxis -> dig <domain>");
-        return;
-    }
-    
     try {
-        await dig(dataId, args[1], true);
-    }catch(error){
+        await dig(dataId, domain, true, dnsServer, useCache, query_type)
+    } catch (error) {
         console.log(error);
     }
 
     if (visualToggle) await maximizeTerminal();
 }
 
-async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = true) {
+async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = true, query_type = "A") {
 
     cleanPacketTraffic();
 
@@ -60,13 +69,13 @@ async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = t
     const switchId = $networkObject.getAttribute("data-switch");
     let [answer_type, answer, server_ip] = [false, false, false];
 
-    if (useCache)  [answer_type, answer, server_ip]= isDomainInCachePc(dataId, domain); //buscamos en la tabla de cache del equipo
+    if (useCache) [answer_type, answer, server_ip] = isDomainInCachePc(dataId, domain); //buscamos en la tabla de cache del equipo
 
     if (!answer) { //no tenemos la ip en cache, buscamos en el servidor
 
         dnsRequestFlag = false;
 
-        await dnsRequestPacketGenerator(dataId, switchId, domain, dnsServer);
+        await dnsRequestPacketGenerator(dataId, switchId, domain, dnsServer, query_type);
 
         if (!dnsRequestFlag) {
             if (verbose) terminalMessage("Error: No se pudo resolver el nombre de dominio.");
@@ -78,9 +87,9 @@ async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = t
             let answer_type = packet.answer_type;
             let authority = packet.authority || "0";
             let server_ip = packet.origin_ip;
-            if (verbose) generateDnsOuput(query, answer_type, answer, authority, server_ip);    
+            if (verbose) generateDnsOuput(query, answer_type, answer, authority, server_ip);
             if (!answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
-            if (useCache) addDnsCacheEntry(dataId, query, answer_type, answer, server_ip);      
+            if (useCache) addDnsCacheEntry(dataId, query, answer_type, answer, server_ip);
         }
 
         return;
@@ -132,7 +141,7 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
     let FQDN_targetDomain = targetDomain;
 
     if (!targetDomain.endsWith(".")) {  //añadimos el punto al final para que sea un FQDN
-        FQDN_targetDomain = FQDN_targetDomain + "." ;
+        FQDN_targetDomain = FQDN_targetDomain + ".";
     }
 
     let i = 1;
@@ -183,7 +192,7 @@ function addDnsCacheEntry(networkObjectId, domain, type, value, server) {
 
 }
 
-function generateDnsOuput(query, answer_type, answer, authority, server_ip)  {
+function generateDnsOuput(query, answer_type, answer, authority, server_ip) {
     const currentDate = new Date();
     const currentDateString = currentDate.toString();
     let answerBoolean = (!answer) ? "0" : "1";
@@ -195,6 +204,6 @@ function generateDnsOuput(query, answer_type, answer, authority, server_ip)  {
     terminalMessage(`<p style="color: #86ff33;" >${query.padEnd(15, " ")}` + " 86400 IN " + `${answer_type}` + " " + `${answer} </p>`);
     terminalMessage("<p>Query time: 4 msec<p>");
     terminalMessage(`<p>SERVER: ${server_ip}#53(${server_ip}) (UDP)</p>`);
-    terminalMessage("<p>WHEN: "+ currentDateString +"</p>");
-    terminalMessage("<p>MSG SIZE  rcvd: 87</p>"); 
+    terminalMessage("<p>WHEN: " + currentDateString + "</p>");
+    terminalMessage("<p>MSG SIZE  rcvd: 87</p>");
 }

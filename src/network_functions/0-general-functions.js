@@ -10,7 +10,7 @@ function getNetwork(ip, netmask) {
 }
 
 function getBroadcastIp(ip, netmask) {
-    let ipBinary = (ip.split('.').map(octet => parseInt(octet, 10).toString(2).padStart(8, '0'))).join('');
+    let ipBinary = (ip.split('.').map(octet => parseInt(octet, 10).toargs(2).padStart(8, '0'))).join('');
     let netmaskCidr = netmaskToCidr(netmask);
     let broadcast = (ipBinary.slice(0, netmaskCidr).padEnd(32, '1').match(/.{8}/g) || []).map(octet => parseInt(octet, 2).toString(10)).join('.');
     return broadcast;
@@ -383,31 +383,30 @@ function getopts(options, string) {
     return response;
 }
 
-function catchopts(options, string) {
+function catchopts(options, args) {
 
     let optionsObject = {};
 
     for (let i = 0; i < options.length; i++) {
         if (options[i].endsWith(":")) {
-            optionsObject["-" + options[i].slice(0, -1)] = "value";
+            optionsObject[options[i].slice(0, -1)] = "value";
         } else {
-            optionsObject["-" + options[i]] = "novalue";
+            optionsObject[options[i]] = "novalue";
         }
     }
 
-    string = string.trim().split(" ");
-
     response = {};
 
-    for (let i = 0; i < string.length; i++) {
-        if (optionsObject[string[i]]) {
-            response[string[i]] = "";
-            if (optionsObject[string[i]] === "value") {
-                response[string[i]] = string[i + 1];
+    for (let i = 1; i < args.length; i++) { //me salto el primer elemento, que es el comando
+        if (optionsObject[args[i]]) {
+            response[args[i]] = "";
+            if (optionsObject[args[i]] === "value") {
+                response[args[i]] = args[i + 1];
                 i++;
             }
         } else {
-            throw new Error("Opcion no reconocida");
+            response["IND"] = i;
+            break;
         }
     }
 

@@ -19,7 +19,7 @@ function iptables(networkObjectId, args) {
 
     try {
         object = catchopts(
-            ["A:", "D:", "p:", "s:", "d:", "-sport:", "-dport:", "j:", "S", "F:"],
+            ["-A:", "-D:", "-p:", "-s:", "-d:", "--sport:", "--dport:", "-j:", "-S", "-F:"],
             args.slice(1).join(" ")
         );
     } catch (error) {

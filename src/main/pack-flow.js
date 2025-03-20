@@ -230,7 +230,7 @@ async function dhcpRenewGenerator(networkObjectId, switchId) {
 
 }
 
-async function dnsRequestPacketGenerator(networkObjectId, switchId, domain, dnsServer = "") {
+async function dnsRequestPacketGenerator(networkObjectId, switchId, domain, dnsServer = "", query_type = "A") {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
@@ -250,7 +250,7 @@ async function dnsRequestPacketGenerator(networkObjectId, switchId, domain, dnsS
         const defaultGateway = $networkObject.getAttribute("data-gateway");
         const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
         packet = new dnsRequest(networkObjectIp, dnsServer, networkObjectMac, defaultGatewayMac, domain);
-        packet.answer_type = "A";
+        packet.answer_type = query_type;
 
         if (!defaultGatewayMac) { //no tenemos la ip de la puerta de enlace en nuestra tabla de arp, lo guardamos en el buffer y enviamos un ARP primero
             buffer[networkObjectId] = packet;
@@ -272,7 +272,7 @@ async function dnsRequestPacketGenerator(networkObjectId, switchId, domain, dnsS
 
     const destination_mac = isIpInARPTable(networkObjectId, dnsServer);
     packet = new dnsRequest(networkObjectIp, dnsServer, networkObjectMac, destination_mac, domain);
-    packet.answer_type = "A";
+    packet.answer_type = query_type;
 
     if (!destination_mac) { //la mac del servidor no está en la tabla arp
         buffer[networkObjectId] = packet;
