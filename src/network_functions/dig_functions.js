@@ -8,6 +8,7 @@ async function command_dig(dataId, args) {
     let query_type = "A";
     const validTypes = ["A", "SOA", "PTR", "NS", "AAAA", "MX"];
     let object = catchopts(["-x", "-t:", "@:"], args);
+    console.log(object);
 
     for (option in object) {
         switch (option) {
@@ -27,7 +28,13 @@ async function command_dig(dataId, args) {
         }
     }
 
-    args = args.slice(object['IND']) //nos quedamos con el resto de argumentos si contar opciones
+    args = args.slice(object['IND'] + 1) //nos quedamos con el resto de argumentos si contar opciones
+
+    if (args.length === 0) {
+        terminalMessage("Error: falta el argumento dominio o ip.");
+        return;
+    }
+
     domain = args[0]; //el primer argumento es el dominio
 
     if (opt_t && !validTypes.includes(query_type.toUpperCase())) {
@@ -37,7 +44,7 @@ async function command_dig(dataId, args) {
 
     if (!opt_x && !isValidDomain(domain)) {
         terminalMessage("Error: el dominio no es válido.");
-        return;
+        return;     
     }
 
     if (opt_x && !isValidIp(domain)) {

@@ -399,13 +399,14 @@ function catchopts(options, args) {
 
     for (let i = 1; i < args.length; i++) { //me salto el primer elemento, que es el comando
         if (optionsObject[args[i]]) {
+            response["IND"] = i;
             response[args[i]] = "";
             if (optionsObject[args[i]] === "value") {
                 response[args[i]] = args[i + 1];
                 i++;
+                response["IND"] = i;
             }
         } else {
-            response["IND"] = i;
             break;
         }
     }
