@@ -282,7 +282,7 @@
 
   <!-- SCRIPT PRINCIPAL -->
   <script src="./src/env.js"></script>
-  <script src="./src/main/0-main.js"></script>
+  <script src="./src/0-main.js"></script>
   <!-- ANIMACIONES -->
   <script src="./animations/move-packet.js"></script>
   <!-- COMPONENTES -->
@@ -318,10 +318,27 @@
   <script src="./src/network_objects/router.js"></script>
   <script src="./src/network_objects/switch.js"></script>
   <script src="./src/network_objects/dnsServer.js"></script>
-  <!-- FLUJOS -->
-  <script src="./src/main/pack-flow.js"></script>
-  <script src="./src/main/packets.js"></script>
-  <script src="./src/main/dynamic-routing.js"></script>
+  <!-- GENERADORES -->
+  <script src="./src/generators/customGen.js"></script>
+  <script src="./src/generators/dhcpGen.js"></script>
+  <script src="./src/generators/dnsGen.js"></script>
+  <script src="./src/generators/httpGen.js"></script>
+  <script src="./src/generators/icmpGen.js"></script>
+  <script src="./src/generators/tcpGen.js"></script>
+  <!-- PROCESADORES -->
+  <script src="./src/processors/dhcpRelayProc.js"></script>
+  <script src="./src/processors/dhcpServerProc.js"></script>
+  <script src="./src/processors/dnsServerProc.js"></script>
+  <script src="./src/processors/pcProc.js"></script>
+  <script src="./src/processors/routerProc.js"></script>
+  <script src="./src/processors/switchProc.js"></script>
+  <!-- CORTAFUEGOS -->
+  <script src="./src/firewall/hostFirewall.js"></script>
+  <script src="./src/firewall/routerFirewall.js"></script>
+  <!-- VISUALIZADORES -->
+  <script src="./src/visualizers/packetVisualize.js"></script>
+  <script src="./src/packets.js"></script>
+  <script src="./src/dynamic-routing.js"></script>
   <!-- ARCHIVOS -->
   <script src="./src/files/parser-network-file.js"></script>
   <script src="./src/files/parser-resolve-file.js"></script>
