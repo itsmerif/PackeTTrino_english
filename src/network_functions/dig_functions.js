@@ -7,8 +7,8 @@ async function command_dig(dataId, args) {
     let useCache = true;
     let query_type = "A";
     const validTypes = ["A", "SOA", "PTR", "NS", "AAAA", "MX"];
+    
     let object = catchopts(["-x", "-t:", "@:"], args);
-    console.log(object);
 
     for (option in object) {
         switch (option) {

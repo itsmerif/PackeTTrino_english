@@ -12,30 +12,13 @@ class iptablesRule {
 
 function iptables(networkObjectId, args) {
 
-    const validChains = ["INPUT", "OUTPUT", "FORWARD"];
-    const validProtocols = ["tcp", "udp", "icmp"];
-    const validActions = ["ACCEPT", "DROP", "REJECT"];
-    let object;
-
-    try {
-        object = catchopts(
-            ["-A:", "-D:", "-p:", "-s:", "-d:", "--sport:", "--dport:", "-j:", "-S", "-F:"],
-            args.slice(1).join(" ")
-        );
-    } catch (error) {
-        terminalMessage(`Error: Opción Ilegal. Consulta man iptables para más información.`);
-        return;
-    }
-
-    let chainFlag = false;
-    let actionFlag = false;
     let rule = new iptablesRule();
 
-    for (let option in object) {
+    let object = catchopts(["-A:", "-D:", "-p:", "-s:", "-d:", "--sport:", "--dport:", "-j:", "-S", "-F:"], args);
+
+    for (option in object) {
         switch (option) {
             case "-A":
-                if (!validChains.includes(object["-A"])) { terminalMessage("Error: cadena no reconocida"); return; }
-                chainFlag = true;
                 rule.chain = object["-A"]
                 break;
             case "-D":
@@ -48,37 +31,81 @@ function iptables(networkObjectId, args) {
                 clearFirewall(networkObjectId, object["-F"]);
                 return;
             case "-p":
-                if (!validProtocols.includes(object["-p"])) { terminalMessage("Error: protocolo no reconocida"); return; }
                 rule.p = object["-p"]
                 break;
             case "-s":
-                if (!isValidIp(object["-s"])) { terminalMessage("Error: ip de origen no válida"); return; }
                 rule.s = object["-s"]
                 break;
             case "-d":
-                if (!isValidIp(object["-d"])) { terminalMessage("Error: ip de destino no válida"); return; }
                 rule.d = object["-d"]
                 break;
             case "--sport":
-                if (!object["--sport"].match(/^\d+$/)) { terminalMessage("Error: puerto de origen no válido"); return; }
                 rule.sport = object["--sport"]
                 break;
             case "--dport":
-                if (!object["--dport"].match(/^\d+$/)) { terminalMessage("Error: puerto de destino no válido"); return; }
                 rule.dport = object["--dport"]
                 break;
             case "-j":
-                if (!validActions.includes(object["-j"])) { terminalMessage("Error: acción no reconocida"); return; }
-                actionFlag = true;
                 rule.j = object["-j"]
                 break;
         }
     }
 
-    if (!chainFlag) { terminalMessage("Error: falta la cadena [-A, -D]"); return; }
-    if (!actionFlag) { terminalMessage("Error: falta la acción [ACCEPT, DROP, REJECT]"); return; }
+    try {
+        isValidFirewallRule(rule);
+    } catch (error) {
+        terminalMessage(error.message);
+        console.log(error);
+        return;
+    }
 
     addFirewallRule(networkObjectId, rule);
+
+}
+
+function isValidFirewallRule(rule) {
+
+    const validChains = ["INPUT", "OUTPUT", "FORWARD"];
+    const validProtocols = ["tcp", "udp", "icmp"];
+    const validActions = ["ACCEPT", "DROP", "REJECT"];
+
+    if (rule.chain === "") {
+        throw new Error("Error: falta la cadena [-A, -D]");
+    }
+
+    if (!validChains.includes(rule.chain)) { 
+        throw new Error("Error: cadena no reconocida"); 
+    }
+
+    if (rule.p !== "*" && !validProtocols.includes(rule.p)) { 
+        throw new Error("Error: protocolo no reconocido"); 
+    }
+
+    if ( rule.s !== "*" && !isValidIp(rule.s)) {
+        throw new Error("Error: ip de origen no válida"); 
+    }
+
+    if ( rule.d !== "*" && !isValidIp(rule.d)) {
+        throw new Error("Error: ip de destino no válida"); 
+    }
+
+    if ( rule.sport !== "*" && !rule.sport.match(/^\d+$/)) { 
+        throw new Error("Error: puerto de origen no válido");
+    }
+
+    if ( rule.dport !== "*" && !rule.dport.match(/^\d+$/)) { 
+        throw new Error("Error: puerto de destino no válido"); 
+    }
+
+    if (rule.j === "") {
+        throw new Error("Error: falta la acción [ACCEPT, DROP, REJECT]"); 
+    }
+
+    if (!validActions.includes(rule.j)) {
+        throw new Error("Error: acción no reconocida");
+    }
+
+    return;
 
 }
 
