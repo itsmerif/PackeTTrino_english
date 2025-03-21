@@ -8,9 +8,9 @@ async function command_dig(dataId, args) {
     let query_type = "A";
     const validTypes = ["A", "SOA", "PTR", "NS", "AAAA", "MX"];
     
-    let object = catchopts(["-x", "-t:", "@:"], args);
+    let $OPTS = catchopts(["-x", "-t:", "@:"], args);
 
-    for (option in object) {
+    for (option in $OPTS) {
         switch (option) {
             case "-x":
                 opt_x = true;
@@ -18,17 +18,17 @@ async function command_dig(dataId, args) {
                 break;
             case "-t":
                 opt_t = true;
-                query_type = object["-t"];
+                query_type = $OPTS["-t"];
                 break;
             case "@":
                 opt_server = true;
-                dnsServer = object["@"];
+                dnsServer = $OPTS["@"];
                 useCache = false;
                 break;
         }
     }
 
-    args = args.slice(object['IND'] + 1) //nos quedamos con el resto de argumentos si contar opciones
+    args = args.slice($OPTS['IND'] + 1) //nos quedamos con el resto de argumentos sin contar opciones
 
     if (args.length === 0) {
         terminalMessage("Error: falta el argumento dominio o ip.");

@@ -396,7 +396,8 @@ function catchopts(options, args) {
     }
 
     response = {};
-
+    response["IND"] = 0;
+    
     for (let i = 1; i < args.length; i++) { //me salto el primer elemento, que es el comando
         if (optionsObject[args[i]]) {
             response["IND"] = i;

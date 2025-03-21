@@ -11,9 +11,7 @@ async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
     //comportamiento como equipo normal
 
     if (packet.protocol === "arp" && packet.type === "request") {
-        if (packet.destination_ip !== serverObjectIp) {
-            return;
-        }
+        if (packet.destination_ip !== serverObjectIp) return;
         addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
@@ -33,9 +31,7 @@ async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
     }
 
     if (packet.protocol === "icmp" && packet.type === "request") {
-        if (packet.destination_ip !== serverObjectIp) {
-            return;
-        }
+        if (packet.destination_ip !== serverObjectIp || packet.destination_mac !== serverObjectMac) return;
         let newPacket = new IcmpEchoReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
         await switchProcessor(switchId, serverObjectId, newPacket);
@@ -43,7 +39,7 @@ async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
     }
 
     if (packet.protocol === "icmp" && packet.type === "reply") {
-        if (packet.destination_ip !== serverObjectIp) return;
+        if (packet.destination_ip !== serverObjectIp || packet.destination_mac !== serverObjectMac) return;
         icmpFlag = true;
     }
 
