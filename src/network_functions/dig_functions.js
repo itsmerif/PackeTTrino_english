@@ -89,9 +89,9 @@ async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = t
             throw new Error("Error: No se pudo resolver el nombre de dominio.");
         } else {
             let packet = buffer[dataId];
-            if (!packet.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
             if (verbose) generateDnsOuput(packet);
             if (useCache) addDnsCacheEntry(dataId, query, answer_type, answer, server_ip);
+            if (!packet.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
         }
 
         return;
@@ -196,9 +196,6 @@ function addDnsCacheEntry(networkObjectId, domain, type, value, server) {
 
 function generateDnsOuput(packet) {
 
-    const currentDate = new Date();
-    const currentDateString = currentDate.toString();
-
     //campos del paquete
     let query = packet.query;
     let answer = packet.answer || "";
@@ -210,6 +207,10 @@ function generateDnsOuput(packet) {
     //formateo de la salida
     let answerBoolean = ( !answer || (authority === "1" && query !== authority_domain) ) ? "0" : "1";
     let answerSectionDomain = (authority !== "0") ? authority_domain : query;
+
+    //fecha actual
+    const currentDate = new Date();
+    const currentDateString = currentDate.toString();
 
     terminalMessage(`<p>QUERY: 1, ANSWER: ${answerBoolean}, AUTHORITY: ${authority}, ADDITIONAL: 0</p>`);
     terminalMessage(`<p>QUESTION SECTION: </p>`);
