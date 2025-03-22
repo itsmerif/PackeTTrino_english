@@ -4,7 +4,7 @@ async function command_dig(dataId, args) {
     let opt_server = false;
     let domain;
     let dnsServer = "";
-    let useCache = true;
+    let useCache = false; //como estamos usando dig directamente, no usamos la cache local
     let query_type = "A";
     const validTypes = ["A", "SOA", "PTR", "NS", "AAAA", "MX"];
     
@@ -37,7 +37,7 @@ async function command_dig(dataId, args) {
 
     domain = args[0]; //el primer argumento es el dominio
 
-    if (opt_t && !validTypes.includes(query_type.toUpperCase())) {
+    if (opt_t && !validTypes.includes(query_type)) {
         terminalMessage("Error: tipo de registro desconocido.")
         return;
     }
@@ -74,6 +74,7 @@ async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = t
 
     const $networkObject = document.getElementById(dataId);
     const switchId = $networkObject.getAttribute("data-switch");
+    if (!domain.endsWith(".")) domain = domain + "."; //si no es un FQDN, lo agregamos
     let [answer_type, answer, server_ip] = [false, false, false];
 
     if (useCache) [answer_type, answer, server_ip] = isDomainInCachePc(dataId, domain); //buscamos en la tabla de cache del equipo
@@ -81,7 +82,6 @@ async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = t
     if (!answer) { //no tenemos la ip en cache, buscamos en el servidor
 
         dnsRequestFlag = false;
-
         await dnsRequestPacketGenerator(dataId, switchId, domain, dnsServer, query_type);
 
         if (!dnsRequestFlag) {
@@ -89,13 +89,8 @@ async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = t
             throw new Error("Error: No se pudo resolver el nombre de dominio.");
         } else {
             let packet = buffer[dataId];
-            let query = packet.query;
-            let answer = (!packet.answer) ? "" : packet.answer;
-            let answer_type = packet.answer_type;
-            let authority = packet.authority || "0";
-            let server_ip = packet.origin_ip;
-            if (verbose) generateDnsOuput(query, answer_type, answer, authority, server_ip);
-            if (!answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
+            if (!packet.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
+            if (verbose) generateDnsOuput(packet);
             if (useCache) addDnsCacheEntry(dataId, query, answer_type, answer, server_ip);
         }
 
@@ -199,16 +194,28 @@ function addDnsCacheEntry(networkObjectId, domain, type, value, server) {
 
 }
 
-function generateDnsOuput(query, answer_type, answer, authority, server_ip) {
+function generateDnsOuput(packet) {
+
     const currentDate = new Date();
     const currentDateString = currentDate.toString();
-    let answerBoolean = (!answer) ? "0" : "1";
 
-    terminalMessage(`<p>QUERY: 1, ANSWER: ${answerBoolean}, AUTHORITY: ${authority}, ADDITIONAL: 1</p>`);
+    //campos del paquete
+    let query = packet.query;
+    let answer = packet.answer || "";
+    let answer_type = packet.answer_type;
+    let authority = packet.authority || "0"; //solo para SOA
+    let authority_domain = packet.authority_domain || ""; //solo para SOA
+    let server_ip = packet.origin_ip;
+
+    //formateo de la salida
+    let answerBoolean = ( !answer || (authority === "1" && query !== authority_domain) ) ? "0" : "1";
+    let answerSectionDomain = (authority !== "0") ? authority_domain : query;
+
+    terminalMessage(`<p>QUERY: 1, ANSWER: ${answerBoolean}, AUTHORITY: ${authority}, ADDITIONAL: 0</p>`);
     terminalMessage(`<p>QUESTION SECTION: </p>`);
     terminalMessage(`<p>${query.padEnd(15, " ")}` + " IN " + `${answer_type} </p>`);
     terminalMessage(`ANSWER SECTION:`);
-    terminalMessage(`<p style="color: #86ff33;" >${query.padEnd(15, " ")}` + " 86400 IN " + `${answer_type}` + " " + `${answer} </p>`);
+    terminalMessage(`<p style="color: #86ff33;" >${answerSectionDomain.padEnd(15, " ")}` + " 86400 IN " + `${answer_type}` + " " + `${answer} </p>`);
     terminalMessage("<p>Query time: 4 msec<p>");
     terminalMessage(`<p>SERVER: ${server_ip}#53(${server_ip}) (UDP)</p>`);
     terminalMessage("<p>WHEN: " + currentDateString + "</p>");

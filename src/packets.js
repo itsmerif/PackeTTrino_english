@@ -165,6 +165,8 @@ class dnsRequest extends packet {
         this.query = query;
         this.answer_type = "";
         this.answer = "";
+        this.authority = "";
+        this.authority_domain = "";
     }
 }
 

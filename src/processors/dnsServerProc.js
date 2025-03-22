@@ -46,13 +46,59 @@ async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
     //comportamiento como servidor dns
 
     if (packet.protocol === "dns" && packet.type === "request") {
-        if (packet.destination_ip !== serverObjectIp) return;
-        let answerTranslation = isDomainInCache(serverObjectId, packet.query)[1];
-        let newPacket = new dnsReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac, packet.query, answerTranslation);
-        newPacket.answer_type = packet.answer_type;
+
+        if (packet.destination_mac !== serverObjectMac || packet.destination_ip !== serverObjectIp) return;
+
+        let newPacket = new dnsReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac, packet.query, ""); //inicializamos el paquete sin respuesta
+        let answer;
+
+        if (packet.answer_type === "SOA") {
+            let authority_domain;          
+            [authority_domain, answer] = soaProcessor(serverObjectId, packet);
+            newPacket.answer_type = "SOA";
+            newPacket.answer = answer;
+            newPacket.authority_domain = authority_domain;
+            if (answer) newPacket.authority = "1";
+        }
+
         addPacketTraffic(newPacket);
         await switchProcessor(switchId, serverObjectId, newPacket);
         return;
+
     }
 
+}
+
+function soaProcessor(serverObjectId, packet) {
+
+    const $serverObject = document.getElementById(serverObjectId);
+    const dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
+    const records = dnsTable.querySelectorAll("tr");
+    let recordIndex;
+    let query = packet.query; // google.com
+    let targetDomain;
+    let response = [false, false];
+
+    //nos aseguramos de que el dominio que estamos buscando sea un FQDN
+
+    if (!query.endsWith(".")) query = query + "."; // google.com.
+    query = query.split("."); // ["google", "com", ""]
+
+    //buscamos en la tabla de registros DNS en cada nivel de autoridad
+       
+    for (let i = 0; i < query.length; i++) {
+        targetDomain = query.slice(i).join("."); // "google.com.", "com.", "."
+        recordIndex = 1;
+        while (recordIndex < records.length && !response[0]) {
+            let row = records[recordIndex];
+            let cells = row.querySelectorAll("td"); 
+            let domain = cells[0].innerHTML;
+            let type = cells[1].innerHTML;
+            let value = cells[2].innerHTML;
+            if (targetDomain === domain && type === "SOA") response = [targetDomain, value];
+            recordIndex++;
+        }
+    }
+
+    return response;
 }
