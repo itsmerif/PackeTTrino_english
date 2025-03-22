@@ -175,19 +175,27 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
 
 }
 
-function addDnsCacheEntry(networkObjectId, domain, type, value, server) {
+function addDnsCacheEntry(networkObjectId, query, answer_type, answer, server) {
 
     console.log("baliza");
     const $networkObject = document.getElementById(networkObjectId);
     const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
     const newRow = document.createElement("tr");
-    if (!domain.endsWith(".")) domain = domain + "."; //los nombres se guardan como FQDN
+    if (!query.endsWith(".")) query = query + "."; //los nombres se guardan como FQDN
+
+    if (typeof answer !== 'string') {
+        let i = 0;
+        while ( i < answer.length && !isValidIp(answer[i]) ) {
+            i++;
+        }
+        answer = answer[i];
+    }
 
     newRow.innerHTML = `
         <tr>
-            <td>${domain}</td>
-            <td>${type}</td>
-            <td>${value}</td>
+            <td>${query}</td>
+            <td>${answer_type}</td>
+            <td>${answer}</td>
         </tr>`;
     newRow.setAttribute("data-server", server);
     dnsTable.appendChild(newRow);
