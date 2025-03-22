@@ -7,7 +7,7 @@ async function command_dig(dataId, args) {
     let useCache = false; //como estamos usando dig directamente, no usamos la cache local
     let query_type = "A";
     const validTypes = ["A", "SOA", "PTR", "NS", "AAAA", "MX"];
-    
+
     let $OPTS = catchopts(["-x", "-t:", "@:"], args);
 
     for (option in $OPTS) {
@@ -44,7 +44,7 @@ async function command_dig(dataId, args) {
 
     if (!opt_x && !isValidDomain(domain)) {
         terminalMessage("Error: el dominio no es válido.");
-        return;     
+        return;
     }
 
     if (opt_x && !isValidIp(domain)) {
@@ -90,7 +90,7 @@ async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = t
         } else {
             let packet = buffer[dataId];
             if (verbose) generateDnsOuput(packet);
-            if (useCache) addDnsCacheEntry(dataId, query, answer_type, answer, server_ip);
+            if (useCache) addDnsCacheEntry(dataId, packet.query, packet.answer_type, packet.answer, packet.origin_ip);
             if (!packet.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
         }
 
@@ -104,23 +104,22 @@ async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = t
 
 async function domainNameResolution(dataId, domain) {
 
-    let response;
+    let response =  false;
 
     //primero miramos en el /etc/hosts
 
     response = isDomainInEtcHosts(dataId, domain);
-    if (response) return response;
 
-    //no se encuentra en el /etc/hosts, buscamos en la cache, y si no, en el servidor
-
-    try {
-        await dig(dataId, domain, false);
-        return isDomainInCachePc(dataId, domain)[1];
-    } catch (error) {
-        console.log(error);
-        return false;
+    if (!response) { //no se encuentra en el /etc/hosts, buscamos en la cache, y si no, en el servidor
+        try {
+            await dig(dataId, domain, false, "", true, "A");
+            response = isDomainInCachePc(dataId, domain)[1];
+        } catch (error) {
+            console.log(error);
+        }
     }
 
+    return response;
 }
 
 function isDomainInEtcHosts(dataId, domain) {
@@ -178,6 +177,7 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
 
 function addDnsCacheEntry(networkObjectId, domain, type, value, server) {
 
+    console.log("baliza");
     const $networkObject = document.getElementById(networkObjectId);
     const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
     const newRow = document.createElement("tr");
@@ -197,26 +197,50 @@ function addDnsCacheEntry(networkObjectId, domain, type, value, server) {
 function generateDnsOuput(packet) {
 
     //campos del paquete
+
     let query = packet.query;
     let answer = packet.answer || "";
     let answer_type = packet.answer_type;
     let authority = packet.authority || "0"; //solo para SOA
     let authority_domain = packet.authority_domain || ""; //solo para SOA
     let server_ip = packet.origin_ip;
-
-    //formateo de la salida
-    let answerBoolean = ( !answer || (authority === "1" && query !== authority_domain) ) ? "0" : "1";
-    let answerSectionDomain = (authority !== "0") ? authority_domain : query;
+    let answerBoolean = (!answer || (authority === "1" && query !== authority_domain)) ? "0" : "1";
 
     //fecha actual
+
     const currentDate = new Date();
     const currentDateString = currentDate.toString();
 
+    //header
+
     terminalMessage(`<p>QUERY: 1, ANSWER: ${answerBoolean}, AUTHORITY: ${authority}, ADDITIONAL: 0</p>`);
+    terminalMessage("<p></p>");
+
+    //seccion de query
+
     terminalMessage(`<p>QUESTION SECTION: </p>`);
     terminalMessage(`<p>${query.padEnd(15, " ")}` + " IN " + `${answer_type} </p>`);
-    terminalMessage(`ANSWER SECTION:`);
-    terminalMessage(`<p style="color: #86ff33;" >${answerSectionDomain.padEnd(15, " ")}` + " 86400 IN " + `${answer_type}` + " " + `${answer} </p>`);
+    terminalMessage("<p></p>");
+
+    //seccion de respuesta
+
+    if (answer) {
+        terminalMessage(`ANSWER SECTION:`);
+        for (let i = 0; i < answer.length; i++) {
+            terminalMessage(`<p>${query.padEnd(15, " ")}` + " 86400 IN " + `${answer_type}` + " " + `${answer[i]} </p>`);
+        }
+        terminalMessage("<p></p>");
+    }
+
+    //seccion de autoridad
+
+    if (authority !== "0") {
+        terminalMessage(`AUTHORITY SECTION:`);
+        terminalMessage(`<p>${authority_domain.padEnd(15, " ")}` + " 86400 IN " + `${answer_type}` + " " + `${authority} </p>`);
+        terminalMessage("<p></p>");
+    }
+
+    //seccion de tiempo
     terminalMessage("<p>Query time: 4 msec<p>");
     terminalMessage(`<p>SERVER: ${server_ip}#53(${server_ip}) (UDP)</p>`);
     terminalMessage("<p>WHEN: " + currentDateString + "</p>");

@@ -7,6 +7,7 @@ async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");
     const serverObjectIp = $serverObject.getAttribute("data-ip");
+    const isRecursive = $serverObject.getAttribute("recursion");
 
     //comportamiento como equipo normal
 
@@ -63,6 +64,7 @@ async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
 
         if (packet.answer_type === "A") {
             answer = dns_A_Request_Proc(serverObjectId, packet);
+            if (!answer && isRecursive !== "false") answer = await recursiveDNSResolve(packet.query);
             newPacket.answer_type = "A";
             newPacket.answer = answer;
         }
@@ -139,4 +141,20 @@ function dns_A_Request_Proc(serverObjectId, packet) {
 
     return response;
 
+}
+
+async function recursiveDNSResolve(domain) {
+    try {
+        const response = await fetch("https://dns.google.com/resolve?name=" + domain + "&type=A");
+        const reply = await response.json();
+        let answer = [];
+        for (let i = 0; i < reply.Answer.length; i++) {
+            answer.push(reply.Answer[i].data);
+        }
+        console.log(answer);
+        return answer;
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
 }
