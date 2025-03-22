@@ -226,12 +226,16 @@ function generateDnsOuput(packet) {
 
     if (answer) {
         terminalMessage(`ANSWER SECTION:`);
-        for (let i = 0; i < answer.length; i++) {
-            terminalMessage(`<p>${query.padEnd(15, " ")}` + " 86400 IN " + `${answer_type}` + " " + `${answer[i]} </p>`);
+        if (typeof answer === 'string') {
+            terminalMessage(`<p>${query.padEnd(15, " ")} 86400 IN ${answer_type} ${answer}</p>`);
+        } else {
+            for (let i = 0; i < answer.length; i++) {
+                terminalMessage(`<p>${query.padEnd(15, " ")} 86400 IN ${answer_type} ${answer[i]}</p>`);
+            }
         }
         terminalMessage("<p></p>");
     }
-
+    
     //seccion de autoridad
 
     if (authority !== "0") {
