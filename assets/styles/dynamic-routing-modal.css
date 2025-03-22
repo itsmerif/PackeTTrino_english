@@ -128,3 +128,33 @@
         transform: rotate(360deg);
     }
 }
+
+.default-network-routing-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 100%;
+    gap: 10px;
+}
+
+.default-network-routing-container input {
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    border: 1px solid black;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding-left: 0.5rem;
+    flex-grow: 2;
+}
+
+.dynamic-routing-modal .error-message {
+    padding: 0px;
+    margin: 0px;
+    visibility: hidden;
+    color: red;
+}

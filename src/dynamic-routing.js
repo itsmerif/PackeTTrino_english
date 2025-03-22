@@ -1,3 +1,11 @@
+function clearAllRoutingTables() {
+    const $routerElements = document.querySelectorAll('.router');
+    for (let i = 0; i < $routerElements.length - 1; i++) {
+        routingTableRestore($routerElements[i].id);
+    }
+    console.log("cleared");
+}
+
 function getNodes() {
 
     nodes = {};
@@ -233,7 +241,6 @@ function getRoutes(routerId) {
     }
 
     matrix = matrix.reduce((a, b) => a.concat(b), []); //juntamos las matrices de todas las redes
-    
 
     //compruebo que los siguientes saltos formen parte de alguna de las redes
 
@@ -262,27 +269,25 @@ function getRoutes(routerId) {
 
     }
 
-    ////console.log(matrix);
     return groupByDefaultRules(removeDuplicateRows(matrix));
 }
 
 function removeDuplicateRows(matrix) {
 
     if (!matrix.length) return [];
-    
+
     const uniqueMatrix = [];
     const seen = new Set();
-    
+
     for (let i = 0; i < matrix.length; i++) {
         const rowStr = JSON.stringify(matrix[i]);
-        
+
         if (!seen.has(rowStr)) {
             seen.add(rowStr);
             uniqueMatrix.push(matrix[i]);
         }
     }
-    
-    ////console.log(uniqueMatrix);
+
     return uniqueMatrix;
 }
 
@@ -297,55 +302,91 @@ function autoInputRules($routerObjectId) {
         let interface = matrix[i][4];
         addRoutingEntry($routerObjectId, destination, netmask, interface, nexthop);
     }
-    
+
 }
 
 function groupByDefaultRules(matrix) {
 
     const hopCounter = {};
     let newMatrix = [];
+    let nextHopDefault;
 
-    for (let i = 0; i < matrix.length; i++) {
-        let nextHop = matrix[i][2];     
-        hopCounter[nextHop] =  { 
-            count: hopCounter[nextHop] ? hopCounter[nextHop].count + 1 : 1,
-            gateway: matrix[i][3],
-            interface: matrix[i][4] 
-        };
-    }
+    if (defaultNetwork === "0.0.0.0") { //agrupamos por mayor numero de reglas para cada siguiente salto
 
-    let maxCount = Math.max(...Object.values(hopCounter).map(hop => hop.count));
-    let maxInst = Object.keys(hopCounter).filter(key => hopCounter[key].count === maxCount);
+        console.log("agrupando por reglas por defecto");
+        
+        for (let i = 0; i < matrix.length; i++) {
+            let nextHop = matrix[i][2];
+            hopCounter[nextHop] = {
+                count: hopCounter[nextHop] ? hopCounter[nextHop].count + 1 : 1,
+                gateway: matrix[i][3],
+                interface: matrix[i][4]
+            };
+        }
 
-    if (maxCount > 1) { //hemos encontrado un canditato a regla por defecto
+        let maxCount = Math.max(...Object.values(hopCounter).map(hop => hop.count));
+        let maxInst = Object.keys(hopCounter).filter(key => hopCounter[key].count === maxCount);
 
-        let maxInstGateway = hopCounter[maxInst[0]].gateway;
-        let maxInstInterface = hopCounter[maxInst[0]].interface;
+        if (maxCount > 1) { //hemos encontrado un canditato a regla por defecto
+
+            let maxInstGateway = hopCounter[maxInst[0]].gateway;
+            let maxInstInterface = hopCounter[maxInst[0]].interface;
+            let j = 0;
+
+            for (let i = 0; i < matrix.length; i++) {
+                let nextHop = matrix[i][2];
+                if (nextHop !== maxInst[0]) {
+                    newMatrix[j] = matrix[i];
+                    j++;
+                }
+            }
+
+            newMatrix[newMatrix.length] = ["0.0.0.0", "0.0.0.0", maxInst[0], maxInstGateway, maxInstInterface];
+
+            return newMatrix;
+
+        }
+
+        return matrix;
+
+    } else { //agrupamos por mayor numero de reglas para cada siguiente salto, PERO teniendo en cuenta que una red que siempre será la por defecto
+
+        let defaultInterface;
+        let defaultGateway;
+
+        for (let i = 0; i < matrix.length; i++) {
+            let network = matrix[i][0];
+            let nextHop = matrix[i][2];
+            if (network === defaultNetwork) {//guardamos el siguiente salto para la regla por defecto
+                nextHopDefault = nextHop;
+                defaultInterface = matrix[i][4];
+                defaultGateway = matrix[i][3];
+            }
+        }
+
         let j = 0;
 
         for (let i = 0; i < matrix.length; i++) {
             let nextHop = matrix[i][2];
-            if (nextHop !== maxInst[0]) {
-                //console.log(nextHop);
+            if (nextHop !== nextHopDefault) {
                 newMatrix[j] = matrix[i];
                 j++;
             }
-            ////console.log(newMatrix);
         }
 
-        newMatrix[newMatrix.length] = ["0.0.0.0", "0.0.0.0", maxInst[0], maxInstGateway, maxInstInterface];
+        newMatrix[newMatrix.length] = ["0.0.0.0", "0.0.0.0", nextHopDefault, defaultGateway, defaultInterface];
         return newMatrix;
+
     }
 
-    ////console.log(matrix);
-    return matrix;
+
 }
 
 function dynamicRouting() {
 
     const $routers = document.querySelectorAll(".router");
 
-    for (let i = 0; i < $routers.length -1; i++) {
+    for (let i = 0; i < $routers.length - 1; i++) {
         autoInputRules($routers[i].id);
     }
 
@@ -359,9 +400,15 @@ function showDynamicRoutingModal() {
     modalComponent.innerHTML = `
     <div class="modal-overlay"></div>
     <div class="dynamic-routing-modal">
-      <p>⚠︎ ¿Estás seguro de que quieres activar la funcionalidad de Enrutamiento Automático?</p>
-      <button class="btn-accept">Sí, quiero enrrutar de forma automática</button>
-      <button class="btn-reject">No, volver al panel</button>
+    <p class="error-message"> Error: La red no existe</p>
+    <div class="default-network-routing-container">
+        <p>Enrutar por defecto a la red:</p>
+        <input class="default-network-routing" type="text" placeholder="Por ejemplo: 192.168.1.0/24">
+    </div>
+    <p> (Usa "0.0.0.0/0" para enrutamiento sin internet) </p>
+    <p>⚠︎ ¿Estás seguro de que quieres activar la funcionalidad de Enrutamiento Automático?</p>
+    <button class="btn-accept">Sí, quiero enrutar de forma automática</button>
+    <button class="btn-reject">No, volver al panel</button>
     </div>`
     modalComponent.querySelector(".btn-accept").addEventListener("click", dynamicRoutingHandler);
     modalComponent.querySelector(".btn-reject").addEventListener("click", closeDynamicRoutingModal);
@@ -374,14 +421,35 @@ function closeDynamicRoutingModal() {
 }
 
 async function dynamicRoutingHandler() {
-    const modalComponent = document.querySelector(".dynamic-routing-modal-container");
-    modalComponent.querySelector(".dynamic-routing-modal").remove();
-    modalComponent.innerHTML += `<div class="loader"></div>`;
+
+    const $modalComponent = document.querySelector(".dynamic-routing-modal-container");
+    const $inputComponentValue = $modalComponent.querySelector("input").value;
+    const $errorModule = $modalComponent.querySelector(".error-message");
+
+    if (!isValidCidrIp($inputComponentValue)) {
+        $errorModule.innerHTML = "Error: Formato de red no válido";
+        $errorModule.style.visibility = "visible";
+        return;
+    }
+
+    let [networkIp, networkNetmask] = parseCidr($inputComponentValue);
+    
+    if (getNetwork(networkIp, networkNetmask) !== networkIp) {
+        $errorModule.innerHTML = "Error: No corresponde con una red válida.";
+        $errorModule.style.visibility = "visible";
+        return;
+    }
+
+    defaultNetwork = networkIp;
+
+    $modalComponent.querySelector(".dynamic-routing-modal").remove();
+    $modalComponent.innerHTML += `<div class="loader"></div>`;
     dynamicRouting();
     return new Promise(resolve => {
         setTimeout(() => {
-            modalComponent.remove();
+            $modalComponent.remove();
             resolve();
         }, 1500);
     });
+
 }

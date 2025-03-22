@@ -39,3 +39,4 @@ let traceFlag = false; //bandera de traceroute
 let nodes = {};
 let nodesNetmask = {};
 let nodesIp = {};
+let defaultNetwork = "0.0.0.0";
