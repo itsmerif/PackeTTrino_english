@@ -45,11 +45,13 @@ function loadNetworkFile(dataId) {
         //resto de tarjetas
         for (let i = 0; i < networkObjectIps.length; i++) {
             if (networkObjectIps[i] !== "") {
+                fileContent += `\n`;
                 fileContent += `auto ${interfaces[i]}\niface ${interfaces[i]} inet static\n`;
                 fileContent += `address ${networkObjectIps[i]}\n`;
                 fileContent += `netmask ${networkObjectNetmasks[i]}\n`;
                 fileContent += `\n`;
                 fileContent += getRoutingRules(networkObjectId, interfaces[i]).join("\n");
+                fileContent += `\n`;
             }
         }
 
