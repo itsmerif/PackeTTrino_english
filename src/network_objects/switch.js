@@ -38,7 +38,10 @@ function createSwitchObject(x, y) {
     //opciones avanzadas
 
     networkObjectAdvancedOptions.classList.add("advanced-options-modal");
-    networkObjectAdvancedOptions.innerHTML = `<button onclick="deleteItem(event)">Eliminar</button>`;
+    networkObjectAdvancedOptions.innerHTML = `
+        <button onclick="deleteItem(event)">Eliminar</button>
+        <button onclick="clusterizeSwitch(event)">Clusterizar</button>
+        `;
     networkObject.appendChild(networkObjectAdvancedOptions);
 
     //eventos
@@ -180,4 +183,14 @@ function saveMac(switchObjectId, networkObjectId, newMac) {
         }
     }
 
+}
+
+function clusterizeSwitch(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const $switchObject = event.target.closest(".item-dropped");
+    const $advancedOptions = $switchObject.querySelector(".advanced-options-modal");
+    const $icon = $switchObject.querySelector("img");
+    $icon.src = "./assets/board/web-cluster.png";
+    $advancedOptions.style.display = "none";
 }
