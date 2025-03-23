@@ -40,8 +40,8 @@ async function ping(dataId, args) {
     cleanPacketTraffic();
 
     if (visualToggle) await minimizeTerminal();
-    
-    if (!isValidIp(destinationIp)) { 
+
+    if (!isValidIp(destinationIp)) {
 
         destinationIp = await domainNameResolution(dataId, args[1]);
 
@@ -50,7 +50,7 @@ async function ping(dataId, args) {
             ping_f(destinationIp);
             return;
         }
-        
+
     }
 
     if (destinationIp === getNetwork(destinationIp, networkObjectNetmask)) { //no se le permite hacer ping a una red
@@ -73,7 +73,7 @@ async function ping(dataId, args) {
         ping_f(destinationIp);
         return;
     }
-    
+
     if (!icmpFlag) {
         ping_f(destinationIp);
     } else {
@@ -163,3 +163,12 @@ async function pingSim() {
 
 }
 
+async function pingHost(host) {
+    return fetch(`http://localhost:3000/ping?host=${encodeURIComponent(host)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('La petición no tuvo éxito');
+            }
+            return response.json();
+        });
+}
