@@ -175,7 +175,6 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
                 buffer[networkObjectId] = packet;
                 let newPacket = new ArpRequest(gateway, nexthop, routerObjectMac);
                 arpFlag = false;
-
                 addPacketTraffic(newPacket);
                 await switchProcessor(nextSwitch, networkObjectId, newPacket);
                 return;
@@ -189,8 +188,18 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
 
         //no hay regla para enrutar el paquete, lo damos por fallido
 
-        throw new Error("No existe regla para enrutar el paquete en " + routerObjectId);
+        console.log("Intentando ping al destino desde el endpoint ...");
 
+        try {
+            await pingHost(packet.destination_ip);
+            let newPacket = new IcmpEchoReply(packet.destination_ip, packet.origin_ip, routerObjectMac, packet.origin_mac);
+            addPacketTraffic(newPacket);
+            await switchProcessor(switchId, networkObjectId, newPacket);
+        }catch(error) {
+            throw new Error("No existe regla para enrutar el paquete en " + routerObjectId);
+        }
+
+        //throw new Error("No existe regla para enrutar el paquete en " + routerObjectId);
     }
 
 }
