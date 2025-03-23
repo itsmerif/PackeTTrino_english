@@ -1,0 +1,13 @@
+{
+  "name": "packet_vanilla",
+  "version": "1.0.0",
+  "scripts": {
+    "start:frontend": "npx live-server --port=8080 --open=index.html",
+    "start:ping-service": "cd Backend/ping-service && node server.js",
+    "start:backend": "concurrently \"npm run start:ping-service\"",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
