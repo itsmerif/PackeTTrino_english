@@ -61,7 +61,7 @@
 
   <!-- FORMULARIOS -->
 
-  <form class="pc-form" onsubmit="savePcSpecs(event); return false;" style="display: none;">
+  <form class="pc-form modal" onsubmit="savePcSpecs(event); return false;" style="display: none;">
     <p id="form-item-id"></p>
     <label for="dhcp">Obtener una dirección IP automática (DHCP):</label>
     <input type="checkbox" id="dhcp" name="dhcp">
@@ -80,7 +80,7 @@
     <button type="submit">Guardar</button>
   </form>
 
-  <form class="router-form" onsubmit="saveRouterSpecs(event); return false;" style="display: none;">
+  <form class="router-form modal" onsubmit="saveRouterSpecs(event); return false;" style="display: none;">
     <p id="form-router-item-id"></p>
     <label for="ip-enp0s3">Enp0s3:</label>
     <input type="text" id="ip-enp0s3" name="ip-enp0s3"
@@ -100,7 +100,7 @@
     <button type="submit">Guardar</button>
   </form>
 
-  <form class="dhcp-form" onsubmit="saveDhcpSpecs(event); return false;" style="display: none;">
+  <form class="dhcp-form modal" onsubmit="saveDhcpSpecs(event); return false;" style="display: none;">
     <p id="form-dhcp-item-id"></p>
   
     <div>
@@ -159,7 +159,7 @@
 
   </form>
   
-  <form class="dns-form" onsubmit="saveDnsSpecs(event); return false;" style="display: none;">
+  <form class="dns-form modal" onsubmit="saveDnsSpecs(event); return false;" style="display: none;">
     <p id="form-dns-item-id"></p>
     <label for="ip">IP:</label>
     <input type="text" id="ip-dns" name="ip-dns"
@@ -175,7 +175,7 @@
     <button type="submit">Guardar</button>
   </form>
 
-  <form class="dhcp-relay-form" onsubmit="saveDhcpRelaySpecs(event); return false;" style="display: none;">
+  <form class="dhcp-relay-form modal" onsubmit="saveDhcpRelaySpecs(event); return false;" style="display: none;">
     <p id="form-dhcp-relay-item-id"></p>
     <label for="ip-relay">IP:</label>
     <input type="text" id="ip-relay" name="ip-relay"
@@ -192,7 +192,7 @@
     <button type="submit">Guardar</button>
   </form>
 
-  <form class="ping-form" onsubmit="pingSim(); return false;" style="display: none;" onmousedown="dragPingForm(event)">
+  <form class="ping-form modal" onsubmit="pingSim(); return false;" style="display: none;" onmousedown="dragPingForm(event)">
     <label for="ip1">Origen</label>
     <input type="text" id="ip1" name="ip1" placeholder="192.168.1.1"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>

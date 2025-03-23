@@ -176,14 +176,10 @@ function dragPingForm(event) {
 
 function closeEveryThing(event) {
     if (event.key === "Escape") {
-        //cerramos todos los formularios
-        let forms = document.querySelectorAll("form");
-        for (let i = 0; i < forms.length; i++) {
-            forms[i].style.display = "none";
-        }
+        document.querySelectorAll(".modal").forEach(modal => { modal.style.display = "none";});
         closeBrowser(event);
         document.querySelector(".packet-traffic").style.display = "none";
-        closeTerminal(event);
+        closeTerminal(event);       
     }
 }
 
