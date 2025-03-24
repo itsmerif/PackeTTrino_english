@@ -94,6 +94,11 @@ function command_Ip(id, args) {
             removeRoutingEntry(id, args[3], args[4]);
             return;
         }
+
+        if (args[2] === "restore") {
+            removeRemotesRules(id);
+            return;
+        }
     }
 
     terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
@@ -463,5 +468,27 @@ function routingTableRestore(routerObjectid) {
                     <td></td>
                     <td></td>
                 </tr>`;
+
+}
+
+function removeRemotesRules(routerObjectId) {
+
+    const $routerObject = document.getElementById(routerObjectId);
+    const routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
+    const rows = routingTable.querySelectorAll("tr");
+
+    //restauramos la regla por defecto
+
+    let defaultRule = rows[4];
+    let cells = defaultRule.querySelectorAll("td");
+    cells[0].innerHTML = "0.0.0.0";
+    cells[1].innerHTML = "0.0.0.0";
+    cells[2].innerHTML = "";
+    cells[3].innerHTML = "";
+    cells[4].innerHTML = "";
+
+    Array.from(rows).slice(5).forEach(row => row.remove());
+
+    terminalMessage("El enrutamiento ha sido restaurado correctamente.");
 
 }
