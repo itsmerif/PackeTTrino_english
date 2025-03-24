@@ -34,15 +34,18 @@ function BoardItemDragStart(event) {
         originx: x,
         originy: y
     }));
-
 }
 
 function dropItem(event) {
     const item = event.dataTransfer.getData("json");
     const itemType = JSON.parse(item).itemType;
     const itemId = JSON.parse(item).itemId;
+    const initialX = JSON.parse(item).originx;
+    const initialY = JSON.parse(item).originy;
     const x = event.clientX;
     const y = event.clientY;
+    const dx = x - parseInt(initialX);
+    const dy = y - parseInt(initialY);
     const $board = document.querySelector(".board");
 
     if (itemType === "item") {
@@ -73,8 +76,11 @@ function dropItem(event) {
                 alert("Error: Tipo de objeto no reconocido");
                 break;
         }
-
-    } else if (itemType === "item-dropped") {
+        
+        return;
+    }
+    
+    if (itemType === "item-dropped") {
 
         const networkObject = document.getElementById(itemId);
 
@@ -91,7 +97,7 @@ function dropItem(event) {
 
         } else if (!itemId.startsWith("switch-")) {
 
-            const conn = networkObject.getAttribute("data-switch");
+            const conn = networkObject.getAttribute("data-switch") || "";
 
             if (conn === "") {
                 networkObject.style.left = `${x}px`;
@@ -138,22 +144,20 @@ function deleteItem(event) {
     }
 }
 
-function dragStart(event) {
-    const networkObjectId = event.target.closest("img").alt;
-    const itemType = "item";
-    event.dataTransfer.setData("json", JSON.stringify({
-        itemType: itemType,
-        itemId: networkObjectId
-    }));
-}
-
 function getConns(networkObjectId) {
-    const networkObject = document.getElementById(networkObjectId);
-    const connections = document.querySelectorAll("line");
+    const $lines = document.querySelectorAll("line");
+    const $circles = document.querySelectorAll("circle");
     let filteredConns = [];
 
-    for (let i = 0; i < connections.length; i++) {
-        let conn = connections[i];
+    for (let i = 0; i < $lines.length; i++) {
+        let conn = $lines[i];
+        if (conn.getAttribute("end-start") === networkObjectId) {
+            filteredConns.push(conn);
+        }
+    }
+
+    for (let i = 0; i < $circles.length; i++) {
+        let conn = $circles[i];
         if (conn.getAttribute("end-start") === networkObjectId) {
             filteredConns.push(conn);
         }

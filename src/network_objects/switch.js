@@ -13,6 +13,7 @@ function createSwitchObject(x, y) {
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
     networkObject.setAttribute("data-mac", getRandomMac());
+    networkObject.setAttribute("clusterized", "false");
 
     //switch grafico con icono
 
@@ -40,7 +41,7 @@ function createSwitchObject(x, y) {
     networkObjectAdvancedOptions.classList.add("advanced-options-modal");
     networkObjectAdvancedOptions.innerHTML = `
         <button onclick="deleteItem(event)">Eliminar</button>
-        <button onclick="clusterizeSwitch(event)">Clusterizar</button>
+        <button class="clusterize-button" onclick="clusterizeSwitch(event)">Clusterizar</button>
         `;
     networkObject.appendChild(networkObjectAdvancedOptions);
 
@@ -72,9 +73,15 @@ function switchConn(event) {
     event.stopPropagation();
 
     const item = event.dataTransfer.getData("json");
-    const networkObject = event.target.closest(".item-dropped");
+    const switchObject = event.target.closest(".item-dropped");
+    const isClusterized = switchObject.getAttribute("clusterized");
 
     if (item) {
+
+        if (isClusterized === "true") {
+            popupMessage("<span>Error:</span> Debes des-clusterizar el switch antes de poder conectar otro dispositivo");
+            return;
+        }
 
         const itemType = JSON.parse(item).itemType; //averiguo si es un item dropeable
         const itemId = JSON.parse(item).itemId; //obtengo el id del item
@@ -84,10 +91,10 @@ function switchConn(event) {
 
         if (itemType === "item-dropped" && (itemId.startsWith("pc-") || itemId.startsWith("dhcp-server-") || itemId.startsWith("dhcp-relay-server-") || itemId.startsWith("dns-server-"))) {
 
-            createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
+            createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id);
             saveConn(event, itemId);
-            document.getElementById(itemId).setAttribute("data-switch", networkObject.id);
-            networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
+            document.getElementById(itemId).setAttribute("data-switch", switchObject.id);
+            //switchObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
             document.getElementById(itemId).querySelector("img").draggable = false; //el pc no se puede arrastrar
 
         }
@@ -101,25 +108,25 @@ function switchConn(event) {
 
             if (enp0s3Conn === "") {
 
-                createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
+                createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id);
                 saveConn(event, itemId);
-                document.getElementById(itemId).setAttribute("data-switch-enp0s3", networkObject.id);
-                networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
+                document.getElementById(itemId).setAttribute("data-switch-enp0s3", switchObject.id);
+                switchObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
 
             } else if (enp0s8Conn === "") {
 
-                createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
+                createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id);
                 saveConn(event, itemId);
-                document.getElementById(itemId).setAttribute("data-switch-enp0s8", networkObject.id);
-                networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
+                document.getElementById(itemId).setAttribute("data-switch-enp0s8", switchObject.id);
+                switchObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
 
             } else if (enp0s9Conn === "") {
 
-                createCableObject(x1, y1, networkObject.style.left, networkObject.style.top, itemId, networkObject.id);
+                createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id);
                 saveConn(event, itemId);
-                document.getElementById(itemId).setAttribute("data-switch-enp0s9", networkObject.id);
+                document.getElementById(itemId).setAttribute("data-switch-enp0s9", switchObject.id);
                 routerObject.querySelector("img").draggable = false; //el router ya no se puede arrastrar
-                networkObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
+                switchObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
 
             }
 
@@ -191,6 +198,44 @@ function clusterizeSwitch(event) {
     const $switchObject = event.target.closest(".item-dropped");
     const $advancedOptions = $switchObject.querySelector(".advanced-options-modal");
     const $icon = $switchObject.querySelector("img");
+    const $connectedDevices = getDeviceTable($switchObject.id);
+    
+    $connectedDevices.forEach(deviceId => { 
+        if (!deviceId.startsWith("router-")) {
+            let $device = document.getElementById(deviceId); //nodo con el dispositivo
+            let $conns = getConns(deviceId); //nodos con las conexiones que parten de ese dispositivo
+            Array.from($conns).forEach( $conn => $conn.style.display = "none"); //oculto las conexiones 
+            $device.style.display = "none"; //oculto el dispositivo
+        }
+    });
+
+    $advancedOptions.querySelector(".clusterize-button").innerHTML = "Des-clusterizar";
+    $advancedOptions.querySelector(".clusterize-button").setAttribute("onclick", "desClusterizeSwitch(event)");
+    $switchObject.setAttribute("clusterized", "true");
     $icon.src = "./assets/board/web-cluster.png";
+    $advancedOptions.style.display = "none";
+}
+
+function desClusterizeSwitch(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const $switchObject = event.target.closest(".item-dropped");
+    const $advancedOptions = $switchObject.querySelector(".advanced-options-modal");
+    const $icon = $switchObject.querySelector("img");
+    const $connectedDevices = getDeviceTable($switchObject.id);
+    
+    $connectedDevices.forEach(deviceId => { 
+        if (!deviceId.startsWith("router-")) {
+            let $device = document.getElementById(deviceId); //nodo con el dispositivo
+            let $conns = getConns(deviceId); //nodos con las conexiones que parten de ese dispositivo
+            Array.from($conns).forEach( $conn => $conn.style.display = "block"); //oculto las conexiones 
+            $device.style.display = "block"; //oculto el dispositivo
+        }
+    });
+
+    $advancedOptions.querySelector(".clusterize-button").innerHTML = "Clusterizar";
+    $advancedOptions.querySelector(".clusterize-button").setAttribute("onclick", "clusterizeSwitch(event)");
+    $switchObject.setAttribute("clusterized", "false");
+    $icon.src = "./assets/board/switch.png";
     $advancedOptions.style.display = "none";
 }

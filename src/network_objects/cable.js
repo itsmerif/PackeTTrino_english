@@ -20,6 +20,8 @@ function createCableObject(x1, y1, x2, y2, start, end) {
     line.setAttribute("stroke-width", "5");
 
     circle.setAttribute("onclick", "deleteCable(event)");
+    circle.setAttribute("end-start", start);
+    circle.setAttribute("end-end", end);
     circle.setAttribute("cx", midX);
     circle.setAttribute("cy", midY);
     circle.setAttribute("r", "10");
