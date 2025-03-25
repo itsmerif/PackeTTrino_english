@@ -94,7 +94,7 @@ function switchConn(event) {
             createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id);
             saveConn(event, itemId);
             document.getElementById(itemId).setAttribute("data-switch", switchObject.id);
-            //switchObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
+            switchObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
             document.getElementById(itemId).querySelector("img").draggable = false; //el pc no se puede arrastrar
 
         }
@@ -203,8 +203,9 @@ function clusterizeSwitch(event) {
     $connectedDevices.forEach(deviceId => { 
         if (!deviceId.startsWith("router-")) {
             let $device = document.getElementById(deviceId); //nodo con el dispositivo
-            let $conns = getConns(deviceId); //nodos con las conexiones que parten de ese dispositivo
-            Array.from($conns).forEach( $conn => $conn.style.display = "none"); //oculto las conexiones 
+            let [$connsLines, $connsCircles] = getConns(deviceId); //nodos con las conexiones que parten de ese dispositivo
+            Array.from($connsLines).forEach( $conn => $conn.style.display = "none"); //oculto las conexiones 
+            Array.from($connsCircles).forEach( $conn => $conn.style.display = "none"); //oculto las conexiones
             $device.style.display = "none"; //oculto el dispositivo
         }
     });
@@ -227,8 +228,9 @@ function desClusterizeSwitch(event) {
     $connectedDevices.forEach(deviceId => { 
         if (!deviceId.startsWith("router-")) {
             let $device = document.getElementById(deviceId); //nodo con el dispositivo
-            let $conns = getConns(deviceId); //nodos con las conexiones que parten de ese dispositivo
-            Array.from($conns).forEach( $conn => $conn.style.display = "block"); //oculto las conexiones 
+            let [$connsLines, $connsCircles] = getConns(deviceId); //nodos con las conexiones que parten de ese dispositivo
+            Array.from($connsLines).forEach( $conn => $conn.style.display = "block"); //oculto las conexiones 
+            Array.from($connsCircles).forEach( $conn => $conn.style.display = "block"); //oculto las conexiones
             $device.style.display = "block"; //oculto el dispositivo
         }
     });
@@ -238,4 +240,30 @@ function desClusterizeSwitch(event) {
     $switchObject.setAttribute("clusterized", "false");
     $icon.src = "./assets/board/switch.png";
     $advancedOptions.style.display = "none";
+}
+
+function moveConns(switchId, dx, dy) {
+    const $connectedDevices = getDeviceTable(switchId);
+
+    $connectedDevices.forEach(deviceId => { 
+        if (!deviceId.startsWith("router-")) {
+            let $device = document.getElementById(deviceId); //nodo con el dispositivo
+            let [$connsLines, $connsCircles] = getConns(deviceId); //nodos con las conexiones que parten de ese dispositivo
+            //movemos las lineas
+            Array.from($connsLines).forEach( $conn => { 
+                $conn.setAttribute("x1", `${parseInt($conn.getAttribute("x1")) + dx}`);
+                $conn.setAttribute("y1", `${parseInt($conn.getAttribute("y1")) + dy}`);
+                $conn.setAttribute("x2", `${parseInt($conn.getAttribute("x2")) + dx}`);
+                $conn.setAttribute("y2", `${parseInt($conn.getAttribute("y2")) + dy}`);
+            });
+            //movemos los circulos
+            Array.from($connsCircles).forEach( $conn => { 
+                $conn.setAttribute("cx", `${parseInt($conn.getAttribute("cx")) + dx}`);
+                $conn.setAttribute("cy", `${parseInt($conn.getAttribute("cy")) + dy}`);
+            });
+            //movemos el dispostivo
+            $device.style.left = `${parseInt($device.style.left) + dx}px`;
+            $device.style.top = `${parseInt($device.style.top) + dy}px`;
+        }
+    });
 }

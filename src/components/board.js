@@ -95,7 +95,13 @@ function dropItem(event) {
                 networkObject.style.top = `${y}px`;
             }
 
-        } else if (!itemId.startsWith("switch-")) {
+        } else if (itemId.startsWith("switch-")) {
+
+            networkObject.style.left = `${x}px`;
+            networkObject.style.top = `${y}px`;
+            moveConns(itemId, dx, dy);
+            
+        }else {
 
             const conn = networkObject.getAttribute("data-switch") || "";
 
@@ -104,11 +110,6 @@ function dropItem(event) {
                 networkObject.style.top = `${y}px`;
             }
 
-        }else {
-
-            networkObject.style.left = `${x}px`;
-            networkObject.style.top = `${y}px`;
-            
         }
     }
 }
@@ -147,21 +148,22 @@ function deleteItem(event) {
 function getConns(networkObjectId) {
     const $lines = document.querySelectorAll("line");
     const $circles = document.querySelectorAll("circle");
-    let filteredConns = [];
+    let finalLines = [];
+    let finalCircles = [];
 
     for (let i = 0; i < $lines.length; i++) {
         let conn = $lines[i];
         if (conn.getAttribute("end-start") === networkObjectId) {
-            filteredConns.push(conn);
+            finalLines.push(conn);
         }
     }
 
     for (let i = 0; i < $circles.length; i++) {
         let conn = $circles[i];
         if (conn.getAttribute("end-start") === networkObjectId) {
-            filteredConns.push(conn);
+            finalCircles.push(conn);
         }
     }
 
-    return filteredConns;
+    return [finalLines, finalCircles];
 }
