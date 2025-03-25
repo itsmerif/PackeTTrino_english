@@ -42,11 +42,12 @@ function dropItem(event) {
     const itemId = JSON.parse(item).itemId;
     const initialX = JSON.parse(item).originx;
     const initialY = JSON.parse(item).originy;
-    const x = event.clientX;
-    const y = event.clientY;
+    const $board = document.querySelector(".board");
+    const boardRect = $board.getBoundingClientRect();
+    const x = event.clientX - boardRect.left;
+    const y = event.clientY - boardRect.top;
     const dx = x - parseInt(initialX);
     const dy = y - parseInt(initialY);
-    const $board = document.querySelector(".board");
 
     if (itemType === "item") {
 
