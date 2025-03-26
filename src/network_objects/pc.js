@@ -1,9 +1,15 @@
 function createPcObject(x, y) {
 
     const $board = document.querySelector(".board");
-    const $networkObject = document.createElement("article");
+    let $networkObject = document.createElement("article");
+    let $icon = document.createElement("img");
+    let $arpTable = document.createElement("article");
+    let $dnsTable = document.createElement("article");
+    let $firewallTable = document.createElement("article");
+    let $advancedOptions = document.createElement("div");
 
     //caracteristicas generales
+
     $networkObject.id = `pc-${itemIndex}`;
     $networkObject.style.left = `${x}px`;
     $networkObject.style.top = `${y}px`;
@@ -16,43 +22,52 @@ function createPcObject(x, y) {
     $networkObject.setAttribute("data-dhcp", false);
     $networkObject.setAttribute("data-dhcp-server", "");
     $networkObject.setAttribute("data-dns-server", "");
-
-    $networkObject.setAttribute("data-etc-hosts",`{
-        "127.0.0.1": ["localhost"]
-    }`);
-
+    $networkObject.setAttribute("data-etc-hosts",`{ "127.0.0.1": ["localhost"] }`);
     $networkObject.setAttribute("firewall-default-policy", "ACCEPT");
-
-    //servidor web
     $networkObject.setAttribute("web-server", "off");
     $networkObject.setAttribute("web-content", "");
 
-    //contenido
-    $networkObject.innerHTML = `
-        <img src="./assets/board/pc.png" alt="pc" draggable="true">
+    //icono
 
-        <article class="arp-table" onclick="event.stopPropagation()">
-            <table>
-                <tr>
-                    <th>IP Address</th>
-                    <th>MAC Address</th>
-                </tr>
-            </table>
-            <button onclick="closeARPTable(event)">Cerrar</button>
-        </article>
+    $icon.src = "./assets/board/pc.png";
+    $icon.alt = "pc";
+    $icon.draggable = true;
 
-        <article class="dns-table" onclick="event.stopPropagation()">
-            <table>
-                <tr>
-                    <th>Domain</th>
-                    <th>Type</th>
-                    <th>Value</th>
-                </tr>
-            </table>
-            <button onclick="closeDnsTable(event)">Cerrar</button>
-        </article>
+    //tabla arp
 
-        <article class="firewall-table">
+    $arpTable.classList.add("arp-table");
+    $arpTable.innerHTML = `
+        <table>
+            <tr>
+                <th>IP Address</th>
+                <th>MAC Address</th>
+            </tr>
+        </table>
+        <button onclick="closeARPTable(event)">Cerrar</button>
+    `;
+
+    $arpTable.setAttribute("onclick", "(event) => { event.stopPropagation(); }");
+
+    //tabla de registros dns
+
+    $dnsTable.classList.add("dns-table");
+    $dnsTable.innerHTML = `
+                <table>
+                    <tr>
+                        <th>Domain</th>
+                        <th>Type</th>
+                        <th>Value</th>
+                    </tr>
+                </table>
+                <button onclick="closeDnsTable(event)">Cerrar</button>
+    `;
+
+    $dnsTable.setAttribute("onclick", "(event) => { event.stopPropagation(); }");
+
+    //tabla de firewall
+
+    $firewallTable.classList.add("firewall-table");
+    $firewallTable.innerHTML = `
             <table>
                 <tr>
                     <th>Id</th>
@@ -64,27 +79,35 @@ function createPcObject(x, y) {
                     <th>Action</th>
                 </tr>
             </table>
-        </article>
+    `;
 
-        <div class="advanced-options-modal top" onclick="event.stopPropagation()">
-            <button onclick="showTerminal(event)">Modo Terminal</button>
-            <button onclick="showARPTable(event)">Ver Tabla ARP</button>
-            <button onclick="showDnsTable(event)">Ver Caché DNS</button>
-            <button onclick="openBrowser(event)">Navegador</button>
-            <button onclick="deleteItem(event)">Eliminar</button>
-        </div>
+    //opciones avanzadas
 
-        <div class="quick-info" style="display: none;">
-            <span class="ip">255.255.255.255/16</span>
-        </div>
+    $advancedOptions.classList.add("advanced-options-modal");
+    $advancedOptions.innerHTML = `
+        <button onclick="showTerminal(event)">Modo Terminal</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="showDnsTable(event)">Ver Caché DNS</button>
+        <button onclick="openBrowser(event)">Navegador</button>
+        <button onclick="deleteItem(event)">Eliminar</button>
     `;
 
     //eventos
+
     $networkObject.setAttribute("onclick", "showPcForm('" + $networkObject.id + "')");
     $networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
     $networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
+
+    //construimos el objeto
+
+    $networkObject.appendChild($icon);
+    $networkObject.appendChild($arpTable);
+    $networkObject.appendChild($dnsTable);
+    $networkObject.appendChild($firewallTable);
+    $networkObject.appendChild($advancedOptions);
     $board.appendChild($networkObject);
     itemIndex++;
+    
 }
 
 function showPcForm(id) {
@@ -199,22 +222,4 @@ function disableOptionsPcForm(event) {
         document.querySelector(".pc-form").querySelectorAll("input[type='text']").forEach(input => input.disabled = false);
         document.querySelector(".pc-form").querySelector("button").innerHTML = "Guardar";
     }
-}
-
-function showquickInfo(event) {
-    event.preventDefault();
-    clearTimeout(quickInfoTimeout);
-    quickInfoTimeout = setTimeout(() => {
-        const quickInfo = document.querySelector(".quick-info");
-        const networkObject = event.target.closest(".item-dropped");
-        quickInfo.querySelector(".ip").innerHTML = networkObject.getAttribute("data-ip");
-        quickInfo.style.display = "block";
-    }, 200);
-}
-
-function hidequickInfo(event) {
-    event.preventDefault();    
-    clearTimeout(quickInfoTimeout);
-    const quickInfo = document.querySelector(".quick-info");
-    quickInfo.style.display = "none";
 }
