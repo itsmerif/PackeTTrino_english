@@ -1,7 +1,5 @@
-.advanced-options-modal {
+.advanced-options-modal{
     position: absolute;
-    top: 30%;
-    left: 50%;
     background-color: #ffffff;
     display: none;
     flex-direction: column;

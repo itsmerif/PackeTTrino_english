@@ -66,7 +66,7 @@ function createPcObject(x, y) {
             </table>
         </article>
 
-        <div class="advanced-options-modal" onclick="event.stopPropagation()">
+        <div class="advanced-options-modal top" onclick="event.stopPropagation()">
             <button onclick="showTerminal(event)">Modo Terminal</button>
             <button onclick="showARPTable(event)">Ver Tabla ARP</button>
             <button onclick="showDnsTable(event)">Ver Caché DNS</button>
@@ -129,11 +129,48 @@ async function savePcSpecs(event) {
 }
 
 function showAdvancedOptions(event) {
+
     event.preventDefault();
     event.stopPropagation();
+
+    const $board = document.querySelector(".board");
+    const boardProperties = window.getComputedStyle($board, null);
+    const boardHeight = parseInt(boardProperties.getPropertyValue("height")); //altura del tablero
+    const boardWidth = parseInt(boardProperties.getPropertyValue("width"));
+    const boardRect = $board.getBoundingClientRect();
     const networkObject = event.target.closest(".item-dropped")
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    modal.style.display = "flex";
+    const $modal = networkObject.querySelector(".advanced-options-modal");
+    const x = event.clientX - boardRect.left;
+    const y = event.clientY - boardRect.top;
+ 
+    if (y < boardHeight / 2 && x < boardWidth / 2) { 
+        $modal.style.bottom = "";
+        $modal.style.left = "50%";
+        $modal.style.right = "";
+    }
+
+    if (y < boardHeight / 2 && x > boardWidth / 2) { 
+        $modal.style.top = "30%";
+        $modal.style.bottom = "";
+        $modal.style.left = "";
+        $modal.style.right = "30%";
+    }
+
+    if (y > boardHeight / 2 && x < boardWidth / 2) {
+        $modal.style.top = "";
+        $modal.style.bottom = "30%";
+        $modal.style.left = "30%";
+        $modal.style.right = "";
+    }
+
+    if (y > boardHeight / 2 && x > boardWidth / 2) {
+        $modal.style.top = "";
+        $modal.style.bottom = "30%";
+        $modal.style.left = "";
+        $modal.style.right = "30%";
+    }
+
+    $modal.style.display = "flex";
 }
 
 function showARPTable(event) {

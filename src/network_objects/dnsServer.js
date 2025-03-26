@@ -144,14 +144,6 @@ function saveDnsSpecs(event) {
     form.style.display = "none";
 }
 
-function showAdvancedOptions(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped")
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    modal.style.display = "flex";
-}
-
 function showDnsTable(event) {
     event.stopPropagation();
     const networkObject = event.target.closest(".item-dropped");
