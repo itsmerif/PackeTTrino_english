@@ -56,7 +56,6 @@ function showObjectModalTable(event, class_name) {
     const boardProperties = window.getComputedStyle($board, null);
     const boardHeight = parseInt(boardProperties.getPropertyValue("height"));
     const boardWidth = parseInt(boardProperties.getPropertyValue("width"));
-    const boardRect = $board.getBoundingClientRect();
     const objectX = parseInt($networkObject.style.left);
     const objectY = parseInt($networkObject.style.top);
     let currentTableHeight;
@@ -105,7 +104,7 @@ function showObjectModalTable(event, class_name) {
     }
 
     if (tableBotSide > boardHeight) { //el modal acaba oculto por abajo
-        let diffBotSide = parseInt(tableBotSide - boardHeight);
+        diffBotSide = parseInt(tableBotSide - boardHeight);
         $Table.style.top = `calc(50% - ${Math.abs(diffBotSide)}px - 5px)`;
     }
 
