@@ -144,6 +144,7 @@ function showAdvancedOptions(event) {
     const y = event.clientY - boardRect.top;
  
     if (y < boardHeight / 2 && x < boardWidth / 2) { 
+        $modal.style.top = "30%";
         $modal.style.bottom = "";
         $modal.style.left = "50%";
         $modal.style.right = "";
