@@ -61,6 +61,14 @@ function showObjectModalTable(event, class_name) {
     const objectY = parseInt($networkObject.style.top);
     let currentTableHeight;
     let currentTableWidth;
+    let tableLeftSide;
+    let tableRightSide;
+    let tableTopSide;
+    let tableBotSide;
+    let diffLeftSide;
+    let diffRightSide;
+    let diffTopSide;
+    let diffBotSide;
 
     //obtenemos el ancho y alto del elemento
 
@@ -76,23 +84,23 @@ function showObjectModalTable(event, class_name) {
 
     //dependiendo del diffX y diffY, cambiamos la posicion del modal
 
-    let tableLeftSide = objectX - currentTableWidth / 2;
-    let tableRightSide = objectX + currentTableWidth / 2;
-    let tableTopSide = objectY - currentTableHeight / 2;
-    let tableBotSide = objectY + currentTableHeight / 2;
+    tableLeftSide = objectX - currentTableWidth / 2;
+    tableRightSide = objectX + currentTableWidth / 2;
+    tableTopSide = objectY - currentTableHeight / 2;
+    tableBotSide = objectY + currentTableHeight / 2;
 
     if ( tableLeftSide < 0) { //el modal acaba oculto por la izquierda
-        let diffLeftSide = parseInt(0 - tableLeftSide);
+        diffLeftSide = parseInt(0 - tableLeftSide);
         $Table.style.left = `calc(50% + ${Math.abs(diffLeftSide)}px + 5px)`;
     }
 
     if (tableRightSide > boardWidth) { //el modal acaba oculto por la derecha
-        let diffRightSide = parseInt(tableRightSide - boardWidth);
+        diffRightSide = parseInt(tableRightSide - boardWidth);
         $Table.style.left = `calc(50% - ${Math.abs(diffRightSide)}px - 5px)`;
     }
 
     if (tableTopSide < 0) { //el modal acaba oculto por arriba
-        let diffTopSide = parseInt(0 - tableTopSide);
+        diffTopSide = parseInt(0 - tableTopSide);
         $Table.style.top = `calc(50% + ${Math.abs(diffTopSide)}px + 5px)`;
     }
 
