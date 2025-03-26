@@ -76,20 +76,12 @@ function createDhcpRelayObject(x, y) {
     //eventos
 
     networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
-    networkObject.setAttribute("oncontextmenu", "showAdvancedOptionsDHCPRelay(event)");
+    networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
     advancedOptions.setAttribute("onclick", "event.stopPropagation()");
 
     board.appendChild(networkObject);
     itemIndex++;
 
-}
-
-function showAdvancedOptionsDHCPRelay(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped")
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    modal.style.display = "flex";
 }
 
 function showDhcpRelaySpecs(event) {

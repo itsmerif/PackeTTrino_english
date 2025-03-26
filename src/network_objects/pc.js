@@ -22,7 +22,7 @@ function createPcObject(x, y) {
     $networkObject.setAttribute("data-dhcp", false);
     $networkObject.setAttribute("data-dhcp-server", "");
     $networkObject.setAttribute("data-dns-server", "");
-    $networkObject.setAttribute("data-etc-hosts",`{ "127.0.0.1": ["localhost"] }`);
+    $networkObject.setAttribute("data-etc-hosts", `{ "127.0.0.1": ["localhost"] }`);
     $networkObject.setAttribute("firewall-default-policy", "ACCEPT");
     $networkObject.setAttribute("web-server", "off");
     $networkObject.setAttribute("web-content", "");
@@ -46,7 +46,7 @@ function createPcObject(x, y) {
         <button onclick="closeARPTable(event)">Cerrar</button>
     `;
 
-    $arpTable.setAttribute("onclick", "(event) => { event.stopPropagation(); }");
+    $arpTable.setAttribute("onclick", "event.stopPropagation();");
 
     //tabla de registros dns
 
@@ -62,7 +62,7 @@ function createPcObject(x, y) {
                 <button onclick="closeDnsTable(event)">Cerrar</button>
     `;
 
-    $dnsTable.setAttribute("onclick", "(event) => { event.stopPropagation(); }");
+    $dnsTable.setAttribute("onclick", "event.stopPropagation();");
 
     //tabla de firewall
 
@@ -107,7 +107,7 @@ function createPcObject(x, y) {
     $networkObject.appendChild($advancedOptions);
     $board.appendChild($networkObject);
     itemIndex++;
-    
+
 }
 
 function showPcForm(id) {
@@ -149,68 +149,6 @@ async function savePcSpecs(event) {
     networkObject.setAttribute("data-dns-server", newDnsServer);
     if (newDhcp) await dhcp(networkObject.id, ["dhcp", "-renew"]);
     document.querySelector(".pc-form").style.display = "none";
-}
-
-function showAdvancedOptions(event) {
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    const $board = document.querySelector(".board");
-    const boardProperties = window.getComputedStyle($board, null);
-    const boardHeight = parseInt(boardProperties.getPropertyValue("height")); //altura del tablero
-    const boardWidth = parseInt(boardProperties.getPropertyValue("width"));
-    const boardRect = $board.getBoundingClientRect();
-    const networkObject = event.target.closest(".item-dropped")
-    const $modal = networkObject.querySelector(".advanced-options-modal");
-    const x = event.clientX - boardRect.left;
-    const y = event.clientY - boardRect.top;
- 
-    if (y < boardHeight / 2 && x < boardWidth / 2) { 
-        $modal.style.top = "30%";
-        $modal.style.bottom = "";
-        $modal.style.left = "50%";
-        $modal.style.right = "";
-    }
-
-    if (y < boardHeight / 2 && x > boardWidth / 2) { 
-        $modal.style.top = "30%";
-        $modal.style.bottom = "";
-        $modal.style.left = "";
-        $modal.style.right = "30%";
-    }
-
-    if (y > boardHeight / 2 && x < boardWidth / 2) {
-        $modal.style.top = "";
-        $modal.style.bottom = "30%";
-        $modal.style.left = "30%";
-        $modal.style.right = "";
-    }
-
-    if (y > boardHeight / 2 && x > boardWidth / 2) {
-        $modal.style.top = "";
-        $modal.style.bottom = "30%";
-        $modal.style.left = "";
-        $modal.style.right = "30%";
-    }
-
-    $modal.style.display = "flex";
-}
-
-function showARPTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".arp-table");
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    modal.style.display = "none";
-    table.style.display = "flex";
-}
-
-function closeARPTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".arp-table");
-    table.style.display = "none";
 }
 
 function disableOptionsPcForm(event) {

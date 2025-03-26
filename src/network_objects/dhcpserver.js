@@ -102,35 +102,13 @@ function createDhcpServerObject(x, y) {
     //eventos
 
     networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
-    networkObject.setAttribute("oncontextmenu", "showAdvancedOptionsDHCP(event)");
+    networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
     networkObject.setAttribute("onclick", "showDhcpTable(event)");
     advancedOptions.setAttribute("onclick", "event.stopPropagation()");
 
     board.appendChild(networkObject);
     itemIndex++;
 
-}
-
-function showAdvancedOptionsDHCP(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped")
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    modal.style.display = "flex";
-}
-
-function showDhcpTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".dhcp-table");
-    table.style.display = "flex";
-}
-
-function closeDhcpTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".dhcp-table");
-    table.style.display = "none";
 }
 
 function showDhcpSpecs(event) { 

@@ -124,7 +124,7 @@ function createRouterObject(x, y) {
     networkObjectAdvancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
         <button onclick="showRouterSpecs(event)"> Configurar Interfaces de Red </button>
-        <button onclick="showRouterARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
         <button onclick="showRouterFirewallTable(event)">Ver Tabla Firewall</button>
         <button onclick="deleteItem(event)">Eliminar</button>`;
     networkObject.appendChild(networkObjectAdvancedOptions);
@@ -132,7 +132,7 @@ function createRouterObject(x, y) {
     //eventos
 
     networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
-    networkObject.setAttribute("oncontextmenu", "showAdvancedOptionsRouter(event)");
+    networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
     networkObject.setAttribute("onclick", "showRoutingTable(event)");
     networkObjectRoutingTable.setAttribute("onclick", "event.stopPropagation()");
     networkObjectAdvancedOptions.setAttribute("onclick", "event.stopPropagation()");
@@ -142,28 +142,6 @@ function createRouterObject(x, y) {
     board.appendChild(networkObject);
     itemIndex++;
 
-}
-
-function showRoutingTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".routing-table");
-    table.style.display = "flex";
-}
-
-function closeRoutingTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".routing-table");
-    table.style.display = "none";
-}
-
-function showAdvancedOptionsRouter(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped")
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    modal.style.display = "flex";
 }
 
 function showRouterSpecs(event) {
@@ -185,15 +163,6 @@ function showRouterSpecs(event) {
     form.querySelector("#netmask-enp0s9").value = netmaskEnp0s9;
     document.getElementById("form-router-item-id").innerHTML = networkObject.id;
     form.style.display = "flex";
-}
-
-function showRouterARPTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".arp-table");
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    modal.style.display = "none";
-    table.style.display = "flex";
 }
 
 function saveRouterSpecs(event) {
@@ -242,20 +211,4 @@ function saveRouterSpecs(event) {
 
     form.style.display = "none";
     
-}
-
-function showRouterFirewallTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".firewall-table");
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    modal.style.display = "none";
-    table.style.display = "flex";
-}
-
-function closeFirewallTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".firewall-table");
-    table.style.display = "none";
 }

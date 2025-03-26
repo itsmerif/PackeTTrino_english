@@ -144,31 +144,6 @@ function saveDnsSpecs(event) {
     form.style.display = "none";
 }
 
-function showDnsTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".dns-table");
-    table.style.display = "flex";
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    if (modal) modal.style.display = "none";
-}
-
-function closeDnsTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".dns-table");
-    table.style.display = "none";
-}
-
-function showARPTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".arp-table");
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    modal.style.display = "none";
-    table.style.display = "flex";
-}
-
 function closeARPTable(event) {
     event.stopPropagation();
     const networkObject = event.target.closest(".item-dropped");
