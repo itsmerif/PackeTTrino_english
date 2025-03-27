@@ -32,18 +32,6 @@
     background-color: #45a049;
 }
 
-@keyframes fadeInDynamicRoutingModal {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -40%);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
-}
-
 .dynamic-routing-modal p {
     font-size: 16px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -81,18 +69,6 @@
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.7);
 }
 
-@keyframes fadeInDynamicRoutingModal {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -40%);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
-}
-
 .loader {
     position: absolute;
     top: 40%;
@@ -105,17 +81,6 @@
     height: 50px;
     z-index: 1000;
     animation: spinDynRouting 2s linear infinite;
-}
-
-
-@keyframes spinDynRouting {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
 }
 
 .default-network-routing-container {
