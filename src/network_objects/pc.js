@@ -115,17 +115,26 @@ function createPcObject(x, y) {
 }
 
 function showPcForm(id) {
-    const networkObject = document.getElementById(id);
-    const ip = networkObject.getAttribute("data-ip");
-    const netmask = networkObject.getAttribute("data-netmask");
-    const gateway = networkObject.getAttribute("data-gateway");
-    const dhcp = networkObject.getAttribute("data-dhcp");
-    const dnsServer = networkObject.getAttribute("data-dns-server");
+
+    const $networkObject = document.getElementById(id);
+
+    //obtenemos los atributos del pc
+
+    const ip = $networkObject.getAttribute("data-ip");
+    const netmask = $networkObject.getAttribute("data-netmask");
+    const gateway = $networkObject.getAttribute("data-gateway");
+    const dhcp = $networkObject.getAttribute("data-dhcp");
+    const dnsServer = $networkObject.getAttribute("data-dns-server");
+
+    //mostramos el formulario con los datos
+
     document.querySelector(".pc-form #ip").value = ip;
     document.getElementById("form-item-id").innerHTML = id;
     document.querySelector(".pc-form #netmask").value = netmask;
     document.querySelector(".pc-form #gateway").value = gateway;
     document.querySelector(".pc-form #dns-server").value = dnsServer;
+
+    //comprobamos si el equipo esta en modo DHCP
 
     if (dhcp === "true") {
         document.querySelector(".pc-form #dhcp").checked = true;
@@ -135,6 +144,9 @@ function showPcForm(id) {
         document.querySelector(".pc-form #dhcp").checked = false;
     }
 
+    //mostramos el formulario
+
+    document.querySelector(".modal-overlay").style.display = "block";
     document.querySelector(".pc-form").style.display = "flex";
 }
 
@@ -152,6 +164,7 @@ async function savePcSpecs(event) {
     networkObject.setAttribute("data-dhcp", newDhcp);
     networkObject.setAttribute("data-dns-server", newDnsServer);
     if (newDhcp) await dhcp(networkObject.id, ["dhcp", "-renew"]);
+    document.querySelector(".modal-overlay").style.display = "none";
     document.querySelector(".pc-form").style.display = "none";
 }
 

@@ -27,17 +27,6 @@
     }
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -48%);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
-}
-
 @keyframes fadeInDynamicRoutingModal {
     from {
         opacity: 0;

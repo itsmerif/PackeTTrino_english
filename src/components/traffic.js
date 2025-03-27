@@ -90,7 +90,6 @@ function filterPacketTraffic() {
 function showPacketFields(event) {
 
     const packet = trafficBuffer[event.target.dataset.buffer];
-
     const packetFields = Object.entries(packet);
 
     //campos por capa
@@ -175,7 +174,6 @@ function showPacketFields(event) {
     const modalComponent = document.createElement("div");
     modalComponent.classList.add("packet-fields-modal-container");
     modalComponent.innerHTML = `
-    <div class="modal-overlay"></div>
     <div class="packet-fields-modal">
         <table>
             <tr>
@@ -213,11 +211,13 @@ function showPacketFields(event) {
         <button class="btn-close" onclick="closePacketFieldsModal()">Cerrar</button>
     </div>`;
 
+    document.querySelector(".modal-overlay").style.display = "block";
     document.body.appendChild(modalComponent);
 }
 
 function closePacketFieldsModal() {
     const modalComponent = document.querySelector(".packet-fields-modal-container");
+    document.querySelector(".modal-overlay").style.display = "none";
     modalComponent.remove();
 }
 

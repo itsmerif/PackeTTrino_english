@@ -13,6 +13,7 @@
     justify-content: center;
     gap: 15px;
     z-index: 1000;
+    animation: form-animation 0.25s ease-in-out;
 }
 
 .router-form input, select {

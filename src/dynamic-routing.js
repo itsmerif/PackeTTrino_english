@@ -398,7 +398,6 @@ function showDynamicRoutingModal() {
     const modalComponent = document.createElement("div");
     modalComponent.classList.add("dynamic-routing-modal-container");
     modalComponent.innerHTML = `
-    <div class="modal-overlay"></div>
     <div class="dynamic-routing-modal">
     <p class="error-message"> Error: La red no existe</p>
     <div class="default-network-routing-container">
@@ -412,11 +411,13 @@ function showDynamicRoutingModal() {
     </div>`
     modalComponent.querySelector(".btn-accept").addEventListener("click", dynamicRoutingHandler);
     modalComponent.querySelector(".btn-reject").addEventListener("click", closeDynamicRoutingModal);
+    document.querySelector(".modal-overlay").style.display = "block";
     document.body.appendChild(modalComponent);
 }
 
 function closeDynamicRoutingModal() {
     const modalComponent = document.querySelector(".dynamic-routing-modal-container");
+    document.querySelector(".modal-overlay").style.display = "none";
     modalComponent.remove();
 }
 
@@ -447,6 +448,7 @@ async function dynamicRoutingHandler() {
     dynamicRouting();
     return new Promise(resolve => {
         setTimeout(() => {
+            document.querySelector(".modal-overlay").style.display = "none";
             $modalComponent.remove();
             resolve();
         }, 1500);

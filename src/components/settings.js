@@ -4,7 +4,6 @@ function showOptions() {
     const $btnStyle = "btn-green";
     modalComponent.classList.add("settings-modal-container");
     modalComponent.innerHTML = `
-    <div class="modal-overlay"></div>
     <form class="settings-modal">
         <div class="form-group">
             <label for="visual-toggle"> Visualización (Visual) </label>
@@ -28,11 +27,13 @@ function showOptions() {
     modalComponent.querySelector("#ignore-arp-traffic").addEventListener("change", function () {ignoreArpTraffic = this.checked;});
     modalComponent.querySelector("#visual-toggle").addEventListener("change", function () {visualToggle = this.checked;});
     modalComponent.querySelector(`.${$btnStyle}`).addEventListener("click", closeSettingsModal);
+    document.querySelector(".modal-overlay").style.display = "block";
     document.body.appendChild(modalComponent);
 
 }
 
 function closeSettingsModal() {
     const modalComponent = document.querySelector(".settings-modal-container");
+    document.querySelector(".modal-overlay").style.display = "none";
     modalComponent.remove();
 }
