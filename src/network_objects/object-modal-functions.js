@@ -8,7 +8,7 @@ function showAdvancedOptions(event) {
     const boardHeight = parseInt(boardProperties.getPropertyValue("height")); //altura del tablero
     const boardWidth = parseInt(boardProperties.getPropertyValue("width"));
     const boardRect = $board.getBoundingClientRect();
-    const networkObject = event.target.closest(".item-dropped")
+    const networkObject = event.target.closest(".item-dropped") || event.target.closest(".text-annotation");
     const $modal = networkObject.querySelector(".advanced-options-modal");
     const x = event.clientX - boardRect.left;
     const y = event.clientY - boardRect.top;
@@ -58,22 +58,12 @@ function showObjectModalTable(event, class_name) {
     const boardWidth = parseInt(boardProperties.getPropertyValue("width"));
     const objectX = parseInt($networkObject.style.left);
     const objectY = parseInt($networkObject.style.top);
-    let currentTableHeight;
-    let currentTableWidth;
-    let tableLeftSide;
-    let tableRightSide;
-    let tableTopSide;
-    let tableBotSide;
-    let diffLeftSide;
-    let diffRightSide;
-    let diffTopSide;
-    let diffBotSide;
 
     //obtenemos el ancho y alto del elemento
 
     $Table.style.display = "flex";
-    currentTableWidth = parseInt($Table.offsetWidth);
-    currentTableHeight = parseInt($Table.offsetHeight);
+    let currentTableWidth = parseInt($Table.offsetWidth);
+    let currentTableHeight = parseInt($Table.offsetHeight);
     $Table.style.display = "none";
 
     //inicializamos la posicion del modal tabla arp
@@ -83,34 +73,41 @@ function showObjectModalTable(event, class_name) {
 
     //dependiendo del diffX y diffY, cambiamos la posicion del modal
 
-    tableLeftSide = objectX - currentTableWidth / 2;
-    tableRightSide = objectX + currentTableWidth / 2;
-    tableTopSide = objectY - currentTableHeight / 2;
-    tableBotSide = objectY + currentTableHeight / 2;
+    let tableLeftSide = objectX - currentTableWidth / 2;
+    let tableRightSide = objectX + currentTableWidth / 2;
+    let tableTopSide = objectY - currentTableHeight / 2;
+    let tableBotSide = objectY + currentTableHeight / 2;
 
     if ( tableLeftSide < 0) { //el modal acaba oculto por la izquierda
-        diffLeftSide = parseInt(0 - tableLeftSide);
+        let diffLeftSide = parseInt(0 - tableLeftSide);
         $Table.style.left = `calc(50% + ${Math.abs(diffLeftSide)}px + 5px)`;
     }
 
     if (tableRightSide > boardWidth) { //el modal acaba oculto por la derecha
-        diffRightSide = parseInt(tableRightSide - boardWidth);
+        let diffRightSide = parseInt(tableRightSide - boardWidth);
         $Table.style.left = `calc(50% - ${Math.abs(diffRightSide)}px - 5px)`;
     }
 
     if (tableTopSide < 0) { //el modal acaba oculto por arriba
-        diffTopSide = parseInt(0 - tableTopSide);
+        let diffTopSide = parseInt(0 - tableTopSide);
         $Table.style.top = `calc(50% + ${Math.abs(diffTopSide)}px + 5px)`;
     }
 
     if (tableBotSide > boardHeight) { //el modal acaba oculto por abajo
-        diffBotSide = parseInt(tableBotSide - boardHeight);
+        let diffBotSide = parseInt(tableBotSide - boardHeight);
         $Table.style.top = `calc(50% - ${Math.abs(diffBotSide)}px - 5px)`;
     }
 
     $advancedOptionsModal.style.display = "none";
     $Table.style.display = "flex";
 
+}
+
+function closeObjectModalTable(event, class_name) {
+    event.stopPropagation();
+    const $networkObject = event.target.closest(".item-dropped");
+    const $Table = $networkObject.querySelector("." + class_name);
+    $Table.style.display = "none";
 }
 
 function showARPTable(event) {
@@ -130,45 +127,25 @@ function showRoutingTable(event) {
 }
 
 function showRouterFirewallTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".firewall-table");
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    modal.style.display = "none";
-    table.style.display = "flex";
+    showObjectModalTable(event, "firewall-table");
 }
 
 function closeDhcpTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".dhcp-table");
-    table.style.display = "none";
+    closeObjectModalTable(event, "dhcp-table");
 }
 
 function closeRoutingTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".routing-table");
-    table.style.display = "none";
+    closeObjectModalTable(event, "routing-table");
 }
 
 function closeFirewallTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".firewall-table");
-    table.style.display = "none";
+    closeObjectModalTable(event, "firewall-table");
 }
 
 function closeARPTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".arp-table");
-    table.style.display = "none";
+    closeObjectModalTable(event, "arp-table");
 }
 
 function closeDnsTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".dns-table");
-    table.style.display = "none";
+    closeObjectModalTable(event, "dns-table");
 }

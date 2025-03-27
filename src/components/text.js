@@ -1,39 +1,38 @@
 function createTextObject(x, y) {
+    const $board = document.querySelector(".board");
+    const $textObject = document.createElement("article");
+    const $input = document.createElement("input");
+    const $advancedOptions = document.createElement("div");
 
-    const board = document.querySelector(".board");
-    const textObject = document.createElement("article");
-    const input = document.createElement("input");
-    const advancedOptions = document.createElement("div");
+    //caracteristicas generales
 
-    advancedOptions.classList.add("advanced-options-modal");
-    advancedOptions.innerHTML = `<button onclick="deleteItem(event)">Eliminar</button>`;
+    $textObject.id = "text-" + itemIndex;
+    $textObject.classList.add("text-annotation");
+    $textObject.style.left = `${x}px`;
+    $textObject.style.top = `${y}px`;
+    $textObject.setAttribute("data-text", "");
 
-    textObject.appendChild(advancedOptions);
+    //opciones avanzadas
 
-    textObject.id = "text-" + itemIndex;
-    textObject.classList.add("text-annotation");
-    textObject.style.left = `${x}px`;
-    textObject.style.top = `${y}px`;
+    $advancedOptions.classList.add("advanced-options-modal");
+    $advancedOptions.innerHTML = `<button onclick="deleteItem(event)">Eliminar</button>`;
 
+    //input
 
-    textObject.setAttribute("onmousedown", "dragText(event)");
-    input.type = "text";
-    input.setAttribute("oninput", "autoExtendText.call(this)");
-    textObject.setAttribute("oncontextmenu", "showAdvancedOptionsText(event)");
-    textObject.setAttribute("data-text", "");
+    $input.type = "text";
 
-    textObject.appendChild(input);
+    //eventos
 
-    board.appendChild(textObject);
+    $textObject.setAttribute("onmousedown", "dragText(event)");
+    $input.setAttribute("oninput", "autoExtendText.call(this)");
+    $textObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
+
+    //construimos el objeto
+
+    $textObject.appendChild($advancedOptions);
+    $textObject.appendChild($input);
+    $board.appendChild($textObject);
     itemIndex++;
-}
-
-function showAdvancedOptionsText(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const textObject = event.target.closest(".text-annotation");
-    const modal = textObject.querySelector(".advanced-options-modal");
-    modal.style.display = "flex";
 }
 
 function autoExtendText() {

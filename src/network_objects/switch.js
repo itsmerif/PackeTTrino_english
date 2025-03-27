@@ -50,21 +50,13 @@ function createSwitchObject(x, y) {
     networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
     networkObject.setAttribute("ondrop", "switchConn(event)");
     networkObject.setAttribute("onclick", "showMacTable(event)");
-    networkObject.setAttribute("oncontextmenu", "showAdvancedOptionsSwitch(event)");
+    networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
 
 
     //añadir el elemento al tablero y aumentar el indice global
     board.appendChild(networkObject);
     itemIndex++;
 
-}
-
-function showAdvancedOptionsSwitch(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped")
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    modal.style.display = "flex";
 }
 
 function switchConn(event) {
