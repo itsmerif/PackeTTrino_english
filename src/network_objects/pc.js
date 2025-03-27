@@ -146,7 +146,6 @@ function showPcForm(id) {
 
     //mostramos el formulario
 
-    document.querySelector(".modal-overlay").style.display = "block";
     document.querySelector(".pc-form").style.display = "flex";
 }
 

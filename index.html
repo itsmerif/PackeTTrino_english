@@ -28,7 +28,7 @@
   <!-- OVERLAY -->
 
   <div class="modal-overlay"></div>
-  
+
   <!-- SECCION PRINCIPAL -->
 
   <div id="root">
@@ -59,7 +59,7 @@
           <div class="radar-line"></div>
         </article>
       </div>
-      
+
     </section>
   </div>
 
@@ -69,23 +69,23 @@
 
     <p id="form-item-id"></p>
 
+    <label for="ip">IP:</label>
+    <input type="text" id="ip" name="ip" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+
+    <label for="netmask">Netmask:</label>
+    <input type="text" id="netmask" name="netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+
+    <label for="gateway">Gateway:</label>
+    <input type="text" id="gateway" name="gateway" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    
+    <label for="dns-server">DNS Server:</label>
+    <input type="text" id="dns-server" name="dns-server" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+
     <div class="form-item">
-      <label for="dhcp">Obtener una dirección IP automática (DHCP):</label>
+      <label for="dhcp"> Modo DHCP: </label>
       <input type="checkbox" id="dhcp" name="dhcp">
     </div>
 
-    <label for="ip">IP:</label>
-    <input type="text" id="ip" name="ip"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <label for="netmask">Netmask:</label>
-    <input type="text" id="netmask" name="netmask"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <label for="gateway">Gateway:</label>
-    <input type="text" id="gateway" name="gateway"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <label for="dns-server">DNS Server:</label>
-    <input type="text" id="dns-server" name="dns-server"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     <button class="btn-modern-blue" type="submit">Guardar</button>
 
   </form>
@@ -112,27 +112,27 @@
 
   <form class="dhcp-form modal" onsubmit="saveDhcpSpecs(event); return false;" style="display: none;">
     <p id="form-dhcp-item-id"></p>
-  
+
     <div>
       <label for="ip-dhcp">IP:</label>
       <input type="text" id="ip-dhcp" name="ip-dhcp"
         pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     </div>
-  
+
     <div>
       <label for="netmask-dhcp">Netmask:</label>
       <input type="text" id="netmask-dhcp" name="netmask-dhcp"
         pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     </div>
-  
+
     <div>
       <label for="gateway-dhcp">Gateway:</label>
       <input type="text" id="gateway-dhcp" name="gateway-dhcp"
         pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     </div>
-    
+
     <p> Opciones de Servicio </p>
-    
+
     <div>
       <label for="range-start">Rango de IPs:</label>
       <input type="text" id="range-start" name="range-start"
@@ -140,7 +140,7 @@
       <input type="text" id="range-end" name="range-end"
         pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     </div>
-    
+
     <div>
       <label for="offer-netmask">Oferta Netmask:</label>
       <input type="text" id="offer-netmask" name="offer-netmask"
@@ -152,7 +152,7 @@
       <input type="text" id="offer-gateway" name="offer-gateway"
         pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
     </div>
-      
+
     <div>
       <label for="offer-dns">Oferta Servidor DNS:</label>
       <input type="text" id="offer-dns" name="offer-dns"
@@ -161,14 +161,13 @@
 
     <div>
       <label for="offer-lease-time">Oferta Tiempo de Alquiler:</label>
-      <input type="text" id="offer-lease-time" name="offer-lease-time"
-        pattern="^[0-9]+$">
+      <input type="text" id="offer-lease-time" name="offer-lease-time" pattern="^[0-9]+$">
     </div>
 
     <button type="submit">Guardar</button>
 
   </form>
-  
+
   <form class="dns-form modal" onsubmit="saveDnsSpecs(event); return false;" style="display: none;">
     <p id="form-dns-item-id"></p>
     <label for="ip">IP:</label>
@@ -202,7 +201,8 @@
     <button type="submit">Guardar</button>
   </form>
 
-  <form class="ping-form modal" onsubmit="pingSim(); return false;" style="display: none;" onmousedown="dragPingForm(event)">
+  <form class="ping-form modal" onsubmit="pingSim(); return false;" style="display: none;"
+    onmousedown="dragPingForm(event)">
     <label for="ip1">Origen</label>
     <input type="text" id="ip1" name="ip1" placeholder="192.168.1.1"
       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
@@ -229,7 +229,7 @@
 
       <div class="editor-buttons">
         <p><span>^S</span>Guardar y Salir</p>
-      </div> 
+      </div>
 
       <p class="file-editor-error" onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation()"></p>
 
