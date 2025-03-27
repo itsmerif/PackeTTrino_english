@@ -485,3 +485,47 @@ function setRouterIps($router, ip1, ip2 = "", ip3 = "") {
     });
 
 }
+
+function checkObjectClip(x, y) { //esta funcion comprueba si el objeto queda clipeado fuera del tablero
+
+    const $board = document.querySelector(".board");
+    const boardProperties = window.getComputedStyle($board, null);
+    const boardHeight = parseInt(boardProperties.getPropertyValue("height"));
+    const boardWidth = parseInt(boardProperties.getPropertyValue("width"));
+    const objectWidth = 80;
+    const objectHeight = 80;
+    const spareSpace = 10;
+    let newX = x;
+    let newY = y;
+
+    //calculamos la posicion del objeto en funcion de su posicion en el tablero
+    
+    let objectLeft = (x - objectWidth / 2);
+    let objectRight = (x + objectWidth / 2);
+    let objectTop = (y - objectHeight / 2);
+    let objectBot = (y + objectHeight / 2);
+
+    console.log(objectLeft, objectRight, objectTop, objectBot);
+
+    if (objectLeft < 0) { //el objeto acaba oculto por la izquierda
+        let diffLeft = Math.abs(objectLeft);
+        newX = x + diffLeft + spareSpace;
+    }
+
+    if (objectRight > boardWidth) { //el objeto acaba oculto por la derecha
+        let diffRight = Math.abs(objectRight - boardWidth);
+        newX = x - diffRight - spareSpace;
+    }
+
+    if (objectTop < 0) { //el objeto acaba oculto por arriba
+        let diffTop = Math.abs(objectTop);
+        newY = y + diffTop + spareSpace;
+    }
+
+    if (objectBot > boardHeight) { //el objeto acaba oculto por abajo
+        let diffBot = Math.abs(objectBot - boardHeight);
+        newY = y - diffBot - spareSpace;
+    }
+
+    return [newX, newY];
+}

@@ -8,6 +8,10 @@ function createPcObject(x, y) {
     let $firewallTable = document.createElement("article");
     let $advancedOptions = document.createElement("div");
 
+    //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
+
+    [x,y] = checkObjectClip(x, y);
+
     //caracteristicas generales
 
     $networkObject.id = `pc-${itemIndex}`;

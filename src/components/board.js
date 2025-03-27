@@ -44,10 +44,10 @@ function dropItem(event) {
     const initialY = JSON.parse(item).originy;
     const $board = document.querySelector(".board");
     const boardRect = $board.getBoundingClientRect();
-    const x = event.clientX - boardRect.left;
-    const y = event.clientY - boardRect.top;
-    const dx = x - parseInt(initialX);
-    const dy = y - parseInt(initialY);
+    let x = event.clientX - boardRect.left;
+    let y = event.clientY - boardRect.top;
+    let dx = x - parseInt(initialX);
+    let dy = y - parseInt(initialY);
 
     if (itemType === "item") {
 
@@ -92,21 +92,22 @@ function dropItem(event) {
             const conns = [ networkObject.getAttribute("data-switch-enp0s3"), networkObject.getAttribute("data-switch-enp0s8"), networkObject.getAttribute("data-switch-enp0s9") ];
             
             if ( conns[0] === "" && conns[1] === "" && conns[2] === "" ) {
+                [x,y] = checkObjectClip(x, y);
                 networkObject.style.left = `${x}px`;
                 networkObject.style.top = `${y}px`;
             }
 
         } else if (itemId.startsWith("switch-")) {
-
+            [x,y] = checkObjectClip(x, y);
             networkObject.style.left = `${x}px`;
             networkObject.style.top = `${y}px`;
-            moveConns(itemId, dx, dy);
             
         }else {
 
             const conn = networkObject.getAttribute("data-switch") || "";
 
             if (conn === "") {
+                [x,y] = checkObjectClip(x, y);
                 networkObject.style.left = `${x}px`;
                 networkObject.style.top = `${y}px`;
             }
