@@ -1,61 +1,61 @@
 function createDhcpServerObject(x, y) {
 
-    const board = document.querySelector(".board");
-    const networkObject = document.createElement("article");
+    const $board = document.querySelector(".board");
+    const $networkObject = document.createElement("article");
     const networkObjectIcon = document.createElement("img");
-    const advancedOptions = document.createElement("div");
-    const networkObjectArpTable = document.createElement("article");
-    const networkObjectDhcpTable = document.createElement("article");
-    const firewallTable = document.createElement("article");
+    const $advancedOptions = document.createElement("div");
+    const $networkObjectArpTable = document.createElement("article");
+    const $networkObjectDhcpTable = document.createElement("article");
+    const $firewallTable = document.createElement("article");
 
 
     //caracteristicas generales
 
-    networkObject.id = `dhcp-server-${itemIndex}`;
-    networkObject.classList.add("item-dropped", "dhcp-server");
+    $networkObject.id = `dhcp-server-${itemIndex}`;
+    $networkObject.classList.add("item-dropped", "dhcp-server");
     [x,y] = checkObjectClip(x, y); //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
-    networkObject.style.left = `${x}px`;
-    networkObject.style.top = `${y}px`;
-    networkObject.setAttribute("data-ip", "");
-    networkObject.setAttribute("data-netmask", "");
-    networkObject.setAttribute("data-mac", getRandomMac());
-    networkObject.setAttribute("data-gateway", "");
-    networkObject.setAttribute("data-switch", "");
-    networkObject.setAttribute("data-interval", "false");
-    networkObject.setAttribute("firewall-default-policy", "ACCEPT");
+    $networkObject.style.left = `${x}px`;
+    $networkObject.style.top = `${y}px`;
+    $networkObject.setAttribute("data-ip", "");
+    $networkObject.setAttribute("data-netmask", "");
+    $networkObject.setAttribute("data-mac", getRandomMac());
+    $networkObject.setAttribute("data-gateway", "");
+    $networkObject.setAttribute("data-switch", "");
+    $networkObject.setAttribute("data-interval", "false");
+    $networkObject.setAttribute("firewall-default-policy", "ACCEPT");
 
     //configuracion de oferta
 
-    networkObject.setAttribute("data-range-start", "");
-    networkObject.setAttribute("data-range-end", "");
-    networkObject.setAttribute("offer-gateway", "");
-    networkObject.setAttribute("offer-netmask", "");
-    networkObject.setAttribute("offer-dns", "");
-    networkObject.setAttribute("offer-lease-time", "");
+    $networkObject.setAttribute("data-range-start", "");
+    $networkObject.setAttribute("data-range-end", "");
+    $networkObject.setAttribute("offer-gateway", "");
+    $networkObject.setAttribute("offer-netmask", "");
+    $networkObject.setAttribute("offer-dns", "");
+    $networkObject.setAttribute("offer-lease-time", "");
 
     //server grafico
 
-    networkObjectIcon.src = "./assets/board/server.png";
+    networkObjectIcon.src = "./assets/board/dhcp.png";
     networkObjectIcon.alt = "server";
     networkObjectIcon.draggable = true;
-    networkObject.appendChild(networkObjectIcon);
+    $networkObject.appendChild(networkObjectIcon);
 
     //opciones avanzadas
 
-    advancedOptions.classList.add("advanced-options-modal");
-    advancedOptions.innerHTML = `
+    $advancedOptions.classList.add("advanced-options-modal");
+    $advancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showDhcpSpecs(event)"> Configurar DHCP </button>
+        <button onclick="showDhcpTable(event)"> Ver Tabla de Alquileres </button>
         <button onclick="showARPTable(event)">Ver Tabla ARP</button>
         <button onclick="deleteItem(event)">Eliminar</button>
     `;
 
-    networkObject.appendChild(advancedOptions);
+    $networkObject.appendChild($advancedOptions);
 
     //tabla de arp
 
-    networkObjectArpTable.classList.add("arp-table");
-    networkObjectArpTable.innerHTML = `
+    $networkObjectArpTable.classList.add("arp-table");
+    $networkObjectArpTable.innerHTML = `
         <table>
             <tr>
                 <th>IP Address</th>
@@ -64,12 +64,12 @@ function createDhcpServerObject(x, y) {
         </table>
         <button onclick="closeARPTable(event)">Cerrar</button>`;
     
-    networkObject.appendChild(networkObjectArpTable);
+    $networkObject.appendChild($networkObjectArpTable);
 
     //tabla de firewall
     
-    firewallTable.classList.add("firewall-table");
-    firewallTable.innerHTML = `
+    $firewallTable.classList.add("firewall-table");
+    $firewallTable.innerHTML = `
             <table>
                 <tr>
                     <th>Id</th>
@@ -82,12 +82,12 @@ function createDhcpServerObject(x, y) {
                 </tr>
             </table>`;
 
-    networkObject.appendChild(firewallTable);
+    $networkObject.appendChild($firewallTable);
 
     //tabla de alquileres
 
-    networkObjectDhcpTable.classList.add("dhcp-table");
-    networkObjectDhcpTable.innerHTML = `
+    $networkObjectDhcpTable.classList.add("dhcp-table");
+    $networkObjectDhcpTable.innerHTML = `
                 <table>
                     <tr>
                         <th>IP</th>
@@ -98,16 +98,16 @@ function createDhcpServerObject(x, y) {
                 </table>
                 <button onclick="closeDhcpTable(event)">Cerrar</button>`;
 
-    networkObject.appendChild(networkObjectDhcpTable);
+    $networkObject.appendChild($networkObjectDhcpTable);
 
     //eventos
 
-    networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
-    networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
-    networkObject.setAttribute("onclick", "showDhcpTable(event)");
-    advancedOptions.setAttribute("onclick", "event.stopPropagation()");
+    $networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
+    $networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
+    $networkObject.setAttribute("onclick", "showDhcpSpecs(event)");
+    $advancedOptions.setAttribute("onclick", "event.stopPropagation()");
 
-    board.appendChild(networkObject);
+    $board.appendChild($networkObject);
     itemIndex++;
 
 }
