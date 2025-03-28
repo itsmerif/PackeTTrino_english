@@ -205,3 +205,19 @@
         transform: perspective(1000px) rotateX(0deg) translateZ(0);
     }
 }
+
+@keyframes shine {
+    0% {
+        left: -100%;
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 0.8;
+    }
+
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
+}

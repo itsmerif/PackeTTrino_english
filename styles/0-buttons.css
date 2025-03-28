@@ -120,3 +120,49 @@
     background-color: rgb(197, 168, 6);
     box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
 }
+
+.btn-modern-green {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #4ade80, #16a34a);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 6px rgba(22, 163, 74, 0.25);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-modern-green:before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.btn-modern-green:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(22, 163, 74, 0.4);
+    background: linear-gradient(135deg, #4ade80, #15803d);
+}
+
+.btn-modern-green:hover:before {
+    opacity: 1;
+    animation: shine 1.5s;
+}
+
+.btn-modern-green:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+}
