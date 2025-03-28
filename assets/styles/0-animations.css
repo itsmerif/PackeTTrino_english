@@ -2,6 +2,7 @@
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -11,6 +12,7 @@
     from {
         opacity: 1;
     }
+
     to {
         opacity: 0;
     }
@@ -21,6 +23,7 @@
         opacity: 0;
         transform: translate(-50%, -50%) scale(0.9);
     }
+
     100% {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
@@ -63,10 +66,11 @@
 
 @keyframes bounce {
     0% {
-      transform: translateY(0);
+        transform: translateY(0);
     }
+
     100% {
-      transform: translateY(-15px);
+        transform: translateY(-15px);
     }
 }
 
@@ -75,6 +79,7 @@
         opacity: 0;
         transform: translateX(-50%) translateY(calc(-48% - 0.5px));
     }
+
     to {
         opacity: 1;
         transform: translateX(-50%) translateY(calc(-50% - 0.5px));
@@ -114,5 +119,89 @@
     to {
         opacity: 1;
         transform: translate(-50%, -50%);
+    }
+}
+
+@keyframes terminal-glitch {
+    0% {
+        transform: translate(0);
+        text-shadow: 0 0 0 #00ff00;
+        opacity: 0;
+    }
+
+    20% {
+        transform: translate(-2px, 2px);
+        text-shadow: 1px -1px 0 #ff00ff, -1px 1px 0 #00ffff;
+        opacity: 0.7;
+    }
+
+    40% {
+        transform: translate(2px, -2px);
+        text-shadow: -1px 1px 0 #ff00ff, 1px -1px 0 #00ffff;
+        opacity: 0.8;
+    }
+
+    60% {
+        transform: translate(-2px, -2px);
+        text-shadow: 2px 0 0 #ff00ff, -2px 0 0 #00ffff;
+        opacity: 0.9;
+    }
+
+    80% {
+        transform: translate(2px, 2px);
+        text-shadow: -1px -1px 0 #ff00ff, 1px 1px 0 #00ffff;
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translate(0);
+        text-shadow: 0 0 0 #00ff00;
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInWithBlur {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.9);
+        filter: blur(10px);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: translateY(15px) scale(0.95);
+        filter: blur(5px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes formReveal {
+    0% {
+        opacity: 0;
+        clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+        transform: perspective(1000px) rotateX(30deg);
+    }
+
+    30% {
+        opacity: 0.5;
+        clip-path: polygon(0 0, 30% 0, 30% 100%, 0 100%);
+        transform: perspective(1000px) rotateX(20deg) translateZ(50px);
+    }
+
+    60% {
+        opacity: 0.8;
+        clip-path: polygon(0 0, 70% 0, 70% 100%, 0 100%);
+        transform: perspective(1000px) rotateX(10deg) translateZ(25px);
+    }
+
+    100% {
+        opacity: 1;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        transform: perspective(1000px) rotateX(0deg) translateZ(0);
     }
 }
