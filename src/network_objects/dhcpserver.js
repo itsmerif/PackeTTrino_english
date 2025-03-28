@@ -13,6 +13,7 @@ function createDhcpServerObject(x, y) {
 
     networkObject.id = `dhcp-server-${itemIndex}`;
     networkObject.classList.add("item-dropped", "dhcp-server");
+    [x,y] = checkObjectClip(x, y); //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
     networkObject.setAttribute("data-ip", "");
