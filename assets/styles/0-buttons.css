@@ -97,3 +97,26 @@
     background-color: #3a56d4;
     box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
 }
+
+.btn-modern-yellow {
+    background-color: rgb(223, 191, 12);
+    color: black;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    outline: none;
+}
+
+.btn-modern-yellow:hover {
+    background-color: rgb(197, 168, 6);
+    box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
+}
