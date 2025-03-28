@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="./styles/0-main.css">
 </head>
 
-<body onload="init()">
+<body>
 
   <!-- PANTALLA DE INICIO -->
 
@@ -65,7 +65,7 @@
 
   <!-- FORMULARIOS -->
 
-  <form class="pc-form modal" onsubmit="savePcSpecs(event); return false;">
+  <form class="pc-form modal">
 
     <p id="form-item-id"></p>
 
@@ -90,7 +90,7 @@
 
   </form>
 
-  <form class="router-form modal" onsubmit="saveRouterSpecs(event); return false;">
+  <form class="router-form modal">
 
     <p id="form-router-item-id"></p>
 
@@ -110,7 +110,7 @@
 
   </form>
 
-  <form class="dhcp-form modal" onsubmit="saveDhcpSpecs(event); return false;">
+  <form class="dhcp-form modal">
 
     <p id="form-dhcp-item-id"></p>
 
@@ -169,17 +169,18 @@
 
   </form>
 
-  <form class="dns-form modal" onsubmit="saveDnsSpecs(event); return false;" style="display: none;">
+  <form class="dns-form modal">
+
     <p id="form-dns-item-id"></p>
+
     <label for="ip">Dirección IP (IPv4):</label>
-    <input type="text" id="ip-dns" name="ip-dns"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="ip-dns" name="ip-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+
     <label for="netmask">Máscara de Red:</label>
-    <input type="text" id="netmask-dns" name="netmask-dns"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="netmask-dns" name="netmask-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+
     <label for="gateway">Puerta de Enlace:</label>
-    <input type="text" id="gateway-dns" name="gateway-dns"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+    <input type="text" id="gateway-dns" name="gateway-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
 
     <div class="form-item">
       <label for="dns-recursive">Servidor DNS Recursivo:</label>
@@ -187,9 +188,10 @@
     </div>
 
     <button class="btn-modern-green" type="submit">Guardar</button>
+
   </form>
 
-  <form class="dhcp-relay-form modal" onsubmit="saveDhcpRelaySpecs(event); return false;">
+  <form class="dhcp-relay-form modal">
     <p id="form-dhcp-relay-item-id"></p>
     <label for="ip-relay">IP:</label>
     <input type="text" id="ip-relay" name="ip-relay"
@@ -206,26 +208,28 @@
     <button class="btn-modern-blue" type="submit">Guardar</button>
   </form>
 
-  <form class="ping-form modal" onsubmit="pingSim(); return false;" style="display: none;"
-    onmousedown="dragPingForm(event)">
+  <form class="ping-form modal">
+
     <label for="ip1">Origen</label>
-    <input type="text" id="ip1" name="ip1" placeholder="192.168.1.1"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+    <input type="text" id="ip1" name="ip1" placeholder="192.168.1.1" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+
     <label for="ip2">Destino</label>
     <input type="text" id="ip2" name="ip2" placeholder="192.168.1.1, www.google.com">
+
     <label for="speed">Tiempo de Animación (ms)</label>
     <input type="text" id="speed" name="speed" placeholder="1000">
+
     <input type="submit" value="Enviar Paquete">
+
   </form>
 
   <!-- COMPONENTES PRECARGADOS -->
 
-  <div class="terminal-component" id="terminal-network" data-id="" onclick="clickTerminal(event)" style="display: none;"
-    onmousedown="dragTerminal(event)">
+  <div class="terminal-component" id="terminal-network" data-id="" style="display: none;">
 
     <p>
       <span>%></span>
-      <input type="text" class="terminal-input" onkeydown="sendCommand(event)" autofocus>
+      <input type="text" class="terminal-input" autofocus>
     </p>
 
     <div class="terminal-output"></div>
@@ -236,11 +240,9 @@
         <p><span>^S</span>Guardar y Salir</p>
       </div>
 
-      <p class="file-editor-error" onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation()"></p>
+      <p class="file-editor-error"></p>
 
-      <textarea class="file-editor" data-file="" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()"
-        onmouseup="event.stopPropagation()" ondragstart="event.stopPropagation()" onkeydown="fileEditorKeyboard(event)">
-      </textarea>
+      <textarea class="file-editor" data-file=""></textarea>
 
       <div class="editor-frame"> <span></span> </div>
 
@@ -248,38 +250,47 @@
 
   </div>
 
-  <div class="browser-component" onmousedown="dragBroswer(event)" data-id="" style="display: none;">
+  <div class="browser-component" data-id="" style="display: none;">
+
     <div class="browser-header">
+
       <div class="browser-controls">
-        <button class="control close" aria-label="Cerrar" onclick="closeBrowser(event)"></button>
-        <button class="control minimize" aria-label="Minimizar" onclick="minimizeBrowser(event)"></button>
-        <button class="control maximize" aria-label="Maximizar" onclick="maximizeBrowser(event)"></button>
+        <button class="control close" aria-label="Cerrar"></button>
+        <button class="control minimize" aria-label="Minimizar"></button>
+        <button class="control maximize" aria-label="Maximizar"></button>
       </div>
+
       <div class="browser-tabs">
         <button class="tab active">Nueva pestaña</button>
       </div>
+
       <div class="browser-address-bar">
+
         <div class="address-bar-icons">
           <button class="icon back" aria-label="Atrás">◀</button>
           <button class="icon forward" aria-label="Adelante">▶</button>
           <button class="icon refresh" aria-label="Actualizar">↻</button>
         </div>
-        <input type="text" class="address-input" placeholder="https://www.ejemplo.com" aria-label="Barra de direcciones"
-          onkeydown="browserSearch(event)" onmousedown="event.stopPropagation()">
+        
+        <input type="text" class="address-input" placeholder="https://www.ejemplo.com" aria-label="Barra de direcciones">
+
         <div class="address-bar-icons">
           <button class="icon star" aria-label="Marcar como favorito">★</button>
           <button class="icon menu" aria-label="Menú">⋮</button>
         </div>
+
       </div>
+
     </div>
-    <iframe class="browser-content" onmousedown="event.stopPropagation()">
-    </iframe>
+
+    <iframe class="browser-content"></iframe>
+
   </div>
 
   <article class="packet-traffic">
     <div class="filter-traffic">
       <input type="text">
-      <button onclick="filterPacketTraffic()">Filtrar</button>
+      <button>Filtrar</button>
     </div>
     <table>
       <tr>

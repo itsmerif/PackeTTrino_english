@@ -1,22 +1,72 @@
-// funciones de inicio
+document.addEventListener("DOMContentLoaded", init);
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function init() {
-    setTimeout(hideLoadingScreen, 0);
-    getPanelItems();
-    await sleep(500);
-    document.querySelector(".terminal-component").addEventListener("keydown", terminalKeyboard); //añadimos eventos de teclado al terminal
+
+    setTimeout(hideLoadingScreen, 0); //ocultamos la pantalla de carga
+    getPanelItems(); //obtenemos los items del panel
+    await sleep(500); //esperamos 500ms para que se cargue el html
+
+    //eventos del documento
+
+    document.addEventListener("keydown", closeEveryThing);
+
+    //eventos de los formularios
+
+    document.querySelector(".pc-form").addEventListener("submit", savePcSpecs);
+    document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm);
+    document.querySelector(".router-form").addEventListener("submit", saveRouterSpecs);
+    document.querySelector(".dhcp-form").addEventListener("submit", saveDhcpSpecs);
+    document.querySelector(".dns-form").addEventListener("submit", saveDnsSpecs);
+    document.querySelector(".dhcp-relay-form").addEventListener("submit", saveDhcpRelaySpecs);
+    document.querySelector(".ping-form").addEventListener("submit", pingSim);
+    document.querySelector(".ping-form").addEventListener("mousedown", dragPingForm);
+
+
+    //eventos del panel
+
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm); //añadimos eventos de clic al item ping del panel
+    removePropagationPingform(); //quitamos la propagación del evento de clic del input del formulario ping
     document.getElementById("item-panel").querySelector(".dynrouting").addEventListener("click", showDynamicRoutingModal); //añadimos eventos de doble clic al item ping del panel
     document.getElementById("item-panel").querySelector(".settings").addEventListener("click", showOptions); //añadimos eventos de doble clic al item ping del panel
-    document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm); //deshabilitar opciones si esta en modo dhcp
     document.getElementById("item-panel").querySelector(".traffic").addEventListener("click", showPacketTraffic); //añadimos eventos de clic al item de la tabla de tráfico
-    document.addEventListener("keydown", closeEveryThing);
-    document.querySelector(".filter-traffic").querySelector("input").addEventListener("keydown", (event) => { if (event.key === "Enter") { filterPacketTraffic(); } });
-    removePropagationPingform();
+
+    //eventos de la terminal
+
+    document.querySelector(".terminal-component").addEventListener("keydown", terminalKeyboard); //añadimos eventos de teclado al terminal
+    document.querySelector(".terminal-component").addEventListener("mousedown", dragTerminal); //añadimos eventos de clic al terminalp
+    document.querySelector(".terminal-component").addEventListener("click", clickTerminal); //añadimos eventos de clic al terminal
+    document.querySelector(".terminal-input").addEventListener("keydown", sendCommand);
+    document.querySelector(".terminal-output").addEventListener("click", clickTerminal);
+    document.querySelector(".file-editor-error").addEventListener("mousedown", event => {event.stopPropagation();});
+    document.querySelector(".file-editor-error").addEventListener("mouseup", event => {event.stopPropagation();});
+    document.querySelector(".file-editor").addEventListener("mousedown", event => {event.stopPropagation();});
+    document.querySelector(".file-editor").addEventListener("mouseup", event => {event.stopPropagation();});
+    document.querySelector(".file-editor").addEventListener("click", event => {event.stopPropagation();});
+    document.querySelector(".file-editor").addEventListener("dragstart", event => {event.stopPropagation();});
+    document.querySelector(".file-editor").addEventListener("keydown", fileEditorKeyboard);
+
+    //eventos del navegador
+
+    document.querySelector(".browser-component").addEventListener("mousedown", dragBroswer);
+    document.querySelector(".browser-component").querySelector(".control.close").addEventListener("click", closeBrowser);
+    document.querySelector(".browser-component").querySelector(".control.minimize").addEventListener("click", minimizeBrowser);
+    document.querySelector(".browser-component").querySelector(".control.maximize").addEventListener("click", maximizeBrowser);
+    document.querySelector(".browser-component").querySelector(".address-input").addEventListener("keydown", browserSearch);
+    document.querySelector(".browser-component").querySelector(".address-input").addEventListener("mousedown", event => {event.stopPropagation();});
+    document.querySelector(".browser-component").querySelector(".browser-content").addEventListener("mousedown", event => {event.stopPropagation();});
+
+    //eventos de la tabla de tráfico
+
+    document.querySelector(".filter-traffic").querySelector("input").addEventListener("keydown", (event) => {
+        if (event.key === "Enter") filterPacketTraffic();
+    });
+
+    document.querySelector(".packet-traffic").querySelector(".filter-traffic").querySelector("button").addEventListener("click", filterPacketTraffic);
+
 }
 
 function getPanelItems() {
@@ -46,7 +96,6 @@ function dragStart(event) {
         originx: x,
         originy: y
     }));
-    
 }
 
 function showPingForm() {
@@ -83,11 +132,11 @@ function downloadState() {
     const url = URL.createObjectURL(blob);
     const enlace = document.createElement("a");
     enlace.href = url;
-    enlace.download = "contenido.html"; // Nombre del archivo
+    enlace.download = "contenido.html";
     document.body.appendChild(enlace);
     enlace.click();
     document.body.removeChild(enlace);
-    URL.revokeObjectURL(url); // Liberar el objeto URL
+    URL.revokeObjectURL(url);
 }
 
 function loadState() {
@@ -125,7 +174,7 @@ function setNewIndex() {
         if (!isNaN(itemindex)) indexes.push(itemindex);
     });
 
-    itemIndex = indexes.length > 0 ? Math.max(...indexes) + 1 : 1;
+    itemIndex = (indexes.length > 0) ? Math.max(...indexes) + 1 : 1;
 
 }
 
@@ -141,16 +190,11 @@ function setTextContents() {
 }
 
 function showTerminal(event) {
-
     event.stopPropagation();
     const networkObject = event.target.closest(".item-dropped");
-
-    //mostramos el terminal usando el id del elemento
     const terminal = document.querySelector(".terminal-component");
     terminal.setAttribute("data-id", networkObject.id);
     terminal.style.display = "block";
-
-    //ocultamos las opciones avanzadas
     const modal = networkObject.querySelector(".advanced-options-modal");
     modal.style.display = "none";
 }
@@ -190,10 +234,10 @@ function dragPingForm(event) {
 
 function closeEveryThing(event) {
     if (event.key === "Escape") {
-        document.querySelectorAll(".modal").forEach(modal => { modal.style.display = "none";});
+        document.querySelectorAll(".modal").forEach(modal => { modal.style.display = "none"; });
         closeBrowser(event);
         document.querySelector(".packet-traffic").style.display = "none";
-        closeTerminal(event);       
+        closeTerminal(event);
     }
 }
 
