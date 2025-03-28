@@ -10,7 +10,7 @@
     border-radius: 5px;
     display: none;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     gap: 15px;
     z-index: 1000;
@@ -34,7 +34,7 @@
 }
 
 .pc-form input {
-    width: 100%;
+    width: 90%;
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -49,7 +49,6 @@
 }
 
 .pc-form label {
-    align-self: flex-start;
     font-weight: 500;
     color: #333;
 }
@@ -57,12 +56,18 @@
 .pc-form p {
     text-transform: uppercase;
     font-weight: bolder;
+    align-self: center;
 }
 
 .pc-form .form-item {
     display: flex;
+    align-self: center;
 
     input {
         width: 20px;
     }
+}
+
+.pc-form button {
+    align-self: center;
 }

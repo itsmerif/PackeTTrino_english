@@ -10,7 +10,7 @@
     border-radius: 5px;
     display: none;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     gap: 15px;
     z-index: 1000;
@@ -33,7 +33,7 @@
 }
 
 .router-form input{
-    width: 80%;
+    width: 90%;
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -55,8 +55,10 @@
 .router-form p {
     text-transform: uppercase;
     font-weight: bolder;
+    align-self: center;
 }
 
 .router-form button {
     width: 50%;
+    align-self: center;
 }
