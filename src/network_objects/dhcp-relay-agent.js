@@ -35,7 +35,6 @@ function createDhcpRelayObject(x, y) {
     advancedOptions.classList.add("advanced-options-modal");
     advancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showDhcpRelaySpecs(event)"> Configurar DHCP Relay </button>
         <button onclick="showARPTable(event)">Ver Tabla ARP</button>
         <button onclick="deleteItem(event)">Eliminar</button>
     `;
@@ -78,6 +77,7 @@ function createDhcpRelayObject(x, y) {
 
     networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
     networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
+    networkObject.setAttribute("onclick", "showDhcpRelaySpecs(event)");
     advancedOptions.setAttribute("onclick", "event.stopPropagation()");
 
     board.appendChild(networkObject);
