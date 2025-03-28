@@ -162,13 +162,3 @@ async function pingSim() {
     await command_ping($networkObject.id, ["ping", destination]);
 
 }
-
-async function pingHost(host) {
-    return fetch(`http://localhost:3000/ping?host=${encodeURIComponent(host)}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('La petición no tuvo éxito');
-            }
-            return response.json();
-        });
-}
