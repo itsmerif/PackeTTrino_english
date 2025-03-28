@@ -12,6 +12,7 @@ function createRouterObject(x, y) {
 
     networkObject.id = `router-${itemIndex}`;
     networkObject.classList.add("item-dropped", "router");
+    [x,y] = checkObjectClip(x, y); //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
     networkObject.setAttribute("data-mac", getRandomMac());
@@ -123,7 +124,7 @@ function createRouterObject(x, y) {
     networkObjectAdvancedOptions.classList.add("advanced-options-modal");
     networkObjectAdvancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showRouterSpecs(event)"> Configurar Interfaces de Red </button>
+        <button onclick="showRoutingTable(event)"> Ver Tabla de Enrutamiento </button>
         <button onclick="showARPTable(event)">Ver Tabla ARP</button>
         <button onclick="showRouterFirewallTable(event)">Ver Tabla Firewall</button>
         <button onclick="deleteItem(event)">Eliminar</button>`;
@@ -133,7 +134,7 @@ function createRouterObject(x, y) {
 
     networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
     networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
-    networkObject.setAttribute("onclick", "showRoutingTable(event)");
+    networkObject.setAttribute("onclick", "showRouterSpecs(event)");
     networkObjectRoutingTable.setAttribute("onclick", "event.stopPropagation()");
     networkObjectAdvancedOptions.setAttribute("onclick", "event.stopPropagation()");
 
