@@ -139,9 +139,11 @@ function showPcForm(id) {
     if (dhcp === "true") {
         document.querySelector(".pc-form #dhcp").checked = true;
         document.querySelector(".pc-form").querySelectorAll("input[type='text']").forEach(input => input.disabled = true);
+        document.querySelector(".pc-form").querySelector("button").innerHTML = "Renovar";
     } else {
         document.querySelector(".pc-form").querySelectorAll("input[type='text']").forEach(input => input.disabled = false);
         document.querySelector(".pc-form #dhcp").checked = false;
+        document.querySelector(".pc-form").querySelector("button").innerHTML = "Guardar";
     }
 
     //mostramos el formulario
