@@ -40,7 +40,7 @@ function createDnsServerObject(x, y) {
     advancedOptions.classList.add("advanced-options-modal");
     advancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showDnsForm(event)">Configurar DNS</button>
+        <button onclick="showDnsTable(event)">Ver Registros DNS</button>
         <button onclick="showARPTable(event)">Ver Tabla ARP</button>
         <button onclick="deleteItem(event)">Eliminar</button>
     `;
@@ -98,7 +98,7 @@ function createDnsServerObject(x, y) {
 
     networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
     networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
-    networkObject.setAttribute("onclick", "showDnsTable(event)");
+    networkObject.setAttribute("onclick", "showDnsForm(event)");
     networkObjectArpTable.setAttribute("onclick", "(event) => { event.stopPropagation(); }");
     advancedOptions.setAttribute("onclick", "event.stopPropagation()");
 
