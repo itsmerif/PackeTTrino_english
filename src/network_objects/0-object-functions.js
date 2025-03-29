@@ -178,20 +178,34 @@ async function icmpTryoutProcess(id) {
     const $board = document.querySelector(".board");
 
     if (icmpTryoutObject1 === "") {
-        icmpTryoutObject1 = id;
+        
         icmpTryoutObject1Ip = $networkObject.getAttribute("data-ip") ||
         $networkObject.getAttribute("ip-enp0s3") ||
         $networkObject.getAttribute("ip-enp0s8") ||
         $networkObject.getAttribute("ip-enp0s9");
+
+        if (!icmpTryoutObject1Ip) {
+            popupMessage("<span>Error: </span>No se ha encontrado la IP del objeto " + id);
+            return;
+        }
+        
+        icmpTryoutObject1 = id;
         createPacketIndicator(id);
         return;
     }
 
-    icmpTryoutObject2 = id;
+
     icmpTryoutObject2Ip = $networkObject.getAttribute("data-ip") ||
     $networkObject.getAttribute("ip-enp0s3") ||
     $networkObject.getAttribute("ip-enp0s8") ||
     $networkObject.getAttribute("ip-enp0s9");
+
+    if (!icmpTryoutObject2Ip) {
+        popupMessage("<span>Error: </span>No se ha encontrado la IP del objeto " + id);
+        return;
+    }
+
+    icmpTryoutObject2 = id;
     createPacketIndicator(id);
     await pingSim(icmpTryoutObject1Ip, icmpTryoutObject2Ip);
     $board.querySelectorAll(".pack-cursor").forEach(cursor => {cursor.remove();});

@@ -26,7 +26,7 @@ async function init() {
 
     //eventos del panel
 
-    document.getElementById("item-panel").querySelector(".ping").addEventListener("click", icmpTryout); //añadimos eventos de clic al item ping del panel
+    document.getElementById("item-panel").querySelector(".ping").addEventListener("click", icmpTryoutStart); //añadimos eventos de clic al item ping del panel
     document.getElementById("item-panel").querySelector(".dynrouting").addEventListener("click", showDynamicRoutingModal); //añadimos eventos de doble clic al item ping del panel
     document.getElementById("item-panel").querySelector(".settings").addEventListener("click", showOptions); //añadimos eventos de doble clic al item ping del panel
     document.getElementById("item-panel").querySelector(".traffic").addEventListener("click", showPacketTraffic); //añadimos eventos de clic al item de la tabla de tráfico
@@ -186,39 +186,6 @@ function showTerminal(event) {
     modal.style.display = "none";
 }
 
-function dragPingForm(event) {
-
-    event.preventDefault();
-    document.body.style.cursor = "move";
-    const pingform = event.target.closest(".ping-form");
-    let rect = pingform.getBoundingClientRect();
-    let offsetX = event.clientX - rect.left;
-    let offsetY = event.clientY - rect.top;
-    pingform.style.right = 'auto';
-    pingform.style.left = `${rect.left}px`;
-    pingform.style.top = `${rect.top}px`;
-
-    function movePingForm(moveEvent) {
-        let x = moveEvent.clientX - offsetX;
-        let y = moveEvent.clientY - offsetY;
-        let maxX = window.innerWidth - pingform.offsetWidth;
-        let maxY = window.innerHeight - pingform.offsetHeight;
-        x = Math.max(0, Math.min(x, maxX));
-        y = Math.max(0, Math.min(y, maxY));
-        pingform.style.left = `${x}px`;
-        pingform.style.top = `${y}px`;
-    }
-
-    function stopDragging() {
-        document.removeEventListener('mousemove', movePingForm);
-        document.removeEventListener('mouseup', stopDragging);
-        document.body.style.cursor = "default";
-    }
-
-    document.addEventListener('mousemove', movePingForm);
-    document.addEventListener('mouseup', stopDragging);
-}
-
 function closeEveryThing(event) {
     if (event.key === "Escape") {
         document.querySelectorAll(".modal").forEach(modal => { modal.style.display = "none"; });
@@ -245,42 +212,39 @@ function changeSchema(event) {
     }
 }
 
-function icmpTryout() {
+function icmpTryoutStart() {
 
-    if (document.body.style.cursor !== "none") {
+    if (icmpTryoutToggle) {
+        icmpTryoutEnd();
+        return;
+    }
 
-        icmpTryoutToggle = true;
+    icmpTryoutToggle = true;
 
-        //creamos el cursor
+    //creamos el cursor
+    const $cursor = document.createElement("article");
+    const $cursorIcon = document.createElement("img");
+    $cursor.classList.add("pack-cursor");
+    $cursorIcon.src = "./assets/board/svgs/pack.svg";
+    $cursor.appendChild($cursorIcon);
+    document.body.appendChild($cursor);
 
-        const $cursor = document.createElement("article");
-        const $cursorIcon = document.createElement("img");
-        $cursor.classList.add("pack-cursor");
-        $cursorIcon.src = "./assets/board/svgs/pack.svg";
-        $cursor.appendChild($cursorIcon);
-        document.body.appendChild($cursor);
+    //ocultamos el cursor por defecto
+    document.body.style.cursor = "none";
 
-        //ocultamos el cursor por defecto
+    //eventos del mouse
+    document.addEventListener("mousemove", moveCursor);
 
-        document.body.style.cursor = "none";
+    function moveCursor(event) {
+        $cursor.style.top = `${event.clientY}px`;
+        $cursor.style.left = `${event.clientX}px`;
+    }
 
-        //eventos del mouse
-
-        document.addEventListener("mousemove", moveCursor);
-
-        function moveCursor(event) {
-            $cursor.style.top = `${event.clientY}px`;
-            $cursor.style.left = `${event.clientX}px`;
-        }
-
-    } else {
-
-        //volvemos al modo normal
-
+    function icmpTryoutEnd() {
         icmpTryoutToggle = false;
-        const $cursor = document.querySelector(".pack-cursor");
-        $cursor.removeEventListener("mousemove", moveCursor);
-        $cursor.remove();
+        const $cursor = document.querySelectorAll(".pack-cursor");
+        $cursor.forEach(cursor => {cursor.removeEventListener("mousemove", moveCursor);});
+        $cursor.forEach(cursor => {cursor.remove();});
         document.body.style.cursor = "default";
     }
 
