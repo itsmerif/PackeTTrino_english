@@ -22,14 +22,11 @@ async function init() {
     document.querySelector(".dhcp-form").addEventListener("submit", saveDhcpSpecs);
     document.querySelector(".dns-form").addEventListener("submit", saveDnsSpecs);
     document.querySelector(".dhcp-relay-form").addEventListener("submit", saveDhcpRelaySpecs);
-    document.querySelector(".ping-form").addEventListener("submit", pingSim);
-    document.querySelector(".ping-form").addEventListener("mousedown", dragPingForm);
 
 
     //eventos del panel
 
     document.getElementById("item-panel").querySelector(".ping").addEventListener("click", icmpTryout); //añadimos eventos de clic al item ping del panel
-    removePropagationPingform(); //quitamos la propagación del evento de clic del input del formulario ping
     document.getElementById("item-panel").querySelector(".dynrouting").addEventListener("click", showDynamicRoutingModal); //añadimos eventos de doble clic al item ping del panel
     document.getElementById("item-panel").querySelector(".settings").addEventListener("click", showOptions); //añadimos eventos de doble clic al item ping del panel
     document.getElementById("item-panel").querySelector(".traffic").addEventListener("click", showPacketTraffic); //añadimos eventos de clic al item de la tabla de tráfico
@@ -228,6 +225,7 @@ function closeEveryThing(event) {
         closeBrowser(event);
         document.querySelector(".packet-traffic").style.display = "none";
         closeTerminal(event);
+        icmpTryout();
     }
 }
 

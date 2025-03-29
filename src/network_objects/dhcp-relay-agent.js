@@ -88,6 +88,12 @@ function createDhcpRelayObject(x, y) {
 function showDhcpRelaySpecs(event) {
     event.stopPropagation();
     const networkObject = event.target.closest(".item-dropped");
+
+    if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
+        icmpTryoutProcess(networkObject.id);
+        return;
+    }
+    
     //obtenemos los atributos del servidor
     const ip = networkObject.getAttribute("data-ip");
     const netmask = networkObject.getAttribute("data-netmask");

@@ -117,6 +117,11 @@ function showDhcpSpecs(event) {
     const networkObject = event.target.closest(".item-dropped");
     const itemId = networkObject.id; //obtenemos el id del elemento
 
+    if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
+        icmpTryoutProcess(itemId);
+        return;
+    }
+
     //obtenemos los atributos del servidor
     const ip = networkObject.getAttribute("data-ip");
     const netmask = networkObject.getAttribute("data-netmask");

@@ -175,18 +175,26 @@ function createPacketIndicator(id) {
 async function icmpTryoutProcess(id) {
 
     const $networkObject = document.getElementById(id);
+    const $board = document.querySelector(".board");
 
     if (icmpTryoutObject1 === "") {
         icmpTryoutObject1 = id;
-        icmpTryoutObject1Ip = $networkObject.getAttribute("data-ip");
+        icmpTryoutObject1Ip = $networkObject.getAttribute("data-ip") ||
+        $networkObject.getAttribute("ip-enp0s3") ||
+        $networkObject.getAttribute("ip-enp0s8") ||
+        $networkObject.getAttribute("ip-enp0s9");
         createPacketIndicator(id);
         return;
     }
 
-    //proceso de simulaciond de ping
-    console.log("simulando ping...");
     icmpTryoutObject2 = id;
-    icmpTryoutObject2Ip = $networkObject.getAttribute("data-ip");
+    icmpTryoutObject2Ip = $networkObject.getAttribute("data-ip") ||
+    $networkObject.getAttribute("ip-enp0s3") ||
+    $networkObject.getAttribute("ip-enp0s8") ||
+    $networkObject.getAttribute("ip-enp0s9");
     createPacketIndicator(id);
     await pingSim(icmpTryoutObject1Ip, icmpTryoutObject2Ip);
+    $board.querySelectorAll(".pack-cursor").forEach(cursor => {cursor.remove();});
+    icmpTryoutObject1 = "";
+    icmpTryoutObject2 = "";
 }

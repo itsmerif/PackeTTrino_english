@@ -111,6 +111,12 @@ function showDnsForm(event) {
     const form = document.querySelector(".dns-form");
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
     const $serverObject = event.target.closest(".item-dropped");
+
+    if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
+        icmpTryoutProcess($serverObject.id);
+        return;
+    }
+
     const id = $serverObject.id;
     const ip = $serverObject.getAttribute("data-ip");
     const netmask = $serverObject.getAttribute("data-netmask");

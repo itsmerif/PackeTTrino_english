@@ -146,9 +146,16 @@ function createRouterObject(x, y) {
 }
 
 function showRouterSpecs(event) {
+
     event.stopPropagation();
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
     const networkObject = event.target.closest(".item-dropped");
+
+    if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
+        icmpTryoutProcess(networkObject.id);
+        return;
+    }
+
     const form = document.querySelector(".router-form");
     const ipEnp0s3 = networkObject.getAttribute("ip-enp0s3");
     const ipEnp0s8 = networkObject.getAttribute("ip-enp0s8");
