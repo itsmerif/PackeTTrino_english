@@ -235,6 +235,11 @@
 }
 
 @keyframes terminal-scale-up {
-    0% { transform: scale(0.2); }
-    100% { transform: scale(1); }
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
 }

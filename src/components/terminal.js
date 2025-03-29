@@ -224,12 +224,15 @@ async function maximizeTerminal() {
 
 function closeTerminal(event) {
     event.preventDefault();
-    const terminal = document.querySelector(".terminal-component");
+    const $terminal = document.querySelector(".terminal-component");
     clearInterval(window.pingInterval);
-    terminalBuffer = [];
+    terminalBuffer = []; 
     currentCommandIndex = 0;
-    terminal.style.display = "none";
     document.querySelector(".terminal-output").innerHTML = "";
-    terminal.querySelector("input").value = "";
+    $terminal.querySelector("input").value = ""; 
+    $terminal.style.top = "40%";
+    $terminal.style.left = "50%";
+    $terminal.style.transform = "translate(-50%, -50%)";
+    $terminal.style.display = "none";
 }
 
