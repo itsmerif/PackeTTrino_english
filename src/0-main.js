@@ -6,7 +6,7 @@ function sleep(ms) {
 
 async function init() {
 
-    setTimeout(hideLoadingScreen, 0); //ocultamos la pantalla de carga
+    setTimeout(hideLoadingScreen, 1000); //ocultamos la pantalla de carga
     getPanelItems(); //obtenemos los items del panel
     await sleep(500); //esperamos 500ms para que se cargue el html
 
@@ -225,7 +225,6 @@ function closeEveryThing(event) {
         closeBrowser(event);
         document.querySelector(".packet-traffic").style.display = "none";
         closeTerminal(event);
-        icmpTryout();
     }
 }
 

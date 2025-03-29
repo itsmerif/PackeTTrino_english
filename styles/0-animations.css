@@ -221,3 +221,15 @@
         opacity: 0;
     }
 }
+
+@keyframes terminal-blink {
+    0% {
+        width: 0px;
+        filter: brightness(0);
+    }
+
+    100% {
+        width: 1000px;
+        filter: brightness(1);
+    }
+}
