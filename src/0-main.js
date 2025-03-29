@@ -41,12 +41,12 @@ async function init() {
     document.querySelector(".terminal-component").addEventListener("click", clickTerminal); //añadimos eventos de clic al terminal
     document.querySelector(".terminal-input").addEventListener("keydown", sendCommand);
     document.querySelector(".terminal-output").addEventListener("click", clickTerminal);
-    document.querySelector(".file-editor-error").addEventListener("mousedown", event => {event.stopPropagation();});
-    document.querySelector(".file-editor-error").addEventListener("mouseup", event => {event.stopPropagation();});
-    document.querySelector(".file-editor").addEventListener("mousedown", event => {event.stopPropagation();});
-    document.querySelector(".file-editor").addEventListener("mouseup", event => {event.stopPropagation();});
-    document.querySelector(".file-editor").addEventListener("click", event => {event.stopPropagation();});
-    document.querySelector(".file-editor").addEventListener("dragstart", event => {event.stopPropagation();});
+    document.querySelector(".file-editor-error").addEventListener("mousedown", event => { event.stopPropagation(); });
+    document.querySelector(".file-editor-error").addEventListener("mouseup", event => { event.stopPropagation(); });
+    document.querySelector(".file-editor").addEventListener("mousedown", event => { event.stopPropagation(); });
+    document.querySelector(".file-editor").addEventListener("mouseup", event => { event.stopPropagation(); });
+    document.querySelector(".file-editor").addEventListener("click", event => { event.stopPropagation(); });
+    document.querySelector(".file-editor").addEventListener("dragstart", event => { event.stopPropagation(); });
     document.querySelector(".file-editor").addEventListener("keydown", fileEditorKeyboard);
 
     //eventos del navegador
@@ -56,8 +56,8 @@ async function init() {
     document.querySelector(".browser-component").querySelector(".control.minimize").addEventListener("click", minimizeBrowser);
     document.querySelector(".browser-component").querySelector(".control.maximize").addEventListener("click", maximizeBrowser);
     document.querySelector(".browser-component").querySelector(".address-input").addEventListener("keydown", browserSearch);
-    document.querySelector(".browser-component").querySelector(".address-input").addEventListener("mousedown", event => {event.stopPropagation();});
-    document.querySelector(".browser-component").querySelector(".browser-content").addEventListener("mousedown", event => {event.stopPropagation();});
+    document.querySelector(".browser-component").querySelector(".address-input").addEventListener("mousedown", event => { event.stopPropagation(); });
+    document.querySelector(".browser-component").querySelector(".browser-content").addEventListener("mousedown", event => { event.stopPropagation(); });
 
     //eventos de la tabla de tráfico
 
@@ -96,16 +96,6 @@ function dragStart(event) {
         originx: x,
         originy: y
     }));
-}
-
-function showPingForm() {
-    const form = document.querySelector(".ping-form");
-    if (form.style.display === "none") {
-        form.style.display = "flex";
-        form.ip1.focus();
-    } else {
-        form.style.display = "none";
-    }
 }
 
 function closeAllModals() {
@@ -256,4 +246,41 @@ function changeSchema(event) {
             createBasicNetwork();
         }
     }
+}
+
+function showPingForm() {
+
+    if (document.body.style.cursor !== "none") {
+
+        //creamos el cursor
+
+        const $cursor = document.createElement("article");
+        const $cursorIcon = document.createElement("img");
+        $cursor.classList.add("pack-cursor");
+        $cursorIcon.src = "./assets/board/svgs/pack.svg";
+        $cursor.appendChild($cursorIcon);
+        document.body.appendChild($cursor);
+
+        //ocultamos el cursor por defecto
+
+        document.body.style.cursor = "none";
+
+        //eventos del mouse
+
+        document.addEventListener("mousemove", moveCursor);
+
+        function moveCursor(event) {
+            $cursor.style.top = `${event.clientY}px`;
+            $cursor.style.left = `${event.clientX}px`;
+        }
+
+    } else {
+
+        //volvemos al modo normal
+        const $cursor = document.querySelector(".pack-cursor");
+        $cursor.removeEventListener("mousemove", moveCursor);
+        $cursor.remove();
+        document.body.style.cursor = "default";
+    }
+
 }

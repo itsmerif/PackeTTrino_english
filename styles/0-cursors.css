@@ -1,0 +1,16 @@
+.pack-cursor {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    box-sizing: border-box;
+    padding: 0px;
+    margin: 0px;
+    width: 80px;
+    pointer-events: none; 
+}
+
+.pack-cursor img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
