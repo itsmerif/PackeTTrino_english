@@ -149,3 +149,44 @@ function closeARPTable(event) {
 function closeDnsTable(event) {
     closeObjectModalTable(event, "dns-table");
 }
+
+function createPacketIndicator(id) {
+
+    const $networkObject = document.getElementById(id)
+    const $board = document.querySelector(".board");
+
+    //creamos el indicator
+    const $indicator = document.createElement("article");
+    const $indicatorIcon = document.createElement("img");
+    $indicator.classList.add("pack-cursor");
+    $indicatorIcon.src = "./assets/board/svgs/pack.svg";
+    $indicator.appendChild($indicatorIcon);
+
+    //obtenermos las coordenadas del objeto
+    const x = parseInt($networkObject.style.left);
+    const y = parseInt($networkObject.style.top);
+    $indicator.style.left = `${x}px`;
+    $indicator.style.top = `${y}px`;
+    
+    //agregamos el indicator al tablero
+    $board.appendChild($indicator);
+}
+
+async function icmpTryoutProcess(id) {
+
+    const $networkObject = document.getElementById(id);
+
+    if (icmpTryoutObject1 === "") {
+        icmpTryoutObject1 = id;
+        icmpTryoutObject1Ip = $networkObject.getAttribute("data-ip");
+        createPacketIndicator(id);
+        return;
+    }
+
+    //proceso de simulaciond de ping
+    console.log("simulando ping...");
+    icmpTryoutObject2 = id;
+    icmpTryoutObject2Ip = $networkObject.getAttribute("data-ip");
+    createPacketIndicator(id);
+    await pingSim(icmpTryoutObject1Ip, icmpTryoutObject2Ip);
+}

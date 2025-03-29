@@ -1,9 +1,6 @@
-//variables globales
 let itemIndex = 0;
 let quickInfoTimeout;
 const leaseTimers = {};
-
-//opciones globales
 let ignoreArpTraffic = false;
 
 //variables de animaciones
@@ -40,3 +37,10 @@ let nodes = {};
 let nodesNetmask = {};
 let nodesIp = {};
 let defaultNetwork = "0.0.0.0";
+
+//variables de icmptryout
+let icmpTryoutToggle = false;
+let icmpTryoutObject1 = "";
+let icmpTryoutObject1Ip = "";
+let icmpTryoutObject2 = "";
+let icmpTryoutObject2Ip = "";

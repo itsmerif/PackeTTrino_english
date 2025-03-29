@@ -116,6 +116,11 @@ function createPcObject(x, y) {
 
 function showPcForm(id) {
 
+    if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
+        icmpTryoutProcess(id);
+        return;
+    }
+
     const $networkObject = document.getElementById(id);
 
     //obtenemos los atributos del pc

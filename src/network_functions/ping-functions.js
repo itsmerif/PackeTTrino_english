@@ -140,18 +140,9 @@ function ping_f(origin) {
     }, 500);
 }
 
-async function pingSim() {
+async function pingSim(originIp, destinationIp) {
 
     visualToggle = true;
-
-    const form = document.querySelector(".ping-form");
-    const originIp = form.ip1.value; //ip de origen
-    const destination = form.ip2.value;
-    const speed = form.speed.value;
-
-    if (speed) {
-        visualSpeed = parseInt(speed, 10);
-    }
 
     const $networkObject = document.querySelector(`[data-ip='${originIp}']`)
         || document.querySelector(`[ip-enp0s3='${originIp}']`)
@@ -159,6 +150,7 @@ async function pingSim() {
         || document.querySelector(`[ip-enp0s9='${originIp}']`);
 
     if (!$networkObject) return;
-    await command_ping($networkObject.id, ["ping", destination]);
+    console.log("balizando ping...");
+    await command_ping($networkObject.id, ["ping", destinationIp]);
 
 }

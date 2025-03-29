@@ -28,7 +28,7 @@ async function init() {
 
     //eventos del panel
 
-    document.getElementById("item-panel").querySelector(".ping").addEventListener("click", showPingForm); //añadimos eventos de clic al item ping del panel
+    document.getElementById("item-panel").querySelector(".ping").addEventListener("click", icmpTryout); //añadimos eventos de clic al item ping del panel
     removePropagationPingform(); //quitamos la propagación del evento de clic del input del formulario ping
     document.getElementById("item-panel").querySelector(".dynrouting").addEventListener("click", showDynamicRoutingModal); //añadimos eventos de doble clic al item ping del panel
     document.getElementById("item-panel").querySelector(".settings").addEventListener("click", showOptions); //añadimos eventos de doble clic al item ping del panel
@@ -248,9 +248,11 @@ function changeSchema(event) {
     }
 }
 
-function showPingForm() {
+function icmpTryout() {
 
     if (document.body.style.cursor !== "none") {
+
+        icmpTryoutToggle = true;
 
         //creamos el cursor
 
@@ -277,6 +279,8 @@ function showPingForm() {
     } else {
 
         //volvemos al modo normal
+
+        icmpTryoutToggle = false;
         const $cursor = document.querySelector(".pack-cursor");
         $cursor.removeEventListener("mousemove", moveCursor);
         $cursor.remove();
