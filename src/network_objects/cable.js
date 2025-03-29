@@ -1,8 +1,11 @@
-function createCableObject(x1, y1, x2, y2, start, end) {
+function createCableObject(x1, y1, x2, y2, start, end, interface = "enp0s3") {
 
     const svg = document.getElementById("svg-board");
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+
+
     const x1Value = parseInt(x1.replace("px", ""));
     const y1Value = parseInt(y1.replace("px", ""));
     const x2Value = parseInt(x2.replace("px", ""));
@@ -27,9 +30,11 @@ function createCableObject(x1, y1, x2, y2, start, end) {
     circle.setAttribute("r", "10");
     circle.setAttribute("fill", "red");
 
+    title.textContent = interface;
+
+    circle.appendChild(title);
     svg.appendChild(line);
     svg.appendChild(circle);
-
 
 }
 

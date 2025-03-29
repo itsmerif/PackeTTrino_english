@@ -101,21 +101,21 @@ function switchConn(event) {
 
             if (enp0s3Conn === "") {
 
-                createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id);
+                createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id, "enp0s3");
                 saveConn(event, itemId);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s3", switchObject.id);
                 switchObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
 
             } else if (enp0s8Conn === "") {
 
-                createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id);
+                createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id, "enp0s8");
                 saveConn(event, itemId);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s8", switchObject.id);
                 switchObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
 
             } else if (enp0s9Conn === "") {
 
-                createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id);
+                createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id, "enp0s9");
                 saveConn(event, itemId);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s9", switchObject.id);
                 routerObject.querySelector("img").draggable = false; //el router ya no se puede arrastrar
