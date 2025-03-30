@@ -4,16 +4,11 @@ async function dnsRequestPacketGenerator(networkObjectId, switchId, domain, dnsS
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     const networkObjectIp = $networkObject.getAttribute("data-ip");
     const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+    dnsServer = (dnsServer === "") ? $networkObject.getAttribute("data-dns-server") : dnsServer;
+    if (!dnsServer) throw new Error("Error: No se ha definido el servidor DNS");
+
     let packet = new dnsRequest(networkObjectIp, dnsServer, networkObjectMac, "", domain);
     packet.answer_type = query_type;
-
-    if (!dnsServer) dnsServer = $networkObject.getAttribute("data-dns-server"); //si no se especificó el servidor dns, usamos el que tenemos en el objeto
-
-    if (!dnsServer) {
-        terminalMessage(networkObjectId + ": No se ha definido el servidor DNS");
-        return;
-    }
-
     const isSameNetwork = getNetwork(networkObjectIp, networkObjectNetmask) === getNetwork(dnsServer, networkObjectNetmask);
 
     if (!isSameNetwork) {
