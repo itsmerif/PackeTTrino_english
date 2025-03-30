@@ -1,19 +1,42 @@
 function showOptions() {
 
     const modalComponent = document.createElement("div");
-    const $btnStyle = "btn-green";
+    const $btnStyle = "btn-modern-blue";
+    const $inputStyle = "btn-toggle";
     modalComponent.classList.add("settings-modal-container");
     modalComponent.innerHTML = `
+
     <form class="settings-modal">
-        <div class="form-group">
-            <label for="visual-toggle"> Visualización (Visual) </label>
-            <input type="checkbox" id="visual-toggle" name="visual-toggle">
+
+        <h1> Opciones Avanzadas </h1>
+
+        <div class="options-group">
+            <label for="visual-toggle"> Modo Visual</label>
+            <input type="checkbox" class=${$inputStyle} id="visual-toggle" name="visual-toggle">
         </div>
-        <div class="form-group">
-            <label for="ignore-arp-traffic"> Ignorar tráfico ARP (Visual) </label>
-            <input type="checkbox" id="ignore-arp-traffic" name="ignore-arp-traffic">
+
+        <div class="options-group">
+            <label for="ignore-arp-traffic"> Tráfico ARP (Visual) </label>
+            <input type="checkbox" class=${$inputStyle} id="ignore-arp-traffic" name="ignore-arp-traffic">
         </div>
+
+        <div class="options-group">
+            <label for="ignore-arp-traffic"> Iconos Legado </label>
+            <input type="checkbox" class=${$inputStyle} id="legacy-icons" name="legacy-icons">
+        </div>
+
+        <div class="options-group">
+            <label for="ignore-arp-traffic"> Modo Oscuro </label>
+            <input type="checkbox" class=${$inputStyle} id="dark-mode" name="dark-mode">
+        </div>
+
+        <div class="options-group">
+            <label for="ignore-arp-traffic"> Template Option (Visual) </label>
+            <input type="checkbox" class=${$inputStyle} id="template-option" name="template-option">
+        </div>
+        
         <button class=${$btnStyle}>Aceptar</button>
+
     </form>`;
 
     if (ignoreArpTraffic) {
@@ -27,7 +50,6 @@ function showOptions() {
     modalComponent.querySelector("#ignore-arp-traffic").addEventListener("change", function () {ignoreArpTraffic = this.checked;});
     modalComponent.querySelector("#visual-toggle").addEventListener("change", function () {visualToggle = this.checked;});
     modalComponent.querySelector(`.${$btnStyle}`).addEventListener("click", closeSettingsModal);
-    document.querySelector(".modal-overlay").style.display = "block";
     document.body.appendChild(modalComponent);
 
 }
