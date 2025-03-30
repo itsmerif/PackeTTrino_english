@@ -188,7 +188,7 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
 
         //no hay regla para enrutar el paquete, lo damos por fallido
 
-        throw new Error("No existe regla para enrutar el paquete en " + routerObjectId);
+        throw new Error("No existe regla para enrutar el paquete");
     }
 
 }

@@ -81,7 +81,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
             serverObjectMac, //origin mac
             serverObjectIp, //server ip
             offerIP, //offer ip
-            packet.origin_mac, //destination mac
+            packet.origin_mac, //destination mac, en los nuevos protocolos de dhcp va directamente a la mac del cliente que solicita
             packet.chaddr, //chaddr
             gatewayOffer, //gateway offer
             netmaskOffer, //netmask offer
@@ -119,17 +119,17 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
             );
 
             newPacket.chaddr = packet.chaddr;
+            newPacket.destination_mac = packet.origin_mac; //en los nuevos protocolos de dhcp va directamente a la mac del cliente que solicita
 
             //comprobamos si proviene de un agente de retransmision
 
             if (packet.giaddr !== "0.0.0.0") {
                 newPacket.destination_ip = packet.giaddr;
                 newPacket.giaddr = packet.giaddr;
-                newPacket.destination_mac = isIpInARPTable(serverObjectId, defaultGateway);
+                newPacket.destination_mac = isIpInARPTable(serverObjectId, defaultGateway); //no basta con esto!!!!
             }
 
             addDhcpEntry(serverObjectId, packet.yiaddr, packet.chaddr, packet.hostname);
-            //terminalMessage(serverObjectId + ": DHCP ACK Enviado")
             addPacketTraffic(newPacket)
             await switchProcessor(switchId, serverObjectId, newPacket);
             return;
@@ -162,6 +162,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
             );
 
             newPacket.destination_ip = packet.origin_ip;
+            newPacket.destination_mac = packet.origin_mac; //en los nuevos protocolos de dhcp va directamente a la mac del cliente que solicita
             addPacketTraffic(newPacket);
             await switchProcessor(switchId, serverObjectId, newPacket);
             return;

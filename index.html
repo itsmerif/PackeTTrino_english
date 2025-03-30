@@ -83,7 +83,7 @@
 
     <div class="form-item">
       <label for="dhcp"> Modo DHCP: </label>
-      <input type="checkbox" id="dhcp" name="dhcp">
+      <input class="btn-toggle" type="checkbox" id="dhcp" name="dhcp">
     </div>
 
     <button class="btn-modern-blue" type="submit">Guardar</button>
@@ -339,6 +339,7 @@
   <script src="./src/generators/icmpGen.js"></script>
   <script src="./src/generators/tcpGen.js"></script>
   <!-- PROCESADORES -->
+  <script src="./src/processors/arpResolver.js"></script>
   <script src="./src/processors/dhcpRelayProc.js"></script>
   <script src="./src/processors/dhcpServerProc.js"></script>
   <script src="./src/processors/dnsServerProc.js"></script>

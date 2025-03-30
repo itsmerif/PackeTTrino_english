@@ -169,9 +169,8 @@ async function savePcSpecs(event) {
     networkObject.setAttribute("data-gateway", newGateway);
     networkObject.setAttribute("data-dhcp", newDhcp);
     networkObject.setAttribute("data-dns-server", newDnsServer);
-    if (newDhcp) await dhcp(networkObject.id, ["dhcp", "-renew"]);
-    document.querySelector(".modal-overlay").style.display = "none";
     document.querySelector(".pc-form").style.display = "none";
+    if (newDhcp) await dhcp(networkObject.id, ["dhcp", "-renew"]);
 }
 
 function disableOptionsPcForm(event) {

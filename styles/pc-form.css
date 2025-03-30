@@ -33,8 +33,8 @@
     z-index: -1;
 }
 
-.pc-form input {
-    width: 90%;
+.pc-form input[type="text"] {
+    width: 100%;
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -43,7 +43,18 @@
     font-family: var(--inter);
 }
 
-.pc-form input:focus {
+.pc-form .form-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+
+    input[type="text"] {
+        width: 20px;
+    }
+}
+
+.pc-form input[type="text"]:focus {
     outline: none;
     border-color: #666;
 }
@@ -57,15 +68,6 @@
     text-transform: uppercase;
     font-weight: bolder;
     align-self: center;
-}
-
-.pc-form .form-item {
-    display: flex;
-    align-self: center;
-
-    input {
-        width: 20px;
-    }
 }
 
 .pc-form button {

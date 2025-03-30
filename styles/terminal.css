@@ -13,7 +13,6 @@
     z-index: 2;
     overflow-y: auto;
     transition: none;
-    animation: terminal-scale-up 0.3s ease-in-out;
 }
 
 .terminal-component.dragging {

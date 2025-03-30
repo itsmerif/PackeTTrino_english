@@ -505,8 +505,6 @@ function checkObjectClip(x, y) { //esta funcion comprueba si el objeto queda cli
     let objectTop = (y - objectHeight / 2);
     let objectBot = (y + objectHeight / 2);
 
-    console.log(objectLeft, objectRight, objectTop, objectBot);
-
     if (objectLeft < 0) { //el objeto acaba oculto por la izquierda
         let diffLeft = Math.abs(objectLeft);
         newX = x + diffLeft + spareSpace;
