@@ -1,108 +1,41 @@
-async function icmpRequestPacketGenerator(networkObjectId, switchId, ip, destination) {
+async function icmpRequestPacketGenerator(networkObjectId, switchId, originIp, destinationIp) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const isSameNetwork = getNetwork(ip, $networkObject.getAttribute("data-netmask")) === getNetwork(destination, $networkObject.getAttribute("data-netmask"));
-    let destination_mac; let packet;
+    const isSameNetwork = getNetwork(originIp, $networkObject.getAttribute("data-netmask")) === getNetwork(destinationIp, $networkObject.getAttribute("data-netmask"));
+    const networkObjectMac = $networkObject.getAttribute("data-mac"); 
+    let packet = new IcmpEchoRequest(originIp, destinationIp, networkObjectMac, "");
+    let destination_mac;
 
-    if (!isSameNetwork) { //el destino no está en la misma red, debemos enviarlo a la puerta de enlace
+    if (!isSameNetwork) { 
 
-        //terminalMessage(networkObjectId + ": Destino En Otra Red...");
         const defaultGateway = $networkObject.getAttribute("data-gateway");
 
-        if (!defaultGateway) {
-            //terminalMessage(networkObjectId + ": Error: Puerta de Enlace Predetermina No Configurada");
-            throw new Error("Error: Puerta de Enlace Predeterminada No Configurada");
-        }
-
+        if (!defaultGateway) throw new Error("Error: Puerta de Enlace Predeterminada No Configurada");
+        
         const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
 
-        if (!defaultGatewayMac) { //no tenemos la ip de la puerta de enlace en nuestra tabla de arp, lo guardamos en el buffer y enviamos un ARP primero
-            //terminalMessage(networkObjectId + ": Gateway No Guardado. Enviando ARP por " + defaultGateway);
-            buffer[networkObjectId] = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), "");
-            packet = new ArpRequest(ip, defaultGateway, $networkObject.getAttribute("data-mac"));
-            addPacketTraffic(packet);
-            await switchProcessor(switchId, networkObjectId, packet);
+        if (!defaultGatewayMac) {
+            buffer[networkObjectId] = packet;
+            arpResolve(networkObjectId, defaultGateway);
             return;
         }
 
-        packet = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), defaultGatewayMac);
-        icmpFlag = false;
+        packet.destination_mac = defaultGatewayMac;
         addPacketTraffic(packet);
         await switchProcessor(switchId, networkObjectId, packet);
         return;
 
     }
 
-    //están en la misma red
-
-    destination_mac = isIpInARPTable(networkObjectId, destination);
+    destination_mac = isIpInARPTable(networkObjectId, destinationIp);
 
     if (!destination_mac) {
-        //guardamos el paquete en el buffer y enviamos una solicitud ARP primero
-        buffer[networkObjectId] = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), "");
-        packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
-        addPacketTraffic(packet);
-        await switchProcessor(switchId, networkObjectId, packet);
-    } else {
-        packet = new IcmpEchoRequest(ip, destination, $networkObject.getAttribute("data-mac"), destination_mac);
-        addPacketTraffic(packet);
-        await switchProcessor(switchId, networkObjectId, packet);
+        buffer[networkObjectId] = packet;
+        arpResolve(networkObjectId, destinationIp);
     }
 
-}
-
-async function icmpReplyPacketGenerator(networkObjectId, switchId, ip, destination) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    const isSameNetwork = getNetwork(ip, $networkObject.getAttribute("data-netmask")) === getNetwork(destination, $networkObject.getAttribute("data-netmask"));
-    let destination_mac; let packet;
-
-    if (!isSameNetwork) { //el destino no está en la misma red, debemos enviarlo a la puerta de enlace
-
-        //terminalMessage(networkObjectId + ": Destino En Otra Red...");
-        const defaultGateway = $networkObject.getAttribute("data-gateway");
-
-        if (!defaultGateway) {
-            //terminalMessage(networkObjectId + ": Error: Puerta de Enlace Predetermina No Configurada");
-            throw new Error("Error: Puerta de Enlace Predetermina No Configurada");
-        }
-
-        const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
-
-        if (!defaultGatewayMac) { //no tenemos la ip de la puerta de enlace en nuestra tabla de arp, lo guardamos en el buffer y enviamos un ARP primero
-            //terminalMessage(networkObjectId + ": Gateway No Guardado. Enviando ARP por " + defaultGateway);
-            buffer[networkObjectId] = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), "");
-            packet = new ArpRequest(ip, defaultGateway, $networkObject.getAttribute("data-mac"));
-            arpFlag = false;
-            addPacketTraffic(packet);
-            await switchProcessor(switchId, networkObjectId, packet);
-            return;
-        }
-
-        packet = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), defaultGatewayMac);
-        icmpFlag = false;
-
-        addPacketTraffic(packet);
-        await switchProcessor(switchId, networkObjectId, packet);
-        return;
-
-    }
-
-    destination_mac = isIpInARPTable(networkObjectId, destination);
-
-    if (!destination_mac) {
-        buffer[networkObjectId] = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), "");
-        packet = new ArpRequest(ip, destination, $networkObject.getAttribute("data-mac"));
-        arpFlag = false;
-
-        addPacketTraffic(packet);
-        await switchProcessor(switchId, networkObjectId, packet);
-    } else {
-        packet = new IcmpEchoReply(ip, destination, $networkObject.getAttribute("data-mac"), destination_mac);
-        icmpFlag = false;
-
-        addPacketTraffic(packet);
-        await switchProcessor(switchId, networkObjectId, packet);
-    }
+    packet.destination_mac = destination_mac;
+    addPacketTraffic(packet);
+    await switchProcessor(switchId, networkObjectId, packet);
 
 }
