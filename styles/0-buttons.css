@@ -95,6 +95,7 @@
 
 .btn-modern-blue:hover {
     background-color: #3a56d4;
+    transform: translate(0px, -3px);
     box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
 }
 
@@ -165,4 +166,43 @@
 .btn-modern-green:active {
     transform: translateY(1px);
     box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+}
+
+.btn-toggle {
+    appearance: none;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0px 0px 10px black;
+    width: 60px;
+    height: 30px;
+    background: linear-gradient(135deg, #ff0000, #bd0505);
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 0px;
+    scale: 0.7;
+}
+
+.btn-toggle::before {
+    content: "";
+    height: 25px;
+    width: 25px;
+    background-color: white;
+    border-radius: 50%;
+    box-sizing: border-box;
+    padding: 2px;
+    margin: 1px;
+    transition: transform 0.1s ease-in-out, background 0.2s ease-in-out;
+}
+
+.btn-toggle:hover{
+    cursor: pointer;
+}
+
+.btn-toggle:checked::before {
+    transform: translateX(33px);
+}
+
+.btn-toggle:checked {
+    background: linear-gradient(135deg, #4ade80, #16a34a);
 }
