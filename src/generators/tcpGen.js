@@ -6,6 +6,7 @@ async function tcpSynPacketGenerator(networkObjectId, switchId, destination, por
     const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
     const isSameNetwork = getNetwork(destination, networkObjectNetmask) === getNetwork(networkObjectIp, networkObjectNetmask);
     let packet = new syn(networkObjectIp, destination, networkObjectMac, "", port);
+    tcpBuffer[networkObjectId] = packet.sequence_number;
 
     if (!isSameNetwork) {
 
@@ -17,7 +18,6 @@ async function tcpSynPacketGenerator(networkObjectId, switchId, destination, por
 
         if (!defaultGatewayMac) {
             buffer[networkObjectId] = packet;
-            tcpBuffer[networkObjectId] = packet.sequence_number;
             arpResolver(networkObjectId, defaultGateway);
             return;
         }
@@ -33,7 +33,6 @@ async function tcpSynPacketGenerator(networkObjectId, switchId, destination, por
 
     if (!destination_mac) {
         buffer[networkObjectId] = packet;
-        tcpBuffer[networkObjectId] = packet.sequence_number;
         arpResolver(networkObjectId, destination);
         return;
     }

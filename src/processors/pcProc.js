@@ -23,40 +23,23 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "arp" && packet.type === "reply") {
-
-        //terminalMessage(networkObjectId + ": Respuesta ARP recibida");
-
-        if (packet.destination_ip !== networkObjectIp) {
-            //terminalMessage(networkObjectId + ": Respuesta ARP invalida");
-            return;
-        }
-
+        if (packet.destination_ip !== networkObjectIp) return;
         arpFlag = true;
-
-
         addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
-        //terminalMessage(networkObjectId + ": El equipo con ip " + packet.origin_ip + " ha sido agregado a la tabla de ARP");
-
         if (buffer[networkObjectId]) {
             buffer[networkObjectId].destination_mac = isIpInARPTable(networkObjectId, packet.origin_ip);
             addPacketTraffic(buffer[networkObjectId]);
             await switchProcessor(switchId, networkObjectId, buffer[networkObjectId]);
-            //if (buffer[networkObjectId].protocol === "dhcp" && buffer[networkObjectId].type === "release") deleteDhcpInfo(networkObjectId);
             delete buffer[networkObjectId];
         }
     }
 
     if (packet.protocol === "icmp" && packet.type === "request") {
-
-        if (packet.destination_ip !== networkObjectIp) {
-            //terminalMessage(networkObjectId + ": Solicitud ICMP ignorada");
-            return;
-        }
-
-        //terminalMessage(networkObjectId + ": Enviando ICMP ECHO REPLY");
-        await icmpReplyPacketGenerator(networkObjectId, switchId, networkObjectIp, packet.origin_ip);
+        if (packet.destination_ip !== networkObjectIp) return;
+        let newPacket = new IcmpEchoReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
+        addPacketTraffic(newPacket);
+        await switchProcessor(switchId, networkObjectId, newPacket);
         return;
-
     }
 
     if (packet.protocol === "icmp" && packet.type === "time-exceeded") {
@@ -68,29 +51,19 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "icmp" && packet.type === "reply") {
-
-        if (packet.destination_ip !== networkObjectIp) {
-            throw new Error("Destino No Coincide");
-        }
-
+        if (packet.destination_ip !== networkObjectIp) return;
         icmpFlag = true;
-
         if (trace){ //estamos en modo traceroute
             traceBuffer.push(packet.origin_ip);
             traceFlag = true; //confirmamos que hemos encontrado el destino
         }
-
     }
 
     if (packet.protocol === "dhcp" && packet.type === "offer") {
 
-        if (packet.chaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
-
-            ////console.log("DHCP Discover");
+        if (packet.chaddr === networkObjectMac) {
 
             dhcpDiscoverFlag = true;
-
-            //terminalMessage("DHCP OFFER Recibido")
 
             let newPacket = new dhcpRequest(
                 networkObjectMac, //origin mac
@@ -105,7 +78,6 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
             newPacket.chaddr = packet.chaddr;
 
             addPacketTraffic(newPacket);
-            //terminalMessage("DHCP REQUEST Enviado")
             await switchProcessor(switchId, networkObjectId, newPacket);
 
         }
@@ -113,8 +85,7 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "dhcp" && packet.type === "ack") {
-        if (packet.chaddr === networkObjectMac) { //hemos detectado una oferta para nuestro equipo
-            //terminalMessage("DHCP ACK Recibido");
+        if (packet.chaddr === networkObjectMac) {
             dhcpRequestFlag = true;
             setDhcpInfo(networkObjectId, packet);
         }
