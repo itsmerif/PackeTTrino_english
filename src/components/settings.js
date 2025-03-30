@@ -1,5 +1,10 @@
 function showOptions() {
 
+    if (document.querySelector(".settings-modal-container")) {
+        document.querySelector(".settings-modal-container").remove();
+        return;
+    }
+
     const modalComponent = document.createElement("div");
     const $btnStyle = "btn-modern-blue";
     const $inputStyle = "btn-toggle";
@@ -21,21 +26,21 @@ function showOptions() {
         </div>
 
         <div class="options-group">
-            <label for="ignore-arp-traffic"> Iconos Legado </label>
+            <label for="legacy-icons"> Iconos Legado </label>
             <input type="checkbox" class=${$inputStyle} id="legacy-icons" name="legacy-icons">
         </div>
 
         <div class="options-group">
-            <label for="ignore-arp-traffic"> Modo Oscuro </label>
+            <label for="dark-mode"> Modo Oscuro </label>
             <input type="checkbox" class=${$inputStyle} id="dark-mode" name="dark-mode">
         </div>
 
         <div class="options-group">
-            <label for="ignore-arp-traffic"> Template Option (Visual) </label>
+            <label for="template-option"> Template Option (Visual) </label>
             <input type="checkbox" class=${$inputStyle} id="template-option" name="template-option">
         </div>
         
-        <button class=${$btnStyle}>Aceptar</button>
+        <button class=${$btnStyle}>Aplicar</button>
 
     </form>`;
 
