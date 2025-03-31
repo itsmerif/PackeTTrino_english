@@ -10,12 +10,14 @@
     border-radius: 5px;
     display: none;
     flex-direction: column;
-    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
     gap: 15px;
     z-index: 1000;
     animation: form-animation 0.25s ease-in-out;
-    font-family: var(--inter);
     min-width: 300px;
+    overflow: hidden;
+    font-family: var(--inter);
 }
 
 .dns-form::before {
@@ -31,7 +33,7 @@
     z-index: -1;
 }
 
-.dns-form input {
+.dns-form input[type="text"] {
     width: 90%;
     padding: 8px 12px;
     border: 1px solid #ddd;
@@ -40,13 +42,23 @@
     text-align: center;
 }
 
+.dns-form .form-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+
+    input[type="text"] {
+        width: 20px;    
+    }
+}
+
 .dns-form input:focus {
     outline: none;
     border-color: #666;
 }
 
 .dns-form label {
-    align-self: flex-start;
     font-weight: 500;
     color: #333;
 }
@@ -59,15 +71,6 @@
 }
 
 .dns-form button {
-    margin-top: 10px;
     align-self: center;
 }
 
-.dns-form .form-item {
-    display: flex;
-    flex-direction: row;
-
-    input {
-        width: 20px;    
-    }
-}
