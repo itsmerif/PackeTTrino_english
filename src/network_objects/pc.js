@@ -129,8 +129,9 @@ function showPcForm(id) {
     const ip = $networkObject.getAttribute("data-ip");
     const netmask = $networkObject.getAttribute("data-netmask");
     const gateway = $networkObject.getAttribute("data-gateway");
-    const dhcp = $networkObject.getAttribute("data-dhcp");
     const dnsServer = $networkObject.getAttribute("data-dns-server");
+    const isDhcpOn = $networkObject.getAttribute("data-dhcp");
+    const isWebServerOn = $networkObject.getAttribute("web-server");
 
     //mostramos el formulario con los datos
 
@@ -142,7 +143,7 @@ function showPcForm(id) {
 
     //comprobamos si el equipo esta en modo DHCP
 
-    if (dhcp === "true") {
+    if (isDhcpOn === "true") {
         document.querySelector(".pc-form #dhcp").checked = true;
         document.querySelector(".pc-form").querySelectorAll("input[type='text']").forEach(input => input.disabled = true);
         document.querySelector(".pc-form").querySelector("button").innerHTML = "Renovar";
@@ -152,6 +153,12 @@ function showPcForm(id) {
         document.querySelector(".pc-form").querySelector("button").innerHTML = "Guardar";
     }
 
+    //comprobamos si el servidor web esta encendido
+
+    if (isWebServerOn === "on") {
+        document.querySelector(".pc-form #web-server").checked = true;
+    }
+    
     //mostramos el formulario
 
     document.querySelector(".pc-form").style.display = "flex";
@@ -159,19 +166,28 @@ function showPcForm(id) {
 
 async function savePcSpecs(event) {
     event.preventDefault();
-    const networkObject = document.getElementById(document.getElementById("form-item-id").innerHTML);
+    const $networkObject = document.getElementById(document.getElementById("form-item-id").innerHTML);
+
+    //obtenemos los valores del formulario
     const newIp = document.querySelector(".pc-form #ip").value;
     const newNetmask = document.querySelector(".pc-form #netmask").value;
     const newGateway = document.querySelector(".pc-form #gateway").value;
-    const newDhcp = document.querySelector(".pc-form #dhcp").checked;
+    const isDhcpOn = document.querySelector(".pc-form #dhcp").checked;
+    const isWebServerOn = document.querySelector(".pc-form #web-server").checked;
     const newDnsServer = document.querySelector(".pc-form #dns-server").value;
-    networkObject.setAttribute("data-ip", newIp);
-    networkObject.setAttribute("data-netmask", newNetmask);
-    networkObject.setAttribute("data-gateway", newGateway);
-    networkObject.setAttribute("data-dhcp", newDhcp);
-    networkObject.setAttribute("data-dns-server", newDnsServer);
+
+    //actualizamos los atributos del objeto
+    $networkObject.setAttribute("data-ip", newIp);
+    $networkObject.setAttribute("data-netmask", newNetmask);
+    $networkObject.setAttribute("data-gateway", newGateway);
+    $networkObject.setAttribute("data-dhcp", isDhcpOn);
+    $networkObject.setAttribute("web-server", isWebServerOn);
+    $networkObject.setAttribute("data-dns-server", newDnsServer);
+
+    //cerramos el formulario
     document.querySelector(".pc-form").style.display = "none";
-    if (newDhcp) await dhcp(networkObject.id, ["dhcp", "-renew"]);
+    if (isDhcpOn) await dhcp($networkObject.id, ["dhcp", "-renew"]); //si esta en modo dhcp, renovamos al guardar
+    $networkObject.querySelector("img").src = (isWebServerOn) ? "./assets/board/www-server.svg" : "./assets/board/pc.svg";
 }
 
 function disableOptionsPcForm(event) {
