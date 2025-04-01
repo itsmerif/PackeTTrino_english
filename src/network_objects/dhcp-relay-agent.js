@@ -25,7 +25,7 @@ function createDhcpRelayObject(x, y) {
 
     //server grafico
 
-    networkObjectIcon.src = "./assets/board/dhcprelay.png";
+    networkObjectIcon.src = "./assets/board/dhcp.svg";
     networkObjectIcon.alt = "server";
     networkObjectIcon.draggable = true;
     networkObject.appendChild(networkObjectIcon);
