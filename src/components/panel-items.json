@@ -36,12 +36,6 @@
         "size": "100%"
     },
     {
-        "name": "www",
-        "image": "./assets/panel/internet.png",
-        "draggable": true,
-        "size": "100%"
-    },
-    {
         "name": "text",
         "image": "./assets/panel/txt.png",
         "draggable": true,
