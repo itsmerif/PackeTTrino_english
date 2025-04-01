@@ -159,7 +159,7 @@ function createPacketIndicator(id) {
     const $indicator = document.createElement("article");
     const $indicatorIcon = document.createElement("img");
     $indicator.classList.add("pack-cursor");
-    $indicatorIcon.src = "./assets/board/svgs/pack.svg";
+    $indicatorIcon.src = "./assets/board/pack.svg";
     $indicator.appendChild($indicatorIcon);
 
     //obtenermos las coordenadas del objeto
