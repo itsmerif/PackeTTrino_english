@@ -8,7 +8,7 @@ async function dhcp(dataId, args) {
 
     cleanPacketTraffic(); //limpiamos la tabla de paquetes
 
-    if (dataId.includes("router-")) { //por ahora solo se puede hacer ping desde un pc
+    if (!dataId.startsWith("pc-")) {
         terminalMessage("Error: Este comando solo puede ser ejecutado desde un pc.");
         return;
     }
@@ -19,8 +19,7 @@ async function dhcp(dataId, args) {
     }
 
     if (args.length !== 2) {
-        terminalMessage("Error de argumentos. Sintáxis: dhcp < -renew | -release > ");
-        //console.log(isDchpOn);
+        terminalMessage("Error de argumentos. Sintáxis: dhcp &lt;-renew | -release&gt; ");
         return;
     }
 
@@ -56,8 +55,6 @@ async function dhcp(dataId, args) {
 
         } else {
             
-            //terminalMessage("Renovando IP...");
-
             try {
                 dhcpRenewGenerator(dataId, switchObjectId);
             } catch (error) {
@@ -67,8 +64,8 @@ async function dhcp(dataId, args) {
 
         }
 
-        //command_Ip(dataId, ["ip", "a"]);
         return;
+        
     }
 
     if (args[1] === "-release") {
@@ -112,23 +109,22 @@ function isDHCPinNetwork(switchObjectId) {
 
 function getRandomIpfromDhcp(serverObjectId) {
 
-    // Obtengo el servidor
+    //Obtengo el servidor
     const serverObject = document.getElementById(serverObjectId);
 
-    // Obtengo el rango de IPs que ofrece
+    //Obtengo el rango de IPs que ofrece
     const rangeStart = serverObject.getAttribute("data-range-start"); // 192.168.1.100
     const rangeEnd = serverObject.getAttribute("data-range-end");     // 192.168.1.200
 
-    // Convertimos las IPs de rango a binario
+    //Convertimos las IPs de rango a binario
     let rangeStartBinary = ipToBinary(rangeStart);
     let rangeEndBinary = ipToBinary(rangeEnd);
 
-    // Convertimos binario a número entero para facilitar el cálculo
+    //Convertimos binario a número entero para facilitar el cálculo
     let startInt = parseInt(rangeStartBinary, 2);
     let endInt = parseInt(rangeEndBinary, 2);
 
-    // Generamos una IP aleatoria dentro del rango
-
+    //Generamos una IP aleatoria dentro del rango
     let randomInt = Math.floor(Math.random() * (endInt - startInt + 1)) + startInt;
     let randomBinary = randomInt.toString(2).padStart(32, '0');
     let randomIp = binaryToIp(randomBinary);

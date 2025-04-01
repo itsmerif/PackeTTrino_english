@@ -64,15 +64,21 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
         }
 
         if (packet.protocol === "arp" && packet.type === "reply") {
+
             arpFlag = true;
+
             addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
-            if (buffer[networkObjectId]) {
-                buffer[networkObjectId].destination_mac = isIpInARPTable(networkObjectId, packet.origin_ip);
-                addPacketTraffic(buffer[networkObjectId]);
-                await switchProcessor(switchId, networkObjectId, buffer[networkObjectId]);
-                delete buffer[networkObjectId];
-                return;
+
+            let bufferPacket = buffer[networkObjectId];
+
+            if (bufferPacket) {
+                bufferPacket.destination_mac = isIpInARPTable(networkObjectId, packet.origin_ip);
+                delete buffer[networkObjectId]; //borramos el paquete del buffer
+                addPacketTraffic(bufferPacket);
+                await switchProcessor(switchId, networkObjectId, bufferPacket);
             }
+
+            return;
         }
 
         if (packet.protocol === "icmp" && packet.type === "reply") {

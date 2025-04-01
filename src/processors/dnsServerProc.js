@@ -21,14 +21,22 @@ async function packetProcessor_dns_server(switchId, serverObjectId, packet) {
     }
 
     if (packet.protocol === "arp" && packet.type === "reply") {
+
         if (packet.destination_ip !== serverObjectIp) return;
+
         addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
-        if (buffer[serverObjectId]) {
-            buffer[serverObjectId].destination_mac = isIpInARPTable(serverObjectId, packet.origin_ip);
-            addPacketTraffic(buffer[serverObjectId]);
-            await switchProcessor(switchId, serverObjectId, buffer[serverObjectId]);
-            delete buffer[serverObjectId];
+
+        let bufferPacket = buffer[serverObjectId];
+        
+        if (bufferPacket) {
+            bufferPacket.destination_mac = isIpInARPTable(serverObjectId, packet.origin_ip);
+            delete buffer[serverObjectId]; //borramos el paquete del buffer
+            addPacketTraffic(bufferPacket);
+            await switchProcessor(switchId, serverObjectId, bufferPacket);
         }
+
+        return;
+
     }
 
     if (packet.protocol === "icmp" && packet.type === "request") {

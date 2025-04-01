@@ -16,7 +16,7 @@ async function customPacketGenerator(networkObjectId, packet) {
 
         if (!defaultGatewayMac) {
             buffer[networkObjectId] = packet;
-            arpResolver(networkObjectId, defaultGateway);
+            await arpResolve(networkObjectId, defaultGateway);
             return;
         }
 
@@ -32,7 +32,7 @@ async function customPacketGenerator(networkObjectId, packet) {
 
     if (!destination_mac) {
         buffer[networkObjectId] = packet;
-        arpResolver(networkObjectId, destination_ip);
+        await arpResolve(networkObjectId, destination_ip);
         return;
     }
 

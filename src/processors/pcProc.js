@@ -23,15 +23,24 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "arp" && packet.type === "reply") {
+
         if (packet.destination_ip !== networkObjectIp) return;
+
         arpFlag = true;
+
         addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
-        if (buffer[networkObjectId]) {
-            buffer[networkObjectId].destination_mac = isIpInARPTable(networkObjectId, packet.origin_ip);
-            addPacketTraffic(buffer[networkObjectId]);
-            await switchProcessor(switchId, networkObjectId, buffer[networkObjectId]);
+
+        let bufferPacket = buffer[networkObjectId];
+        
+        if (bufferPacket) {
+            bufferPacket.destination_mac = isIpInARPTable(networkObjectId, packet.origin_ip);
             delete buffer[networkObjectId];
+            addPacketTraffic(bufferPacket);
+            await switchProcessor(switchId, networkObjectId, bufferPacket);
         }
+
+        return;
+
     }
 
     if (packet.protocol === "icmp" && packet.type === "request") {
@@ -94,6 +103,8 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
     if (packet.protocol === "dns" && packet.type === "reply") {
         dnsRequestFlag = true;
         buffer[networkObjectId] = packet;
+        console.log("respuesta dns en el buffer");
+        console.log(buffer);
     }
 
     if (packet.protocol === "tcp" && packet.type === "syn") {

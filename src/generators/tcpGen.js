@@ -18,7 +18,7 @@ async function tcpSynPacketGenerator(networkObjectId, switchId, destination, por
 
         if (!defaultGatewayMac) {
             buffer[networkObjectId] = packet;
-            arpResolver(networkObjectId, defaultGateway);
+            await arpResolve(networkObjectId, defaultGateway);
             return;
         }
 
@@ -33,7 +33,7 @@ async function tcpSynPacketGenerator(networkObjectId, switchId, destination, por
 
     if (!destination_mac) {
         buffer[networkObjectId] = packet;
-        arpResolver(networkObjectId, destination);
+        await arpResolve(networkObjectId, destination);
         return;
     }
 

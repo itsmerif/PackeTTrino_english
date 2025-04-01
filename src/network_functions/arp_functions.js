@@ -76,6 +76,7 @@ function delARPEntry(networkObjectId, targetip) {
         let ip = cells[0].innerText.trim();
         if (ip === targetip) {
             row.remove();
+            break;
         }
     }
 }

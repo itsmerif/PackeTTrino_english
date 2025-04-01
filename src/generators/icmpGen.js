@@ -16,7 +16,7 @@ async function icmpRequestPacketGenerator(networkObjectId, switchId, originIp, d
 
         if (!defaultGatewayMac) {
             buffer[networkObjectId] = packet;
-            arpResolve(networkObjectId, defaultGateway);
+            await arpResolve(networkObjectId, defaultGateway);
             return;
         }
 
@@ -31,7 +31,7 @@ async function icmpRequestPacketGenerator(networkObjectId, switchId, originIp, d
 
     if (!destination_mac) {
         buffer[networkObjectId] = packet;
-        arpResolve(networkObjectId, destinationIp);
+        await arpResolve(networkObjectId, destinationIp);
     }
 
     packet.destination_mac = destination_mac;

@@ -74,12 +74,12 @@ async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = t
 
     const $networkObject = document.getElementById(dataId);
     const switchId = $networkObject.getAttribute("data-switch");
-    if (!domain.endsWith(".")) domain = domain + "."; //si no es un FQDN, lo agregamos
     let [answer_type, answer, server_ip] = [false, false, false];
 
+    if (!domain.endsWith(".")) domain = domain + "."; //FQDN
     if (useCache) [answer_type, answer, server_ip] = isDomainInCachePc(dataId, domain); //buscamos en la tabla de cache del equipo
 
-    if (!answer) { //no tenemos la ip en cache, buscamos en el servidor
+    if (!answer) {
 
         dnsRequestFlag = false;
         await dnsRequestPacketGenerator(dataId, switchId, domain, dnsServer, query_type);
@@ -87,13 +87,12 @@ async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = t
         if (!dnsRequestFlag) {
             if (verbose) terminalMessage("Error: No se pudo resolver el nombre de dominio.");
             throw new Error("Error: No se pudo resolver el nombre de dominio.");
-        } else {
-            let packet = buffer[dataId];
-            if (verbose) generateDnsOuput(packet);
-            if (useCache) addDnsCacheEntry(dataId, packet.query, packet.answer_type, packet.answer, packet.origin_ip);
-            if (!packet.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
         }
 
+        let packet = buffer[dataId];
+        if (verbose) generateDnsOuput(packet);
+        if (useCache) addDnsCacheEntry(dataId, packet.query, packet.answer_type, packet.answer, packet.origin_ip);
+        if (!packet.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
         return;
     }
 

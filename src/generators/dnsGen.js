@@ -21,7 +21,7 @@ async function dnsRequestPacketGenerator(networkObjectId, switchId, domain, dnsS
 
         if (!defaultGatewayMac) { 
             buffer[networkObjectId] = packet;
-            arpResolve(networkObjectId, defaultGateway);
+            await arpResolve(networkObjectId, defaultGateway);
             return;
         }
 
@@ -36,7 +36,7 @@ async function dnsRequestPacketGenerator(networkObjectId, switchId, domain, dnsS
 
     if (!destination_mac) {
         buffer[networkObjectId] = packet;
-        arpResolve(networkObjectId, dnsServer);
+        await arpResolve(networkObjectId, dnsServer);
         return;
     }
 

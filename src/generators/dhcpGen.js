@@ -33,7 +33,7 @@ async function dhcpReleaseGenerator(networkObjectId, switchId) {
 
         if (!defaultGatewayMac) { 
             buffer[networkObjectId] = packet;
-            arpResolve(networkObjectId, defaultGateway);
+            await arpResolve(networkObjectId, defaultGateway);
             return;
         }
 
@@ -49,7 +49,7 @@ async function dhcpReleaseGenerator(networkObjectId, switchId) {
 
     if (!serverObjectMac) { 
         buffer[networkObjectId] = packet;
-        arpResolve(networkObjectId, dhcpServerIp);
+        await arpResolve(networkObjectId, dhcpServerIp);
         return;
     }
 
@@ -77,7 +77,7 @@ async function dhcpRenewGenerator(networkObjectId, switchId) {
 
         if (!defaultGatewayMac) {
             buffer[networkObjectId] = packet;
-            arpResolve(networkObjectId, defaultGateway);
+            await arpResolve(networkObjectId, defaultGateway);
             return;
         }
 
@@ -92,7 +92,7 @@ async function dhcpRenewGenerator(networkObjectId, switchId) {
 
     if (!destination_mac) { 
         buffer[networkObjectId] = packet;
-        arpResolve(networkObjectId, dhcpServerIp);
+        await arpResolve(networkObjectId, dhcpServerIp);
         return;
     }
 

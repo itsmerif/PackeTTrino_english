@@ -29,17 +29,17 @@ async function packetProcessor_dhcp_relay_server(switchId, serverObjectId, packe
 
         if (packet.protocol === "arp" && packet.type === "reply") {
 
-            if (packet.destination_ip !== serverObjectIp) {
-                throw new Error("Destino No Coincide");
-            }
+            if (packet.destination_ip !== serverObjectIp) return;
 
             addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
 
-            if (buffer[serverObjectId]) {
-                buffer[serverObjectId].destination_mac = isIpInARPTable(serverObjectId, packet.origin_ip);
-                addPacketTraffic(buffer[serverObjectId]);
-                await switchProcessor(switchId, serverObjectId, buffer[serverObjectId]);
+            let bufferPacket = buffer[serverObjectId];
+
+            if (bufferPacket) {
+                bufferPacket.destination_mac = isIpInARPTable(serverObjectId, packet.origin_ip);
                 delete buffer[serverObjectId];
+                addPacketTraffic(bufferPacket);
+                await switchProcessor(switchId, serverObjectId, bufferPacket);
             }
 
             return;
