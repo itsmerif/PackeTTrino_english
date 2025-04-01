@@ -30,7 +30,7 @@ function createDnsServerObject(x, y) {
 
     //server grafico
 
-    networkObjectIcon.src = "./assets/board/dns.png";
+    networkObjectIcon.src = "./assets/board/dns.svg";
     networkObjectIcon.alt = "server";
     networkObjectIcon.draggable = true;
     networkObject.appendChild(networkObjectIcon);

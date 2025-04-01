@@ -18,7 +18,7 @@ function createSwitchObject(x, y) {
 
     //switch grafico con icono
 
-    networkObjectIcon.src = "./assets/board/switch.png";
+    networkObjectIcon.src = "./assets/board/switch.svg";
     networkObjectIcon.alt = "switch";
     networkObjectIcon.draggable = true;
     networkObject.appendChild(networkObjectIcon);
@@ -206,7 +206,7 @@ function clusterizeSwitch(event) {
     $advancedOptions.querySelector(".clusterize-button").innerHTML = "Des-clusterizar";
     $advancedOptions.querySelector(".clusterize-button").setAttribute("onclick", "desClusterizeSwitch(event)");
     $switchObject.setAttribute("clusterized", "true");
-    $icon.src = "./assets/board/web-cluster.png";
+    $icon.src = "./assets/board/cluster.svg";
     $advancedOptions.style.display = "none";
 }
 

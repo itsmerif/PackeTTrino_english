@@ -33,7 +33,7 @@ function createPcObject(x, y) {
 
     //icono
 
-    $icon.src = "./assets/board/pc.png";
+    $icon.src = "./assets/board/pc.svg";
     $icon.alt = "pc";
     $icon.draggable = true;
 
@@ -92,6 +92,7 @@ function createPcObject(x, y) {
         <button onclick="showTerminal(event)">Modo Terminal</button>
         <button onclick="showARPTable(event)">Ver Tabla ARP</button>
         <button onclick="showDnsTable(event)">Ver Caché DNS</button>
+        <button onclick="scanNetwork(event)">Escanear Redes Disponibles</button>
         <button onclick="openBrowser(event)">Navegador</button>
         <button onclick="deleteItem(event)">Eliminar</button>
     `;

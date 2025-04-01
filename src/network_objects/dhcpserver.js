@@ -35,7 +35,7 @@ function createDhcpServerObject(x, y) {
 
     //server grafico
 
-    networkObjectIcon.src = "./assets/board/dhcp.png";
+    networkObjectIcon.src = "./assets/board/dhcp.svg";
     networkObjectIcon.alt = "server";
     networkObjectIcon.draggable = true;
     $networkObject.appendChild(networkObjectIcon);
