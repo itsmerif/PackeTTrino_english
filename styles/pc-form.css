@@ -52,6 +52,12 @@
     input[type="text"] {
         width: 20px;
     }
+
+    label {
+        flex-grow: 0;
+        width: 200px;
+        text-align: left;
+    }
 }
 
 .pc-form input[type="text"]:focus {
