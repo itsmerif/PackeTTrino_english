@@ -225,7 +225,7 @@ function icmpTryoutStart() {
     const $cursor = document.createElement("article");
     const $cursorIcon = document.createElement("img");
     $cursor.classList.add("pack-cursor");
-    $cursorIcon.src = "./assets/board/svgs/pack.svg";
+    $cursorIcon.src = "./assets/board/pack.svg";
     $cursor.appendChild($cursorIcon);
     document.body.appendChild($cursor);
 
