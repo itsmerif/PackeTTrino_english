@@ -49,37 +49,17 @@ function dropItem(event) {
     let dx = x - parseInt(initialX);
     let dy = y - parseInt(initialY);
 
-    if (itemType === "item") {
-
-        switch (itemId) {
-            case "pc":
-                createPcObject(x, y);
-                break;
-            case "router":
-                createRouterObject(x, y);
-                break;
-            case "switch":
-                createSwitchObject(x, y);
-                break;
-            case "dhcpserver":
-                createDhcpServerObject(x, y);
-                break;
-            case "dhcprelay":
-                createDhcpRelayObject(x, y);
-                break;
-            case "dnsserver":
-                createDnsServerObject(x, y);
-                break;
-            case "text":
-                createTextObject(x, y);
-                break;
-            default:
-                alert("Error: Tipo de objeto no reconocido");
-                break;
-        }
-        
-        return;
+    const itemCreators = {
+        "pc": () => createPcObject(x, y),
+        "router": () => createRouterObject(x, y),
+        "switch": () => createSwitchObject(x, y),
+        "dhcpserver": () => createDhcpServerObject(x, y),
+        "dhcprelay": () => createDhcpRelayObject(x, y),
+        "dnsserver": () => createDnsServerObject(x, y),
+        "text": () => createTextObject(x, y)
     }
+
+    if (itemType === "item") itemCreators[itemId] ? itemCreators[itemId]() : alert("Error: Tipo de objeto no reconocido");
     
     if (itemType === "item-dropped") {
 
