@@ -17,12 +17,11 @@ async function init() {
     //eventos de los formularios
 
     document.querySelector(".pc-form").addEventListener("submit", savePcSpecs);
-    document.querySelector(".pc-form").querySelector("input[type='checkbox']").addEventListener("change", disableOptionsPcForm);
+    document.querySelector(".pc-form").querySelector("#dhcp").addEventListener("change", dhcpHandler);
     document.querySelector(".router-form").addEventListener("submit", saveRouterSpecs);
     document.querySelector(".dhcp-form").addEventListener("submit", saveDhcpSpecs);
     document.querySelector(".dns-form").addEventListener("submit", saveDnsSpecs);
     document.querySelector(".dhcp-relay-form").addEventListener("submit", saveDhcpRelaySpecs);
-
 
     //eventos del panel
 

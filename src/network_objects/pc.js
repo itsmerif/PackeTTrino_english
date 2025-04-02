@@ -165,10 +165,11 @@ function showPcForm(id) {
 }
 
 async function savePcSpecs(event) {
-    event.preventDefault();
-    const $networkObject = document.getElementById(document.getElementById("form-item-id").innerHTML);
 
-    //obtenemos los valores del formulario
+    event.preventDefault();
+
+    const $networkObject = document.getElementById(document.getElementById("form-item-id").innerHTML);
+    const $networkObjectIcon = $networkObject.querySelector("img");
     const newIp = document.querySelector(".pc-form #ip").value;
     const newNetmask = document.querySelector(".pc-form #netmask").value;
     const newGateway = document.querySelector(".pc-form #gateway").value;
@@ -176,26 +177,54 @@ async function savePcSpecs(event) {
     const isWebServerOn = document.querySelector(".pc-form #web-server").checked;
     const newDnsServer = document.querySelector(".pc-form #dns-server").value;
 
-    //actualizamos los atributos del objeto
-    $networkObject.setAttribute("data-ip", newIp);
-    $networkObject.setAttribute("data-netmask", newNetmask);
-    $networkObject.setAttribute("data-gateway", newGateway);
-    $networkObject.setAttribute("data-dhcp", isDhcpOn);
-    $networkObject.setAttribute("web-server", isWebServerOn);
-    $networkObject.setAttribute("data-dns-server", newDnsServer);
+    function staticIp() {
+        $networkObject.setAttribute("data-ip", newIp);
+        $networkObject.setAttribute("data-netmask", newNetmask);
+        $networkObject.setAttribute("data-gateway", newGateway);
+        $networkObject.setAttribute("data-dhcp", isDhcpOn);
+        $networkObject.setAttribute("web-server", isWebServerOn);
+        $networkObject.setAttribute("data-dns-server", newDnsServer);
+    }
 
-    //cerramos el formulario
-    document.querySelector(".pc-form").style.display = "none";
-    if (isDhcpOn) await dhcp($networkObject.id, ["dhcp", "-renew"]); //si esta en modo dhcp, renovamos al guardar
-    $networkObject.querySelector("img").src = (isWebServerOn) ? "./assets/board/www-server.svg" : "./assets/board/pc.svg";
+    document.querySelector(".pc-form").style.display = "none"; //cerramos el formulario
+
+    if (event.submitter.id === "save-get-renew-btn") {
+
+        $networkObjectIcon.src = (isWebServerOn) ? "./assets/board/www-server.svg" : "./assets/board/pc.svg"; //cambiamos el icono del objeto a servidor web
+        if (isDhcpOn) await dhcp($networkObject.id, ["dhcp", "-renew"]); //obtenemos o renovamos la ip si esta en modo dhcp
+        else staticIp(); //si no esta en modo dhcp, solo actualizamos los atributos del objeto
+
+    } else {
+
+        await dhcp($networkObject.id, ["dhcp", "-release"]); //liberamos la ip  
+
+    }
 }
 
-function disableOptionsPcForm(event) {
+function dhcpHandler(event) {
+
     const input = event.target;
-    if (input.checked) {
+    
+    if (input.checked) dhcpRenewView();
+    else removeDhcpView();
+
+    function dhcpRenewView() {
+
+        let hasIp = document.querySelector(".pc-form").querySelector("#ip").value !== "";
+
+        let options = {
+            true: () => { 
+                document.querySelector(".pc-form").querySelector("button").innerHTML = "Renovar IP";
+                document.querySelector(".pc-form").querySelector("#release-btn").style.display = "block"; 
+            },
+            false: () => document.querySelector(".pc-form").querySelector("button").innerHTML = "Obtener IP"
+        }
+
+        options[hasIp]();
         document.querySelector(".pc-form").querySelectorAll("input[type='text']").forEach(input => input.disabled = true);
-        document.querySelector(".pc-form").querySelector("button").innerHTML = "Renovar";
-    } else {
+    }
+
+    function removeDhcpView(){
         document.querySelector(".pc-form").querySelectorAll("input[type='text']").forEach(input => input.disabled = false);
         document.querySelector(".pc-form").querySelector("button").innerHTML = "Guardar";
     }
