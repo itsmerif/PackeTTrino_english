@@ -10,47 +10,22 @@ function command_apache(id, args) {
         return;
     }
 
-    if (args[1] === "-a") {
-        
-        if ($networkObject.getAttribute("web-server") !== "on") {
-            terminalMessage("Error: El servidor web debe estar encendido para configurar el contenido.");
-            return;
-        }
-
-        openApacheContentModal(id);
-        return;
-
-    }
-
     if (args[1] === "on") {
-
         $networkObject.setAttribute("web-server", "on");
         terminalMessage("Servidor web encendido correctamente.");
         return;
-
     }
 
     if (args[1] === "off") {
-
         $networkObject.setAttribute("web-server", "off");
         terminalMessage("Servidor web apagado correctamente.");
         return;
-
     }
 
     if (args[1] === "status") {
-
-        if ($networkObject.getAttribute("web-server") === "on") {
-            terminalMessage("Servidor web encendido.");
-            return;
-        }
-
-        terminalMessage("Servidor web apagado.");
+        ($networkObject.getAttribute("web-server") === "on") ? terminalMessage("Servidor web encendido.") : terminalMessage("Servidor web apagado.");
         return;
-
     }
-
-    terminalMessage("<p> Error: Sintaxis : apache &lt;on|off|status&gt;</p>");
 
 }
 
