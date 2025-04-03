@@ -9,20 +9,15 @@ function dragOverBoard(event) {
 
 function BoardItemDragStart(event) {
 
-    const networkObject = event.target.closest(".item-dropped");
-
-    //obtengo TODOS los datos del elemento
-
-    const networkObjectid = networkObject.id;
-    const ip = networkObject.getAttribute("data-ip");
-    const netmask = networkObject.getAttribute("data-netmask");
-    const mac = networkObject.getAttribute("data-mac");
-    const gateway = networkObject.getAttribute("data-gateway");
+    const $networkObject = event.target.closest(".item-dropped");
+    const networkObjectid = $networkObject.id;
+    const ip = $networkObject.getAttribute("data-ip");
+    const netmask = $networkObject.getAttribute("data-netmask");
+    const mac = $networkObject.getAttribute("data-mac");
+    const gateway = $networkObject.getAttribute("data-gateway");
     const itemType = "item-dropped";
-    const x = networkObject.style.left;
-    const y = networkObject.style.top;
-
-    //los transformamos en un string
+    const x = $networkObject.style.left;
+    const y = $networkObject.style.top;
 
     event.dataTransfer.setData("json", JSON.stringify({
         itemType: itemType,
@@ -59,7 +54,7 @@ function dropItem(event) {
         "text": () => createTextObject(x, y)
     }
 
-    if (itemType === "item") itemCreators[itemId] ? itemCreators[itemId]() : alert("Error: Tipo de objeto no reconocido");
+    if (itemType === "item") itemCreators[itemId] ? itemCreators[itemId]() : popupMessage("Error: Tipo de objeto no reconocido");
     
     if (itemType === "item-dropped") {
 
@@ -78,6 +73,7 @@ function dropItem(event) {
             }
 
         } else if (itemId.startsWith("switch-")) {
+
             [x,y] = checkObjectClip(x, y);
             networkObject.style.left = `${x}px`;
             networkObject.style.top = `${y}px`;
@@ -99,32 +95,19 @@ function dropItem(event) {
 function deleteItem(event) {
 
     event.stopPropagation();
+    const $networkObject = event.target.closest(".item-dropped") || event.target.closest(".text-annotation");
 
-    let networkObject = event.target.closest(".item-dropped") || event.target.closest(".text-annotation");
-
-    if (!networkObject.id.startsWith("router-")) {
-
-        if (networkObject.id.startsWith("switch-")) {
-
-            if (networkObject.querySelector(".mac-table").querySelector("table").querySelectorAll("tr").length === 1 ) {
-                networkObject.remove();
-            }
-
-        } else {
-
-            if (!networkObject.getAttribute("data-switch")) {
-                networkObject.remove();
-            }
-            
-        }
-
+    if ($networkObject.id.startsWith("router-")) {
+        if (!$networkObject.getAttribute("data-switch-enp0s3") && !$networkObject.getAttribute("data-switch-enp0s8") && !$networkObject.getAttribute("data-switch-enp0s9")) $networkObject.remove();
+        else popupMessage("Error: No se puede eliminar un router con conexiones.");
+    } else if ($networkObject.id.startsWith("switch-")) {
+        if ($networkObject.querySelector(".mac-table").querySelector("table").querySelectorAll("tr").length === 1 ) $networkObject.remove();
+        else popupMessage("Error: No se puede eliminar un switch con dispositivos conectados.");
     } else {
-
-        if (!networkObject.getAttribute("data-switch-enp0s3") && !networkObject.getAttribute("data-switch-enp0s8") && !networkObject.getAttribute("data-switch-enp0s9")) {
-            networkObject.remove();
-        }
-
+        if (!$networkObject.getAttribute("data-switch")) $networkObject.remove();
+        else popupMessage("Error: No se puede eliminar un dispositivo con conexiones.");       
     }
+
 }
 
 function getConns(networkObjectId) {
