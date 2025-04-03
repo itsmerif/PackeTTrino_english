@@ -91,6 +91,7 @@
     text-decoration: none;
     display: inline-block;
     outline: none;
+    animation: fadeInWithBlur 0.1s ease-in-out;
 }
 
 .btn-modern-blue:hover {
