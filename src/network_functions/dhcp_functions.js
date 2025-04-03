@@ -1,7 +1,7 @@
 async function dhcp(dataId, args) {
 
     const $networkObject = document.getElementById(dataId);
-    const $networkObjectIp = $networkObject.getAttribute("data-ip");
+    const networkObjectIp = $networkObject.getAttribute("data-ip");
     const switchObjectId = $networkObject.getAttribute("data-switch");
     const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
     const isDchpOn = $networkObject.getAttribute("data-dhcp")
@@ -25,7 +25,7 @@ async function dhcp(dataId, args) {
 
     if (args[1] === "-renew") {
 
-        if (!$networkObjectIp || networkObjectDhcpServer === "") { //no tenemos una ip, tenemos que buscar uno
+        if (!networkObjectIp || networkObjectDhcpServer === "") { //no tenemos una ip, tenemos que buscar uno
 
             terminalMessage("Buscando servidor DHCP...");
 
@@ -70,7 +70,7 @@ async function dhcp(dataId, args) {
 
     if (args[1] === "-release") {
 
-        if (!$networkObjectIp) {
+        if (!networkObjectIp) {
             terminalMessage("No hay ninguna IP para liberar.");
             return;
         }
