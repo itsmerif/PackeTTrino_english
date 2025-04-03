@@ -65,29 +65,29 @@ const $forbidden403 = `
 function dragBroswer(event) {
 
     event.preventDefault();
-    const browser = event.target.closest(".browser-component");
-    let rect = browser.getBoundingClientRect();
+    const $browser = event.target.closest(".browser-component");
+    let rect = $browser.getBoundingClientRect();
     let offsetX = event.clientX - rect.left;
     let offsetY = event.clientY - rect.top;
 
-    browser.style.left = `${rect.left}px`;
-    browser.style.top = `${rect.top}px`;
-    browser.style.transform = 'none';
-    browser.style.position = 'fixed';
+    $browser.style.left = `${rect.left}px`;
+    $browser.style.top = `${rect.top}px`;
+    $browser.style.transform = 'none';
+    $browser.style.position = 'fixed';
 
     function moveBrowser(moveEvent) {
         let x = moveEvent.clientX - offsetX;
         let y = moveEvent.clientY - offsetY;
-        let maxX = window.innerWidth - browser.offsetWidth;
-        let maxY = window.innerHeight - browser.offsetHeight;
-        browser.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
-        browser.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+        let maxX = window.innerWidth - $browser.offsetWidth;
+        let maxY = window.innerHeight - $browser.offsetHeight;
+        $browser.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+        $browser.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
     }
 
     function stopDraggingBrowser() {
         document.removeEventListener('mousemove', moveBrowser);
         document.removeEventListener('mouseup', stopDraggingBrowser);
-        const input = browser.querySelector('input');
+        const input = $browser.querySelector('input');
         if (input) input.focus();
     }
 
@@ -97,10 +97,11 @@ function dragBroswer(event) {
 }
 
 async function browserSearch(event) {
+
     if (event.key === 'Enter') {
-        const $searchInput = event.target;
+
         const $networkObject = document.getElementById(document.querySelector(".browser-component").getAttribute("data-id"));
-        let search = $searchInput.value.trim();
+        let search = event.target.value.trim();
 
         if (visualToggle) await minimizeBrowser();
 
@@ -112,6 +113,7 @@ async function browserSearch(event) {
         }
 
         if (visualToggle) await maximizeBrowser();
+
     }
 }
 
