@@ -56,8 +56,11 @@ async function dhcp(dataId, args) {
         } else {
             
             try {
+
                 dhcpRenewGenerator(dataId, switchObjectId);
+
             } catch (error) {
+
                 terminalMessage("Error: " + error);
                 return;
             }
