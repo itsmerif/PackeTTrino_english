@@ -30,6 +30,7 @@ function sendCommand(event) {
             "visual": () => command_visual(args),
             "test": () => command_test(args),
             "traceroute": () => command_traceroute(dataId, args),
+            "systemctl": () => command_systemctl(dataId, args),
             "exit": () => closeTerminal(event)
         }
 
