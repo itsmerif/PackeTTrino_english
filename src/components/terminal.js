@@ -15,8 +15,8 @@ function sendCommand(event) {
 
         const commandFunctions = {
             "ping": () => command_ping(dataId, args),
-            "dhcp": () => dhcp(dataId, args),
-            "iptables": () => iptables(dataId, args),
+            "dhcp": () => command_Dhcp(dataId, args),
+            "iptables": () => command_Iptables(dataId, args),
             "ip": () => command_Ip(dataId, args, originIP),
             "dns": () => command_dns(dataId, args),
             "dig": () => command_dig(dataId, args),
@@ -30,12 +30,7 @@ function sendCommand(event) {
             "visual": () => command_visual(args),
             "test": () => command_test(args),
             "traceroute": () => command_traceroute(dataId, args),
-            "exit": () => { 
-                event.target.value = "";
-                document.querySelector(".terminal-component").style.display = "none";
-                terminalBuffer = [];
-                currentCommandIndex = 0;
-            }
+            "exit": () => closeTerminal(event)
         }
 
         window.clearInterval(window.pingInterval); //limpiamos todos los procesos de terminal en funcionamiento
@@ -43,7 +38,7 @@ function sendCommand(event) {
         terminalBuffer.push(input); //añadimos el comando en el buffer
         currentCommandIndex++; //actualizamos el indice del cursor de comandos
         document.querySelector(".terminal-component").querySelector("input").value = ""; //limpiamos la entrada
-        commandFunctions[command] ? commandFunctions[command]() : terminalMessage("Command not found"); //ejecutamos la función correspondiente
+        commandFunctions[command] ? commandFunctions[command]() : terminalMessage(`Error: comando ${command} desconocido.`); //ejecutamos la función correspondiente
     }
 
 }
@@ -196,4 +191,3 @@ function closeTerminal(event) {
     $terminal.style.transform = "translate(-50%, -50%)";
     $terminal.style.display = "none";
 }
-

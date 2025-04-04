@@ -10,7 +10,7 @@ class iptablesRule {
     }
 }
 
-function iptables(networkObjectId, args) {
+function command_Iptables(networkObjectId, args) {
 
     let rule = new iptablesRule();
 

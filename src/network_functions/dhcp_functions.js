@@ -1,4 +1,4 @@
-async function dhcp(dataId, args) {
+async function command_Dhcp(dataId, args) {
 
     const $networkObject = document.getElementById(dataId);
     const switchObjectId = $networkObject.getAttribute("data-switch");
