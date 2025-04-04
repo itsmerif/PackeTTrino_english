@@ -16,7 +16,7 @@ async function init() {
 
     //eventos de los formularios
 
-    document.querySelector(".pc-form").addEventListener("submit", savePcSpecs);
+    document.querySelector(".pc-form").addEventListener("submit", submitPcForm);
     document.querySelector(".pc-form").querySelector("#dhcp").addEventListener("change", dhcpHandler);
     document.querySelector(".router-form").addEventListener("submit", saveRouterSpecs);
     document.querySelector(".dhcp-form").addEventListener("submit", saveDhcpSpecs);

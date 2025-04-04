@@ -124,7 +124,7 @@ function showPcForm(id) {
 
     const $networkObject = document.getElementById(id);
     const $textInputs = document.querySelector(".pc-form").querySelectorAll("input[type='text']");
-    const $buttons = document.querySelectorAll(".pc-form button");
+    const $buttons = document.querySelectorAll(".pc-form .button-container button");
 
     //obtenemos los atributos del pc
 
@@ -160,7 +160,7 @@ function showPcForm(id) {
     document.querySelector(".pc-form").style.display = "flex";
 }
 
-async function savePcSpecs(event) {
+async function submitPcForm(event) {
 
     event.preventDefault();
 
@@ -192,6 +192,10 @@ async function savePcSpecs(event) {
 
         "release-btn": async () => { 
             await dhcp($networkObject.id, ["dhcp", "-release"]);
+        },
+
+        "close-btn": () => {
+            document.querySelector(".pc-form").style.display = "none";
         }
     }
 
@@ -205,7 +209,7 @@ async function savePcSpecs(event) {
 function dhcpHandler(event) {
 
     const $dhcpToggle = event.target;
-    const $buttons = document.querySelectorAll(".pc-form button");
+    const $buttons = document.querySelectorAll(".pc-form .button-container button");
     const $textInputs = document.querySelector(".pc-form").querySelectorAll("input[type='text']");
     const hasIp = document.querySelector(".pc-form #ip").value !== "";
 
