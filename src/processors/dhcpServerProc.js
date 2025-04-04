@@ -1,8 +1,6 @@
 async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
-    
-    if (visualToggle) await visualize(switchId, serverObjectId, packet);
 
-    //cortafuegos
+    if (visualToggle) await visualize(switchId, serverObjectId, packet);
 
     if (!firewallProcessorHost(serverObjectId, packet)) return;
 
@@ -12,21 +10,16 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
     const serverObjectNetmask = $serverObject.getAttribute("data-netmask");
     const serverObjectNetwork = getNetwork(serverObjectIp, serverObjectNetmask);
     const defaultGateway = $serverObject.getAttribute("data-gateway");
-
-    //configuracion del servidor dhcp
-
     const gatewayOffer = $serverObject.getAttribute("offer-gateway");
     const netmaskOffer = $serverObject.getAttribute("offer-netmask");
     const dnsOffer = $serverObject.getAttribute("offer-dns");
-    const networkOffer = getNetwork(gatewayOffer, netmaskOffer); //obtengo la red a la que ofrece
+    const networkOffer = getNetwork(gatewayOffer, netmaskOffer);
 
-    //comportamiento de pc
+    if (!serverObjectIp || !serverObjectNetmask) return;
 
     if (packet.protocol === "arp" && packet.type === "request") {
 
-        if (packet.destination_ip !== serverObjectIp) {
-            return;
-        }
+        if (packet.destination_ip !== serverObjectIp) return;
 
         addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
@@ -43,7 +36,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
         addARPEntry(serverObjectId, packet.origin_ip, packet.origin_mac);
 
         let bufferPacket = buffer[serverObjectId];
-        
+
         if (bufferPacket) {
             bufferPacket.destination_mac = isIpInARPTable(serverObjectId, packet.origin_ip);
             if (bufferPacket.protocol === "dhcp" && bufferPacket.type === "release") deleteDhcpInfo(serverObjectId);
@@ -75,33 +68,30 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
         icmpFlag = true;
     }
 
-    //comportamiento de servidor dhcp
+    if (packet.protocol === "dhcp" && packet.type === "discover") {
 
-    if (packet.protocol === "dhcp" && packet.type === "discover") { //peticion de descubrimiento dhcp
-
-        let offerIP = getRandomIpfromDhcp(serverObjectId) //obtenemos una ip válida del servidor
+        let offerIP = getRandomIpfromDhcp(serverObjectId)
 
         let newPacket = new dhcpOffer(
-            serverObjectIp, //origin ip
-            serverObjectMac, //origin mac
-            serverObjectIp, //server ip
-            offerIP, //offer ip
-            packet.origin_mac, //destination mac, en los nuevos protocolos de dhcp va directamente a la mac del cliente que solicita
-            packet.chaddr, //chaddr
-            gatewayOffer, //gateway offer
-            netmaskOffer, //netmask offer
-            dnsOffer //dns offer
+            serverObjectIp,
+            serverObjectMac,
+            serverObjectIp,
+            offerIP,
+            packet.origin_mac,
+            packet.chaddr,
+            gatewayOffer,
+            netmaskOffer,
+            dnsOffer
         );
 
-        //comprobamos si proviene de un agente de retransmision
-
         if (packet.giaddr !== "0.0.0.0") {
+
             newPacket.destination_ip = packet.giaddr;
             newPacket.giaddr = packet.giaddr;
-        } else { //asumimos que el paquete viene de la misma red que el server
-            if (networkOffer !== serverObjectNetwork) {
-                return;
-            }
+
+        } else {
+
+            if (networkOffer !== serverObjectNetwork) return;
         }
 
         addPacketTraffic(newPacket);
@@ -109,69 +99,67 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
         return;
     }
 
-    if (packet.protocol === "dhcp" && packet.type === "request") { //solicitud de ip
+    if (packet.protocol === "dhcp" && packet.type === "request") {
 
-        if (packet.siaddr === serverObjectIp) { //el paquete va dirigido al server, lo aceptamos
+        if (packet.siaddr !== serverObjectIp) return;
 
-            let newPacket = new dhcpAck(
-                serverObjectMac, //origin mac
-                packet.yiaddr, //assigned ip
-                serverObjectIp, //server ip
-                gatewayOffer, //gateway offer
-                netmaskOffer, //netmask offer
-                dnsOffer, //dns offer
-                packet.hostname //hostname
-            );
+        let newPacket = new dhcpAck(
+            serverObjectMac,
+            packet.yiaddr,
+            serverObjectIp,
+            gatewayOffer,
+            netmaskOffer,
+            dnsOffer,
+            packet.hostname
+        );
 
-            newPacket.chaddr = packet.chaddr;
-            newPacket.destination_mac = packet.origin_mac; //en los nuevos protocolos de dhcp va directamente a la mac del cliente que solicita
+        newPacket.chaddr = packet.chaddr;
+        newPacket.destination_mac = packet.origin_mac;
 
-            //comprobamos si proviene de un agente de retransmision
-
-            if (packet.giaddr !== "0.0.0.0") {
-                newPacket.destination_ip = packet.giaddr;
-                newPacket.giaddr = packet.giaddr;
-                newPacket.destination_mac = isIpInARPTable(serverObjectId, defaultGateway); //no basta con esto!!!!
-            }
-
-            addDhcpEntry(serverObjectId, packet.yiaddr, packet.chaddr, packet.hostname);
-            addPacketTraffic(newPacket)
-            await switchProcessor(switchId, serverObjectId, newPacket);
-            return;
+        if (packet.giaddr !== "0.0.0.0") {
+            newPacket.destination_ip = packet.giaddr;
+            newPacket.giaddr = packet.giaddr;
+            newPacket.destination_mac = isIpInARPTable(serverObjectId, defaultGateway); //no basta con esto!!!!
         }
+
+        addDhcpEntry(serverObjectId, packet.yiaddr, packet.chaddr, packet.hostname);
+        addPacketTraffic(newPacket)
+        await switchProcessor(switchId, serverObjectId, newPacket);
+        return;
 
     }
 
     if (packet.protocol === "dhcp" && packet.type === "release") {
-        if (packet.siaddr === serverObjectIp) { //el paquete va dirigido al server, lo aceptamos
-            terminalMessage(serverObjectId + ": Eliminando DHCP entry");
-            deleteDhcpEntry(serverObjectId, packet.ciaddr);
-            return;
-        }
+
+        if (packet.siaddr !== serverObjectIp) return;
+
+        terminalMessage(serverObjectId + ": Eliminando DHCP entry");
+        deleteDhcpEntry(serverObjectId, packet.ciaddr);
+        return;
+
     }
 
     if (packet.protocol === "dhcp" && packet.type === "renew") {
 
-        if (packet.siaddr === serverObjectIp) { //el paquete va dirigido al server, lo aceptamos
+        if (packet.siaddr !== serverObjectIp) return;
 
-            updateDhcpEntry(serverObjectId, packet.ciaddr);
+        updateDhcpEntry(serverObjectId, packet.ciaddr);
 
-            let newPacket = new dhcpAck(
-                serverObjectMac, //origin mac
-                packet.ciaddr, //assigned ip
-                serverObjectIp, //server ip
-                defaultGateway, //gateway offer
-                networkOffer, //netmask offer
-                dnsOffer, //dns offer
-                packet.hostname //hostname
-            );
+        let newPacket = new dhcpAck(
+            serverObjectMac,
+            packet.ciaddr,
+            serverObjectIp,
+            defaultGateway,
+            networkOffer,
+            dnsOffer,
+            packet.hostname
+        );
 
-            newPacket.destination_ip = packet.origin_ip;
-            newPacket.destination_mac = packet.origin_mac; //en los nuevos protocolos de dhcp va directamente a la mac del cliente que solicita
-            addPacketTraffic(newPacket);
-            await switchProcessor(switchId, serverObjectId, newPacket);
-            return;
+        newPacket.destination_ip = packet.origin_ip;
+        newPacket.destination_mac = packet.origin_mac;
+        addPacketTraffic(newPacket);
+        await switchProcessor(switchId, serverObjectId, newPacket);
+        return;
 
-        }
     }
 }
