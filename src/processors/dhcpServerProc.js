@@ -133,7 +133,6 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
 
         if (packet.siaddr !== serverObjectIp) return;
 
-        terminalMessage(serverObjectId + ": Eliminando DHCP entry");
         deleteDhcpEntry(serverObjectId, packet.ciaddr);
         return;
 

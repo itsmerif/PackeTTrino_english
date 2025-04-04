@@ -1,12 +1,10 @@
 async function dhcp(dataId, args) {
 
     const $networkObject = document.getElementById(dataId);
-    const networkObjectIp = $networkObject.getAttribute("data-ip");
     const switchObjectId = $networkObject.getAttribute("data-switch");
-    const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
     const isDchpOn = $networkObject.getAttribute("data-dhcp")
 
-    cleanPacketTraffic(); //limpiamos la tabla de paquetes
+    cleanPacketTraffic();
 
     if (!dataId.startsWith("pc-")) {
         terminalMessage("Error: Este comando solo puede ser ejecutado desde un pc.");
@@ -14,75 +12,99 @@ async function dhcp(dataId, args) {
     }
 
     if (isDchpOn === "false") {
-        terminalMessage("Error: Equipo No Configurado Como DHCP");
+        terminalMessage("Error: Equipo No Configurado Como Cliente DHCP");
         return;
     }
 
     if (args.length !== 2) {
-        terminalMessage("Error de argumentos. Sintáxis: dhcp &lt;-renew | -release&gt; ");
+        terminalMessage("Error de argumentos. Sintáxis: dhcp &lt; discover | -renew | -release &gt; ");
         return;
     }
 
-    if (args[1] === "-renew") {
-
-        if (!networkObjectIp || networkObjectDhcpServer === "") { //no tenemos una ip, tenemos que buscar uno
-
-            terminalMessage("Buscando servidor DHCP...");
-
-            try {
-
-                dhcpDiscoverFlag = false;
-                dhcpRequestFlag = false;
-
-                if (visualToggle) await minimizeTerminal();
-                await dhcpDiscoverGenerator(dataId, switchObjectId);
-                if (visualToggle) await maximizeTerminal();
-
-                if (dhcpDiscoverFlag === false || dhcpRequestFlag === false) {
-                    terminalMessage("Error: No se pudo encontrar un servidor DHCP.");
-                    return;
-                }
-
-                terminalMessage("Servidor DHCP encontrado correctamente.");
-                showObjectInfo(dataId);
-
-            } catch (error) {
-
-                terminalMessage("Error: " + error);
-                return;
-
-            }
-
-        } else {
-            
-            try {
-
-                dhcpRenewGenerator(dataId, switchObjectId);
-
-            } catch (error) {
-
-                terminalMessage("Error: " + error);
-                return;
-            }
-
-        }
-
-        return;
-        
+    const dhcpFunctions = {
+        "-discover": async () => await dhcpDiscoverHandler(dataId, switchObjectId),
+        "-renew": async () => await dhcpRenewHandler(dataId, switchObjectId),
+        "-release": async () => await dhcpReleaseHandler(dataId, switchObjectId)
     }
 
-    if (args[1] === "-release") {
+    if (args[1] in dhcpFunctions) await dhcpFunctions[args[1]]();
 
-        if (!networkObjectIp) {
-            terminalMessage("No hay ninguna IP para liberar.");
+}
+
+async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
+
+    terminalMessage("Buscando servidor DHCP...");
+
+    try {
+
+        dhcpDiscoverFlag = false;
+        dhcpRequestFlag = false;
+
+        if (visualToggle) await minimizeTerminal();
+        await dhcpDiscoverGenerator(networkObjectId, switchObjectId);
+        if (visualToggle) await maximizeTerminal();
+
+        if (dhcpDiscoverFlag === false || dhcpRequestFlag === false) {
+            terminalMessage("Error: No se pudo encontrar un servidor DHCP.");
             return;
         }
 
-        terminalMessage("Liberando dirercción IP...");
-        dhcpReleaseGenerator(dataId, switchObjectId);
+        terminalMessage(`\n`);
+        showObjectInfo(networkObjectId);
+
+    } catch (error) {
+
+        terminalMessage("Error: " + error);
+        return;
+
+    }
+
+}
+
+async function dhcpRenewHandler(networkObjectId, switchObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+    const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
+
+    if (!networkObjectIp || !networkObjectNetmask || !networkObjectDhcpServer) {
+        terminalMessage("Error en la configuración de red.");
         return;
     }
 
+    if (visualToggle) await minimizeTerminal();
+
+    try {
+
+        await dhcpRenewGenerator(networkObjectId, switchObjectId);
+        terminalMessage("IP renovada correctamente."); //TODO -> generar un mensaje de exito real de un dhcp
+
+    } catch (error) {
+
+        terminalMessage("Error: " + error);
+
+    }
+
+    if (visualToggle) await maximizeTerminal();
+
+}
+
+async function dhcpReleaseHandler(networkObjectId, switchObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+    const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
+
+    if (!networkObjectIp || !networkObjectNetmask || !networkObjectDhcpServer) {
+        terminalMessage("Error en la configuración de red.");
+        return;
+    }
+
+    terminalMessage("Liberando dirección IP: " + networkObjectIp);
+    await dhcpReleaseGenerator(networkObjectId, switchObjectId);
+    return;
 }
 
 function isDHCPinNetwork(switchObjectId) {
@@ -105,7 +127,7 @@ function isDHCPinNetwork(switchObjectId) {
         }
 
     }
-    
+
     return false;
 
 }
