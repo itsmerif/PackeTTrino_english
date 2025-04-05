@@ -2,16 +2,11 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
 
     if (visualToggle) await visualize(switchId, networkObjectId, packet);
 
-    //cortafuegos
-
     if (!firewallProcessorHost(networkObjectId, packet)) return;
-
-    //procesamiento de paquetes
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     const networkObjectIp = $networkObject.getAttribute("data-ip");
-    const isSameNetwork = getNetwork(packet.destination_ip, $networkObject.getAttribute("data-netmask")) === getNetwork(networkObjectIp, $networkObject.getAttribute("data-netmask"));
     
     if (packet.protocol === "arp" && packet.type === "request") {
         if (packet.destination_ip !== networkObjectIp) return;
@@ -68,45 +63,6 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
         }
     }
 
-    if (packet.protocol === "dhcp" && packet.type === "offer") {
-
-        if (packet.chaddr === networkObjectMac) {
-
-            dhcpDiscoverFlag = true;
-
-            let newPacket = new dhcpRequest(
-                networkObjectMac, //origin mac
-                packet.yiaddr, //requested ip
-                packet.siaddr, //server ip
-                networkObjectId //hostname
-            );
-
-            newPacket.destination_mac = packet.origin_mac;
-            newPacket.yiaddr = packet.yiaddr;
-            newPacket.giaddr = packet.giaddr;
-            newPacket.chaddr = packet.chaddr;
-
-            addPacketTraffic(newPacket);
-            await switchProcessor(switchId, networkObjectId, newPacket);
-
-        }
-
-    }
-
-    if (packet.protocol === "dhcp" && packet.type === "ack") {
-        if (packet.chaddr === networkObjectMac) {
-            dhcpRequestFlag = true;
-            setDhcpInfo(networkObjectId, packet);
-        }
-    }
-
-    if (packet.protocol === "dns" && packet.type === "reply") {
-        dnsRequestFlag = true;
-        buffer[networkObjectId] = packet;
-        console.log("respuesta dns en el buffer");
-        console.log(buffer);
-    }
-
     if (packet.protocol === "tcp" && packet.type === "syn") {
         if (packet.destination_ip !== networkObjectIp) return;
         let newPacket = new synAck(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac, packet.sport);
@@ -129,26 +85,21 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "tcp" && packet.type === "syn-ack-reply") {
-        if (packet.destination_ip !== networkObjectIp) return; //comprobamos si el paquete es para mi respecto a ip
-        if (packet.ack_number !== tcpBuffer[networkObjectId] + 1) return; //comprobamos si el paquete es para mi respecto a la secuencia TCP
+        if (packet.destination_ip !== networkObjectIp) return;
+        if (packet.ack_number !== tcpBuffer[networkObjectId] + 1) return;
         tcpSyncFlag = true;
         return;
     }
 
-    if (packet.protocol === "http" && packet.type === "request") {
-        if (packet.destination_ip !== networkObjectIp) return; //comprobamos si el paquete es para mi respecto a ip
-        if ($networkObject.getAttribute("web-server") === "off") return; //comprobamos si el servidor web esta encendido
-        //generamos el paquete
-        let newPacket = new httpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
-        newPacket.body = $networkObject.getAttribute("web-content");
-        addPacketTraffic(newPacket);
-        await switchProcessor(switchId, networkObjectId, newPacket);
-        return;
-    }
-
     if (packet.protocol === "http" && packet.type === "reply") {
-        if (packet.destination_ip !== networkObjectIp) return; //comprobamos si el paquete es para mi respecto a ip
+        if (packet.destination_ip !== networkObjectIp) return;
         browserBuffer[networkObjectId] = packet;
         return;
     }
+
+    if (packet.protocol === "dhcp") dhclient_service(networkObjectId, packet);
+
+    if (packet.protocol === "dns") resolved_service(networkObjectId, packet);
+
+    if (packet.protocol === "http" && packet.type === "request") apache_service(networkObjectId, packet);
 }
