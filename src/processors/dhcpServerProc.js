@@ -4,16 +4,23 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
 
     if (!firewallProcessorHost(serverObjectId, packet)) return;
 
+    //specs
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");
     const serverObjectIp = $serverObject.getAttribute("data-ip");
     const serverObjectNetmask = $serverObject.getAttribute("data-netmask");
     const serverObjectNetwork = getNetwork(serverObjectIp, serverObjectNetmask);
     const defaultGateway = $serverObject.getAttribute("data-gateway");
-    const gatewayOffer = $serverObject.getAttribute("offer-gateway");
+
+    //configuracion DHCP
+    const rangeStart = $serverObject.getAttribute("data-range-start");
+    const rangeEnd = $serverObject.getAttribute("data-range-end");
     const netmaskOffer = $serverObject.getAttribute("offer-netmask");
-    const dnsOffer = $serverObject.getAttribute("offer-dns");
-    const networkOffer = getNetwork(gatewayOffer, netmaskOffer);
+    const leaseTime = $serverObject.getAttribute("offer-lease-time");
+    const networkOffer = getNetwork(rangeStart, netmaskOffer);
+    //opcionales
+    const gatewayOffer = $serverObject.getAttribute("offer-gateway") || "";
+    const dnsOffer = $serverObject.getAttribute("offer-dns") || "";
 
     if (!serverObjectIp || !serverObjectNetmask) return;
 
@@ -66,9 +73,9 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
 
     if (packet.protocol === "dhcp" && packet.type === "discover") {
 
+        if (!rangeStart || !rangeEnd || !netmaskOffer || !leaseTime) return;
+   
         let offerIP = getRandomIpfromDhcp(serverObjectId);
-
-        if (!offerIP) return;
         
         let newPacket = new dhcpOffer(
             serverObjectIp,
@@ -82,14 +89,16 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
             dnsOffer
         );
 
-        if (packet.giaddr !== "0.0.0.0") {
+
+        if (packet.giaddr !== "0.0.0.0") { //servir a redes remotas
 
             newPacket.destination_ip = packet.giaddr;
             newPacket.giaddr = packet.giaddr;
 
-        } else {
+        } else { //servir a redes locales
 
-            if (networkOffer !== serverObjectNetwork) return;
+            if ( getNetwork(rangeStart, netmaskOffer) !== serverObjectNetwork ) return;
+
         }
 
         addPacketTraffic(newPacket);
