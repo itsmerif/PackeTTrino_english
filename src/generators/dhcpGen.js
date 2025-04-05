@@ -76,6 +76,7 @@ async function dhcpReleaseGenerator(networkObjectId, switchId) {
         if (!defaultGatewayMac) { 
             buffer[networkObjectId] = packet;
             await arpResolve(networkObjectId, defaultGateway);
+            deleteDhcpInfo(networkObjectId);
             return;
         }
 
