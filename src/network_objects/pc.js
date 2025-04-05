@@ -23,12 +23,12 @@ function createPcObject(x, y) {
     $networkObject.setAttribute("data-mac", getRandomMac());
     $networkObject.setAttribute("data-gateway", "");
     $networkObject.setAttribute("data-switch", "");
-    $networkObject.setAttribute("data-dhcp", false);
+    $networkObject.setAttribute("data-dhcp", "false");
     $networkObject.setAttribute("data-dhcp-server", "");
     $networkObject.setAttribute("data-dns-server", "");
     $networkObject.setAttribute("data-etc-hosts", `{ "127.0.0.1": ["localhost"] }`);
     $networkObject.setAttribute("firewall-default-policy", "ACCEPT");
-    $networkObject.setAttribute("web-server", "off");
+    $networkObject.setAttribute("web-server", "false");
     $networkObject.setAttribute("web-content", "");
 
     //icono
@@ -117,7 +117,7 @@ function createPcObject(x, y) {
 
 function showPcForm(id) {
 
-    if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
+    if (icmpTryoutToggle) {
         icmpTryoutProcess(id);
         return;
     }
@@ -125,9 +125,6 @@ function showPcForm(id) {
     const $networkObject = document.getElementById(id);
     const $textInputs = document.querySelector(".pc-form").querySelectorAll("input[type='text']");
     const $buttons = document.querySelectorAll(".pc-form .button-container button");
-
-    //obtenemos los atributos del pc
-
     const ip = $networkObject.getAttribute("data-ip");
     const netmask = $networkObject.getAttribute("data-netmask");
     const gateway = $networkObject.getAttribute("data-gateway");
@@ -135,15 +132,11 @@ function showPcForm(id) {
     const isDhcpOn = $networkObject.getAttribute("data-dhcp");
     const isWebServerOn = $networkObject.getAttribute("web-server");
 
-    //mostramos el formulario con los datos
-
     document.querySelector(".pc-form #ip").value = ip;
     document.getElementById("form-item-id").innerHTML = id;
     document.querySelector(".pc-form #netmask").value = netmask;
     document.querySelector(".pc-form #gateway").value = gateway;
     document.querySelector(".pc-form #dns-server").value = dnsServer;
-
-    //comprobamos si el equipo esta en modo DHCP
 
     if (isDhcpOn === "true") {
         document.querySelector(".pc-form #dhcp").checked = true;
@@ -156,7 +149,7 @@ function showPcForm(id) {
         $buttons.forEach(button => (button.id === "save-btn") ? button.style.display = "block" : button.style.display = "none");
     }
 
-    if (isWebServerOn === "on") document.querySelector(".pc-form #web-server").checked = true; //comprobamos si el servidor web esta encendido
+    (isWebServerOn === "true") ? document.querySelector(".pc-form #web-server").checked = true : document.querySelector(".pc-form #web-server").checked = false;
     document.querySelector(".pc-form").style.display = "flex";
 }
 
@@ -201,9 +194,10 @@ async function submitPcForm(event) {
 
     $networkObject.setAttribute("data-dhcp", isDhcpOn);
     $networkObject.setAttribute("web-server", isWebServerOn);
-    $networkObjectIcon.src = (isWebServerOn) ? "./assets/board/www-server.svg" : "./assets/board/pc.svg"; //cambiamos el icono del objeto a servidor web
-    document.querySelector(".pc-form").style.display = "none"; //cerramos el formulario
-    (event.submitter.id in buttonFunctions) ? buttonFunctions[event.submitter.id]() : buttonFunctions["save-btn"] //ejecutamos la función correspondiente
+    $networkObjectIcon.src = (isWebServerOn) ? "./assets/board/www-server.svg" : "./assets/board/pc.svg";
+    document.querySelector(".pc-form").style.display = "none";
+    
+    (event.submitter.id in buttonFunctions) ? buttonFunctions[event.submitter.id]() : buttonFunctions["save-btn"]();
 }
 
 function dhcpHandler(event) {
@@ -213,13 +207,14 @@ function dhcpHandler(event) {
     const $textInputs = document.querySelector(".pc-form").querySelectorAll("input[type='text']");
     const hasIp = document.querySelector(".pc-form #ip").value !== "";
 
-    if ($dhcpToggle.checked) {
-        $textInputs.forEach(input => input.disabled = true);
-        if (hasIp)  $buttons.forEach(button => (button.id === "renew-btn" || button.id === "release-btn") ? button.style.display = "block" : button.style.display = "none");
-        else $buttons.forEach(button => (button.id === "get-btn") ? button.style.display = "block" : button.style.display = "none");
-    } else {
+    if (!$dhcpToggle.checked) {
         $textInputs.forEach(input => input.disabled = false);
         $buttons.forEach(button => (button.id !== "save-btn") ? button.style.display = "none" : button.style.display = "block");
+        return;
     }
+
+    $textInputs.forEach(input => input.disabled = true);
+    if (hasIp)  $buttons.forEach(button => (button.id === "renew-btn" || button.id === "release-btn") ? button.style.display = "block" : button.style.display = "none");
+    else $buttons.forEach(button => (button.id === "get-btn") ? button.style.display = "block" : button.style.display = "none");
 
 }
