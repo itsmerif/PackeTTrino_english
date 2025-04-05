@@ -1,8 +1,4 @@
-problemas con los modales -> a veces no se ven si el elemento esta demasiado en el borde de la ventana
 modales -> algunos todavian transparentan los eventos del padre
 poder usar ESC para salir del editor de texto
 permitir hacer resize tanto de la terminal como del navegador
 no puedes encontrar ip por dhcp si tienes todavia la ip estatica
-al hacer dhcp -release el equipo no pierde la ip
-enrutamiento automático hacia una red
-prueba desde pc
