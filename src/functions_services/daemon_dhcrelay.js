@@ -5,6 +5,33 @@ async function dhcrelay_service(agentObjectId, packet) {
     const agentObjectIp = $agentObject.getAttribute("data-ip");
     const mainServer = $agentObject.getAttribute("data-main-server");
     const defaultGateway = $agentObject.getAttribute("data-gateway");
+    const switchId = $agentObject.getAttribute("data-switch");
+
+    if (packet.destination_ip === agentObjectIp) {
+
+        if (packet.type === "offer") {
+            if (packet.giaddr !== agentObjectIp) return;
+            packet.destination_mac = packet.ciaddr;
+            packet.destination_ip = "255.255.255.255";
+            packet.origin_mac = agentObjectMac;
+            packet.destination_mac = packet.chaddr;
+            addPacketTraffic(packet);
+            await switchProcessor(switchId, agentObjectId, packet);
+            return;
+        }
+
+        if (packet.type === "ack") {
+            if (packet.giaddr === agentObjectMac) return;
+            packet.origin_ip = agentObjectIp;
+            packet.destination_ip = "255.255.255.255";
+            packet.origin_mac = agentObjectMac;
+            packet.destination_mac = packet.chaddr;
+            addPacketTraffic(packet);
+            await switchProcessor(switchId, agentObjectId, packet);
+            return;
+        }
+
+    }
 
     if (packet.destination_ip = "255.255.255.255") {
         
@@ -38,32 +65,6 @@ async function dhcrelay_service(agentObjectId, packet) {
             packet.destination_ip = mainServer;
             packet.origin_mac = agentObjectMac;
             packet.destination_mac = isIpInARPTable(agentObjectId, defaultGateway);
-            addPacketTraffic(packet);
-            await switchProcessor(switchId, agentObjectId, packet);
-            return;
-        }
-
-    }
-
-    if (packet.destination_ip === agentObjectIp) {
-
-        if (packet.type === "offer") {
-            if (packet.giaddr !== agentObjectIp) return;
-            packet.destination_mac = packet.ciaddr;
-            packet.destination_ip = "255.255.255.255";
-            packet.origin_mac = agentObjectMac;
-            packet.destination_mac = packet.chaddr;
-            addPacketTraffic(packet);
-            await switchProcessor(switchId, agentObjectId, packet);
-            return;
-        }
-
-        if (packet.type === "ack") {
-            if (packet.giaddr === agentObjectMac) return;
-            packet.origin_ip = agentObjectIp;
-            packet.destination_ip = "255.255.255.255";
-            packet.origin_mac = agentObjectMac;
-            packet.destination_mac = packet.chaddr;
             addPacketTraffic(packet);
             await switchProcessor(switchId, agentObjectId, packet);
             return;

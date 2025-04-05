@@ -6,6 +6,7 @@ async function daemon_dhcpd(serverObjectId, packet) {
     const serverObjectNetmask = $serverObject.getAttribute("data-netmask");
     const serverObjectNetwork = getNetwork(serverObjectIp, serverObjectNetmask);
     const defaultGateway = $serverObject.getAttribute("data-gateway");
+    const switchId = $serverObject.getAttribute("data-switch");
 
     //configuracion DHCP
     const rangeStart = $serverObject.getAttribute("data-range-start");
