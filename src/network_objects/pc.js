@@ -8,13 +8,10 @@ function createPcObject(x, y) {
     let $firewallTable = document.createElement("article");
     let $advancedOptions = document.createElement("div");
 
-    //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
-
-    [x,y] = checkObjectClip(x, y);
-
     //caracteristicas generales
 
     $networkObject.id = `pc-${itemIndex}`;
+    [x,y] = checkObjectClip(x, y);
     $networkObject.style.left = `${x}px`;
     $networkObject.style.top = `${y}px`;
     $networkObject.classList.add("item-dropped", "pc");
@@ -92,7 +89,7 @@ function createPcObject(x, y) {
         <button onclick="showTerminal(event)">Modo Terminal</button>
         <button onclick="showARPTable(event)">Ver Tabla ARP</button>
         <button onclick="showDnsTable(event)">Ver Caché DNS</button>
-        <button onclick="scanNetwork(event)">Escanear Redes Disponibles</button>
+        <button onclick="scanNetwork(event)" style="display: none;">Escanear Redes Disponibles</button>
         <button onclick="openBrowser(event)">Navegador</button>
         <button onclick="deleteItem(event)">Eliminar</button>
     `;
@@ -176,15 +173,15 @@ async function submitPcForm(event) {
         },
         
         "get-btn": async () => { 
-            await dhcp($networkObject.id, ["dhcp", "-renew"]); 
+            await command_Dhcp($networkObject.id, ["dhcp", "-discover"]); 
         },
 
         "renew-btn": async () => { 
-            await dhcp($networkObject.id, ["dhcp", "-renew"]); 
+            await command_Dhcp($networkObject.id, ["dhcp", "-renew"]); 
         },
 
         "release-btn": async () => { 
-            await dhcp($networkObject.id, ["dhcp", "-release"]);
+            await command_Dhcp($networkObject.id, ["dhcp", "-release"]);
         },
 
         "close-btn": () => {
