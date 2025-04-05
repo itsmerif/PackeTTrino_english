@@ -4,7 +4,7 @@ async function apache_service(networkObjectId, packet) {
     const networkObjectIp = $networkObject.getAttribute("data-ip");
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     const switchId = $networkObject.getAttribute("data-switch");
-    const isApacheOn = $networkObject.getAttribute("apache") !== "true";
+    const isApacheOn = $networkObject.getAttribute("apache") === "true";
 
     if (packet.destination_ip !== networkObjectIp) return;
 

@@ -14,7 +14,7 @@ async function daemon_dhcpd(serverObjectId, packet) {
     const networkOffer = getNetwork(rangeStart, netmaskOffer);
     const gatewayOffer = $serverObject.getAttribute("offer-gateway") || "";
     const dnsOffer = $serverObject.getAttribute("offer-dns") || "";
-    const isDhcpOn = $serverObject.getAttribute("dhclient") !== "true";
+    const isDhcpOn = $serverObject.getAttribute("dhcpd") === "true";
 
     if (!isDhcpOn) return;
 

@@ -1,7 +1,7 @@
 async function resolved_service(networkObjectId, packet) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("data-ip");
-    const isResolvedOn = $networkObject.getAttribute("resolved") !== "true";
+    const isResolvedOn = $networkObject.getAttribute("resolved") === "true";
 
     if (packet.destination_ip !== networkObjectIp) return;
 
