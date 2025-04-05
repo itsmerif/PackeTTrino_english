@@ -1,12 +1,12 @@
 function createPcObject(x, y) {
 
     const $board = document.querySelector(".board");
-    let $networkObject = document.createElement("article");
-    let $icon = document.createElement("img");
-    let $arpTable = document.createElement("article");
-    let $dnsTable = document.createElement("article");
-    let $firewallTable = document.createElement("article");
-    let $advancedOptions = document.createElement("div");
+    const $networkObject = document.createElement("article");
+    const $icon = document.createElement("img");
+    const $arpTable = document.createElement("article");
+    const $dnsTable = document.createElement("article");
+    const $firewallTable = document.createElement("article");
+    const $advancedOptions = document.createElement("div");
 
     //caracteristicas generales
 

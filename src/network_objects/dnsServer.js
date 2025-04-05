@@ -11,7 +11,7 @@ function createDnsServerObject(x, y) {
     //caracteristicas generales
 
     networkObject.id = `dns-server-${itemIndex}`;
-    [x,y] = checkObjectClip(x, y); //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
+    [x,y] = checkObjectClip(x, y);
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
     networkObject.classList.add("item-dropped", "dns-server");
@@ -20,15 +20,17 @@ function createDnsServerObject(x, y) {
     networkObject.setAttribute("data-mac", getRandomMac());
     networkObject.setAttribute("data-gateway", "");
     networkObject.setAttribute("data-switch", "");
-    networkObject.setAttribute("dhclient", false);
-    networkObject.setAttribute("data-dhcp-server", "");
     networkObject.setAttribute("firewall-default-policy", "ACCEPT");
+
+    //servicios
+
+    networkObject.setAttribute("named", "true");
 
     //caracteristicas especiales
 
     networkObject.setAttribute("recursion", "false");
 
-    //server grafico
+    //icono
 
     networkObjectIcon.src = "./assets/board/dns.svg";
     networkObjectIcon.alt = "server";
