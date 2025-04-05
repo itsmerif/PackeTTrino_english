@@ -12,7 +12,7 @@ async function init() {
 
     //eventos del documento
 
-    document.addEventListener("keydown", closeEveryThing);
+    document.addEventListener("keydown", documentKeyboardHandler);
 
     //eventos de los formularios
 
@@ -185,13 +185,20 @@ function showTerminal(event) {
     modal.style.display = "none";
 }
 
-function closeEveryThing(event) {
-    if (event.key === "Escape") {
-        document.querySelectorAll(".modal").forEach(modal => { modal.style.display = "none"; });
-        closeBrowser(event);
-        document.querySelector(".packet-traffic").style.display = "none";
-        closeTerminal(event);
+function documentKeyboardHandler(event) {
+
+    const keyboardActions = {
+        "Escape": () => closeEveryThing(event)
     }
+
+    keyboardActions[event.key] ? keyboardActions[event.key]() : null;
+}
+
+function closeEveryThing(event) {
+    document.querySelectorAll(".modal").forEach(modal => { modal.style.display = "none"; });
+    closeBrowser(event);
+    closeTraffic();
+    closeTerminal(event);
 }
 
 function hideLoadingScreen() {
@@ -242,9 +249,14 @@ function icmpTryoutStart() {
     function icmpTryoutEnd() {
         icmpTryoutToggle = false;
         const $cursor = document.querySelectorAll(".pack-cursor");
-        $cursor.forEach(cursor => {cursor.removeEventListener("mousemove", moveCursor);});
-        $cursor.forEach(cursor => {cursor.remove();});
+        $cursor.forEach(cursor => { cursor.removeEventListener("mousemove", moveCursor); });
+        $cursor.forEach(cursor => { cursor.remove(); });
         document.body.style.cursor = "default";
     }
 
+}
+
+function closeTraffic() {
+    const $traffic = document.querySelector(".packet-traffic");
+    $traffic.style.display = "none";
 }
