@@ -14,8 +14,6 @@
     border-radius: 8px;
     text-align: center;
     z-index: 2;
-    /*opacity: 0;*/
-    /*animation: fadeInPacketTraffic 0.3s ease forwards;*/
     border: 1px solid #ddd;
     min-width: 220px;
     max-height: 500px;
@@ -133,6 +131,7 @@
     padding: 15px;
     max-height: 80vh;
     overflow-y: auto;
+    animation: fadeInPacketTrafficInfo 0.1s ease-in-out;
 }
 
 .packet-fields-modal table {
