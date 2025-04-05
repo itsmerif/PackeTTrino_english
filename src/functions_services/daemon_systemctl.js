@@ -1,73 +1,70 @@
 function command_systemctl(networkObjectId, args) {
 
     const option = args[1];
-
-    const validOptions = ["start", "restart", "stop", "status"];
-    
     const service = args[2];
 
-    const systemctlFunctions = {
-        "dhcpd": () => daemonDhcpd(networkObjectId, option),
-        "apache": () => daemonApache(networkObjectId, option),
-        "dhclient": () => daemonDhclient(networkObjectId, option),
-        "rsyslog": () => daemonRsyslog(networkObjectId, option),
+    const validOptions = ["start", "restart", "stop", "status"];
+    const validServices = ["dhcpd", "apache", "dhclient", "dhcrelay", "resolved", "named"];
+
+    if (!validServices.includes(service)) {
+        terminalMessage("Error: Servicio no reconocido.");
+        return;
     }
-    
+
     if (!validOptions.includes(option)) {
-        terminalMessage("Error: opción no reconocida");
+        terminalMessage("Error: Opción no reconocida.");
         terminalMessage("Sintaxis: systemctl [start|restart|stop|status] &lt;nombre del servicio&gt;");
         return;
     }
 
-    (service in systemctlFunctions) ? systemctlFunctions[service]() : terminalMessage("Error: servicio desconocido.")
-}
-
-function daemonDhcpd(networkObjectId, option) {
-
-    if (!networkObjectId.startsWith("dhcp-server-")) {
-        terminalMessage("Error: Servicio No disponible para este equipo.");
-        return;
-    }
+    daemonManager(networkObjectId, service, option);
 
 }
 
-function daemonApache(networkObjectId, option) {
-
-    if (!networkObjectId.startsWith("pc-")) {
-        terminalMessage("Error: Servicio No disponible para este equipo.");
-        return;
-    }
+function daemonManager(networkObjectId, service, option) {
 
     const $networkObject = document.getElementById(networkObjectId);
+
+    const serviceAtribbutes = {
+        "dhcpd": "dhcpd",
+        "apache": "apache",
+        "dhclient": "dhclient"
+    }
     
-    const apacheFunctions = {
+    let daemonStatus = $networkObject.getAttribute(serviceAtribbutes[service]);
+
+    if (!daemonStatus) {
+        terminalMessage("Error: Servicio no disponible para este equipo.");
+        return;
+    }
+
+    const stateFunctions = {
 
         "start": () => {
-            $networkObject.setAttribute("web-server", "on");
-            terminalMessage("apache2.service - The Apache HTTP Server")
-            terminalMessage("Servicio de Apache Iniciado.")
+            $networkObject.setAttribute(serviceAtribbutes[service], "true");
+            terminalMessage(`${service}.service`)
+            terminalMessage("Servicio Iniciado.")
         },
-        
+
         "restart": () => {
-            $networkObject.setAttribute("web-server", "on");
-            terminalMessage("apache2.service - The Apache HTTP Server")
-            terminalMessage("Servicio de Apache Reiniciado.")
+            $networkObject.setAttribute(serviceAtribbutes[service], "true");
+            terminalMessage(`${service}.service`)
+            terminalMessage("Servicio Iniciado.")
         },
 
         "stop": () => {
-            $networkObject.setAttribute("web-server", "off");
-            terminalMessage("apache2.service - The Apache HTTP Server")
-            terminalMessage("Servicio de Apache Interrumpido.")
+            $networkObject.setAttribute(serviceAtribbutes[service], "false");
+            terminalMessage(`${service}.service`)
+            terminalMessage("Servicio Interrumpido.")
         },
 
         "status": () => {
-            let statusApache = ($networkObject.getAttribute("web-server") === "on") 
-            ? "<span style='color:#4ade80;'> Activo (running)</span>"
-            : "<span style='color:red;'> Inactivo (dead) </span>";
-            terminalMessage("apache2.service - The Apache HTTP Server")
-            terminalMessage(`Status: ${statusApache}`);
+            let daemonMessage = (daemonStatus === "true") ? "<span style='color:#4ade80;'> Activo (running)</span>" : "<span style='color:red;'> Inactivo (dead) </span>";
+            terminalMessage(`${service}.service`)
+            terminalMessage(`Status: ${daemonMessage}`);
         },
     }
 
-    apacheFunctions[option]();
+    stateFunctions[option]();
+
 }

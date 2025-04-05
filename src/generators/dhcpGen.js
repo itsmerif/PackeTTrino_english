@@ -55,7 +55,7 @@ async function dhcpReleaseGenerator(networkObjectId, switchId) {
     const networkObjectIp = $networkObject.getAttribute("data-ip");
     const neworkObjectNetmask = $networkObject.getAttribute("data-netmask");
     const networkObjectMac = $networkObject.getAttribute("data-mac");
-    const isDHCPon = $networkObject.getAttribute("data-dhcp");
+    const isDHCPon = $networkObject.getAttribute("dhclient");
     const dhcpServerIp = $networkObject.getAttribute("data-dhcp-server");
     const isSameNetwork = getNetwork(networkObjectIp, neworkObjectNetmask) === getNetwork(dhcpServerIp, neworkObjectNetmask);
     let packet = new dhcpRelease(networkObjectIp, dhcpServerIp, networkObjectMac, "");

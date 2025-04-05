@@ -117,7 +117,7 @@ function parserNetworkFile() {
 
                 } else if (lines[i + 1] === "iface enp0s3 inet dhcp") {
 
-                    $networkObject.setAttribute("data-dhcp", "true");
+                    $networkObject.setAttribute("dhclient", "true");
                     $networkObject.setAttribute("data-ip", "");
                     $networkObject.setAttribute("data-netmask", "");
                     $networkObject.setAttribute("data-gateway", "");

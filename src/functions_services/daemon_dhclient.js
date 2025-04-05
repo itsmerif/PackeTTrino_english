@@ -4,7 +4,7 @@ async function dhclient_service(networkObjectId, packet) {
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     const switchId = $networkObject.getAttribute("data-switch");
 
-    if ($networkObject.getAttribute("data-dhcp") === "false") return; 
+    if ($networkObject.getAttribute("dhclient") === "false") return; 
 
     if (packet.type === "offer") {
 

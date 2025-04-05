@@ -12,7 +12,7 @@ function createDhcpRelayObject(x, y) {
 
     networkObject.id = `dhcp-relay-server-${itemIndex}`;
     networkObject.classList.add("item-dropped", "dhcp-relay");
-    [x,y] = checkObjectClip(x, y); //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
+    [x,y] = checkObjectClip(x, y);
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
     networkObject.setAttribute("data-ip", "");
@@ -20,10 +20,17 @@ function createDhcpRelayObject(x, y) {
     networkObject.setAttribute("data-mac", getRandomMac());
     networkObject.setAttribute("data-gateway", "");
     networkObject.setAttribute("data-switch", "");
-    networkObject.setAttribute("data-main-server", "");
     networkObject.setAttribute("firewall-default-policy", "ACCEPT");
 
-    //server grafico
+    //servicios
+
+    networkObject.setAttribute("dhcrelay", "true");
+
+    //atributos de servicios
+
+    networkObject.setAttribute("data-main-server", "");
+
+    //icono
 
     networkObjectIcon.src = "./assets/board/dhcp.svg";
     networkObjectIcon.alt = "server";

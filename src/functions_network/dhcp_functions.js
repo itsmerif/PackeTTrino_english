@@ -2,7 +2,7 @@ async function command_Dhcp(dataId, args) {
 
     const $networkObject = document.getElementById(dataId);
     const switchObjectId = $networkObject.getAttribute("data-switch");
-    const isDchpOn = $networkObject.getAttribute("data-dhcp")
+    const isDchpOn = $networkObject.getAttribute("dhclient")
 
     cleanPacketTraffic();
 
@@ -316,7 +316,7 @@ function renewLeaseTime(ip) {
     const $networkObject = document.querySelector(`[data-ip='${ip}']`);
     const networkObjectId = $networkObject.id;
     const switchId = $networkObject.getAttribute("data-switch");
-    const isDHCPon = $networkObject.getAttribute("data-dhcp");
+    const isDHCPon = $networkObject.getAttribute("dhclient");
     if (isDHCPon === "false") return;
     dhcpRenewGenerator(networkObjectId, switchId);
 }

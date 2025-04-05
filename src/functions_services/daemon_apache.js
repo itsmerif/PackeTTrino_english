@@ -7,7 +7,7 @@ async function apache_service(networkObjectId, packet) {
 
     if (packet.destination_ip !== networkObjectIp) return;
 
-    if ($networkObject.getAttribute("web-server") === "off") return;
+    if ($networkObject.getAttribute("apache") === "off") return;
 
     let newPacket = new httpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
     newPacket.body = $networkObject.getAttribute("web-content");

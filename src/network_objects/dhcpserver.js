@@ -21,10 +21,13 @@ function createDhcpServerObject(x, y) {
     $networkObject.setAttribute("data-mac", getRandomMac());
     $networkObject.setAttribute("data-gateway", "");
     $networkObject.setAttribute("data-switch", "");
-    $networkObject.setAttribute("data-interval", "false");
     $networkObject.setAttribute("firewall-default-policy", "ACCEPT");
 
-    //configuracion de oferta
+    //servicios
+
+    $networkObject.setAttribute("dhcpd", "true");
+
+    //atributos de servicios
 
     $networkObject.setAttribute("data-range-start", "");
     $networkObject.setAttribute("data-range-end", "");
@@ -32,8 +35,9 @@ function createDhcpServerObject(x, y) {
     $networkObject.setAttribute("offer-netmask", "");
     $networkObject.setAttribute("offer-dns", "");
     $networkObject.setAttribute("offer-lease-time", "");
+    $networkObject.setAttribute("data-interval", "false");
 
-    //server grafico
+    //icono
 
     networkObjectIcon.src = "./assets/board/dhcp.svg";
     networkObjectIcon.alt = "server";

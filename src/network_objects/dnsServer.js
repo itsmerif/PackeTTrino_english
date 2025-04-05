@@ -20,7 +20,7 @@ function createDnsServerObject(x, y) {
     networkObject.setAttribute("data-mac", getRandomMac());
     networkObject.setAttribute("data-gateway", "");
     networkObject.setAttribute("data-switch", "");
-    networkObject.setAttribute("data-dhcp", false);
+    networkObject.setAttribute("dhclient", false);
     networkObject.setAttribute("data-dhcp-server", "");
     networkObject.setAttribute("firewall-default-policy", "ACCEPT");
 
