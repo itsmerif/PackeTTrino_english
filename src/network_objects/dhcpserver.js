@@ -13,7 +13,7 @@ function createDhcpServerObject(x, y) {
 
     $networkObject.id = `dhcp-server-${itemIndex}`;
     $networkObject.classList.add("item-dropped", "dhcp-server");
-    [x,y] = checkObjectClip(x, y); //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
+    [x,y] = checkObjectClip(x, y);
     $networkObject.style.left = `${x}px`;
     $networkObject.style.top = `${y}px`;
     $networkObject.setAttribute("data-ip", "");
@@ -106,6 +106,7 @@ function createDhcpServerObject(x, y) {
     $networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
     $networkObject.setAttribute("onclick", "showDhcpSpecs(event)");
     $advancedOptions.setAttribute("onclick", "event.stopPropagation()");
+    $networkObjectDhcpTable.setAttribute("onclick", "event.stopPropagation()");
 
     $board.appendChild($networkObject);
     itemIndex++;

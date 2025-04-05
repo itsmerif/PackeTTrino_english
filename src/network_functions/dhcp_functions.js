@@ -268,6 +268,7 @@ function deleteDhcpEntry(serverObjectId, targetip) {
 
 function setDhcpInfo(networkObjectId, packet) {
     const $networkObject = document.getElementById(networkObjectId);
+    const $pcForm = document.querySelector(".pc-form");
     let newIp = packet.yiaddr;
     let newGateway = packet.gateway;
     let newNetmask = packet.netmask;
@@ -278,16 +279,37 @@ function setDhcpInfo(networkObjectId, packet) {
     $networkObject.setAttribute("data-netmask", newNetmask);
     $networkObject.setAttribute("data-dhcp-server", newServer);
     $networkObject.setAttribute("data-dns-server", newDns);
+
+    if ($pcForm.style.display === "flex") {
+        $pcForm.querySelector("#ip").value = newIp;
+        $pcForm.querySelector("#netmask").value = newNetmask;
+        $pcForm.querySelector("#gateway").value = newGateway;
+        $pcForm.querySelector("#dns-server").value = newDns;
+        $pcForm.querySelector("#renew-btn").style.display = "block";
+        $pcForm.querySelector("#release-btn").style.display = "block";
+        $pcForm.querySelector("#get-btn").style.display = "none";
+    }
 }
 
 function deleteDhcpInfo(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
+    const $pcForm = document.querySelector(".pc-form");
     $networkObject.setAttribute("data-ip", "");
     $networkObject.setAttribute("data-gateway", "");
     $networkObject.setAttribute("data-netmask", "");
     $networkObject.setAttribute("data-dhcp-server", "");
     $networkObject.setAttribute("data-dns-server", "");
     $networkObject.setAttribute("data-dhcp-server", "");
+
+    if ($pcForm.style.display === "flex") {
+        $pcForm.querySelector("#ip").value = "";
+        $pcForm.querySelector("#netmask").value = "";
+        $pcForm.querySelector("#gateway").value = "";
+        $pcForm.querySelector("#dns-server").value = "";
+        $pcForm.querySelector("#renew-btn").style.display = "none";
+        $pcForm.querySelector("#release-btn").style.display = "none";
+        $pcForm.querySelector("#get-btn").style.display = "block";
+    }
 }
 
 function renewLeaseTime(ip) {

@@ -192,8 +192,7 @@ async function submitPcForm(event) {
     $networkObject.setAttribute("data-dhcp", isDhcpOn);
     $networkObject.setAttribute("web-server", isWebServerOn);
     $networkObjectIcon.src = (isWebServerOn) ? "./assets/board/www-server.svg" : "./assets/board/pc.svg";
-    document.querySelector(".pc-form").style.display = "none";
-    
+    if (visualToggle) document.querySelector(".pc-form").style.display = "none"; 
     (event.submitter.id in buttonFunctions) ? buttonFunctions[event.submitter.id]() : buttonFunctions["save-btn"]();
 }
 
