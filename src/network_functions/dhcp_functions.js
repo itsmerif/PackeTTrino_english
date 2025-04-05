@@ -134,27 +134,20 @@ function isDHCPinNetwork(switchObjectId) {
 
 function getRandomIpfromDhcp(serverObjectId) {
 
-    //Obtengo el servidor
-    const serverObject = document.getElementById(serverObjectId);
+    const $serverObject = document.getElementById(serverObjectId);
+    const rangeStart = $serverObject.getAttribute("data-range-start");
+    const rangeEnd = $serverObject.getAttribute("data-range-end");
+    const offerNetmask = $serverObject.getAttribute("offer-netmask");
 
-    //Obtengo el rango de IPs que ofrece
-    const rangeStart = serverObject.getAttribute("data-range-start"); // 192.168.1.100
-    const rangeEnd = serverObject.getAttribute("data-range-end");     // 192.168.1.200
-
-    //Convertimos las IPs de rango a binario
-    let rangeStartBinary = ipToBinary(rangeStart);
-    let rangeEndBinary = ipToBinary(rangeEnd);
-
-    //Convertimos binario a número entero para facilitar el cálculo
-    let startInt = parseInt(rangeStartBinary, 2);
-    let endInt = parseInt(rangeEndBinary, 2);
-
-    //Generamos una IP aleatoria dentro del rango
+    let startInt = parseInt(ipToBinary(rangeStart), 2);
+    let endInt = parseInt(ipToBinary(rangeEnd), 2);
     let randomInt = Math.floor(Math.random() * (endInt - startInt + 1)) + startInt;
     let randomBinary = randomInt.toString(2).padStart(32, '0');
     let randomIp = binaryToIp(randomBinary);
 
-    while (!checkIpinDhcp(serverObjectId, randomIp)) { //si no esta disponible, volvemos a obtener una aleatoria
+    if (!rangeStart || !rangeEnd || !offerNetmask) return randomIp;
+
+    while (!checkIpinDhcp(serverObjectId, randomIp)) {
         randomInt = Math.floor(Math.random() * (endInt - startInt + 1)) + startInt;
         randomBinary = randomInt.toString(2).padStart(32, '0');
         randomIp = binaryToIp(randomBinary);
@@ -166,24 +159,18 @@ function getRandomIpfromDhcp(serverObjectId) {
 
 function checkIpinDhcp(serverObjectId, newip) {
 
-    const serverObject = document.getElementById(serverObjectId); //obtengo el server
+    const serverObject = document.getElementById(serverObjectId);
     const dhcpTable = serverObject.querySelector(".dhcp-table").querySelector("table");
     const rows = dhcpTable.querySelectorAll("tr");
 
     for (let i = 1; i < rows.length; i++) {
-
-        let row = rows[i]; //fila
+        let row = rows[i];
         let cells = row.querySelectorAll("td");
         let ip = cells[0]
-
-        if (newip === ip) {
-            return false
-        }
-
+        if (newip === ip) return false;
     }
 
     return true
-
 }
 
 function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {

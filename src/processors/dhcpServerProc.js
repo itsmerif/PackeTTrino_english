@@ -50,9 +50,7 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
 
     if (packet.protocol === "icmp" && packet.type === "request") {
 
-        if (packet.destination_ip !== serverObjectIp) {
-            return;
-        }
+        if (packet.destination_ip !== serverObjectIp) return;
 
         let newPacket = new IcmpEchoReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
@@ -62,16 +60,16 @@ async function packetProcessor_dhcp_server(switchId, serverObjectId, packet) {
     }
 
     if (packet.protocol === "icmp" && packet.type === "reply") {
-        if (packet.destination_ip !== serverObjectIp) {
-            throw new Error("Destino No Coincide");
-        }
+        if (packet.destination_ip !== serverObjectIp) return;
         icmpFlag = true;
     }
 
     if (packet.protocol === "dhcp" && packet.type === "discover") {
 
-        let offerIP = getRandomIpfromDhcp(serverObjectId)
+        let offerIP = getRandomIpfromDhcp(serverObjectId);
 
+        if (!offerIP) return;
+        
         let newPacket = new dhcpOffer(
             serverObjectIp,
             serverObjectMac,
