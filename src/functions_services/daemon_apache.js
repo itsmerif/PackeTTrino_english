@@ -4,10 +4,11 @@ async function apache_service(networkObjectId, packet) {
     const networkObjectIp = $networkObject.getAttribute("data-ip");
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     const switchId = $networkObject.getAttribute("data-switch");
+    const isApacheOn = $networkObject.getAttribute("apache") !== "true";
 
     if (packet.destination_ip !== networkObjectIp) return;
 
-    if ($networkObject.getAttribute("apache") === "off") return;
+    if (!isApacheOn) return;
 
     let newPacket = new httpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
     newPacket.body = $networkObject.getAttribute("web-content");

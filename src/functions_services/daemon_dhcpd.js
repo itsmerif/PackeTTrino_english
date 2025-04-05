@@ -7,8 +7,6 @@ async function daemon_dhcpd(serverObjectId, packet) {
     const serverObjectNetwork = getNetwork(serverObjectIp, serverObjectNetmask);
     const defaultGateway = $serverObject.getAttribute("data-gateway");
     const switchId = $serverObject.getAttribute("data-switch");
-
-    //configuracion DHCP
     const rangeStart = $serverObject.getAttribute("data-range-start");
     const rangeEnd = $serverObject.getAttribute("data-range-end");
     const netmaskOffer = $serverObject.getAttribute("offer-netmask");
@@ -16,6 +14,9 @@ async function daemon_dhcpd(serverObjectId, packet) {
     const networkOffer = getNetwork(rangeStart, netmaskOffer);
     const gatewayOffer = $serverObject.getAttribute("offer-gateway") || "";
     const dnsOffer = $serverObject.getAttribute("offer-dns") || "";
+    const isDhcpOn = $serverObject.getAttribute("dhclient") !== "true";
+
+    if (!isDhcpOn) return;
 
     if (packet.type === "discover") {
 

@@ -24,14 +24,8 @@ function command_systemctl(networkObjectId, args) {
 function daemonManager(networkObjectId, service, option) {
 
     const $networkObject = document.getElementById(networkObjectId);
-
-    const serviceAtribbutes = {
-        "dhcpd": "dhcpd",
-        "apache": "apache",
-        "dhclient": "dhclient"
-    }
     
-    let daemonStatus = $networkObject.getAttribute(serviceAtribbutes[service]);
+    let daemonStatus = $networkObject.getAttribute(service);
 
     if (!daemonStatus) {
         terminalMessage("Error: Servicio no disponible para este equipo.");
@@ -41,19 +35,19 @@ function daemonManager(networkObjectId, service, option) {
     const stateFunctions = {
 
         "start": () => {
-            $networkObject.setAttribute(serviceAtribbutes[service], "true");
+            $networkObject.setAttribute(service, "true");
             terminalMessage(`${service}.service`)
             terminalMessage("Servicio Iniciado.")
         },
 
         "restart": () => {
-            $networkObject.setAttribute(serviceAtribbutes[service], "true");
+            $networkObject.setAttribute(service, "true");
             terminalMessage(`${service}.service`)
             terminalMessage("Servicio Iniciado.")
         },
 
         "stop": () => {
-            $networkObject.setAttribute(serviceAtribbutes[service], "false");
+            $networkObject.setAttribute(service, "false");
             terminalMessage(`${service}.service`)
             terminalMessage("Servicio Interrumpido.")
         },
@@ -63,6 +57,7 @@ function daemonManager(networkObjectId, service, option) {
             terminalMessage(`${service}.service`)
             terminalMessage(`Status: ${daemonMessage}`);
         },
+
     }
 
     stateFunctions[option]();

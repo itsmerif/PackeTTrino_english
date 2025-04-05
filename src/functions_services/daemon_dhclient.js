@@ -3,8 +3,9 @@ async function dhclient_service(networkObjectId, packet) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     const switchId = $networkObject.getAttribute("data-switch");
+    const isDhclientOn = $networkObject.getAttribute("dhclient") !== "true";
 
-    if ($networkObject.getAttribute("dhclient") === "false") return; 
+    if (!isDhclientOn) return;
 
     if (packet.type === "offer") {
 
