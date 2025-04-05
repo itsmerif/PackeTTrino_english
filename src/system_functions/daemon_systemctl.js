@@ -31,7 +31,6 @@ function daemonDhcpd(networkObjectId, option) {
 
 }
 
-
 function daemonApache(networkObjectId, option) {
 
     if (!networkObjectId.startsWith("pc-")) {
