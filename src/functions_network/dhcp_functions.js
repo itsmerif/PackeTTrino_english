@@ -266,6 +266,23 @@ function deleteDhcpEntry(serverObjectId, targetip) {
     }
 }
 
+function deleteAllDhcpLeases(serverObjectId) {
+
+    const serverObject = document.getElementById(serverObjectId);
+    const table = serverObject.querySelector(".dhcp-table").querySelector("table");
+    const rows = table.querySelectorAll("tr");
+
+    for (let i = 1; i < rows.length; i++) {
+        let row = rows[i];
+        row.remove();
+    }
+
+    if (table.querySelectorAll("tr").length === 1) {
+        clearInterval(window.leaseTimer);
+        serverObject.setAttribute("data-interval", "false");
+    }
+}
+
 function setDhcpInfo(networkObjectId, packet) {
     const $networkObject = document.getElementById(networkObjectId);
     const $pcForm = document.querySelector(".pc-form");

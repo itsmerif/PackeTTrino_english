@@ -19,6 +19,9 @@ let icmpFlag = false;
 let dhcpDiscoverFlag = false;
 let dhcpRequestFlag = false;
 let dhcpRenewFlag = false;
+let dhcpOfferBuffer = {};
+
+//variables de dns
 let dnsRequestFlag = false;
 
 //variables de tcp

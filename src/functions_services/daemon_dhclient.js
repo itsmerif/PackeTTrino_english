@@ -6,12 +6,18 @@ async function dhclient_service(networkObjectId, packet) {
     const isDhclientOn = $networkObject.getAttribute("dhclient") === "true";
 
     if (!isDhclientOn) return;
-
+    
     if (packet.type === "offer") {
+
+        if (dhcpOfferBuffer[networkObjectId]) return;
+
+        if ($networkObject.getAttribute("data-ip") !== "") return;
 
         if (packet.chaddr === networkObjectMac) {
 
             dhcpDiscoverFlag = true;
+
+            dhcpOfferBuffer[networkObjectId] = true;
 
             let newPacket = new dhcpRequest(
                 networkObjectMac, //origin mac
@@ -36,6 +42,7 @@ async function dhclient_service(networkObjectId, packet) {
 
         if (packet.chaddr === networkObjectMac) {
             dhcpRequestFlag = true;
+            delete dhcpOfferBuffer[networkObjectId];
             setDhcpInfo(networkObjectId, packet);
         }
 
