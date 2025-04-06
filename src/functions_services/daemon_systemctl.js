@@ -87,3 +87,16 @@ function listallServices(networkObjectId) {
     });
 
 }
+
+function getactiveServices(networkObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let availableServices = ["dhcpd", "apache", "dhclient", "dhcrelay", "resolved", "named"];
+    let response = [];
+
+    availableServices.forEach(service => {
+        if ($networkObject.getAttribute(service) !== null) response.push(service);
+    });
+
+    return response;
+}

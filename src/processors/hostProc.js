@@ -1,4 +1,4 @@
-async function packetProcessor_PC(switchId, networkObjectId, packet) {
+async function packetProcessor_Host(switchId, networkObjectId, packet) {
 
     if (visualToggle) await visualize(switchId, networkObjectId, packet);
 
@@ -7,9 +7,14 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const activeServices = getactiveServices(networkObjectId);
     
+    //kernel
+
     if (packet.protocol === "arp" && packet.type === "request") {
+
         if (packet.destination_ip !== networkObjectIp) return;
+
         addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
@@ -39,7 +44,9 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "icmp" && packet.type === "request") {
+        
         if (packet.destination_ip !== networkObjectIp) return;
+
         let newPacket = new IcmpEchoReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
         addPacketTraffic(newPacket);
         await switchProcessor(switchId, networkObjectId, newPacket);
@@ -47,24 +54,33 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "icmp" && packet.type === "time-exceeded") {
+
         if (packet.destination_ip !== networkObjectIp) return;
+        
         if (trace) {
             traceReturn = true;
             traceBuffer.push(packet.origin_ip);
         }
+
     }
 
     if (packet.protocol === "icmp" && packet.type === "reply") {
+
         if (packet.destination_ip !== networkObjectIp) return;
+
         icmpFlag = true;
-        if (trace){ //estamos en modo traceroute
+
+        if (trace){
             traceBuffer.push(packet.origin_ip);
-            traceFlag = true; //confirmamos que hemos encontrado el destino
+            traceFlag = true;
         }
+
     }
 
     if (packet.protocol === "tcp" && packet.type === "syn") {
+
         if (packet.destination_ip !== networkObjectIp) return;
+        
         let newPacket = new synAck(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac, packet.sport);
         newPacket.ack_number = packet.sequence_number + 1; //el ack debe ser el siguiente número de secuencia
         tcpBuffer[networkObjectId] = newPacket.sequence_number;
@@ -97,9 +113,18 @@ async function packetProcessor_PC(switchId, networkObjectId, packet) {
         return;
     }
 
-    if (packet.protocol === "dhcp") dhclient_service(networkObjectId, packet);
+    //daemons o servicios
 
-    if (packet.protocol === "dns") resolved_service(networkObjectId, packet);
+    if (packet.protocol === "dhcp") {
+        if (activeServices.includes("dhclient")) await dhclient_service(networkObjectId, packet);
+        if (activeServices.includes("dhcpd")) await dhcpd_service(networkObjectId, packet);
+        if (activeServices.includes("dhcrelay")) await dhcrelay_service(networkObjectId, packet);
+    }
 
-    if (packet.protocol === "http" && packet.type === "request") apache_service(networkObjectId, packet);
+    if (packet.protocol === "dns") {
+        if (activeServices.includes("resolved")) await resolved_service(networkObjectId, packet);
+        if (activeServices.includes("named")) await named_service(networkObjectId, packet);
+    }
+
+    if (packet.protocol === "http" && packet.type === "request" && activeServices.includes("apache")) await apache_service(networkObjectId, packet);
 }

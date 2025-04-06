@@ -1,5 +1,4 @@
 async function dhcrelay_service(agentObjectId, packet) {
-
     const $agentObject = document.getElementById(agentObjectId);
     const agentObjectMac = $agentObject.getAttribute("data-mac");
     const agentObjectIp = $agentObject.getAttribute("data-ip");

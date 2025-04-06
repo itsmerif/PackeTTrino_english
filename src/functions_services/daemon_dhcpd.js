@@ -1,4 +1,4 @@
-async function daemon_dhcpd(serverObjectId, packet) {
+async function dhcpd_service(serverObjectId, packet) {
     
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("data-mac");
@@ -14,9 +14,9 @@ async function daemon_dhcpd(serverObjectId, packet) {
     const networkOffer = getNetwork(rangeStart, netmaskOffer);
     const gatewayOffer = $serverObject.getAttribute("offer-gateway") || "";
     const dnsOffer = $serverObject.getAttribute("offer-dns") || "";
-    const isDhcpOn = $serverObject.getAttribute("dhcpd") === "true";
+    const isDhcpServerOn = $serverObject.getAttribute("dhcpd") === "true";
 
-    if (!isDhcpOn) return;
+    if (!isDhcpServerOn) return;
 
     if (packet.type === "discover") {
 
