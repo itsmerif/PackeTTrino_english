@@ -3,16 +3,17 @@ async function named_service(networkObjectId, packet) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const switchId = $networkObject.getAttribute("data-switch");
     const isRecursive = $networkObject.getAttribute("recursion");
 
-    if (packet.destination_mac !== serverObjectMac || packet.destination_ip !== serverObjectIp) return;
+    if (packet.destination_mac !== networkObjectMac || packet.destination_ip !== networkObjectIp) return;
 
-    let newPacket = new dnsReply(serverObjectIp, packet.origin_ip, serverObjectMac, packet.origin_mac, packet.query, ""); //inicializamos el paquete sin respuesta
+    let newPacket = new dnsReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac, packet.query, ""); //inicializamos el paquete sin respuesta
     let answer;
 
     if (packet.answer_type === "SOA") {
         let authority_domain;
-        [authority_domain, answer] = dns_SOA_Request_Proc(serverObjectId, packet);
+        [authority_domain, answer] = dns_SOA_Request_Proc(networkObjectId, packet);
         newPacket.answer_type = "SOA";
         newPacket.answer = answer;
         newPacket.authority_domain = authority_domain;
@@ -20,14 +21,14 @@ async function named_service(networkObjectId, packet) {
     }
 
     if (packet.answer_type === "A") {
-        answer = dns_A_Request_Proc(serverObjectId, packet);
+        answer = dns_A_Request_Proc(networkObjectId, packet);
         if (!answer && isRecursive !== "false") answer = await recursiveDNSResolve(packet.query);
         newPacket.answer_type = "A";
         newPacket.answer = answer;
     }
 
     addPacketTraffic(newPacket);
-    await switchProcessor(switchId, serverObjectId, newPacket);
+    await switchProcessor(switchId, networkObjectId, newPacket);
     return;
 
 }
@@ -43,12 +44,8 @@ function dns_SOA_Request_Proc(serverObjectId, packet) {
     let targetDomain;
     let response = [false, false];
 
-    //nos aseguramos de que el dominio que estamos buscando sea un FQDN
-
     if (!query.endsWith(".")) query = query + "."; // google.com.
     query = query.split("."); // ["google", "com", ""]
-
-    //buscamos en la tabla de registros DNS en cada nivel de autoridad
 
     for (let i = 0; i < query.length; i++) {
         targetDomain = query.slice(i).join("."); // "google.com.", "com.", "."
@@ -76,11 +73,7 @@ function dns_A_Request_Proc(serverObjectId, packet) {
     let recordIndex;
     let query = packet.query; // www.google.com
 
-    //nos aseguramos de que el dominio que estamos buscando sea un FQDN
-
-    if (!query.endsWith(".")) query = query + "."; // google.com.
-
-    //buscamos en la tabla de registros
+    if (!query.endsWith(".")) query = query + "."; // www.google.com.
 
     recordIndex = 1;
 
