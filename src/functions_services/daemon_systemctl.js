@@ -81,7 +81,7 @@ function listallServices(networkObjectId) {
         if (isServiceAvailable) {
             let isServiceActive = $networkObject.getAttribute(service) === "true";
             let status = (isServiceActive) ? "<span style='color:#4ade80;'> Activo (running) </span>" : "<span style='color:red;'> Inactivo (dead) </span>";
-            terminalMessage(`${service}.service: ${status}`);
+            terminalMessage(`${(service + ".service:").padEnd(20, " ")} ${status}`);
         }
 
     });
