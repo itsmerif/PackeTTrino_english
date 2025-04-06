@@ -17,6 +17,8 @@ async function dhclient_service(networkObjectId, packet) {
 
             dhcpDiscoverFlag = true;
 
+            terminalMessage(`DHCPOFFER of ${packet.yiaddr} from ${packet.siaddr}`);
+
             dhcpOfferBuffer[networkObjectId] = true;
 
             let newPacket = new dhcpRequest(
@@ -31,6 +33,8 @@ async function dhclient_service(networkObjectId, packet) {
             newPacket.giaddr = packet.giaddr;
             newPacket.chaddr = packet.chaddr;
 
+            terminalMessage(`DHCPREQUEST for ${packet.yiaddr} on enp0s3 to ${packet.siaddr} port 67`);
+
             addPacketTraffic(newPacket);
             await switchProcessor(switchId, networkObjectId, newPacket);
 
@@ -41,9 +45,11 @@ async function dhclient_service(networkObjectId, packet) {
     if (packet.type === "ack") {
 
         if (packet.chaddr === networkObjectMac) {
+            terminalMessage(`DHCPACK of ${packet.yiaddr} from ${packet.siaddr}`);
             dhcpRequestFlag = true;
             delete dhcpOfferBuffer[networkObjectId];
             setDhcpInfo(networkObjectId, packet);
+            terminalMessage(`Bound to ${packet.yiaddr} -- renewal in ${3600} seconds.`); //TODO -> añadir el tiempo de renovación real
         }
 
     }

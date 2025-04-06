@@ -34,7 +34,19 @@ async function command_Dhcp(dataId, args) {
 
 async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
 
-    terminalMessage("Buscando servidor DHCP...");
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const networkObjectMac = $networkObject.getAttribute("data-mac");
+
+    if (networkObjectIp !== "") {
+        terminalMessage("Error: Este equipo ya tiene una IP asignada.");
+        return;
+    };
+
+    terminalMessage(`Listening on LPF/enp0s3/${networkObjectMac}`);
+    terminalMessage(`Sending on   LPF/enp0s3/${networkObjectMac}`);
+    terminalMessage("Sending on   Socket/fallback");
+    terminalMessage(`DHCPDISCOVER on enp0s3 to 255.255.255.255 port 67 interval 6`);
 
     try {
 
@@ -42,7 +54,9 @@ async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
         dhcpRequestFlag = false;
 
         if (visualToggle) await minimizeTerminal();
+
         await dhcpDiscoverGenerator(networkObjectId, switchObjectId);
+
         if (visualToggle) await maximizeTerminal();
 
         if (dhcpDiscoverFlag === false || dhcpRequestFlag === false) {
@@ -50,8 +64,6 @@ async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
             return;
         }
 
-        terminalMessage(`\n`);
-        showObjectInfo(networkObjectId);
 
     } catch (error) {
 
@@ -94,6 +106,7 @@ async function dhcpRenewHandler(networkObjectId, switchObjectId) {
 async function dhcpReleaseHandler(networkObjectId, switchObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectMac = $networkObject.getAttribute("data-mac");
     const networkObjectIp = $networkObject.getAttribute("data-ip");
     const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
     const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
@@ -103,7 +116,10 @@ async function dhcpReleaseHandler(networkObjectId, switchObjectId) {
         return;
     }
 
-    terminalMessage("Liberando dirección IP: " + networkObjectIp);
+    terminalMessage(`Listening on LPF/enp0s3/${networkObjectMac}`);
+    terminalMessage(`Sending on   LPF/enp0s3/${networkObjectMac}`);
+    terminalMessage("Sending on   Socket/fallback");
+    terminalMessage(`DHCPRELEASE of ${networkObjectIp} on enp0s3 to ${networkObjectDhcpServer} port 67`);
     await dhcpReleaseGenerator(networkObjectId, switchObjectId);
     return;
 }
@@ -337,17 +353,4 @@ function renewLeaseTime(ip) {
     const isDHCPon = $networkObject.getAttribute("dhclient");
     if (isDHCPon === "false") return;
     dhcpRenewGenerator(networkObjectId, switchId);
-}
-
-function generateDHCPMessage(packet) {
-    /*  
-        Listening on LPF/enp0s3/08:00:27:57:27:a3
-        Sending on   LPF/enp0s3/08:00:27:57:27:a3
-        Sending on   Socket/fallback
-        DHCPDISCOVER on enp0s3 to 255.255.255.255 port 67 interval 6
-        DHCPOFFER of 192.168.1.107 from 192.168.1.1
-        DHCPREQUEST for 192.168.1.107 on enp0s3 to 255.255.255.255 port 67
-        DHCPACK of 192.168.1.107 from 192.168.1.1
-        bound to 192.168.1.107 -- renewal in 20291 seconds.
-    */
 }
