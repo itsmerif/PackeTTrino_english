@@ -66,7 +66,7 @@ class dhcpDiscover extends packet {
 }
 
 class dhcpOffer extends packet {
-    constructor(origin_ip, origin_mac, server_ip, offer_ip, destination_mac, chaddr, gateway, netmask, dns) {
+    constructor(origin_ip, origin_mac, server_ip, offer_ip, destination_mac, chaddr, gateway, netmask, dns, leasetime) {
         super(origin_ip, "255.255.255.255", origin_mac, destination_mac);
         this.transport_protocol = "udp";
         this.protocol = "dhcp";
@@ -82,6 +82,7 @@ class dhcpOffer extends packet {
         this.gateway = gateway;
         this.netmask = netmask;
         this.dns = dns;
+        this.leasetime = leasetime;
     }
 }
 
@@ -103,7 +104,7 @@ class dhcpRequest extends packet {
 }
 
 class dhcpAck extends packet {
-    constructor(origin_mac, assigned_ip, server_ip, gateway, netmask, dns, hostname) {
+    constructor(origin_mac, assigned_ip, server_ip, gateway, netmask, dns, hostname, leasetime) {
         super(server_ip, "255.255.255.255", origin_mac, "ff:ff:ff:ff:ff:ff");
         this.transport_protocol = "udp";
         this.protocol = "dhcp";
@@ -118,6 +119,7 @@ class dhcpAck extends packet {
         this.netmask = netmask;
         this.dns = dns;
         this.hostname = hostname;
+        this.leasetime = leasetime;
     }
 }
 

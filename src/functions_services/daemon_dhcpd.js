@@ -33,7 +33,8 @@ async function dhcpd_service(serverObjectId, packet) {
             packet.chaddr,
             gatewayOffer,
             netmaskOffer,
-            dnsOffer
+            dnsOffer,
+            leaseTime
         );
 
 
@@ -64,7 +65,8 @@ async function dhcpd_service(serverObjectId, packet) {
             gatewayOffer,
             netmaskOffer,
             dnsOffer,
-            packet.hostname
+            packet.hostname,
+            leaseTime
         );
 
         newPacket.chaddr = packet.chaddr;
@@ -77,6 +79,7 @@ async function dhcpd_service(serverObjectId, packet) {
         }
 
         addDhcpEntry(serverObjectId, packet.yiaddr, packet.chaddr, packet.hostname);
+        console.log(packet);
         addPacketTraffic(newPacket)
         await switchProcessor(switchId, serverObjectId, newPacket);
         return;

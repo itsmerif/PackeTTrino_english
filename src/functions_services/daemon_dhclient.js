@@ -49,7 +49,7 @@ async function dhclient_service(networkObjectId, packet) {
             dhcpRequestFlag = true;
             delete dhcpOfferBuffer[networkObjectId];
             setDhcpInfo(networkObjectId, packet);
-            terminalMessage(`Bound to ${packet.yiaddr} -- renewal in ${3600} seconds.`); //TODO -> añadir el tiempo de renovación real
+            terminalMessage(`Bound to ${packet.yiaddr} -- renewal in ${packet.leasetime} seconds.`); //TODO -> añadir el tiempo de renovación real
         }
 
     }
