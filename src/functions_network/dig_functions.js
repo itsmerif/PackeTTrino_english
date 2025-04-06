@@ -59,10 +59,15 @@ async function command_dig(dataId, args) {
     if (visualToggle) await minimizeTerminal();
 
     try {
+
         cleanPacketTraffic();
-        await getDomainFromServer(dataId, domain, true, dnsServer, query_type)
+
+        await getDomainFromServer(dataId, domain, true, dnsServer, query_type, true);
+
     } catch (error) {
+
         console.log(error);
+
     }
 
     if (visualToggle) await maximizeTerminal();
@@ -83,10 +88,11 @@ async function domainNameResolution(dataId, domain) {
 
         try {
 
-            await getDomainFromServer(dataId, domain, false, "", true, "A");
+            await getDomainFromServer(dataId, domain, false, "", "A", false);
             let dnsReply = buffer[dataId];
-            response = dnsReply.answer;
             delete buffer[dataId];
+
+            response = dnsReply.answer;
 
         } catch (error) {
 
@@ -99,7 +105,7 @@ async function domainNameResolution(dataId, domain) {
     return response;
 }
 
-async function getDomainFromServer(dataId, domain, verbose = false, dnsServer = "", query_type = "A") {
+async function getDomainFromServer(dataId, domain, verbose = false, dnsServer = "", query_type = "A", deleteAfterUse) {
 
     const $networkObject = document.getElementById(dataId);
     const switchId = $networkObject.getAttribute("data-switch");
@@ -112,7 +118,7 @@ async function getDomainFromServer(dataId, domain, verbose = false, dnsServer = 
     await dnsRequestPacketGenerator(dataId, switchId, domain, dnsServer, query_type);
 
     if (!dnsRequestFlag) {
-        if (verbose) terminalMessage("Error: No se pudo resolver el nombre de dominio.");
+        if (verbose) terminalMessage(`communications error to ${dnsServer}#53: timed out`);
         throw new Error("Error: No se pudo resolver el nombre de dominio.");
     }
 
@@ -123,6 +129,8 @@ async function getDomainFromServer(dataId, domain, verbose = false, dnsServer = 
     if (!dnsReply.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
 
     if (isResolvedOn) addDnsCacheEntry(dataId, dnsReply.query, dnsReply.answer_type, dnsReply.answer, dnsReply.origin_ip);
+
+    if (deleteAfterUse) delete buffer[dataId];
 
 }
 
@@ -179,7 +187,6 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
 
 function addDnsCacheEntry(networkObjectId, query, answer_type, answer, server) {
 
-    console.log("baliza");
     const $networkObject = document.getElementById(networkObjectId);
     const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
     const newRow = document.createElement("tr");
@@ -259,35 +266,4 @@ function generateDnsOuput(packet) {
     terminalMessage(`<p>SERVER: ${server_ip}#53(${server_ip}) (UDP)</p>`);
     terminalMessage("<p>WHEN: " + currentDateString + "</p>");
     terminalMessage("<p>MSG SIZE  rcvd: 87</p>");
-}
-
-function isDomainInCache(networkObjectId, targetDomain) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
-    const records = dnsTable.querySelectorAll("tr");
-    let FQDN_targetDomain = targetDomain;
-
-    if (!isValidIp(targetDomain) && !targetDomain.endsWith(".")) FQDN_targetDomain = FQDN_targetDomain + ".";
-
-    let i = 1;
-
-    while (i < records.length) {
-
-        let row = records[i];
-        let cells = row.querySelectorAll("td");
-        let domain = cells[0].innerHTML;
-        let type = cells[1].innerHTML;
-        let value = cells[2].innerHTML;
-
-        if (domain === FQDN_targetDomain) {
-            return [type, value];
-        }
-
-        i++;
-
-    }
-
-    return [false, false];
-
 }

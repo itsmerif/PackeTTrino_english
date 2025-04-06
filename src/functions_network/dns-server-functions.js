@@ -12,11 +12,6 @@ function command_dns(dataId, args) {
     const isNamedOn = $serverObject.getAttribute("named") === "true";
     const forbiddenChars = ["\\", "/", "ñ"];
 
-    if (!isNamedOn) {
-        terminalMessage("Error: Comando desconocido.");
-        return;
-    }
-
     if (args[1] === "-s" || args[1] === "--show") {
         terminalMessage($serverObject.querySelector(".dns-table").querySelector("table").outerHTML);
         return;
@@ -33,6 +28,11 @@ function command_dns(dataId, args) {
         return;
     }
 
+    if (!isNamedOn) {
+        terminalMessage("Error: Comando desconocido.");
+        return;
+    }
+ 
     if (args[1] === "add") {
 
         if (args[2] !== "-t"){  
