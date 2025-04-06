@@ -2,7 +2,8 @@ async function command_Dhcp(dataId, args) {
 
     const $networkObject = document.getElementById(dataId);
     const switchObjectId = $networkObject.getAttribute("data-switch");
-    const isDchpOn = $networkObject.getAttribute("dhclient")
+    const isDchpOn = $networkObject.getAttribute("dhclient");
+    const option = args[1];
 
     cleanPacketTraffic();
 
@@ -27,7 +28,7 @@ async function command_Dhcp(dataId, args) {
         "-release": async () => await dhcpReleaseHandler(dataId, switchObjectId)
     }
 
-    if (args[1] in dhcpFunctions) await dhcpFunctions[args[1]]();
+    if (option in dhcpFunctions) await dhcpFunctions[option]();
 
 }
 
@@ -336,4 +337,17 @@ function renewLeaseTime(ip) {
     const isDHCPon = $networkObject.getAttribute("dhclient");
     if (isDHCPon === "false") return;
     dhcpRenewGenerator(networkObjectId, switchId);
+}
+
+function generateDHCPMessage(packet) {
+    /*  
+        Listening on LPF/enp0s3/08:00:27:57:27:a3
+        Sending on   LPF/enp0s3/08:00:27:57:27:a3
+        Sending on   Socket/fallback
+        DHCPDISCOVER on enp0s3 to 255.255.255.255 port 67 interval 6
+        DHCPOFFER of 192.168.1.107 from 192.168.1.1
+        DHCPREQUEST for 192.168.1.107 on enp0s3 to 255.255.255.255 port 67
+        DHCPACK of 192.168.1.107 from 192.168.1.1
+        bound to 192.168.1.107 -- renewal in 20291 seconds.
+    */
 }

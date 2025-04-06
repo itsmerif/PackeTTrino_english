@@ -4,28 +4,18 @@ async function command_ping(dataId, args) {
     const networkObjectIp = $networkObject.getAttribute("data-ip");
     const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
     const networkObjectMac = $networkObject.getAttribute("data-mac");
-    const switchObjectId = $networkObject.getAttribute("data-switch");
-
-    //gestion de entrada
-
-    if (dataId.includes("router-")) { //se reenvia a la funcion especifica para routers
-        router_ping(dataId, args);
-        return;
-    }
 
     if (args.length !== 2) {
-        terminalMessage("Error: Sintaxis: ping <ip | dominio>");
+        terminalMessage("Error: Sintaxis: ping  &lt;ip | dominio&gt;");
         return;
     }
-
-    //gestion de equipo
 
     if (!networkObjectIp || !networkObjectNetmask || !networkObjectMac) {
-        terminalMessage("Error: No se ha configurado el equipo.");
+        terminalMessage("ping: connect: La red es inaccesible.");
         return;
     }
 
-    ping(dataId, args);
+    await ping(dataId, args);
 
 }
 
@@ -35,87 +25,58 @@ async function ping(dataId, args) {
     const networkObjectIp = $networkObject.getAttribute("data-ip");
     const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
     const switchObjectId = $networkObject.getAttribute("data-switch");
-    let destinationIp = args[1];
+    let destination = args[1];
 
     cleanPacketTraffic();
 
     if (visualToggle) await minimizeTerminal();
 
-    if (!isValidIp(destinationIp)) {
+    if (!isValidIp(destination)) {
 
-        destinationIp = await domainNameResolution(dataId, args[1]);
+        destination = await domainNameResolution(dataId, args[1]);
 
-        if (!destinationIp) { //no se pudo resolver el dominio
+        if (!destination) {
             if (visualToggle) await maximizeTerminal();
-            ping_f(destinationIp);
+            terminalMessage(`ping: ${destination}: Nombre o servicio desconocido`)
             return;
         }
 
     }
 
-    if (destinationIp === getNetwork(destinationIp, networkObjectNetmask)) { //no se le permite hacer ping a una red
+    if (destination === getNetwork(destination, networkObjectNetmask)) {
         if (visualToggle) await maximizeTerminal();
-        ping_f(destinationIp);
+        pingFailure(destination);
         return;
     }
 
-    if (destinationIp === networkObjectIp || getNetwork(destinationIp, "255.0.0.0") === "127.0.0.0") {
+    if (destination === networkObjectIp || getNetwork(destination, "255.0.0.0") === "127.0.0.0") {
         await new Promise(resolve => setTimeout(resolve, 50));
         if (visualToggle) await maximizeTerminal();
-        ping_s(destinationIp);
+        pingSuccess(destination);
         return;
     }
 
     try {
-        await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, destinationIp);
+
+        icmpFlag = false;
+        await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, destination);
+
     } catch (error) {
+
         if (visualToggle) await maximizeTerminal();
-        ping_f(destinationIp);
+        pingFailure(destination);
         return;
+
     }
 
-    if (!icmpFlag) {
-        ping_f(destinationIp);
-    } else {
-        ping_s(destinationIp);
-    }
+    if (!icmpFlag) pingFailure(destination);
+    else pingSuccess(destination);
 
     if (visualToggle) await maximizeTerminal();
 
 }
 
-async function router_ping(dataId, args) {
-
-    const $routerObject = document.getElementById(dataId);
-    const routerObjectIp = $routerObject.getAttribute("ip-enp0s3"); //obtenemos una ip válida del router, cualquiera
-    const switchId = $routerObject.getAttribute("data-switch-enp0s3");
-    const destinationIp = args[1];
-    let newPacket = new IcmpEchoRequest(routerObjectIp, destinationIp, $routerObject.getAttribute("data-mac"), "");
-    icmpFlag = false;
-
-    cleanPacketTraffic();
-
-    if (visualToggle) await minimizeTerminal();
-
-    try {
-        await packetProcessor_router(switchId, dataId, newPacket);
-    } catch (error) {
-        if (visualToggle) await maximizeTerminal();
-        ping_f(routerObjectIp);
-        return;
-    }
-
-    if (!icmpFlag) {
-        ping_f(routerObjectIp);
-    } else {
-        ping_s(routerObjectIp);
-    }
-
-    if (visualToggle) await maximizeTerminal();
-
-}
-
-function ping_s(origin) {
+function pingSuccess(origin) {
     const terminal = document.querySelector(".terminal-component");
     if (terminal.style.display === "none") return;
     const terminalOutput = document.querySelector(".terminal-output");
@@ -128,7 +89,7 @@ function ping_s(origin) {
 
 }
 
-function ping_f(origin) {
+function pingFailure(origin) {
     const terminal = document.querySelector(".terminal-component");
     if (terminal.style.display === "none") return;
     const terminalOutput = document.querySelector(".terminal-output");
@@ -140,7 +101,7 @@ function ping_f(origin) {
     }, 500);
 }
 
-async function pingSim(originIp, destinationIp) {
+async function pingSimulator(originIp, destinationIp) {
 
     visualToggle = true;
 

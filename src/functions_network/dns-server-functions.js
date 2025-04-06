@@ -9,42 +9,35 @@ class dnsRecord {
 function command_dns(dataId, args) {
 
     const $serverObject = document.getElementById(dataId);
-    const forbiddenChars = ["\\", "/", "ñ"]
+    const isNamedOn = $serverObject.getAttribute("named") === "true";
+    const forbiddenChars = ["\\", "/", "ñ"];
 
-    // sintaxis: dns <add|del> [ -t <type> ] <domain> <ip|cname>
-
-    if (args.length === 1) {
-        terminalMessage("Error: Sintaxis: dns &lt;-s&gt; ");
+    if (!isNamedOn) {
+        terminalMessage("Error: Comando desconocido.");
         return;
     }
 
-    if (!dataId.startsWith("dns-server")) { //solo puede mostrar la caché o eliminarla
+    if (args[1] === "-s" || args[1] === "--show") {
+        terminalMessage($serverObject.querySelector(".dns-table").querySelector("table").outerHTML);
+        return;
+    }
 
-        if (args[1] === "-s" || args[1] === "--show") {
-            terminalMessage($serverObject.querySelector(".dns-table").querySelector("table").outerHTML);
-            return;
-        }
-
-        if (args[1] === "-f" || args[1] === "--flush") {
-            $serverObject.querySelector(".dns-table").querySelector("table").innerHTML = `
+    if (args[1] === "-f" || args[1] === "--flush") {
+        $serverObject.querySelector(".dns-table").querySelector("table").innerHTML = `
                     <tr>
                         <th>Dominio</th>
                         <th>Tipo</th>
                         <th>Valor</th>
                     </tr>`;
-            terminalMessage("La tabla de registros DNS ha sido limpiada correctamente.");
-            return;
-        }
-
-        terminalMessage("Error: Comando solo implementado en servidores DNS");
+        terminalMessage("La tabla de registros DNS ha sido limpiada correctamente.");
         return;
     }
 
     if (args[1] === "add") {
 
-        if (args[2] !== "-t"){ //por defecto es tipo A
+        if (args[2] !== "-t"){  
 
-            if (args.length !== 4) { //dns add domain ip
+            if (args.length !== 4) { 
                 terminalMessage("Error: Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]</p>");
                 return;
             }
@@ -71,41 +64,27 @@ function command_dns(dataId, args) {
             let type = args[3] || "none";
             type = type.toUpperCase();
 
-            switch (type) {
-                case "SOA":
-                    dns_SOA(dataId, args);
-                    break;
-                case "NS":
-                    dns_NS(dataId, args);
-                    break;
-                case "A":
-                    dns_A(dataId, args);
-                    break;
-                case "CNAME":
-                    dns_CNAME(dataId, args);
-                    break;
-                case "PTR":
-                    dns_PTR(dataId, args);
-                    break;
-                default:
-                    terminalMessage("Error: Tipo de Registro Desconocido.");
+            const dnsRecordTypes = {
+                "SOA": () => dns_SOA(dataId, args),
+                "NS": () => dns_NS(dataId, args),
+                "A": () => dns_A(dataId, args),
+                "CNAME": () => dns_CNAME(dataId, args),
+                "PTR": () => dns_PTR(dataId, args)
             }
 
+            if (type in dnsRecordTypes) dnsRecordTypes[type]()
+            else terminalMessage("Error: Tipo de Registro Desconocido.");
         }
 
-    } else if (args[1] === "del") {
-        
-        delDnsEntry(dataId, args[2])
-       
-    } else if (args[1] === "-s") {
-
-        terminalMessage($serverObject.querySelector(".dns-table").querySelector("table").outerHTML);
-
-    } else {
-
-        terminalMessage("Error: Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]</p>");
-
+        return;
     }
+    
+    if (args[1] === "del") {       
+        delDnsEntry(dataId, args[2]);
+        return;
+    }
+       
+    terminalMessage("Error: Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]");
 
 }
 
@@ -280,39 +259,5 @@ function delDnsEntry(dataId, targetDomain) {
         i++;
     }
 
-    terminalMessage("Error: No se encontro el dominio en la tabla de registros DNS");
+    terminalMessage("Error: No se encontró el nombre de dominio en la tabla de registros DNS.");
 }
-
-function isDomainInCache(networkObjectId, targetDomain) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
-    const records = dnsTable.querySelectorAll("tr");
-    let FQDN_targetDomain = targetDomain;
-
-    if (!isValidIp(targetDomain) && !targetDomain.endsWith(".")) {  //si no es ip, añadimos el punto al final para que sea un FQDN
-        FQDN_targetDomain = FQDN_targetDomain + "." ;
-    }
-
-    let i = 1;
-
-    while ( i < records.length ) {
-
-        let row = records[i];
-        let cells = row.querySelectorAll("td");
-        let domain = cells[0].innerHTML;
-        let type = cells[1].innerHTML;
-        let value = cells[2].innerHTML;
-
-        if (domain === FQDN_targetDomain) {
-            return [type, value];
-        }
-
-        i++;
-
-    }
-
-    return [false, false];
-
-}
-

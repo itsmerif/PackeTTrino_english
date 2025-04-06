@@ -1,10 +1,10 @@
 async function command_dig(dataId, args) {
+
     let opt_x = false;
     let opt_t = false;
     let opt_server = false;
     let domain;
     let dnsServer = "";
-    let useCache = false; //como estamos usando dig directamente, no usamos la cache local
     let query_type = "A";
     const validTypes = ["A", "SOA", "PTR", "NS", "AAAA", "MX"];
 
@@ -23,19 +23,18 @@ async function command_dig(dataId, args) {
             case "@":
                 opt_server = true;
                 dnsServer = $OPTS["@"];
-                useCache = false;
                 break;
         }
     }
 
-    args = args.slice($OPTS['IND'] + 1) //nos quedamos con el resto de argumentos sin contar opciones
+    args = args.slice($OPTS['IND'] + 1)
 
     if (args.length === 0) {
         terminalMessage("Error: falta el argumento dominio o ip.");
         return;
     }
 
-    domain = args[0]; //el primer argumento es el dominio
+    domain = args[0];
 
     if (opt_t && !validTypes.includes(query_type)) {
         terminalMessage("Error: tipo de registro desconocido.")
@@ -60,7 +59,8 @@ async function command_dig(dataId, args) {
     if (visualToggle) await minimizeTerminal();
 
     try {
-        await dig(dataId, domain, true, dnsServer, useCache, query_type)
+        cleanPacketTraffic();
+        await getDomainFromServer(dataId, domain, true, dnsServer, query_type)
     } catch (error) {
         console.log(error);
     }
@@ -68,57 +68,62 @@ async function command_dig(dataId, args) {
     if (visualToggle) await maximizeTerminal();
 }
 
-async function dig(dataId, domain, verbose = false, dnsServer = "", useCache = true, query_type = "A") {
-
-    cleanPacketTraffic();
-
-    const $networkObject = document.getElementById(dataId);
-    const switchId = $networkObject.getAttribute("data-switch");
-    let [answer_type, answer, server_ip] = [false, false, false];
-
-    if (!domain.endsWith(".")) domain = domain + "."; //FQDN
-    if (useCache) [answer_type, answer, server_ip] = isDomainInCachePc(dataId, domain); //buscamos en la tabla de cache del equipo
-
-    if (!answer) {
-
-        dnsRequestFlag = false;
-        await dnsRequestPacketGenerator(dataId, switchId, domain, dnsServer, query_type);
-
-        if (!dnsRequestFlag) {
-            if (verbose) terminalMessage("Error: No se pudo resolver el nombre de dominio.");
-            throw new Error("Error: No se pudo resolver el nombre de dominio.");
-        }
-
-        let packet = buffer[dataId];
-        if (verbose) generateDnsOuput(packet);
-        if (useCache) addDnsCacheEntry(dataId, packet.query, packet.answer_type, packet.answer, packet.origin_ip);
-        if (!packet.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
-        return;
-    }
-
-    dnsRequestFlag = true;
-    if (verbose) generateDnsOuput(domain, answer_type, answer, "0", server_ip);
-
-}
-
 async function domainNameResolution(dataId, domain) {
 
-    let response =  false;
+    const $networkObject = document.getElementById(dataId);
+    const useCache = $networkObject.getAttribute("resolved") === "true";
 
-    //primero miramos en el /etc/hosts
+    let response = false;
 
     response = isDomainInEtcHosts(dataId, domain);
 
-    if (!response) { //no se encuentra en el /etc/hosts, buscamos en la cache, y si no, en el servidor
+    if (!response && useCache) response = isDomainInCachePc(dataId, domain)[1];
+
+    if (!response) {
+
         try {
-            await dig(dataId, domain, false, "", true, "A");
-            response = isDomainInCachePc(dataId, domain)[1];
+
+            await getDomainFromServer(dataId, domain, false, "", true, "A");
+            let dnsReply = buffer[dataId];
+            response = dnsReply.answer;
+            delete buffer[dataId];
+
         } catch (error) {
+
             console.log(error);
+
         }
+
     }
 
     return response;
+}
+
+async function getDomainFromServer(dataId, domain, verbose = false, dnsServer = "", query_type = "A") {
+
+    const $networkObject = document.getElementById(dataId);
+    const switchId = $networkObject.getAttribute("data-switch");
+    const isResolvedOn = $networkObject.getAttribute("resolved") === "true";
+
+    if (!domain.endsWith(".")) domain = domain + ".";
+
+    dnsRequestFlag = false;
+
+    await dnsRequestPacketGenerator(dataId, switchId, domain, dnsServer, query_type);
+
+    if (!dnsRequestFlag) {
+        if (verbose) terminalMessage("Error: No se pudo resolver el nombre de dominio.");
+        throw new Error("Error: No se pudo resolver el nombre de dominio.");
+    }
+
+    let dnsReply = buffer[dataId];
+
+    if (verbose) generateDnsOuput(dnsReply);
+
+    if (!dnsReply.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
+
+    if (isResolvedOn) addDnsCacheEntry(dataId, dnsReply.query, dnsReply.answer_type, dnsReply.answer, dnsReply.origin_ip);
+
 }
 
 function isDomainInEtcHosts(dataId, domain) {
@@ -140,9 +145,7 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
     const records = dnsTable.querySelectorAll("tr");
     let FQDN_targetDomain = targetDomain;
 
-    if (!targetDomain.endsWith(".")) {  //añadimos el punto al final para que sea un FQDN
-        FQDN_targetDomain = FQDN_targetDomain + ".";
-    }
+    if (!targetDomain.endsWith(".")) FQDN_targetDomain = FQDN_targetDomain + ".";
 
     let i = 1;
 
@@ -184,7 +187,7 @@ function addDnsCacheEntry(networkObjectId, query, answer_type, answer, server) {
 
     if (typeof answer !== 'string') {
         let i = 0;
-        while ( i < answer.length && !isValidIp(answer[i]) ) {
+        while (i < answer.length && !isValidIp(answer[i])) {
             i++;
         }
         answer = answer[i];
@@ -242,7 +245,7 @@ function generateDnsOuput(packet) {
         }
         terminalMessage("<p></p>");
     }
-    
+
     //seccion de autoridad
 
     if (authority !== "0") {
@@ -256,4 +259,35 @@ function generateDnsOuput(packet) {
     terminalMessage(`<p>SERVER: ${server_ip}#53(${server_ip}) (UDP)</p>`);
     terminalMessage("<p>WHEN: " + currentDateString + "</p>");
     terminalMessage("<p>MSG SIZE  rcvd: 87</p>");
+}
+
+function isDomainInCache(networkObjectId, targetDomain) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
+    const records = dnsTable.querySelectorAll("tr");
+    let FQDN_targetDomain = targetDomain;
+
+    if (!isValidIp(targetDomain) && !targetDomain.endsWith(".")) FQDN_targetDomain = FQDN_targetDomain + ".";
+
+    let i = 1;
+
+    while (i < records.length) {
+
+        let row = records[i];
+        let cells = row.querySelectorAll("td");
+        let domain = cells[0].innerHTML;
+        let type = cells[1].innerHTML;
+        let value = cells[2].innerHTML;
+
+        if (domain === FQDN_targetDomain) {
+            return [type, value];
+        }
+
+        i++;
+
+    }
+
+    return [false, false];
+
 }

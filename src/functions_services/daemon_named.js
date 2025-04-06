@@ -40,15 +40,15 @@ function dns_SOA_Request_Proc(serverObjectId, packet) {
     const dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
     const records = dnsTable.querySelectorAll("tr");
     let recordIndex;
-    let query = packet.query; // google.com
+    let query = packet.query;
     let targetDomain;
     let response = [false, false];
 
-    if (!query.endsWith(".")) query = query + "."; // google.com.
-    query = query.split("."); // ["google", "com", ""]
+    if (!query.endsWith(".")) query = query + "."; 
+    query = query.split(".");
 
     for (let i = 0; i < query.length; i++) {
-        targetDomain = query.slice(i).join("."); // "google.com.", "com.", "."
+        targetDomain = query.slice(i).join(".");
         recordIndex = 1;
         while (recordIndex < records.length && !response[0]) {
             let row = records[recordIndex];
@@ -71,9 +71,9 @@ function dns_A_Request_Proc(serverObjectId, packet) {
     const records = dnsTable.querySelectorAll("tr");
     let response = false;
     let recordIndex;
-    let query = packet.query; // www.google.com
+    let query = packet.query;
 
-    if (!query.endsWith(".")) query = query + "."; // www.google.com.
+    if (!query.endsWith(".")) query = query + ".";
 
     recordIndex = 1;
 
@@ -83,7 +83,7 @@ function dns_A_Request_Proc(serverObjectId, packet) {
         let domain = cells[0].innerHTML;
         let type = cells[1].innerHTML;
         let value = cells[2].innerHTML;
-        if (domain === query && type === "CNAME") query = value // www.google.com -> google.com
+        if (domain === query && type === "CNAME") query = value;
         if (domain === query && type === "A") response = value;
         recordIndex++;
     }

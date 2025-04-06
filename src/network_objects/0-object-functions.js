@@ -207,7 +207,7 @@ async function icmpTryoutProcess(id) {
 
     icmpTryoutObject2 = id;
     createPacketIndicator(id);
-    await pingSim(icmpTryoutObject1Ip, icmpTryoutObject2Ip);
+    await pingSimulator(icmpTryoutObject1Ip, icmpTryoutObject2Ip);
     $board.querySelectorAll(".pack-cursor").forEach(cursor => {cursor.remove();});
     icmpTryoutObject1 = "";
     icmpTryoutObject2 = "";

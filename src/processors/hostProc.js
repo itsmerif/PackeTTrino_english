@@ -115,6 +115,16 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
         return;
     }
 
+    if (packet.protocol === "dns" && packet.type === "reply") {
+
+        if (packet.destination_ip !== networkObjectIp) return;
+        
+        dnsRequestFlag = true;
+        buffer[networkObjectId] = packet;
+        return;
+
+    }
+
     //daemons o servicios
 
     if (packet.protocol === "dhcp") {
@@ -123,10 +133,7 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
         if (activeServices.includes("dhcrelay")) await dhcrelay_service(networkObjectId, packet);
     }
 
-    if (packet.protocol === "dns") {
-        if (activeServices.includes("resolved")) await resolved_service(networkObjectId, packet);
-        if (activeServices.includes("named")) await named_service(networkObjectId, packet);
-    }
+    if (packet.protocol === "dns" && packet.type === "request" && activeServices.includes("named") ) await named_service(networkObjectId, packet);
 
     if (packet.protocol === "http" && packet.type === "request" && activeServices.includes("apache")) await apache_service(networkObjectId, packet);
 }
