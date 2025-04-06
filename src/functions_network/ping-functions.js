@@ -150,7 +150,7 @@ async function pingSim(originIp, destinationIp) {
         || document.querySelector(`[ip-enp0s9='${originIp}']`);
 
     if (!$networkObject) return;
-    console.log("balizando ping...");
+    
     await command_ping($networkObject.id, ["ping", destinationIp]);
 
 }

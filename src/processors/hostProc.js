@@ -62,6 +62,7 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
             traceBuffer.push(packet.origin_ip);
         }
 
+        return;
     }
 
     if (packet.protocol === "icmp" && packet.type === "reply") {
@@ -75,6 +76,7 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
             traceFlag = true;
         }
 
+        return;
     }
 
     if (packet.protocol === "tcp" && packet.type === "syn") {

@@ -32,6 +32,7 @@ async function icmpRequestPacketGenerator(networkObjectId, switchId, originIp, d
     if (!destination_mac) {
         buffer[networkObjectId] = packet;
         await arpResolve(networkObjectId, destinationIp);
+        return;
     }
 
     packet.destination_mac = destination_mac;
