@@ -33,11 +33,12 @@ async function ping(dataId, args) {
 
     if (!isValidIp(destination)) {
 
+        const domain = destination;
         destination = await domainNameResolution(dataId, args[1]);
 
         if (!destination) {
             if (visualToggle) await maximizeTerminal();
-            terminalMessage(`ping: ${destination}: Nombre o servicio desconocido`)
+            terminalMessage(`ping: ${domain}: Nombre o servicio desconocido`)
             return;
         }
 
