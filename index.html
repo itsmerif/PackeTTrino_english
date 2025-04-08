@@ -322,79 +322,74 @@
     </table>
   </article>
 
-  <!-- SCRIPT PRINCIPAL -->
-  <script src="./src/env.js"></script>
-  <script src="./src/0-main.js"></script>
-  <!-- ANIMACIONES -->
   <script src="./animations/move-packet.js"></script>
-  <!-- COMPONENTES -->
-  <script src="./src/components/panel-items.json"></script>
-  <script src="./src/components/terminal.js"></script>
-  <script src="./src/components/text.js"></script>
+  <script src="./schemes/network-one.js"></script>
+  <script src="./src/env.js"></script>
+  <script src="./src/main.js"></script>
   <script src="./src/components/board.js"></script>
   <script src="./src/components/browser.js"></script>
-  <script src="./src/components/traffic.js"></script>
-  <script src="./src/components/settings.js"></script>
+  <script src="./src/components/cable.js"></script>
+  <script src="./src/components/dhcp-relay-agent.js"></script>
+  <script src="./src/components/dhcpserver.js"></script>      
+  <script src="./src/components/dnsServer.js"></script>       
+  <script src="./src/components/pc.js"></script>
   <script src="./src/components/popup.js"></script>
-  <!-- FUNCIONES DE RED-->
-  <script src="./src/functions_network/0-general-functions.js"></script>
-  <script src="./src/functions_network/apache.js"></script>
-  <script src="./src/functions_network/dhcp_functions.js"></script>
-  <script src="./src/functions_network/arp_functions.js"></script>
-  <script src="./src/functions_network/dig_functions.js"></script>
-  <script src="./src/functions_network/ip-functions.js"></script>
-  <script src="./src/functions_network/ping-functions.js"></script>
-  <script src="./src/functions_network/tcp-functions.js"></script>
-  <script src="./src/functions_network/http-functions.js"></script>
-  <script src="./src/functions_network/firewall-functions.js"></script>
-  <script src="./src/functions_network/dns-server-functions.js"></script>
-  <script src="./src/functions_network/traceroute-functions.js"></script>
-  <!-- SERVICIOS -->
-  <script src="./src/functions_services/daemon_dhclient.js"></script>
-  <script src="./src/functions_services/daemon_dhcpd.js"></script>
-  <script src="./src/functions_services/daemon_dhcrelay.js"></script>
-  <script src="./src/functions_services/daemon_named.js"></script>
-  <script src="./src/functions_services/daemon_systemctl.js"></script>
-  <script src="./src/functions_services/daemon_apache.js"></script>
-  <!-- FUNCIONES DEL SISTEMA -->
-  <script src="./src/functions_system/help.js"></script>
-  <script src="./src/functions_system/man.js"></script>
-  <script src="./src/functions_system/nano.js"></script>
-  <script src="./src/functions_system/visual.js"></script>
-  <!-- OBJETOS -->
-  <script src="./src/network_objects/dhcp-relay-agent.js"></script>
-  <script src="./src/network_objects/dhcpserver.js"></script>
-  <script src="./src/network_objects/pc.js"></script>
-  <script src="./src/network_objects/router.js"></script>
-  <script src="./src/network_objects/switch.js"></script>
-  <script src="./src/network_objects/dnsServer.js"></script>
-  <script src="./src/network_objects/cable.js"></script>
-  <script src="./src/network_objects/0-object-functions.js"></script>
-  <!-- GENERADORES -->
-  <script src="./src/generators/customGen.js"></script>
-  <script src="./src/generators/dhcpGen.js"></script>
-  <script src="./src/generators/dnsGen.js"></script>
-  <script src="./src/generators/httpGen.js"></script>
-  <script src="./src/generators/icmpGen.js"></script>
-  <script src="./src/generators/tcpGen.js"></script>
-  <script src="./src/generators/arpResolver.js"></script>
-  <!-- PROCESADORES -->
+  <script src="./src/components/router.js"></script>
+  <script src="./src/components/settings.js"></script>        
+  <script src="./src/components/switch.js"></script>
+  <script src="./src/components/terminal.js"></script>        
+  <script src="./src/components/text.js"></script>
+  <script src="./src/components/traffic.js"></script>
+  <script src="./src/lib/arp_lib.js"></script>
+  <script src="./src/lib/dhcp_lib.js"></script>
+  <script src="./src/lib/dig_lib.js"></script>
+  <script src="./src/lib/dns_lib.js"></script>
+  <script src="./src/lib/dynamic_routing_lib.js"></script>    
+  <script src="./src/lib/firewall_lib.js"></script>
+  <script src="./src/lib/ip_lib.js"></script>
+  <script src="./src/lib/network_lib.js"></script>
+  <script src="./src/lib/object_functions_lib.js"></script>   
+  <script src="./src/lib/packet_visualize_lib.js"></script>   
+  <script src="./src/lib/packets_lib.js"></script>
+  <script src="./src/lib/ping_lib.js"></script>
+  <script src="./src/lib/traceroute_lib.js"></script>
+  <script src="./src/parsers/parser-etc-hosts.js"></script>   
+  <script src="./src/parsers/parser-index-file.js"></script>  
+  <script src="./src/parsers/parser-network-file.js"></script>
+  <script src="./src/parsers/parser-resolve-file.js"></script>
+  <script src="./src/processors/hostProc.js"></script>
   <script src="./src/processors/routerProc.js"></script>
   <script src="./src/processors/switchProc.js"></script>
-  <script src="./src/processors/hostFirewall.js"></script>
-  <script src="./src/processors/routerFirewall.js"></script>
-  <script src="./src/processors/hostProc.js"></script>
-  <!-- VISUALIZADORES -->
-  <script src="./src/visualizers/packetVisualize.js"></script>
-  <script src="./src/packets.js"></script>
-  <script src="./src/dynamic-routing.js"></script>
-  <!-- ARCHIVOS -->
-  <script src="./src/files/parser-network-file.js"></script>
-  <script src="./src/files/parser-resolve-file.js"></script>
-  <script src="./src/files/parser-index-file.js"></script>
-  <script src="./src/files/parser-etc-hosts.js"></script>
-  <!--PLANTILLAS-->
-  <script src="./schemes/network-one.js"></script>
+  <script src="./src/services/daemon_apache.js"></script>
+  <script src="./src/services/daemon_dhclient.js"></script>
+  <script src="./src/services/daemon_dhcpd.js"></script>
+  <script src="./src/services/daemon_dhcrelay.js"></script>
+  <script src="./src/services/daemon_named.js"></script>
+  <script src="./src/system/kernel_arp.js"></script>
+  <script src="./src/system/kernel_custom.js"></script>
+  <script src="./src/system/kernel_dns.js"></script>
+  <script src="./src/system/kernel_http.js"></script>
+  <script src="./src/system/kernel_icmp.js"></script>
+  <script src="./src/system/kernel_iptables.js"></script>
+  <script src="./src/system/kernel_systemd.js"></script>
+  <script src="./src/system/kernel_tcp.js"></script>
+  <script src="./src/utilities/apache_util.js"></script>
+  <script src="./src/utilities/arp_util.js"></script>
+  <script src="./src/utilities/dhcp_util.js"></script>
+  <script src="./src/utilities/dig_util.js"></script>
+  <script src="./src/utilities/dns_util.js"></script>
+  <script src="./src/utilities/help_util.js"></script>
+  <script src="./src/utilities/http-functions.js"></script>
+  <script src="./src/utilities/ip_util.js"></script>
+  <script src="./src/utilities/iptables_util.js"></script>
+  <script src="./src/utilities/man_util.js"></script>
+  <script src="./src/utilities/nano_util.js"></script>
+  <script src="./src/utilities/ping_util.js"></script>
+  <script src="./src/utilities/systemctl_util.js"></script>
+  <script src="./src/utilities/tpc_util.js"></script>
+  <script src="./src/utilities/traceroute_util.js"></script>
+  <script src="./src/utilities/visual_util.js"></script>
+  
 </body>
 
 </html>
