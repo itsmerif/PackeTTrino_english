@@ -1,3 +1,21 @@
+class networkChange {
+    constructor() {
+        this.networkInterface = "";
+        this.type = "";
+        this.ip = "";
+        this.netmask = "";
+        this.gateway = "";
+    }
+}
+
+class routingRule {
+    constructor() {
+        this.destination = "";
+        this.netmask = "";
+        this.nextHop = "";
+    }
+}
+
 function loadNetworkFile(dataId) {
 
     const fileEditorContainer = document.querySelector(".editor-container");
@@ -14,12 +32,7 @@ function loadNetworkFile(dataId) {
         const networkObjectGateway = $networkObject.getAttribute("data-gateway");
 
         let fileContent;
-
-        fileContent = `#The loopback network interface\n`;
-        fileContent += `\n`;
-        fileContent += `auto lo\niface lo inet loopback\n`;
-        fileContent += `\n`;
-        fileContent += `# The primary network interface\n`;
+        fileContent = `#The primary network interface\n`;
         fileContent += `\n`;
 
         if (networkObjectIp !== "" && !isDhcpOn) {
@@ -29,43 +42,39 @@ function loadNetworkFile(dataId) {
             if (networkObjectGateway) fileContent += `gateway ${networkObjectGateway}\n`;
         }
 
-        if (isDhcpOn) {
-            fileContent += `auto enp0s3\niface enp0s3 inet dhcp\n`;
-        }
+        if (isDhcpOn) fileContent += `auto enp0s3\niface enp0s3 inet dhcp\n`;
 
         content.value = fileContent;
         fileEditorContainer.style.display = "block";
-        return;
 
-    }
+    } else {
 
+        const $networkObject = document.getElementById(dataId);
+        const networkObjectIps = [$networkObject.getAttribute("ip-enp0s3"), $networkObject.getAttribute("ip-enp0s8"), $networkObject.getAttribute("ip-enp0s9")];
+        const networkObjectNetmasks = [$networkObject.getAttribute("netmask-enp0s3"), $networkObject.getAttribute("netmask-enp0s8"), $networkObject.getAttribute("netmask-enp0s9")];
+        const interfaces = ["enp0s3", "enp0s8", "enp0s9"];
+    
+        let fileContent;
 
-    const $networkObject = document.getElementById(dataId);
-    const networkObjectIps = [$networkObject.getAttribute("ip-enp0s3"), $networkObject.getAttribute("ip-enp0s8"), $networkObject.getAttribute("ip-enp0s9")];
-    const networkObjectNetmasks = [$networkObject.getAttribute("netmask-enp0s3"), $networkObject.getAttribute("netmask-enp0s8"), $networkObject.getAttribute("netmask-enp0s9")];
-    const interfaces = ["enp0s3", "enp0s8", "enp0s9"];
-
-    let fileContent;
-
-    fileContent = `#The loopback network interface\n`;
-    fileContent += `\n`;
-    fileContent += `auto lo\niface lo inet loopback\n`;
-    fileContent += `\n`;
-
-    for (let i = 0; i < networkObjectIps.length; i++) {
-        if (networkObjectIps[i] !== "") {
-            fileContent += `\n`;
-            fileContent += `auto ${interfaces[i]}\niface ${interfaces[i]} inet static\n`;
-            fileContent += `address ${networkObjectIps[i]}\n`;
-            fileContent += `netmask ${networkObjectNetmasks[i]}\n`;
-            fileContent += `\n`;
-            fileContent += getRoutingRules(networkObjectId, interfaces[i]).join("\n");
-            fileContent += `\n`;
+        fileContent = `#The primary network interface\n`;
+        fileContent += `\n`;
+    
+        for (let i = 0; i < networkObjectIps.length; i++) {
+            if (networkObjectIps[i] !== "") {
+                fileContent += `\n`;
+                fileContent += `auto ${interfaces[i]}\niface ${interfaces[i]} inet static\n`;
+                fileContent += `address ${networkObjectIps[i]}\n`;
+                fileContent += `netmask ${networkObjectNetmasks[i]}\n`;
+                fileContent += `\n`;
+                fileContent += getRoutingRules(networkObjectId, interfaces[i]).join("\n");
+                fileContent += `\n`;
+            }
         }
-    }
+    
+        content.value = fileContent;
+        fileEditorContainer.style.display = "block";
 
-    content.value = fileContent;
-    fileEditorContainer.style.display = "block";
+    }
 
 }
 
@@ -73,156 +82,121 @@ function parserNetworkFile() {
 
     const fileEditor = document.querySelector(".file-editor");
     const $networkObject = document.getElementById(document.querySelector(".terminal-component").dataset.id);
-    const interfaces = ["enp0s3", "enp0s8", "enp0s9"];
+    const networkInterfacesStrategy = {
+        "host": ["enp0s3"],
+        "router": ["enp0s3", "enp0s8", "enp0s9"]
+    };
+    const interfaceTypes = ["dhcp", "static"];
     const fileContent = fileEditor.value;
     const unfilteredlines = fileContent.split("\n");
     const lines = unfilteredlines.map(line => line.trim().replace(/\s+/g, " ")).filter(line => line !== "");
+    const availableInterfaces = networkInterfacesStrategy[$networkObject.id.startsWith("router-") ? "router" : "host"];
 
-    //para los hosts
-
-    if (!$networkObject.id.startsWith("router-")) {
-
-        for (let i = 0; i < lines.length; i++) {
-
-            if (lines[i].startsWith("auto enp0s3")) {
-
-                if (lines[i + 1] === "iface enp0s3 inet static") {
-
-                    if (!lines[i + 2].match(/^address \S+$/)) throw new Error(`Error en la línea ${i + 2}: formato no válido.`);
-                    if (!lines[i + 3].match(/^netmask \S+$/)) throw new Error(`Error en la línea ${i + 3}: formato no válido.`);
-
-                    let ip = lines[i + 2].split(" ")[1];
-                    let netmask = lines[i + 3].split(" ")[1];
-                    let gateway = false;
-
-                    if (lines[i + 4] && lines[i + 4].match(/^gateway/)) {
-                        if (!lines[i + 4].match(/^gateway \S+$/)) throw new Error(`Error en la línea ${i + 4}: formato no válido.`);
-                        gateway = lines[i + 4].split(" ")[1];
-                    }
-
-                    if (!isValidIp(ip)) throw new Error(`Error en la línea ${i + 2}: IP no válida.`);
-                    if (!isValidIp(netmask)) throw new Error(`Error en la línea ${i + 3}: Netmask no válida.`);
-
-                    if (gateway) {
-                        if (!isValidIp(gateway)) throw new Error(`Error en la línea ${i + 4}: Gateway no válida.`);
-                        if (getNetwork(gateway, netmask) !== getNetwork(ip, netmask)) throw new Error(`Error en la línea ${i + 4}: Gateway Inalcanzable.`);
-                    }
-
-                    $networkObject.setAttribute("data-ip", ip);
-                    $networkObject.setAttribute("data-netmask", netmask);
-                    if (gateway) $networkObject.setAttribute("data-gateway", gateway);
-                    terminalMessage("El archivo se ha cargado correctamente.");
-                    return;
-
-                }
-
-                if (lines[i + 1] === "iface enp0s3 inet dhcp") {
-                    $networkObject.setAttribute("dhclient", "true");
-                    terminalMessage("El archivo se ha cargado correctamente.");
-                    return;
-                }
-
-                throw new Error(`Error en la línea ${i + 1}: formato no válido.`);
-
-            }
-        }
-
-        return
-    }
-
-    //para los routers
-
-    const routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
-    const rows = routingTable.querySelectorAll("tr");
-
+    let networkChanges = [];
     let routingRules = [];
-    let ips = {};
-    let netmasks = {};
+
     let i = 0;
 
     while (i < lines.length) {
 
-        while (lines[i].startsWith("auto") && !lines[i].startsWith("auto lo")) { 
+        if (lines[i].startsWith("auto ")) {
 
+            let $networkUpdate = new networkChange();
+
+            //interfaz
             let networkInterface = lines[i].split(" ")[1];
+            if (!availableInterfaces.includes(networkInterface)) throw new Error(`Error: interfaz ${networkInterface} no reconocida.`);
+            $networkUpdate.networkInterface = networkInterface;
 
-            if (!interfaces.includes(networkInterface)) throw new Error(`Error en la línea ${i}: interface no reconocida.`);
+            //tipo de interfaz
+            if (!lines[i + 1].startsWith(`iface ${networkInterface} inet`)) throw new Error(`Error: formato no válido cerca de la línea ${i + 1}.`);
+            let $interfaceType = lines[i + 1].split(" ")[3];
+            if (!interfaceTypes.includes($interfaceType)) throw new Error(`Error: tipo de interfaz ${$interfaceType} no reconocido.`);
+            $networkUpdate.type = $interfaceType;
 
-            let regExForInterface = new RegExp(`^iface ${networkInterface} inet static`);
-
-            if (!lines[i + 1].match(regExForInterface)) throw new Error(`Error en la línea ${i + 1}: formato no válido.`);
-
-            if (!lines[i + 2].match(/^address \S+$/)) throw new Error(`Error en la línea ${i + 2}: formato no válido.`);
-
-            if (!lines[i + 3].match(/^netmask \S+$/)) throw new Error(`Error en la línea ${i + 3}: formato no válido.`);
-
+            //ip
+            if (!lines[i + 2].startsWith("address ")) throw new Error(`Error: formato no válido cerca de la línea ${i + 2}.`);
             let ip = lines[i + 2].split(" ")[1];
+            if (!isValidIp(ip)) throw new Error(`Error: ${ip} no es una dirección IP válida.`);
+            $networkUpdate.ip = ip;
+
+            //netmask
+            if (!lines[i + 3].startsWith("netmask ")) throw new Error(`Error: formato no válido cerca de la línea ${i + 3}.`);
             let netmask = lines[i + 3].split(" ")[1];
-            
-            if (!isValidIp(ip)) throw new Error(`Error en la línea ${i + 2}: IP no válida.`);
+            if (!isValidIp(netmask)) throw new Error(`Error: ${netmask} no es una máscara de red válida.`);
+            $networkUpdate.netmask = lines[i + 3].split(" ")[1];
 
-            if (!isValidIp(netmask)) throw new Error(`Error en la línea ${i + 3}: Netmask no válida.`);
+            let nextLine = i + 4;
 
-            ips[networkInterface] = ip;
-            netmasks[networkInterface] = netmask;
-
-            let j = i + 4;
-
-            while (j < lines.length && lines[j].startsWith("ip route add")) {
-
-                let destinationCidr;
-                let nextHop;
-                let [destination, destinationNetmask] = [];
-
-                destinationCidr = lines[j].split(" ")[3];
-
-                if (!isValidCidrIp(destinationCidr)) throw new Error(`Error en la líneas ${j}: dirección IP en CIDR no válida.`)
-
-                [destination, destinationNetmask] = parseCidr(lines[j].split(" ")[3]);
-
-                if (lines[j].split(" ")[4] !== "via") throw new Error(`Error en la línea ${j}: se esperaba 'via' `);
-
-                nextHop = lines[j].split(" ")[5];
-
-                if (!isValidIp(nextHop) || getNetwork(nextHop, netmask) !== getNetwork(ip, netmask)) throw new Error(`Error en la línea ${j}: siguiente salto no válido.`);
-
-                let rule = new routingRule(destination, destinationNetmask, networkInterface, nextHop);
-                routingRules.push(rule);
-
-                j++;
-
+            //gateway(opcional)
+            if (lines[i + 4] && lines[i + 4].startsWith("gateway ")) {
+                let gateway = lines[i + 4].split(" ")[1];
+                if (!isValidIp(gateway)) throw new Error(`Error: ${gateway} no es una dirección IP válida.`);
+                if (getNetwork(gateway, netmask) !== getNetwork(ip, netmask)) throw new Error(`Error: puerta de enlace ${gateway} inalcanzable.`);
+                $networkUpdate.gateway = gateway;
+                nextLine++;
             }
 
-            i = j;
+            networkChanges.push($networkUpdate);
 
+            i = nextLine;
+
+        }else if (lines[i].startsWith("ip route add ")) {
+
+            let $routingRule = new routingRule();
+
+            //destino
+            let destination = lines[i].split(" ")[3];
+            if (!isValidCidrIp(destination)) throw new Error(`Error: ${destination} no es una dirección CIDR válida.`);
+            $routingRule.destination = parseCidr(destination)[0];
+            $routingRule.netmask = parseCidr(destination)[1];
+            let nextHop = lines[i].split(" ")[5];
+            if (!isValidIp(nextHop)) throw new Error(`Error: ${nextHop} no es una dirección IP válida.`);
+            $routingRule.nextHop = nextHop;
+
+            routingRules.push($routingRule);
+            i++;
+
+        } else {
+            i++;
         }
-
-        i++;
-        
     }
 
-    for (let rule of routingRules) {
-        addRoutingEntry($networkObject.id, rule.destination, rule.destinationNetmask, rule.interface, rule.nextHop);
-    }
+    setNetworkChanges(networkChanges, $networkObject);
 
-    let rowNumber = 1;
-
-    for (let ip in ips) {
-        $networkObject.setAttribute(`ip-${ip}`, ips[ip]);
-        $networkObject.setAttribute(`netmask-${ip}`, netmasks[ip]);
-        rows[1].querySelectorAll("td")[0].innerText = getNetwork(ips[ip], netmasks[ip]);
-        rows[1].querySelectorAll("td")[1].innerText = netmasks[ip];
-        rows[1].querySelectorAll("td")[2].innerText = ips[ip];
-        rows[1].querySelectorAll("td")[3].innerText = ip;
-        rowNumber++;
-    }
 }
 
-class routingRule {
-    constructor(destination, destinationNetmask, networkInterface, nextHop) {
-        this.destination = destination;
-        this.destinationNetmask = destinationNetmask;
-        this.interface = networkInterface;
-        this.nextHop = nextHop;
-    }
+function setNetworkChanges(networkChanges, $networkObject) {
+
+    networkChanges.forEach(networkChange => {
+
+        const setNetworkSpecsStrategy = {
+
+            "enp0s3": () => {
+                if ($networkObject.getAttribute("data-ip") === null) {
+                    $networkObject.setAttribute("ip-enp0s3", networkChange.ip);
+                    $networkObject.setAttribute("netmask-enp0s3", networkChange.netmask);
+                }else {
+                    $networkObject.setAttribute("data-ip", networkChange.ip);
+                    $networkObject.setAttribute("data-netmask", networkChange.netmask);
+                    if (networkChange.gateway !== "") $networkObject.setAttribute("data-gateway", networkChange.gateway);
+                }
+            },
+
+            "enp0s8": () => {
+                $networkObject.setAttribute("ip-enp0s8", networkChange.ip);
+                $networkObject.setAttribute("netmask-enp0s8", networkChange.netmask);
+            },
+
+            "enp0s9": () => { 
+                $networkObject.setAttribute("ip-enp0s9", networkChange.ip);
+                $networkObject.setAttribute("netmask-enp0s9", networkChange.netmask);
+            }
+
+        };
+
+        setNetworkSpecsStrategy[networkChange.networkInterface]();
+
+    });
+
 }

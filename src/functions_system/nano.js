@@ -15,7 +15,7 @@ function command_nano(dataId, args) {
     });
 
 
-    if (fileName === "/etc/network/interfaces") {
+    if (fileName === "/etc/network/interfaces" || fileName === "-p") {
         fileEditor.setAttribute("data-file", "/etc/network/interfaces");
         frameTitle.innerHTML = "/etc/network/interfaces";
         loadNetworkFile(networkObjectId);
