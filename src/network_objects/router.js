@@ -180,7 +180,7 @@ function saveRouterSpecs(event) {
     const networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
 
     //obtenemos los valores del formulario  
-
+    
     const newIpEnp0s3 = document.querySelector(".router-form #ip-enp0s3").value;
     const newIpEnp0s8 = document.querySelector(".router-form #ip-enp0s8").value;
     const newIpEnp0s9 = document.querySelector(".router-form #ip-enp0s9").value;
@@ -211,7 +211,7 @@ function saveRouterSpecs(event) {
     interfaces.forEach((iface, index) => {
         const row = rows[index + 1];
         const cells = row.querySelectorAll("td");
-        if (getNetwork(iface.ip, iface.netmask) !== "0.0.0.0") cells[0].innerHTML = getNetwork(iface.ip, iface.netmask);
+        cells[0].innerHTML = (getNetwork(iface.ip, iface.netmask) === "0.0.0.0") ? "" : getNetwork(iface.ip, iface.netmask);
         cells[1].innerHTML = iface.netmask;
         cells[2].innerHTML = iface.ip;
         cells[3].innerHTML = iface.interface;
