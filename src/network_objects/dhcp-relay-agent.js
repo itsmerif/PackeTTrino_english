@@ -32,7 +32,7 @@ function createDhcpRelayObject(x, y) {
 
     //icono
 
-    networkObjectIcon.src = "./assets/board/dhcp.svg";
+    networkObjectIcon.src = "./assets/board/dhcprelay.svg";
     networkObjectIcon.alt = "server";
     networkObjectIcon.draggable = true;
     networkObject.appendChild(networkObjectIcon);

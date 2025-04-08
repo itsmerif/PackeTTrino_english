@@ -3,3 +3,4 @@ poder usar ESC para salir del editor de texto
 permitir hacer resize tanto de la terminal como del navegador
 problemas de css con el editor de texto
 eliminar lease timers setintervals al eliminar un dhcp server
+cambiar icono de dhcp relay
