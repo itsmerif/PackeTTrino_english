@@ -1,6 +1,6 @@
 let itemIndex = 0;
 let quickInfoTimeout;
-const leaseTimers = {};
+let leaseTimers = {};
 let ignoreArpTraffic = false;
 let visualToggle = false;
 let visualSpeed = 300;
