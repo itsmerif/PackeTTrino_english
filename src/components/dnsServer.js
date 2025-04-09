@@ -1,4 +1,4 @@
-function createDnsServerObject(x, y) {
+function DnsServerObject(x, y) {
 
     const $board = document.querySelector(".board");
     const networkObject = document.createElement("article");

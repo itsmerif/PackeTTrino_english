@@ -1,3 +1,57 @@
+function browser() {
+
+    const $browser = document.createElement("div");
+    $browser.classList.add("browser-component");
+    $browser.setAttribute("data-id", "");
+    
+    $browser.innerHTML = `
+        <div class="browser-header">
+
+        <div class="browser-controls">
+            <button class="control close" aria-label="Cerrar"></button>
+            <button class="control minimize" aria-label="Minimizar"></button>
+            <button class="control maximize" aria-label="Maximizar"></button>
+        </div>
+
+        <div class="browser-tabs">
+            <button class="tab active">Nueva pestaña</button>
+        </div>
+
+        <div class="browser-address-bar">
+
+            <div class="address-bar-icons">
+            <button class="icon back" aria-label="Atrás">◀</button>
+            <button class="icon forward" aria-label="Adelante">▶</button>
+            <button class="icon refresh" aria-label="Actualizar">↻</button>
+            </div>
+
+            <input type="text" class="address-input" placeholder="https://www.ejemplo.com"
+            aria-label="Barra de direcciones">
+
+            <div class="address-bar-icons">
+            <button class="icon star" aria-label="Marcar como favorito">★</button>
+            <button class="icon menu" aria-label="Menú">⋮</button>
+            </div>
+
+        </div>
+
+        </div>
+
+        <iframe class="browser-content"></iframe>
+    `;
+    
+    $browser.addEventListener("mousedown", dragBroswer);
+    $browser.querySelector(".control.close").addEventListener("click", closeBrowser);
+    $browser.querySelector(".control.minimize").addEventListener("click", minimizeBrowser);
+    $browser.querySelector(".control.maximize").addEventListener("click", maximizeBrowser);
+    $browser.querySelector(".address-input").addEventListener("keydown", browserSearch);
+    $browser.querySelector(".address-input").addEventListener("mousedown", event => { event.stopPropagation(); });
+    $browser.querySelector(".browser-content").addEventListener("mousedown", event => { event.stopPropagation(); });
+
+    return $browser;
+
+}
+
 //constantes de navegador
 
 const $homepage = `

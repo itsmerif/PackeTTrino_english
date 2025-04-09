@@ -1,5 +1,37 @@
 let trafficBuffer = [];
 
+function packetTracer() {
+
+    const $packetTracer = document.createElement("article");
+    $packetTracer.classList.add("packet-traffic");
+
+    $packetTracer.innerHTML = `
+        <div class="filter-traffic">
+            <input type="text">
+            <button>Filtrar</button>
+        </div>
+        <table>
+        <tr>
+            <th>XID</th>
+            <th>Protocol</th>
+            <th>Type</th>
+            <th>Origin IP</th>
+            <th>Destination IP</th>
+            <th>Origin MAC</th>
+            <th>Destination MAC</th>
+            <th>TTL</th>
+        </tr>
+        </table>
+    `;
+
+
+    $packetTracer.querySelector("input").addEventListener("keydown", (event) => { if (event.key === "Enter") filterPacketTraffic(); });
+    $packetTracer.querySelector("button").addEventListener("click", filterPacketTraffic);
+
+    return $packetTracer;
+
+}
+
 function addPacketTraffic(packet) {
     trafficBuffer.push(packet);
     const $table = document.querySelector(".packet-traffic table");

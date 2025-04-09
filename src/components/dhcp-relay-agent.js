@@ -1,4 +1,4 @@
-function createDhcpRelayObject(x, y) {
+function DhcpRelayObject(x, y) {
 
     const board = document.querySelector(".board");
     const networkObject = document.createElement("article");

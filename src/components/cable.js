@@ -1,4 +1,4 @@
-function createCableObject(x1, y1, x2, y2, start, end, interface = "enp0s3") {
+function CableObject(x1, y1, x2, y2, start, end, interface = "enp0s3") {
 
     const svg = document.getElementById("svg-board");
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");

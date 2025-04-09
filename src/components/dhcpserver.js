@@ -1,4 +1,4 @@
-function createDhcpServerObject(x, y) {
+function DhcpServerObject(x, y) {
 
     const $board = document.querySelector(".board");
     const $networkObject = document.createElement("article");

@@ -1,6 +1,53 @@
 let terminalBuffer = [];
 let currentCommandIndex = 0;
 
+function terminal() {
+
+    const $terminal = document.createElement("div");
+    $terminal.classList.add("terminal-component");
+    $terminal.id = "terminal-network";
+    $terminal.setAttribute("data-id", "");
+
+    $terminal.innerHTML = `
+        <p>
+            <span>%></span>
+            <input type="text" class="terminal-input" autofocus>
+        </p>
+
+        <div class="terminal-output"></div>
+
+        <div class="editor-container" style="display: none;">
+
+        <div class="editor-buttons">
+            <p><span>^S</span>Guardar y Salir</p>
+        </div>
+
+        <p class="file-editor-error"></p>
+
+        <textarea class="file-editor" data-file=""></textarea>
+
+        <div class="editor-frame"> <span></span> </div>
+
+        </div>
+    `;
+
+    $terminal.addEventListener("keydown", terminalKeyboard);
+    $terminal.addEventListener("mousedown", dragTerminal);
+    $terminal.addEventListener("click", clickTerminal);
+    $terminal.querySelector(".terminal-input").addEventListener("keydown", sendCommand);
+    $terminal.querySelector(".terminal-output").addEventListener("click", clickTerminal);
+    $terminal.querySelector(".file-editor-error").addEventListener("mousedown", event => { event.stopPropagation(); });
+    $terminal.querySelector(".file-editor-error").addEventListener("mouseup", event => { event.stopPropagation(); });
+    $terminal.querySelector(".file-editor").addEventListener("mousedown", event => { event.stopPropagation(); });
+    $terminal.querySelector(".file-editor").addEventListener("mouseup", event => { event.stopPropagation(); });
+    $terminal.querySelector(".file-editor").addEventListener("click", event => { event.stopPropagation(); });
+    $terminal.querySelector(".file-editor").addEventListener("dragstart", event => { event.stopPropagation(); });
+    $terminal.querySelector(".file-editor").addEventListener("keydown", fileEditorKeyboard);
+    
+    return $terminal;
+    
+}
+
 function sendCommand(event) {
 
     const terminal = event.target.closest('.terminal-component');

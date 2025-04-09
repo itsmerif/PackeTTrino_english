@@ -1,4 +1,4 @@
-function createTextObject(x, y) {
+function TextObject(x, y) {
     const $board = document.querySelector(".board");
     const $textObject = document.createElement("article");
     const $input = document.createElement("input");

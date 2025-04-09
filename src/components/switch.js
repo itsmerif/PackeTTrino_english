@@ -1,4 +1,4 @@
-function createSwitchObject(x, y) {
+function SwitchObject(x, y) {
 
     const board = document.querySelector(".board");
     const networkObject = document.createElement("article");
@@ -84,7 +84,7 @@ function switchConn(event) {
 
         if (itemType === "item-dropped" && (itemId.startsWith("pc-") || itemId.startsWith("dhcp-server-") || itemId.startsWith("dhcp-relay-server-") || itemId.startsWith("dns-server-"))) {
 
-            createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id);
+            CableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id);
             saveConn(event, itemId);
             document.getElementById(itemId).setAttribute("data-switch-enp0s3", switchObject.id);
             switchObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
@@ -101,21 +101,21 @@ function switchConn(event) {
 
             if (enp0s3Conn === "") {
 
-                createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id, "enp0s3");
+                CableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id, "enp0s3");
                 saveConn(event, itemId);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s3", switchObject.id);
                 switchObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
 
             } else if (enp0s8Conn === "") {
 
-                createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id, "enp0s8");
+                CableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id, "enp0s8");
                 saveConn(event, itemId);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s8", switchObject.id);
                 switchObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
 
             } else if (enp0s9Conn === "") {
 
-                createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id, "enp0s9");
+                CableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id, "enp0s9");
                 saveConn(event, itemId);
                 document.getElementById(itemId).setAttribute("data-switch-enp0s9", switchObject.id);
                 routerObject.querySelector("img").draggable = false; //el router ya no se puede arrastrar

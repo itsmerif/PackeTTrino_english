@@ -1,4 +1,4 @@
-function createRouterObject(x, y) {
+function RouterObject(x, y) {
 
     const board = document.querySelector(".board");
     const networkObject = document.createElement("article");

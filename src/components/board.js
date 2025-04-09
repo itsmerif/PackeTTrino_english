@@ -3,6 +3,24 @@ let routers = {};
 let switches = {};
 let servers = {};
 
+function itemBoard() {
+    
+    const $board = document.createElement("section");
+
+    $board.classList.add("board");
+    $board.setAttribute("ondragover", "dragOverBoard(event)");
+    $board.setAttribute("ondrop", "dropItem(event)");
+    $board.setAttribute("onclick", "closeAllModals()");
+
+    $board.innerHTML = `
+        <svg ondragover="dragOverBoard(event)" id="svg-board" rope-start="startId" rope-end="endId"
+        preserveAspectRatio="none" width="100%" height="100%" style="position: absolute; top: 0; left: 0;">
+        </svg>
+    `;
+
+    return $board
+}
+
 function dragOverBoard(event) {
     event.preventDefault();
 }
@@ -45,13 +63,13 @@ function dropItem(event) {
     let dy = y - parseInt(initialY);
 
     const itemCreators = {
-        "pc": () => createPcObject(x, y),
-        "router": () => createRouterObject(x, y),
-        "switch": () => createSwitchObject(x, y),
-        "dhcpserver": () => createDhcpServerObject(x, y),
-        "dhcprelay": () => createDhcpRelayObject(x, y),
-        "dnsserver": () => createDnsServerObject(x, y),
-        "text": () => createTextObject(x, y)
+        "pc": () => PcObject(x, y),
+        "router": () => RouterObject(x, y),
+        "switch": () => SwitchObject(x, y),
+        "dhcpserver": () => DhcpServerObject(x, y),
+        "dhcprelay": () => DhcpRelayObject(x, y),
+        "dnsserver": () => DnsServerObject(x, y),
+        "text": () => TextObject(x, y)
     }
 
     if (itemType === "item") itemCreators[itemId] ? itemCreators[itemId]() : popupMessage("Error: Tipo de objeto no reconocido");

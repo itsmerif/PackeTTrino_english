@@ -10,8 +10,6 @@
 
 <body>
 
-  <!-- PANTALLA DE INICIO -->
-
   <div id="loading-screen">
     <div class="loader-container">
       <div class="loader-animation">
@@ -25,313 +23,19 @@
     </div>
   </div>
 
-  <!-- OVERLAY -->
-
   <div class="modal-overlay"></div>
 
-  <!-- SECCION PRINCIPAL -->
-
-  <div id="root">
-
-    <section class="board" ondragover="dragOverBoard(event)" ondrop="dropItem(event)" onclick="closeAllModals()">
-      <svg ondragover="dragOverBoard(event)" id="svg-board" rope-start="startId" rope-end="endId"
-        preserveAspectRatio="none" width="100%" height="100%" style="position: absolute; top: 0; left: 0;"></svg>
-    </section>
-
-    <section id="item-panel">
-      <!--
-      <div class="schema-selector">
-        <select id="schema-selector" onchange="changeSchema(event)">
-          <option value="network-one">Elije una red</option>
-          <option value="net-one">Red de prueba</option>
-        </select>
-      </div>-->
-      <div class="file-options">
-        <button onclick="downloadState()"> Descargar Esquema </button>
-        <input type="file" id="fileInput" accept=".html" data-content="Seleccionar archivo">
-        <button onclick="loadState()"> Cargar Esquema </button>
-      </div>
-
-      <div class="item-panel-elements">
-        <article class="item dynrouting" draggable="false">
-          <img src="./assets/panel/dynrouter.png" alt="dynrouting" draggable="false" style="width: 100%; height: 100%;">
-          <div class="pulse"></div>
-          <div class="radar-line"></div>
-        </article>
-      </div>
-
-    </section>
-  </div>
-
-  <!-- FORMULARIOS -->
-
-  <form class="pc-form modal">
-
-    <p id="form-item-id"></p>
-
-    <label for="ip">Dirección IP (ipv4):</label>
-    <input type="text" id="ip" name="ip"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-
-    <label for="netmask">Máscara de Red:</label>
-    <input type="text" id="netmask" name="netmask"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-
-    <label for="gateway">Puerta de enlace:</label>
-    <input type="text" id="gateway" name="gateway"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-
-    <label for="dns-server">Servidor DNS:</label>
-    <input type="text" id="dns-server" name="dns-server"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-
-    <div class="form-item">
-      <label for="dhcp"> Modo DHCP: </label>
-      <input class="btn-toggle" type="checkbox" id="dhcp" name="dhcp">
-    </div>
-
-    <div class="form-item">
-      <label for="wifi"> Modo Wi-Fi: </label>
-      <input class="btn-toggle" type="checkbox" id="wifi" name="wifi">
-    </div>
-
-    <div class="form-item">
-      <label for="web-server"> Servidor Web: </label>
-      <input class="btn-toggle" type="checkbox" id="web-server" name="web-server">
-    </div>
-
-    <div class="button-container">
-      <button class="btn-modern-blue" type="submit" id="save-btn">Guardar</button>
-      <button class="btn-modern-blue" type="submit" id="get-btn" style="display: none;">Obtener IP</button>
-      <button class="btn-modern-blue" type="submit" id="renew-btn" style="display: none;">Renovar IP</button>
-      <button class="btn-modern-blue" type="submit" id="release-btn" style="display: none;">Liberar IP</button>
-    </div>
-
-    <button class="btn-modern-red" type="submit" id="close-btn">Cerrar</button>
-
-  </form>
-
-  <form class="router-form modal">
-
-    <p id="form-router-item-id"></p>
-
-    <label for="ip-enp0s3">Interfaz enp0s3:</label>
-    <input type="text" id="ip-enp0s3" name="ip-enp0s3"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <input type="text" name="netmask-enp0s3" id="netmask-enp0s3"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-
-    <label for="ip-enp0s8">Interfaz enp0s8:</label>
-    <input type="text" id="ip-enp0s8" name="ip-enp0s8"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <input type="text" name="netmask-enp0s8" id="netmask-enp0s8"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-
-    <label for="ip-enp0s9">Interfaz enp0s9:</label>
-    <input type="text" id="ip-enp0s9" name="ip-enp0s9"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <input type="text" name="netmask-enp0s9" id="netmask-enp0s9"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-
-    <button class="btn-modern-yellow" type="submit">Guardar</button>
-
-  </form>
-
-  <form class="dhcp-form modal">
-
-    <p id="form-dhcp-item-id"></p>
-
-    <div>
-      <label for="ip-dhcp">IP:</label>
-      <input type="text" id="ip-dhcp" name="ip-dhcp"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    </div>
-
-    <div>
-      <label for="netmask-dhcp">Netmask:</label>
-      <input type="text" id="netmask-dhcp" name="netmask-dhcp"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    </div>
-
-    <div>
-      <label for="gateway-dhcp">Gateway:</label>
-      <input type="text" id="gateway-dhcp" name="gateway-dhcp"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    </div>
-
-    <p> Opciones de Servicio </p>
-
-    <div>
-      <label for="range-start">Rango de IPs:</label>
-      <input type="text" id="range-start" name="range-start"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-      <input type="text" id="range-end" name="range-end"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    </div>
-
-    <div>
-      <label for="offer-netmask">Oferta Netmask:</label>
-      <input type="text" id="offer-netmask" name="offer-netmask"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    </div>
-
-    <div>
-      <label for="offer-gateway">Oferta Gateway:</label>
-      <input type="text" id="offer-gateway" name="offer-gateway"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    </div>
-
-    <div>
-      <label for="offer-dns">Oferta Servidor DNS:</label>
-      <input type="text" id="offer-dns" name="offer-dns"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    </div>
-
-    <div>
-      <label for="offer-lease-time">Oferta Tiempo de Alquiler:</label>
-      <input type="text" id="offer-lease-time" name="offer-lease-time" pattern="^[0-9]+$">
-    </div>
-
-    <button class="btn-modern-blue" type="submit">Guardar</button>
-
-  </form>
-
-  <form class="dns-form modal">
-
-    <p id="form-dns-item-id"></p>
-
-    <label for="ip">Dirección IP (IPv4):</label>
-    <input type="text" id="ip-dns" name="ip-dns"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-
-    <label for="netmask">Máscara de Red:</label>
-    <input type="text" id="netmask-dns" name="netmask-dns"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-
-    <label for="gateway">Puerta de Enlace:</label>
-    <input type="text" id="gateway-dns" name="gateway-dns"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-
-    <div class="form-item">
-      <label for="dns-recursive">Servidor DNS Recursivo:</label>
-      <input class="btn-toggle" type="checkbox" id="dns-recursive" name="dns-recursive">
-    </div>
-
-    <button class="btn-modern-green" type="submit">Guardar</button>
-
-  </form>
-
-  <form class="dhcp-relay-form modal">
-    <p id="form-dhcp-relay-item-id"></p>
-    <label for="ip-relay">IP:</label>
-    <input type="text" id="ip-relay" name="ip-relay"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <label for="netmask-relay">Netmask:</label>
-    <input type="text" id="netmask-relay" name="netmask-relay"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <label for="gateway-relay">Gateway:</label>
-    <input type="text" id="gateway-relay" name="gateway-relay"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <label for="main-server">IP del Servidor DHCP Principal:</label>
-    <input type="text" id="main-server" name="main-server"
-      pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-    <button class="btn-modern-blue" type="submit">Guardar</button>
-  </form>
-
-  <!-- COMPONENTES PRECARGADOS -->
-
-  <div class="terminal-component" id="terminal-network" data-id="" style="display: none;">
-
-    <p>
-      <span>%></span>
-      <input type="text" class="terminal-input" autofocus>
-    </p>
-
-    <div class="terminal-output"></div>
-
-    <div class="editor-container" style="display: none;">
-
-      <div class="editor-buttons">
-        <p><span>^S</span>Guardar y Salir</p>
-      </div>
-
-      <p class="file-editor-error"></p>
-
-      <textarea class="file-editor" data-file=""></textarea>
-
-      <div class="editor-frame"> <span></span> </div>
-
-    </div>
-
-  </div>
-
-  <div class="browser-component" data-id="" style="display: none;">
-
-    <div class="browser-header">
-
-      <div class="browser-controls">
-        <button class="control close" aria-label="Cerrar"></button>
-        <button class="control minimize" aria-label="Minimizar"></button>
-        <button class="control maximize" aria-label="Maximizar"></button>
-      </div>
-
-      <div class="browser-tabs">
-        <button class="tab active">Nueva pestaña</button>
-      </div>
-
-      <div class="browser-address-bar">
-
-        <div class="address-bar-icons">
-          <button class="icon back" aria-label="Atrás">◀</button>
-          <button class="icon forward" aria-label="Adelante">▶</button>
-          <button class="icon refresh" aria-label="Actualizar">↻</button>
-        </div>
-
-        <input type="text" class="address-input" placeholder="https://www.ejemplo.com"
-          aria-label="Barra de direcciones">
-
-        <div class="address-bar-icons">
-          <button class="icon star" aria-label="Marcar como favorito">★</button>
-          <button class="icon menu" aria-label="Menú">⋮</button>
-        </div>
-
-      </div>
-
-    </div>
-
-    <iframe class="browser-content"></iframe>
-
-  </div>
-
-  <article class="packet-traffic">
-    <div class="filter-traffic">
-      <input type="text">
-      <button>Filtrar</button>
-    </div>
-    <table>
-      <tr>
-        <th>XID</th>
-        <th>Protocol</th>
-        <th>Type</th>
-        <th>Origin IP</th>
-        <th>Destination IP</th>
-        <th>Origin MAC</th>
-        <th>Destination MAC</th>
-        <th>TTL</th>
-      </tr>
-    </table>
-  </article>
+  <div id="root"></div>
 
   <script src="./animations/move-packet.js"></script>
   <script src="./schemes/network-one.js"></script>
-  <script src="./src/env.js"></script>
-  <script src="./src/main.js"></script>
   <script src="./src/components/board.js"></script>
   <script src="./src/components/browser.js"></script>
   <script src="./src/components/cable.js"></script>
   <script src="./src/components/dhcp-relay-agent.js"></script>
   <script src="./src/components/dhcpserver.js"></script>      
   <script src="./src/components/dnsServer.js"></script>       
+  <script src="./src/components/panel.js"></script>
   <script src="./src/components/pc.js"></script>
   <script src="./src/components/popup.js"></script>
   <script src="./src/components/router.js"></script>
@@ -353,6 +57,11 @@
   <script src="./src/lib/packets_lib.js"></script>
   <script src="./src/lib/ping_lib.js"></script>
   <script src="./src/lib/traceroute_lib.js"></script>
+  <script src="./src/menus/dhcp_agent_menu.js"></script>      
+  <script src="./src/menus/dhcp_server_menu.js"></script>     
+  <script src="./src/menus/dns_server_menu.js"></script>      
+  <script src="./src/menus/pc_menu.js"></script>
+  <script src="./src/menus/router_menu.js"></script>
   <script src="./src/parsers/parser-etc-hosts.js"></script>   
   <script src="./src/parsers/parser-index-file.js"></script>  
   <script src="./src/parsers/parser-network-file.js"></script>
@@ -389,7 +98,9 @@
   <script src="./src/utilities/tpc_util.js"></script>
   <script src="./src/utilities/traceroute_util.js"></script>
   <script src="./src/utilities/visual_util.js"></script>
-  
+  <script src="./src/app.js"></script>
+  <script src="./src/env.js"></script>
+
 </body>
 
 </html>

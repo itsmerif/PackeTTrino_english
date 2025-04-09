@@ -1,4 +1,4 @@
-function createPcObject(x, y) {
+function PcObject(x, y) {
 
     const $board = document.querySelector(".board");
     const $networkObject = document.createElement("article");
