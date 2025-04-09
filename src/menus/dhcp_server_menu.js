@@ -66,3 +66,76 @@ function dhcp_server_menu() {
     return $menu;
     
 }
+
+function showDhcpSpecs(event) { 
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped");
+    const itemId = networkObject.id; //obtenemos el id del elemento
+
+    if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
+        icmpTryoutProcess(itemId);
+        return;
+    }
+
+    //obtenemos los atributos del servidor
+    const ip = networkObject.getAttribute("ip-enp0s3");
+    const netmask = networkObject.getAttribute("netmask-enp0s3");
+    const gateway = networkObject.getAttribute("data-gateway");
+    const rangeStart = networkObject.getAttribute("data-range-start");
+    const rangeEnd = networkObject.getAttribute("data-range-end");
+    const offerGateway = networkObject.getAttribute("offer-gateway");
+    const offerNetmask = networkObject.getAttribute("offer-netmask");
+    const offerDns = networkObject.getAttribute("offer-dns");
+    const offerLeaseTime = networkObject.getAttribute("offer-lease-time");
+
+    //mostramos el formulario
+    document.querySelector(".dhcp-form #ip-dhcp").value = ip;
+    document.querySelector(".dhcp-form #netmask-dhcp").value = netmask;
+    document.querySelector(".dhcp-form #gateway-dhcp").value = gateway;
+    document.querySelector(".dhcp-form #range-start").value = rangeStart;
+    document.querySelector(".dhcp-form #range-end").value = rangeEnd;
+    document.getElementById("form-dhcp-item-id").innerHTML = itemId;
+    document.querySelector(".dhcp-form #offer-gateway").value = offerGateway;
+    document.querySelector(".dhcp-form #offer-netmask").value = offerNetmask;
+    document.querySelector(".dhcp-form #offer-dns").value = offerDns;
+    document.querySelector(".dhcp-form #offer-lease-time").value = offerLeaseTime;
+
+    //ocultamos y mostramos
+    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
+    document.querySelector(".dhcp-form").style.display = "flex";
+}
+
+function saveDhcpSpecs(event) {
+
+    event.preventDefault();
+    const networkObject = document.getElementById(document.getElementById("form-dhcp-item-id").innerHTML);
+
+    //obtenemos los valores del formulario  
+
+    const newIp = document.querySelector(".dhcp-form #ip-dhcp").value;
+    const newNetmask = document.querySelector(".dhcp-form #netmask-dhcp").value;
+    const newGateway = document.querySelector(".dhcp-form #gateway-dhcp").value;
+    const newRangeStart = document.querySelector(".dhcp-form #range-start").value;
+    const newRangeEnd = document.querySelector(".dhcp-form #range-end").value;
+    const newOfferGateway = document.querySelector(".dhcp-form #offer-gateway").value;
+    const newOfferNetmask = document.querySelector(".dhcp-form #offer-netmask").value;
+    const newOfferDns = document.querySelector(".dhcp-form #offer-dns").value;
+    const newOfferLeaseTime = document.querySelector(".dhcp-form #offer-lease-time").value;
+
+    //guardamos los nuevos atributos en el server
+
+    networkObject.setAttribute("ip-enp0s3", newIp);
+    networkObject.setAttribute("netmask-enp0s3", newNetmask);
+    networkObject.setAttribute("data-gateway", newGateway);
+    networkObject.setAttribute("data-range-start", newRangeStart);
+    networkObject.setAttribute("data-range-end", newRangeEnd);
+    networkObject.setAttribute("offer-gateway", newOfferGateway);
+    networkObject.setAttribute("offer-netmask", newOfferNetmask);
+    networkObject.setAttribute("offer-dns", newOfferDns);
+    networkObject.setAttribute("offer-lease-time", newOfferLeaseTime);
+
+    //ocultamos el formulario
+
+    document.querySelector(".dhcp-form").style.display = "none";
+
+}

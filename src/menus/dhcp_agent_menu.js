@@ -25,3 +25,44 @@ function dhcp_agent_menu() {
     return $menu;
 
 }
+
+function showDhcpRelaySpecs(event) {
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped");
+
+    if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
+        icmpTryoutProcess(networkObject.id);
+        return;
+    }
+    
+    //obtenemos los atributos del servidor
+    const ip = networkObject.getAttribute("ip-enp0s3");
+    const netmask = networkObject.getAttribute("netmask-enp0s3");
+    const gateway = networkObject.getAttribute("data-gateway");
+    const mainServer = networkObject.getAttribute("data-main-server");
+    //mostramos el formulario
+    document.querySelector(".dhcp-relay-form #ip-relay").value = ip;
+    document.querySelector(".dhcp-relay-form #netmask-relay").value = netmask;
+    document.querySelector(".dhcp-relay-form #gateway-relay").value = gateway;
+    document.querySelector(".dhcp-relay-form #main-server").value = mainServer;
+    document.getElementById("form-dhcp-relay-item-id").innerHTML = networkObject.id;
+    document.querySelector(".dhcp-relay-form").style.display = "flex";
+    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
+}
+
+function saveDhcpRelaySpecs(event) {
+    event.preventDefault();
+    //obtenemos los valores del formulario  
+    const newIp = document.querySelector(".dhcp-relay-form #ip-relay").value;
+    const newNetmask = document.querySelector(".dhcp-relay-form #netmask-relay").value;
+    const newGateway = document.querySelector(".dhcp-relay-form #gateway-relay").value;
+    const newMainServer = document.querySelector(".dhcp-relay-form #main-server").value;
+    //guardamos los nuevos atributos en el server
+    const networkObject = document.getElementById(document.getElementById("form-dhcp-relay-item-id").innerHTML);
+    networkObject.setAttribute("ip-enp0s3", newIp);
+    networkObject.setAttribute("netmask-enp0s3", newNetmask);
+    networkObject.setAttribute("data-gateway", newGateway);
+    networkObject.setAttribute("data-main-server", newMainServer);
+    //ocultamos el formulario
+    document.querySelector(".dhcp-relay-form").style.display = "none";  
+}

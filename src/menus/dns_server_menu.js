@@ -32,3 +32,48 @@ function dns_server_menu() {
     return $menu;
 
 }
+
+function showDnsForm(event) {
+    event.stopPropagation();
+    const form = document.querySelector(".dns-form");
+    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
+    const $serverObject = event.target.closest(".item-dropped");
+
+    if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
+        icmpTryoutProcess($serverObject.id);
+        return;
+    }
+
+    const id = $serverObject.id;
+    const ip = $serverObject.getAttribute("ip-enp0s3");
+    const netmask = $serverObject.getAttribute("netmask-enp0s3");
+    const gateway = $serverObject.getAttribute("data-gateway");
+    const isRecursive = $serverObject.getAttribute("recursion");
+    form.querySelector("#ip-dns").value = ip;
+    form.querySelector("#netmask-dns").value = netmask;
+    form.querySelector("#gateway-dns").value = gateway;
+    form.querySelector("#dns-recursive").checked = isRecursive === "true";
+    document.getElementById("form-dns-item-id").innerHTML = id;
+    form.style.display = "flex";
+}
+
+function saveDnsSpecs(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const form = event.target.closest("form");
+    //tomo los datos del formulario
+    const id = form.querySelector("#form-dns-item-id").innerHTML;
+    const $serverObject = document.getElementById(id);
+    const ip = form.querySelector("#ip-dns").value;
+    const netmask = form.querySelector("#netmask-dns").value;
+    const gateway = form.querySelector("#gateway-dns").value;
+    const isRecursive = form.querySelector("#dns-recursive").checked;
+    //actualizo el servidor
+    $serverObject.setAttribute("ip-enp0s3", ip);
+    $serverObject.setAttribute("netmask-enp0s3", netmask);
+    $serverObject.setAttribute("data-gateway", gateway);
+    $serverObject.setAttribute("recursion", isRecursive);
+    //limpio el formulario
+    form.reset();
+    form.style.display = "none";
+}
