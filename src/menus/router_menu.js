@@ -43,7 +43,7 @@ function showRouterSpecs(event) {
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
     const networkObject = event.target.closest(".item-dropped");
 
-    if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
+    if (icmpTryoutToggle) {
         icmpTryoutProcess(networkObject.id);
         return;
     }
@@ -70,9 +70,7 @@ function saveRouterSpecs(event) {
     event.preventDefault();
     const form = document.querySelector(".router-form");
     const networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
-
-    //obtenemos los valores del formulario  
-    
+   
     const newIpEnp0s3 = document.querySelector(".router-form #ip-enp0s3").value;
     const newIpEnp0s8 = document.querySelector(".router-form #ip-enp0s8").value;
     const newIpEnp0s9 = document.querySelector(".router-form #ip-enp0s9").value;
@@ -80,16 +78,12 @@ function saveRouterSpecs(event) {
     const newNetmaskEnp0s8 = document.querySelector(".router-form #netmask-enp0s8").value;
     const newNetmaskEnp0s9 = document.querySelector(".router-form #netmask-enp0s9").value;
 
-    //guardamos los nuevos atributos en el router
-
     networkObject.setAttribute("ip-enp0s3", newIpEnp0s3);
     networkObject.setAttribute("ip-enp0s8", newIpEnp0s8);
     networkObject.setAttribute("ip-enp0s9", newIpEnp0s9);
     networkObject.setAttribute("netmask-enp0s3", newNetmaskEnp0s3);
     networkObject.setAttribute("netmask-enp0s8", newNetmaskEnp0s8);
     networkObject.setAttribute("netmask-enp0s9", newNetmaskEnp0s9);
-
-    //generamos nuevas reglas de conexion directa en la tabla de enrutamiento
 
     const routingTable = networkObject.querySelector(".routing-table").querySelector("table");
     const rows = routingTable.querySelectorAll("tr");

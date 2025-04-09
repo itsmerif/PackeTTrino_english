@@ -7,7 +7,6 @@ function DhcpRelayObject(x, y) {
     const networkObjectArpTable = document.createElement("article");
     const firewallTable = document.createElement("article");
 
-
     //caracteristicas generales
 
     networkObject.id = `dhcp-relay-server-${itemIndex}`;

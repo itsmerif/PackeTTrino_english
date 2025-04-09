@@ -115,6 +115,7 @@ async function submitPcForm(event) {
             $networkObject.setAttribute("netmask-enp0s3", newNetmask);
             $networkObject.setAttribute("data-gateway", newGateway);
             $networkObject.setAttribute("data-dns-server", newDnsServer);
+            document.querySelector(".pc-form").style.display = "none";
         },
 
         "get-btn": async () => {
