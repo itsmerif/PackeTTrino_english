@@ -26,9 +26,9 @@ function loadNetworkFile(dataId) {
     if (!networkObjectId.startsWith("router-")) {
 
         const $networkObject = document.getElementById(dataId);
-        const networkObjectIp = $networkObject.getAttribute("data-ip");
+        const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
         const isDhcpOn = $networkObject.getAttribute("dhclient") === "true";
-        const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+        const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
         const networkObjectGateway = $networkObject.getAttribute("data-gateway");
 
         let fileContent;
@@ -173,12 +173,12 @@ function setNetworkChanges(networkChanges, $networkObject) {
         const setNetworkSpecsStrategy = {
 
             "enp0s3": () => {
-                if ($networkObject.getAttribute("data-ip") === null) {
+                if ($networkObject.getAttribute("ip-enp0s3") === null) {
                     $networkObject.setAttribute("ip-enp0s3", networkChange.ip);
                     $networkObject.setAttribute("netmask-enp0s3", networkChange.netmask);
                 }else {
-                    $networkObject.setAttribute("data-ip", networkChange.ip);
-                    $networkObject.setAttribute("data-netmask", networkChange.netmask);
+                    $networkObject.setAttribute("ip-enp0s3", networkChange.ip);
+                    $networkObject.setAttribute("netmask-enp0s3", networkChange.netmask);
                     if (networkChange.gateway !== "") $networkObject.setAttribute("data-gateway", networkChange.gateway);
                 }
             },

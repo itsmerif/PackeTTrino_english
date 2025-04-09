@@ -1,8 +1,8 @@
 async function command_ping(dataId, args) {
 
     const $networkObject = document.getElementById(dataId);
-    const networkObjectIp = $networkObject.getAttribute("data-ip");
-    const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
+    const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("data-mac");
 
     if (args.length !== 2) {

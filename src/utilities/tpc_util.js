@@ -19,7 +19,7 @@ async function command_tcp(id, args) {
 
     const $networkObject = document.getElementById(id);
 
-    if ($networkObject.getAttribute("data-ip") === args[1]) {   
+    if ($networkObject.getAttribute("ip-enp0s3") === args[1]) {   
         terminalMessage("Error: No se puede conectar a un equipo a si mismo.");
         return;
     }

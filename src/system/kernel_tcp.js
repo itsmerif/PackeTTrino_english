@@ -8,9 +8,9 @@ async function tcp(networkObjectId, destination, port) {
 async function tcpSynPacketGenerator(networkObjectId, switchId, destination, port) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("data-mac");
-    const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+    const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const isSameNetwork = getNetwork(destination, networkObjectNetmask) === getNetwork(networkObjectIp, networkObjectNetmask);
     let packet = new syn(networkObjectIp, destination, networkObjectMac, "", port);
     tcpBuffer[networkObjectId] = packet.sequence_number;

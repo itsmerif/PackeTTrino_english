@@ -3,8 +3,8 @@ function command_traceroute(dataId, args) {
     //gestion de equipo
 
     const $networkObject = document.getElementById(dataId);
-    const networkObjectIp = $networkObject.getAttribute("data-ip");
-    const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
+    const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
 
     if (!networkObjectIp || !networkObjectNetmask) {
         terminalMessage("Error: No se ha configurado el equipo.");

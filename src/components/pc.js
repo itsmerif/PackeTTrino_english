@@ -15,8 +15,8 @@ function createPcObject(x, y) {
     $networkObject.style.left = `${x}px`;
     $networkObject.style.top = `${y}px`;
     $networkObject.classList.add("item-dropped", "pc");
-    $networkObject.setAttribute("data-ip", "");
-    $networkObject.setAttribute("data-netmask", "");
+    $networkObject.setAttribute("ip-enp0s3", "");
+    $networkObject.setAttribute("netmask-enp0s3", "");
     $networkObject.setAttribute("data-mac", getRandomMac());
     $networkObject.setAttribute("data-gateway", "");
     $networkObject.setAttribute("data-switch", "");
@@ -130,8 +130,8 @@ function showPcForm(id) {
     const $networkObject = document.getElementById(id);
     const $textInputs = document.querySelector(".pc-form").querySelectorAll("input[type='text']");
     const $buttons = document.querySelectorAll(".pc-form .button-container button");
-    const ip = $networkObject.getAttribute("data-ip");
-    const netmask = $networkObject.getAttribute("data-netmask");
+    const ip = $networkObject.getAttribute("ip-enp0s3");
+    const netmask = $networkObject.getAttribute("netmask-enp0s3");
     const gateway = $networkObject.getAttribute("data-gateway");
     const dnsServer = $networkObject.getAttribute("data-dns-server");
     const isDhcpOn = $networkObject.getAttribute("dhclient");
@@ -174,8 +174,8 @@ async function submitPcForm(event) {
     const buttonFunctions = {
 
         "save-btn": () => {
-            $networkObject.setAttribute("data-ip", newIp);
-            $networkObject.setAttribute("data-netmask", newNetmask);
+            $networkObject.setAttribute("ip-enp0s3", newIp);
+            $networkObject.setAttribute("netmask-enp0s3", newNetmask);
             $networkObject.setAttribute("data-gateway", newGateway);
             $networkObject.setAttribute("data-dns-server", newDnsServer);
         },

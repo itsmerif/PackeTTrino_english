@@ -2,7 +2,7 @@ async function visualize(originObject, destinationObject, packet) {
 
     const $originObject = document.getElementById(originObject);
     const $destinationObject = document.getElementById(destinationObject);
-    const destinationIp = $destinationObject.getAttribute("data-ip") 
+    const destinationIp = $destinationObject.getAttribute("ip-enp0s3") 
     || $destinationObject.getAttribute("ip-enp0s3") 
     || $destinationObject.getAttribute("ip-enp0s8") 
     || $destinationObject.getAttribute("ip-enp0s9");

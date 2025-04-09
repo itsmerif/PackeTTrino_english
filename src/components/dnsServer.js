@@ -15,8 +15,8 @@ function createDnsServerObject(x, y) {
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
     networkObject.classList.add("item-dropped", "dns-server");
-    networkObject.setAttribute("data-ip", "");
-    networkObject.setAttribute("data-netmask", "");
+    networkObject.setAttribute("ip-enp0s3", "");
+    networkObject.setAttribute("netmask-enp0s3", "");
     networkObject.setAttribute("data-mac", getRandomMac());
     networkObject.setAttribute("data-gateway", "");
     networkObject.setAttribute("data-switch", "");
@@ -120,8 +120,8 @@ function showDnsForm(event) {
     }
 
     const id = $serverObject.id;
-    const ip = $serverObject.getAttribute("data-ip");
-    const netmask = $serverObject.getAttribute("data-netmask");
+    const ip = $serverObject.getAttribute("ip-enp0s3");
+    const netmask = $serverObject.getAttribute("netmask-enp0s3");
     const gateway = $serverObject.getAttribute("data-gateway");
     const isRecursive = $serverObject.getAttribute("recursion");
     form.querySelector("#ip-dns").value = ip;
@@ -144,8 +144,8 @@ function saveDnsSpecs(event) {
     const gateway = form.querySelector("#gateway-dns").value;
     const isRecursive = form.querySelector("#dns-recursive").checked;
     //actualizo el servidor
-    $serverObject.setAttribute("data-ip", ip);
-    $serverObject.setAttribute("data-netmask", netmask);
+    $serverObject.setAttribute("ip-enp0s3", ip);
+    $serverObject.setAttribute("netmask-enp0s3", netmask);
     $serverObject.setAttribute("data-gateway", gateway);
     $serverObject.setAttribute("recursion", isRecursive);
     //limpio el formulario

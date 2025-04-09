@@ -123,8 +123,8 @@ function printRoutingTable(networkObjectId) {
     // caso 1) es un equipo
 
     if (!networkObjectId.includes("router-")) {
-        const ip = $networkObject.getAttribute("data-ip");
-        const netmask = $networkObject.getAttribute("data-netmask");
+        const ip = $networkObject.getAttribute("ip-enp0s3");
+        const netmask = $networkObject.getAttribute("netmask-enp0s3");
         const network = getNetwork(ip, netmask);
         const gateway = $networkObject.getAttribute("data-gateway");
         terminalMessage(`${network}/${netmaskToCidr(netmask)} via ${ip} dev enp0s3`);
@@ -165,8 +165,8 @@ function showObjectInfo(id) {
 
     if (!id.includes("router-")) {
 
-        const ip = $networkObject.getAttribute("data-ip");
-        const netmask = $networkObject.getAttribute("data-netmask");
+        const ip = $networkObject.getAttribute("ip-enp0s3");
+        const netmask = $networkObject.getAttribute("netmask-enp0s3");
         const mac = $networkObject.getAttribute("data-mac");
 
         terminalMessage("1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000");
@@ -220,8 +220,8 @@ function addNetwork(networkObjectId, ip, netmask, interface) {
             return;
         }
 
-        $networkObject.setAttribute("data-ip", ip);
-        $networkObject.setAttribute("data-netmask", netmask);
+        $networkObject.setAttribute("ip-enp0s3", ip);
+        $networkObject.setAttribute("netmask-enp0s3", netmask);
         terminalMessage("La red ha sido creada correctamente.");
         return;
     }
@@ -277,8 +277,8 @@ function removeNetwork(networkObjectId, interface) {
             return;
         }
 
-        $networkObject.setAttribute("data-ip", "");
-        $networkObject.setAttribute("data-netmask", "");
+        $networkObject.setAttribute("ip-enp0s3", "");
+        $networkObject.setAttribute("netmask-enp0s3", "");
 
         terminalMessage("La red ha sido eliminada correctamente.");
         return;

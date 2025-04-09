@@ -103,8 +103,8 @@ async function dnsRequestPacketGenerator(networkObjectId, switchId, domain, dnsS
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
-    const networkObjectIp = $networkObject.getAttribute("data-ip");
-    const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
+    const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     dnsServer = (dnsServer === "") ? $networkObject.getAttribute("data-dns-server") : dnsServer;
     if (!dnsServer) throw new Error("Error: No se ha definido el servidor DNS");
 

@@ -185,9 +185,9 @@ function setDhcpInfo(networkObjectId, packet) {
     const newLeaseTime = packet.leasetime;
 
     //actualizamos los atributos del cliente dhcp
-    $networkObject.setAttribute("data-ip", newIp);
+    $networkObject.setAttribute("ip-enp0s3", newIp);
     $networkObject.setAttribute("data-gateway", newGateway);
-    $networkObject.setAttribute("data-netmask", newNetmask);
+    $networkObject.setAttribute("netmask-enp0s3", newNetmask);
     $networkObject.setAttribute("data-dhcp-server", newServer);
     $networkObject.setAttribute("data-dns-server", newDns);
     $networkObject.setAttribute("data-dhcp-lease-time", newLeaseTime);
@@ -231,9 +231,9 @@ async function startClientLeaseTimer(networkObjectId) {
 function deleteDhcpInfo(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
     const $pcForm = document.querySelector(".pc-form");
-    $networkObject.setAttribute("data-ip", "");
+    $networkObject.setAttribute("ip-enp0s3", "");
     $networkObject.setAttribute("data-gateway", "");
-    $networkObject.setAttribute("data-netmask", "");
+    $networkObject.setAttribute("netmask-enp0s3", "");
     $networkObject.setAttribute("data-dhcp-server", "");
     $networkObject.setAttribute("data-dns-server", "");
     $networkObject.setAttribute("data-dhcp-server", "");

@@ -1,7 +1,7 @@
 async function arpResolve(networkObjectId, destinationIp)  {
     const $networkObject = document.getElementById(networkObjectId);
     const switchId = $networkObject.getAttribute("data-switch");
-    const originIp = $networkObject.getAttribute("data-ip");
+    const originIp = $networkObject.getAttribute("ip-enp0s3");
     const originMac = $networkObject.getAttribute("data-mac");
     let packet = new ArpRequest(originIp, destinationIp, originMac);
     addPacketTraffic(packet);

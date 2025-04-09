@@ -1,8 +1,8 @@
 async function ping(dataId, args) {
 
     const $networkObject = document.getElementById(dataId);
-    const networkObjectIp = $networkObject.getAttribute("data-ip");
-    const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
+    const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const switchObjectId = $networkObject.getAttribute("data-switch");
     let destination = args[1];
 
@@ -64,7 +64,7 @@ async function traceroute(dataId, destination, numeric = false) {
     traceFlag = false; //ponemos a falso el flag de traceroute
 
     const $networkObject = document.getElementById(dataId);
-    const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("data-mac");
     let hops = numeric ? 1 : "";
 
@@ -113,7 +113,7 @@ async function traceroute(dataId, destination, numeric = false) {
 async function icmpRequestPacketGenerator(networkObjectId, switchId, originIp, destinationIp) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const isSameNetwork = getNetwork(originIp, $networkObject.getAttribute("data-netmask")) === getNetwork(destinationIp, $networkObject.getAttribute("data-netmask"));
+    const isSameNetwork = getNetwork(originIp, $networkObject.getAttribute("netmask-enp0s3")) === getNetwork(destinationIp, $networkObject.getAttribute("netmask-enp0s3"));
     const networkObjectMac = $networkObject.getAttribute("data-mac"); 
     let packet = new IcmpEchoRequest(originIp, destinationIp, networkObjectMac, "");
     let destination_mac;

@@ -5,7 +5,7 @@ function sendCommand(event) {
 
     const terminal = event.target.closest('.terminal-component');
     const dataId = terminal.dataset.id;
-    const originIP = document.getElementById(dataId).getAttribute("data-ip");
+    const originIP = document.getElementById(dataId).getAttribute("ip-enp0s3");
 
     if (event.key === "Enter") {
 

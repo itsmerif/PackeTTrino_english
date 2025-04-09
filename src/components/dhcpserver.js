@@ -16,8 +16,8 @@ function createDhcpServerObject(x, y) {
     [x,y] = checkObjectClip(x, y);
     $networkObject.style.left = `${x}px`;
     $networkObject.style.top = `${y}px`;
-    $networkObject.setAttribute("data-ip", "");
-    $networkObject.setAttribute("data-netmask", "");
+    $networkObject.setAttribute("ip-enp0s3", "");
+    $networkObject.setAttribute("netmask-enp0s3", "");
     $networkObject.setAttribute("data-mac", getRandomMac());
     $networkObject.setAttribute("data-gateway", "");
     $networkObject.setAttribute("data-switch", "");
@@ -128,8 +128,8 @@ function showDhcpSpecs(event) {
     }
 
     //obtenemos los atributos del servidor
-    const ip = networkObject.getAttribute("data-ip");
-    const netmask = networkObject.getAttribute("data-netmask");
+    const ip = networkObject.getAttribute("ip-enp0s3");
+    const netmask = networkObject.getAttribute("netmask-enp0s3");
     const gateway = networkObject.getAttribute("data-gateway");
     const rangeStart = networkObject.getAttribute("data-range-start");
     const rangeEnd = networkObject.getAttribute("data-range-end");
@@ -174,8 +174,8 @@ function saveDhcpSpecs(event) {
 
     //guardamos los nuevos atributos en el server
 
-    networkObject.setAttribute("data-ip", newIp);
-    networkObject.setAttribute("data-netmask", newNetmask);
+    networkObject.setAttribute("ip-enp0s3", newIp);
+    networkObject.setAttribute("netmask-enp0s3", newNetmask);
     networkObject.setAttribute("data-gateway", newGateway);
     networkObject.setAttribute("data-range-start", newRangeStart);
     networkObject.setAttribute("data-range-end", newRangeEnd);

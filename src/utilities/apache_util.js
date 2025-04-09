@@ -1,9 +1,9 @@
 function command_apache(id, args) {
 
     const $networkObject = document.getElementById(id);
-    const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("data-mac");
-    const networkObjectNetmask = $networkObject.getAttribute("data-netmask");
+    const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
 
     if (!networkObjectIp || !networkObjectMac || !networkObjectNetmask) {
         terminalMessage("Error: No se ha configurado el equipo.");

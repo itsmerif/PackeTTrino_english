@@ -2,7 +2,7 @@ async function named_service(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("data-mac");
-    const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const switchId = $networkObject.getAttribute("data-switch");
     const isRecursive = $networkObject.getAttribute("recursion");
 

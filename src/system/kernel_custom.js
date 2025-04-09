@@ -1,10 +1,10 @@
 async function customPacketGenerator(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectIp = $networkObject.getAttribute("data-ip");
+    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const switchId = $networkObject.getAttribute("data-switch");
     const destination_ip = packet.destination_ip;
-    const isSameNetwork = getNetwork(networkObjectIp, $networkObject.getAttribute("data-netmask")) === getNetwork(destination_ip, $networkObject.getAttribute("data-netmask"));
+    const isSameNetwork = getNetwork(networkObjectIp, $networkObject.getAttribute("netmask-enp0s3")) === getNetwork(destination_ip, $networkObject.getAttribute("netmask-enp0s3"));
 
     if (!isSameNetwork) {
 

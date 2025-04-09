@@ -4,7 +4,7 @@ function firewallProcessorHost(networkObjectId, packet) {
     const defaultPolicy = $networkObject.getAttribute("firewall-default-policy");
     const firewallTable = $networkObject.querySelector(".firewall-table").querySelector("table");
     const rules = firewallTable.querySelectorAll("tr");
-    const networkObjectIP = $networkObject.getAttribute("data-ip");
+    const networkObjectIP = $networkObject.getAttribute("ip-enp0s3");
 
     //definimos variables de regla objetivo
 

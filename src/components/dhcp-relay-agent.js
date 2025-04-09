@@ -15,8 +15,8 @@ function createDhcpRelayObject(x, y) {
     [x,y] = checkObjectClip(x, y);
     networkObject.style.left = `${x}px`;
     networkObject.style.top = `${y}px`;
-    networkObject.setAttribute("data-ip", "");
-    networkObject.setAttribute("data-netmask", "");
+    networkObject.setAttribute("ip-enp0s3", "");
+    networkObject.setAttribute("netmask-enp0s3", "");
     networkObject.setAttribute("data-mac", getRandomMac());
     networkObject.setAttribute("data-gateway", "");
     networkObject.setAttribute("data-switch", "");
@@ -102,8 +102,8 @@ function showDhcpRelaySpecs(event) {
     }
     
     //obtenemos los atributos del servidor
-    const ip = networkObject.getAttribute("data-ip");
-    const netmask = networkObject.getAttribute("data-netmask");
+    const ip = networkObject.getAttribute("ip-enp0s3");
+    const netmask = networkObject.getAttribute("netmask-enp0s3");
     const gateway = networkObject.getAttribute("data-gateway");
     const mainServer = networkObject.getAttribute("data-main-server");
     //mostramos el formulario
@@ -125,8 +125,8 @@ function saveDhcpRelaySpecs(event) {
     const newMainServer = document.querySelector(".dhcp-relay-form #main-server").value;
     //guardamos los nuevos atributos en el server
     const networkObject = document.getElementById(document.getElementById("form-dhcp-relay-item-id").innerHTML);
-    networkObject.setAttribute("data-ip", newIp);
-    networkObject.setAttribute("data-netmask", newNetmask);
+    networkObject.setAttribute("ip-enp0s3", newIp);
+    networkObject.setAttribute("netmask-enp0s3", newNetmask);
     networkObject.setAttribute("data-gateway", newGateway);
     networkObject.setAttribute("data-main-server", newMainServer);
     //ocultamos el formulario

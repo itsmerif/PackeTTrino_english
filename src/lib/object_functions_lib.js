@@ -221,7 +221,7 @@ async function icmpTryoutProcess(id) {
 
     if (icmpTryoutObject1 === "") {
         
-        icmpTryoutObject1Ip = $networkObject.getAttribute("data-ip") ||
+        icmpTryoutObject1Ip = $networkObject.getAttribute("ip-enp0s3") ||
         $networkObject.getAttribute("ip-enp0s3") ||
         $networkObject.getAttribute("ip-enp0s8") ||
         $networkObject.getAttribute("ip-enp0s9");
@@ -237,7 +237,7 @@ async function icmpTryoutProcess(id) {
     }
 
 
-    icmpTryoutObject2Ip = $networkObject.getAttribute("data-ip") ||
+    icmpTryoutObject2Ip = $networkObject.getAttribute("ip-enp0s3") ||
     $networkObject.getAttribute("ip-enp0s3") ||
     $networkObject.getAttribute("ip-enp0s8") ||
     $networkObject.getAttribute("ip-enp0s9");

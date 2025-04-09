@@ -211,7 +211,7 @@ function ipCheck(switchObjectId, networkObjectId, ip) {
     let networkObjectIp = "";
 
     if (networkObjectId.startsWith("pc-") || networkObjectId.startsWith("dhcp-server-")) {
-        networkObjectIp = networkObject.getAttribute("data-ip");
+        networkObjectIp = networkObject.getAttribute("ip-enp0s3");
     }
     if (networkObjectId.startsWith("router-")) {
         networkObjectIp = getRouterIp(networkObjectId, switchObjectId);
@@ -305,7 +305,7 @@ function isIpInNetwork(switchObjectId, ipAddress) {
         let ip = "";
 
         if (devices[i].startsWith("pc-") || devices[i].startsWith("dhcp-server-")) {
-            ip = networkObject.getAttribute("data-ip");
+            ip = networkObject.getAttribute("ip-enp0s3");
         }
 
         if (devices[i].startsWith("router-")) {
