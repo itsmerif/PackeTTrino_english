@@ -226,6 +226,16 @@ async function maximizeTerminal() {
     });
 }
 
+function showTerminal(event) {
+    event.stopPropagation();
+    const networkObject = event.target.closest(".item-dropped");
+    const terminal = document.querySelector(".terminal-component");
+    terminal.setAttribute("data-id", networkObject.id);
+    terminal.style.display = "block";
+    const modal = networkObject.querySelector(".advanced-options-modal");
+    modal.style.display = "none";
+}
+
 function closeTerminal(event) {
     event.preventDefault();
     const $terminal = document.querySelector(".terminal-component");
