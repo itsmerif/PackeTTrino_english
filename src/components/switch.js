@@ -1,27 +1,26 @@
 function SwitchObject(x, y) {
 
-    const board = document.querySelector(".board");
-    const networkObject = document.createElement("article");
+    const $switchObject = document.createElement("article");
     const networkObjectIcon = document.createElement("img");
     const networkObjectTable = document.createElement("article");
     const networkObjectAdvancedOptions = document.createElement("div");
 
     //caracteristicas generales
 
-    networkObject.id = `switch-${itemIndex}`;
-    networkObject.classList.add("item-dropped", "switch");
+    $switchObject.id = `switch-${itemIndex}`;
+    $switchObject.classList.add("item-dropped", "switch");
     [x,y] = checkObjectClip(x, y); //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
-    networkObject.style.left = `${x}px`;
-    networkObject.style.top = `${y}px`;
-    networkObject.setAttribute("data-mac", getRandomMac());
-    networkObject.setAttribute("clusterized", "false");
+    $switchObject.style.left = `${x}px`;
+    $switchObject.style.top = `${y}px`;
+    $switchObject.setAttribute("data-mac", getRandomMac());
+    $switchObject.setAttribute("clusterized", "false");
 
     //switch grafico con icono
 
     networkObjectIcon.src = "./assets/board/switch.svg";
     networkObjectIcon.alt = "switch";
     networkObjectIcon.draggable = true;
-    networkObject.appendChild(networkObjectIcon);
+    $switchObject.appendChild(networkObjectIcon);
 
     //tabla de macs
 
@@ -35,7 +34,7 @@ function SwitchObject(x, y) {
             </table>
             <button onclick="closeMacTable(event)">Cerrar</button>`;
 
-    networkObject.appendChild(networkObjectTable);
+    $switchObject.appendChild(networkObjectTable);
 
     //opciones avanzadas
 
@@ -44,19 +43,17 @@ function SwitchObject(x, y) {
         <button onclick="deleteItem(event)">Eliminar</button>
         <button class="clusterize-button" onclick="clusterizeSwitch(event)">Clusterizar</button>
         `;
-    networkObject.appendChild(networkObjectAdvancedOptions);
+    $switchObject.appendChild(networkObjectAdvancedOptions);
 
     //eventos
     
-    networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
-    networkObject.setAttribute("ondrop", "switchConn(event)");
-    networkObject.setAttribute("onclick", "showMacTable(event)");
-    networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
-
-
-    //añadir el elemento al tablero y aumentar el indice global
-    board.appendChild(networkObject);
+    $switchObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
+    $switchObject.setAttribute("ondrop", "switchConn(event)");
+    $switchObject.setAttribute("onclick", "showMacTable(event)");
+    $switchObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
     itemIndex++;
+
+    return $switchObject;
 
 }
 

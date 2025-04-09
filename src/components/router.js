@@ -1,7 +1,6 @@
 function RouterObject(x, y) {
 
-    const board = document.querySelector(".board");
-    const networkObject = document.createElement("article");
+    const $networkObject = document.createElement("article");
     const networkObjectIcon = document.createElement("img");
     const networkObjectArpTable = document.createElement("article");
     const networkObjectRoutingTable = document.createElement("article");
@@ -10,35 +9,35 @@ function RouterObject(x, y) {
 
     //características generales
 
-    networkObject.id = `router-${itemIndex}`;
-    networkObject.classList.add("item-dropped", "router");
+    $networkObject.id = `router-${itemIndex}`;
+    $networkObject.classList.add("item-dropped", "router");
     [x,y] = checkObjectClip(x, y); //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
-    networkObject.style.left = `${x}px`;
-    networkObject.style.top = `${y}px`;
-    networkObject.setAttribute("data-mac", getRandomMac());
-    networkObject.setAttribute("firewall-default-policy", "ACCEPT");
+    $networkObject.style.left = `${x}px`;
+    $networkObject.style.top = `${y}px`;
+    $networkObject.setAttribute("data-mac", getRandomMac());
+    $networkObject.setAttribute("firewall-default-policy", "ACCEPT");
 
     //icono
 
     networkObjectIcon.src = "./assets/board/router.svg";
     networkObjectIcon.alt = "router";
     networkObjectIcon.draggable = true;
-    networkObject.appendChild(networkObjectIcon);
+    $networkObject.appendChild(networkObjectIcon);
 
     //direcciones ip de cada interfaz del router
 
-    networkObject.setAttribute("ip-enp0s3", "");
-    networkObject.setAttribute("netmask-enp0s3", "");
-    networkObject.setAttribute("ip-enp0s8", "");
-    networkObject.setAttribute("netmask-enp0s8", "");
-    networkObject.setAttribute("ip-enp0s9", "");
-    networkObject.setAttribute("netmask-enp0s9", "");
+    $networkObject.setAttribute("ip-enp0s3", "");
+    $networkObject.setAttribute("netmask-enp0s3", "");
+    $networkObject.setAttribute("ip-enp0s8", "");
+    $networkObject.setAttribute("netmask-enp0s8", "");
+    $networkObject.setAttribute("ip-enp0s9", "");
+    $networkObject.setAttribute("netmask-enp0s9", "");
 
     //switches a los que está conectado el router en cada interfaz
 
-    networkObject.setAttribute("data-switch-enp0s3", "");
-    networkObject.setAttribute("data-switch-enp0s8", "");
-    networkObject.setAttribute("data-switch-enp0s9", "");
+    $networkObject.setAttribute("data-switch-enp0s3", "");
+    $networkObject.setAttribute("data-switch-enp0s8", "");
+    $networkObject.setAttribute("data-switch-enp0s9", "");
 
     //tabla de arp
 
@@ -52,7 +51,7 @@ function RouterObject(x, y) {
         </table>
         <button onclick="closeARPTable(event)">Cerrar</button>`;
     
-    networkObject.appendChild(networkObjectArpTable);
+    $networkObject.appendChild(networkObjectArpTable);
 
     //tabla de enrutamiento
 
@@ -97,7 +96,7 @@ function RouterObject(x, y) {
             </table>
             <button onclick="closeRoutingTable(event)">Cerrar</button>`;
 
-    networkObject.appendChild(networkObjectRoutingTable);
+    $networkObject.appendChild(networkObjectRoutingTable);
 
     //tabla de firewall
 
@@ -117,7 +116,7 @@ function RouterObject(x, y) {
             </table>
             <button onclick="closeFirewallTable(event)">Cerrar</button>`;
 
-    networkObject.appendChild(firewallTable);
+    $networkObject.appendChild(firewallTable);
 
     //opciones avanzadas
 
@@ -128,19 +127,17 @@ function RouterObject(x, y) {
         <button onclick="showARPTable(event)">Ver Tabla ARP</button>
         <button onclick="showRouterFirewallTable(event)">Ver Tabla Firewall</button>
         <button onclick="deleteItem(event)">Eliminar</button>`;
-    networkObject.appendChild(networkObjectAdvancedOptions);
+    $networkObject.appendChild(networkObjectAdvancedOptions);
 
     //eventos
 
-    networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
-    networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
-    networkObject.setAttribute("onclick", "showRouterSpecs(event)");
+    $networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
+    $networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
+    $networkObject.setAttribute("onclick", "showRouterSpecs(event)");
     networkObjectRoutingTable.setAttribute("onclick", "event.stopPropagation()");
     networkObjectAdvancedOptions.setAttribute("onclick", "event.stopPropagation()");
-
-    //añadir el elemento al tablero y aumentar el indice global
-
-    board.appendChild(networkObject);
     itemIndex++;
+
+    return $networkObject;
 
 }

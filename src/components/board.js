@@ -50,26 +50,24 @@ function BoardItemDragStart(event) {
 }
 
 function dropItem(event) {
+    
     const item = event.dataTransfer.getData("json");
     const itemType = JSON.parse(item).itemType;
     const itemId = JSON.parse(item).itemId;
-    const initialX = JSON.parse(item).originx;
-    const initialY = JSON.parse(item).originy;
     const $board = document.querySelector(".board");
+    const boardComponent = new componentToken(".board");
     const boardRect = $board.getBoundingClientRect();
     let x = event.clientX - boardRect.left;
     let y = event.clientY - boardRect.top;
-    let dx = x - parseInt(initialX);
-    let dy = y - parseInt(initialY);
 
     const itemCreators = {
-        "pc": () => PcObject(x, y),
-        "router": () => RouterObject(x, y),
-        "switch": () => SwitchObject(x, y),
-        "dhcpserver": () => DhcpServerObject(x, y),
-        "dhcprelay": () => DhcpRelayObject(x, y),
-        "dnsserver": () => DnsServerObject(x, y),
-        "text": () => TextObject(x, y)
+        "pc": () => boardComponent.render(PcObject(x, y)),
+        "router": () => boardComponent.render(RouterObject(x, y)),
+        "switch": () => boardComponent.render(SwitchObject(x, y)),
+        "dhcpserver": () => boardComponent.render(DhcpServerObject(x, y)),
+        "dhcprelay": () => boardComponent.render(DhcpRelayObject(x, y)),
+        "dnsserver": () => boardComponent.render(DnsServerObject(x, y)),
+        "text": () => boardComponent.render(TextObject(x, y))
     }
 
     if (itemType === "item") itemCreators[itemId] ? itemCreators[itemId]() : popupMessage("Error: Tipo de objeto no reconocido");
@@ -77,8 +75,6 @@ function dropItem(event) {
     if (itemType === "item-dropped") {
 
         const networkObject = document.getElementById(itemId);
-
-        //compruebo si existe alguna conexión
         
         if (itemId.startsWith("router-")) {
 

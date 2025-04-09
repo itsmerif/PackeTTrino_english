@@ -115,7 +115,8 @@ function PcObject(x, y) {
     $networkObject.appendChild($dnsTable);
     $networkObject.appendChild($firewallTable);
     $networkObject.appendChild($advancedOptions);
-    $board.appendChild($networkObject);
     itemIndex++;
+
+    return $networkObject;
 
 }
