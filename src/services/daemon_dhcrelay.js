@@ -4,7 +4,7 @@ async function dhcrelay_service(agentObjectId, packet) {
     const agentObjectIp = $agentObject.getAttribute("ip-enp0s3");
     const mainServer = $agentObject.getAttribute("data-main-server");
     const defaultGateway = $agentObject.getAttribute("data-gateway");
-    const switchId = $agentObject.getAttribute("data-switch");
+    const switchId = $agentObject.getAttribute("data-switch-enp0s3");
     const isDhcpRelayOn = $agentObject.getAttribute("dhcrelay") === "true";
 
     if (!isDhcpRelayOn) return;

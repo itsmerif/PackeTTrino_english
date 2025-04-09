@@ -47,7 +47,7 @@ function deleteCable(event) {
 
     if (!NetworkObject.id.startsWith("router-")) {
 
-        NetworkObject.setAttribute("data-switch", "");  //eliminamos la referencia al switch en el pc
+        NetworkObject.setAttribute("data-switch-enp0s3", "");  //eliminamos la referencia al switch en el pc
         NetworkObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
 
     }

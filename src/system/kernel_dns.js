@@ -73,7 +73,7 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
 async function getDomainFromServer(dataId, domain, verbose = false, dnsServer = "", query_type = "A", deleteAfterUse) {
 
     const $networkObject = document.getElementById(dataId);
-    const switchId = $networkObject.getAttribute("data-switch");
+    const switchId = $networkObject.getAttribute("data-switch-enp0s3");
     const isResolvedOn = $networkObject.getAttribute("resolved") === "true";
 
     if (!domain.endsWith(".")) domain = domain + ".";

@@ -3,7 +3,7 @@ async function ping(dataId, args) {
     const $networkObject = document.getElementById(dataId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
-    const switchObjectId = $networkObject.getAttribute("data-switch");
+    const switchObjectId = $networkObject.getAttribute("data-switch-enp0s3");
     let destination = args[1];
 
     cleanPacketTraffic();

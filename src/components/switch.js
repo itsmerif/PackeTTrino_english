@@ -86,7 +86,7 @@ function switchConn(event) {
 
             createCableObject(x1, y1, switchObject.style.left, switchObject.style.top, itemId, switchObject.id);
             saveConn(event, itemId);
-            document.getElementById(itemId).setAttribute("data-switch", switchObject.id);
+            document.getElementById(itemId).setAttribute("data-switch-enp0s3", switchObject.id);
             switchObject.querySelector("img").draggable = false; //el switch no se puede arrastrar
             document.getElementById(itemId).querySelector("img").draggable = false; //el pc no se puede arrastrar
 

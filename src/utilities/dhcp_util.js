@@ -1,7 +1,7 @@
 async function command_Dhcp(dataId, args) {
 
     const $networkObject = document.getElementById(dataId);
-    const switchObjectId = $networkObject.getAttribute("data-switch");
+    const switchObjectId = $networkObject.getAttribute("data-switch-enp0s3");
     const isDchpOn = $networkObject.getAttribute("dhclient");
     const option = args[1];
 

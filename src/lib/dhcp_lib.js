@@ -252,7 +252,7 @@ function deleteDhcpInfo(networkObjectId) {
 function renewLeaseTime(ip) {
     const $networkObject = document.querySelector(`[data-ip='${ip}']`);
     const networkObjectId = $networkObject.id;
-    const switchId = $networkObject.getAttribute("data-switch");
+    const switchId = $networkObject.getAttribute("data-switch-enp0s3");
     const isDHCPon = $networkObject.getAttribute("dhclient");
     if (isDHCPon === "false") return;
     dhcpRequestGenerator(networkObjectId, switchId);

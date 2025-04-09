@@ -80,7 +80,7 @@ function dropItem(event) {
             
         }else {
 
-            const conn = networkObject.getAttribute("data-switch") || "";
+            const conn = networkObject.getAttribute("data-switch-enp0s3") || "";
 
             if (conn === "") {
                 [x,y] = checkObjectClip(x, y);
@@ -104,7 +104,7 @@ function deleteItem(event) {
         if ($networkObject.querySelector(".mac-table").querySelector("table").querySelectorAll("tr").length === 1 ) $networkObject.remove();
         else popupMessage("Error: No se puede eliminar un switch con dispositivos conectados.");
     } else {
-        if (!$networkObject.getAttribute("data-switch")) $networkObject.remove();
+        if (!$networkObject.getAttribute("data-switch-enp0s3")) $networkObject.remove();
         else popupMessage("Error: No se puede eliminar un dispositivo con conexiones.");       
     }
 

@@ -19,7 +19,7 @@ function createDhcpRelayObject(x, y) {
     networkObject.setAttribute("netmask-enp0s3", "");
     networkObject.setAttribute("data-mac", getRandomMac());
     networkObject.setAttribute("data-gateway", "");
-    networkObject.setAttribute("data-switch", "");
+    networkObject.setAttribute("data-switch-enp0s3", "");
     networkObject.setAttribute("firewall-default-policy", "ACCEPT");
 
     //servicios

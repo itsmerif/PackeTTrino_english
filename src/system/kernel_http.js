@@ -1,7 +1,7 @@
 async function http(networkObjectId, arg) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const switchId = $networkObject.getAttribute("data-switch");
+    const switchId = $networkObject.getAttribute("data-switch-enp0s3");
     delete browserBuffer[networkObjectId];
     let destinationIp = arg;
     cleanPacketTraffic();
