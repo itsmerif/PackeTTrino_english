@@ -4,7 +4,7 @@ let switches = {};
 let servers = {};
 
 function itemBoard() {
-    
+
     const $board = document.createElement("section");
 
     $board.classList.add("board");
@@ -50,11 +50,12 @@ function BoardItemDragStart(event) {
 }
 
 function dropItem(event) {
-    
+
     const item = event.dataTransfer.getData("json");
     const itemType = JSON.parse(item).itemType;
     const itemId = JSON.parse(item).itemId;
     const $board = document.querySelector(".board");
+    const $networkObject = document.getElementById(itemId);
     const boardRect = $board.getBoundingClientRect();
     let x = event.clientX - boardRect.left;
     let y = event.clientY - boardRect.top;
@@ -70,39 +71,13 @@ function dropItem(event) {
     }
 
     if (itemType === "item") boardItemRender[itemId] ? boardItemRender[itemId]() : bodyComponent.render(popupMessage("Error: Tipo de objeto no reconocido"));
-    
-    if (itemType === "item-dropped") {
 
-        const networkObject = document.getElementById(itemId);
-        
-        if (itemId.startsWith("router-")) {
-
-            const conns = [ networkObject.getAttribute("data-switch-enp0s3"), networkObject.getAttribute("data-switch-enp0s8"), networkObject.getAttribute("data-switch-enp0s9") ];
-            
-            if ( conns[0] === "" && conns[1] === "" && conns[2] === "" ) {
-                [x,y] = checkObjectClip(x, y);
-                networkObject.style.left = `${x}px`;
-                networkObject.style.top = `${y}px`;
-            }
-
-        } else if (itemId.startsWith("switch-")) {
-
-            [x,y] = checkObjectClip(x, y);
-            networkObject.style.left = `${x}px`;
-            networkObject.style.top = `${y}px`;
-            
-        }else {
-
-            const conn = networkObject.getAttribute("data-switch-enp0s3") || "";
-
-            if (conn === "") {
-                [x,y] = checkObjectClip(x, y);
-                networkObject.style.left = `${x}px`;
-                networkObject.style.top = `${y}px`;
-            }
-
-        }
+    if (itemType === "item-dropped" && !isConnected(itemId)) {
+        [x, y] = checkObjectClip(x, y);
+        $networkObject.style.left = `${x}px`;
+        $networkObject.style.top = `${y}px`;
     }
+
 }
 
 function deleteItem(event) {
@@ -110,16 +85,8 @@ function deleteItem(event) {
     event.stopPropagation();
     const $networkObject = event.target.closest(".item-dropped") || event.target.closest(".text-annotation");
 
-    if ($networkObject.id.startsWith("router-")) {
-        if (!$networkObject.getAttribute("data-switch-enp0s3") && !$networkObject.getAttribute("data-switch-enp0s8") && !$networkObject.getAttribute("data-switch-enp0s9")) $networkObject.remove();
-        else popupMessage("Error: No se puede eliminar un router con conexiones.");
-    } else if ($networkObject.id.startsWith("switch-")) {
-        if ($networkObject.querySelector(".mac-table").querySelector("table").querySelectorAll("tr").length === 1 ) $networkObject.remove();
-        else popupMessage("Error: No se puede eliminar un switch con dispositivos conectados.");
-    } else {
-        if (!$networkObject.getAttribute("data-switch-enp0s3")) $networkObject.remove();
-        else popupMessage("Error: No se puede eliminar un dispositivo con conexiones.");       
-    }
+    if (!isConnected($networkObject.id)) $networkObject.remove();
+    else boardComponent.render(popupMessage(`<span>Error: </span>No se puede eliminar un dispositivo con conexiones.`));
 
 }
 

@@ -485,3 +485,40 @@ function setRouterIps($router, ip1, ip2 = "", ip3 = "") {
     });
 
 }
+
+function getInterfaces(networkObjectId)  {
+    
+    const $networkObject = document.getElementById(networkObjectId);
+    let response = [];
+    let index = 3;
+    let interfaceName = "ip-enp0s" + index;
+    let networkInterface = $networkObject.getAttribute(interfaceName);
+
+    while (networkInterface !== null) {
+        response.push(interfaceName);
+        if (index === 3) index = 8;
+        else index++;
+        interfaceName = "ip-enp0s" + index;
+        networkInterface = $networkObject.getAttribute(interfaceName);
+    }
+
+    return response;
+
+}
+
+function isConnected(networkObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let index = 3;
+    let switchAttribute = $networkObject.getAttribute("data-switch-enp0s" + index);
+
+    while (switchAttribute !== null) {
+        if (switchAttribute !== "") return true;
+        if (index === 3) index = 8;
+        else index++;
+        switchAttribute = $networkObject.getAttribute("data-switch-enp0s" + index);
+    }
+
+    return false;
+
+}
