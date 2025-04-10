@@ -14,7 +14,6 @@ function RouterObject(x, y) {
     [x,y] = checkObjectClip(x, y); //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
     $networkObject.style.left = `${x}px`;
     $networkObject.style.top = `${y}px`;
-    $networkObject.setAttribute("mac-enp0s3", getRandomMac());
     $networkObject.setAttribute("firewall-default-policy", "ACCEPT");
 
     //icono
@@ -28,15 +27,17 @@ function RouterObject(x, y) {
 
     $networkObject.setAttribute("ip-enp0s3", "");
     $networkObject.setAttribute("netmask-enp0s3", "");
+    $networkObject.setAttribute("mac-enp0s3", getRandomMac());
+    $networkObject.setAttribute("data-switch-enp0s3", "");
+
     $networkObject.setAttribute("ip-enp0s8", "");
     $networkObject.setAttribute("netmask-enp0s8", "");
+    $networkObject.setAttribute("mac-enp0s8", getRandomMac());
+    $networkObject.setAttribute("data-switch-enp0s8", "");
+
     $networkObject.setAttribute("ip-enp0s9", "");
     $networkObject.setAttribute("netmask-enp0s9", "");
-
-    //switches a los que está conectado el router en cada interfaz
-
-    $networkObject.setAttribute("data-switch-enp0s3", "");
-    $networkObject.setAttribute("data-switch-enp0s8", "");
+    $networkObject.setAttribute("mac-enp0s9", getRandomMac());
     $networkObject.setAttribute("data-switch-enp0s9", "");
 
     //tabla de arp

@@ -55,12 +55,11 @@ function dropItem(event) {
     const itemType = JSON.parse(item).itemType;
     const itemId = JSON.parse(item).itemId;
     const $board = document.querySelector(".board");
-    const boardComponent = new componentToken(".board");
     const boardRect = $board.getBoundingClientRect();
     let x = event.clientX - boardRect.left;
     let y = event.clientY - boardRect.top;
 
-    const itemCreators = {
+    const boardItemRender = {
         "pc": () => boardComponent.render(PcObject(x, y)),
         "router": () => boardComponent.render(RouterObject(x, y)),
         "switch": () => boardComponent.render(SwitchObject(x, y)),
@@ -70,7 +69,7 @@ function dropItem(event) {
         "text": () => boardComponent.render(TextObject(x, y))
     }
 
-    if (itemType === "item") itemCreators[itemId] ? itemCreators[itemId]() : popupMessage("Error: Tipo de objeto no reconocido");
+    if (itemType === "item") boardItemRender[itemId] ? boardItemRender[itemId]() : bodyComponent.render(popupMessage("Error: Tipo de objeto no reconocido"));
     
     if (itemType === "item-dropped") {
 

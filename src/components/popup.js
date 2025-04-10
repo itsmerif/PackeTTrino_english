@@ -1,20 +1,21 @@
 function popupMessage(message) {
 
-    let $popupComponent = document.createElement("div");
-    $popupComponent.innerHTML = `
+    let $popup = document.createElement("div");
+
+    $popup.innerHTML = `
         <div class="popup-content">
             <p>${message}</p>
             <button class="btn-blue" onclick="closePopup()">Ok</button>
         </div>
     `;
 
-    $popupComponent.querySelector(".btn-blue").addEventListener("click", closePopup);
+    $popup.querySelector(".btn-blue").addEventListener("click", closePopup);
 
-    function closePopup() {
-        document.querySelector(".modal-overlay").style.display = "none";
-        $popupComponent.remove();
-    }
+    return $popup;
+}
 
-    document.querySelector(".modal-overlay").style.display = "block";
-    document.body.appendChild($popupComponent);
+function closePopup() {
+    document.querySelector(".modal-overlay").style.display = "none";
+    $popupComponent.removeEventListener("click", closePopup);
+    $popupComponent.remove();
 }

@@ -1,18 +1,19 @@
-var html = new componentToken("html");
-var body = new componentToken("body");
-var root = new componentToken("#root");
+var htmlComponent = new componentToken("html");
+var bodyComponent = new componentToken("body");
+var rootComponent = new componentToken("#root");
+var boardComponent = new componentToken(".board");
 
-root.render(itemBoard());
-root.render(itemPanel());
-body.render(pc_menu());
-body.render(dns_server_menu());
-body.render(dhcp_server_menu());
-body.render(dhcp_agent_menu());
-body.render(router_menu());
-body.render(terminal());
-body.render(browser());
-body.render(packetTracer());
-body.render(GeneralOptions());
-html.event("keydown", documentKeyboardHandler);
+rootComponent.render(itemBoard());
+rootComponent.render(itemPanel());
+bodyComponent.render(pc_menu());
+bodyComponent.render(dns_server_menu());
+bodyComponent.render(dhcp_server_menu());
+bodyComponent.render(dhcp_agent_menu());
+bodyComponent.render(router_menu());
+bodyComponent.render(terminal());
+bodyComponent.render(browser());
+bodyComponent.render(packetTracer());
+bodyComponent.render(GeneralOptions());
+htmlComponent.event("keydown", documentKeyboardHandler);
 
 setTimeout(hideLoadingScreen, 1000);

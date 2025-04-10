@@ -121,7 +121,7 @@ function filterPacketTraffic() {
 
 function showPacketFields(event) {
     //document.querySelector(".modal-overlay").style.display = "block";
-    body.render(packetInfo(event));
+    bodyComponent.render(packetInfo(event));
 }
 
 function closePacketFieldsModal() {
