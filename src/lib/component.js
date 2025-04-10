@@ -4,9 +4,11 @@ class componentToken {
         this.element = element;
     }
     
-    render(componente) {
+    render(...componentes) {
         const $elements = document.querySelectorAll(this.element);
-        $elements.forEach( $element => { $element.appendChild(componente); });
+        $elements.forEach( $element => { 
+            componentes.forEach(componente => $element.appendChild(componente));
+        });
     }
 
     event(evento, resultado) {
