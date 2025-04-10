@@ -1,6 +1,3 @@
-let terminalBuffer = [];
-let currentCommandIndex = 0;
-
 function terminal() {
 
     const $terminal = document.createElement("div");
