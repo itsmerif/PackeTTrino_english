@@ -27,8 +27,6 @@ function terminal() {
         <textarea class="file-editor" data-file=""></textarea>
 
         <div class="editor-frame"> <span></span> </div>
-
-        </div>
     `;
 
     $terminal.addEventListener("keydown", terminalKeyboard);
