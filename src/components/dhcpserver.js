@@ -17,7 +17,7 @@ function DhcpServerObject(x, y) {
     $dhcpServerObject.style.top = `${y}px`;
     $dhcpServerObject.setAttribute("ip-enp0s3", "");
     $dhcpServerObject.setAttribute("netmask-enp0s3", "");
-    $dhcpServerObject.setAttribute("data-mac", getRandomMac());
+    $dhcpServerObject.setAttribute("mac-enp0s3", getRandomMac());
     $dhcpServerObject.setAttribute("data-gateway", "");
     $dhcpServerObject.setAttribute("data-switch-enp0s3", "");
     $dhcpServerObject.setAttribute("firewall-default-policy", "ACCEPT");

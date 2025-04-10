@@ -65,7 +65,7 @@ async function traceroute(dataId, destination, numeric = false) {
 
     const $networkObject = document.getElementById(dataId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     let hops = numeric ? 1 : "";
 
 
@@ -114,7 +114,7 @@ async function icmpRequestPacketGenerator(networkObjectId, switchId, originIp, d
 
     const $networkObject = document.getElementById(networkObjectId);
     const isSameNetwork = getNetwork(originIp, $networkObject.getAttribute("netmask-enp0s3")) === getNetwork(destinationIp, $networkObject.getAttribute("netmask-enp0s3"));
-    const networkObjectMac = $networkObject.getAttribute("data-mac"); 
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3"); 
     let packet = new IcmpEchoRequest(originIp, destinationIp, networkObjectMac, "");
     let destination_mac;
 

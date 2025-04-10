@@ -102,7 +102,7 @@ async function getDomainFromServer(dataId, domain, verbose = false, dnsServer = 
 async function dnsRequestPacketGenerator(networkObjectId, switchId, domain, dnsServer = "", query_type = "A") {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     dnsServer = (dnsServer === "") ? $networkObject.getAttribute("data-dns-server") : dnsServer;

@@ -245,7 +245,7 @@ function getDeviceFromMac(switchObjectId, mac) {
 function macCheck(networkObjectId, mac) {
 
     const networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = networkObject.getAttribute("data-mac");
+    const networkObjectMac = networkObject.getAttribute("mac-enp0s3");
 
     if (networkObjectMac === mac) {
         return true;
@@ -301,7 +301,7 @@ function isIpInNetwork(switchObjectId, ipAddress) {
     for (let i = 0; i < devices.length; i++) {
 
         const networkObject = document.getElementById(devices[i]);
-        const mac = networkObject.getAttribute("data-mac");
+        const mac = networkObject.getAttribute("mac-enp0s3");
         let ip = "";
 
         if (devices[i].startsWith("pc-") || devices[i].startsWith("dhcp-server-")) {

@@ -1,7 +1,7 @@
 async function dhcpd_service(serverObjectId, packet) {
     
     const $serverObject = document.getElementById(serverObjectId);
-    const serverObjectMac = $serverObject.getAttribute("data-mac");
+    const serverObjectMac = $serverObject.getAttribute("mac-enp0s3");
     const serverObjectIp = $serverObject.getAttribute("ip-enp0s3");
     const serverObjectNetmask = $serverObject.getAttribute("netmask-enp0s3");
     const serverObjectNetwork = getNetwork(serverObjectIp, serverObjectNetmask);

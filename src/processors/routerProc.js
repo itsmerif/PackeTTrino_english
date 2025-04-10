@@ -13,7 +13,7 @@ async function packetProcessor_router(switchId, networkObjectId, packet) {
     //obtenemos especificaciones del router
 
     const $routerObject = document.getElementById(networkObjectId);
-    const routerObjectMac = $routerObject.getAttribute("data-mac");
+    const routerObjectMac = $routerObject.getAttribute("mac-enp0s3");
     const availableIps = [$routerObject.getAttribute("ip-enp0s3"), $routerObject.getAttribute("ip-enp0s8"), $routerObject.getAttribute("ip-enp0s9")];
 
     let networkObjectIp; let networkObjectNetmask;

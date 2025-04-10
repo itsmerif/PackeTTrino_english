@@ -16,7 +16,7 @@ function DnsServerObject(x, y) {
     $dnsServerObject.classList.add("item-dropped", "dns-server");
     $dnsServerObject.setAttribute("ip-enp0s3", "");
     $dnsServerObject.setAttribute("netmask-enp0s3", "");
-    $dnsServerObject.setAttribute("data-mac", getRandomMac());
+    $dnsServerObject.setAttribute("mac-enp0s3", getRandomMac());
     $dnsServerObject.setAttribute("data-gateway", "");
     $dnsServerObject.setAttribute("data-switch-enp0s3", "");
     $dnsServerObject.setAttribute("firewall-default-policy", "ACCEPT");

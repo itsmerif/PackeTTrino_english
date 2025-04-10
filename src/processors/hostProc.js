@@ -5,7 +5,7 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     if (!firewallProcessorHost(networkObjectId, packet)) return;
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const activeServices = getactiveServices(networkObjectId);
     

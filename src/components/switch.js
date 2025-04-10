@@ -12,7 +12,7 @@ function SwitchObject(x, y) {
     [x,y] = checkObjectClip(x, y); //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
     $switchObject.style.left = `${x}px`;
     $switchObject.style.top = `${y}px`;
-    $switchObject.setAttribute("data-mac", getRandomMac());
+    $switchObject.setAttribute("mac-enp0s3", getRandomMac());
     $switchObject.setAttribute("clusterized", "false");
 
     //switch grafico con icono

@@ -9,7 +9,7 @@ async function tcpSynPacketGenerator(networkObjectId, switchId, destination, por
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const isSameNetwork = getNetwork(destination, networkObjectNetmask) === getNetwork(networkObjectIp, networkObjectNetmask);
     let packet = new syn(networkObjectIp, destination, networkObjectMac, "", port);

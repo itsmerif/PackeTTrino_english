@@ -2,7 +2,7 @@ function command_apache(id, args) {
 
     const $networkObject = document.getElementById(id);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
 
     if (!networkObjectIp || !networkObjectMac || !networkObjectNetmask) {

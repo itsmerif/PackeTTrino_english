@@ -3,7 +3,7 @@ async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
 
     if (networkObjectIp !== "") {
         terminalMessage("Error: Este equipo ya tiene una IP asignada.");
@@ -75,7 +75,7 @@ async function dhcpRenewHandler(networkObjectId, switchObjectId) {
 async function dhcpReleaseHandler(networkObjectId, switchObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
@@ -95,7 +95,7 @@ async function dhcpReleaseHandler(networkObjectId, switchObjectId) {
 
 async function dhcpDiscoverGenerator(networkObjectId, switchId) {
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     let packet = new dhcpDiscover(networkObjectMac);
     addPacketTraffic(packet);
     await switchProcessor(switchId, networkObjectId, packet);
@@ -106,7 +106,7 @@ async function dhcpRequestGenerator(networkObjectId, switchId) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const dhcpServerIp = $networkObject.getAttribute("data-dhcp-server");
     const isSameNetwork = getNetwork(networkObjectIp, networkObjectNetmask) === getNetwork(dhcpServerIp, networkObjectNetmask);
@@ -160,7 +160,7 @@ async function dhcpReleaseGenerator(networkObjectId, switchId) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const neworkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
-    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const isDHCPon = $networkObject.getAttribute("dhclient");
     const dhcpServerIp = $networkObject.getAttribute("data-dhcp-server");
     const isSameNetwork = getNetwork(networkObjectIp, neworkObjectNetmask) === getNetwork(dhcpServerIp, neworkObjectNetmask);
@@ -213,7 +213,7 @@ async function dhcpReleaseGenerator(networkObjectId, switchId) {
 async function dhclient_service(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const switchId = $networkObject.getAttribute("data-switch-enp0s3");
     const isDhclientOn = $networkObject.getAttribute("dhclient") === "true";
 

@@ -17,7 +17,7 @@ function PcObject(x, y) {
     $networkObject.classList.add("item-dropped", "pc");
     $networkObject.setAttribute("ip-enp0s3", "");
     $networkObject.setAttribute("netmask-enp0s3", "");
-    $networkObject.setAttribute("data-mac", getRandomMac());
+    $networkObject.setAttribute("mac-enp0s3", getRandomMac());
     $networkObject.setAttribute("data-gateway", "");
     $networkObject.setAttribute("data-switch-enp0s3", "");
     $networkObject.setAttribute("data-etc-hosts", `{ "127.0.0.1": ["localhost"] }`);

@@ -48,7 +48,7 @@ async function http(networkObjectId, arg) {
 async function httpRequestPacketGenerator(networkObjectId, switchId, destinationIp) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("data-mac");
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const isSameNetwork = getNetwork(destinationIp, networkObjectNetmask) === getNetwork(networkObjectIp, networkObjectNetmask);

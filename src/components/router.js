@@ -14,7 +14,7 @@ function RouterObject(x, y) {
     [x,y] = checkObjectClip(x, y); //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
     $networkObject.style.left = `${x}px`;
     $networkObject.style.top = `${y}px`;
-    $networkObject.setAttribute("data-mac", getRandomMac());
+    $networkObject.setAttribute("mac-enp0s3", getRandomMac());
     $networkObject.setAttribute("firewall-default-policy", "ACCEPT");
 
     //icono

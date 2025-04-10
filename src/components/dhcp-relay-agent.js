@@ -15,7 +15,7 @@ function DhcpRelayObject(x, y) {
     $dhcpAgentObject.style.top = `${y}px`;
     $dhcpAgentObject.setAttribute("ip-enp0s3", "");
     $dhcpAgentObject.setAttribute("netmask-enp0s3", "");
-    $dhcpAgentObject.setAttribute("data-mac", getRandomMac());
+    $dhcpAgentObject.setAttribute("mac-enp0s3", getRandomMac());
     $dhcpAgentObject.setAttribute("data-gateway", "");
     $dhcpAgentObject.setAttribute("data-switch-enp0s3", "");
     $dhcpAgentObject.setAttribute("firewall-default-policy", "ACCEPT");

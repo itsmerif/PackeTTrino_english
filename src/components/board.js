@@ -31,7 +31,7 @@ function BoardItemDragStart(event) {
     const networkObjectid = $networkObject.id;
     const ip = $networkObject.getAttribute("ip-enp0s3");
     const netmask = $networkObject.getAttribute("netmask-enp0s3");
-    const mac = $networkObject.getAttribute("data-mac");
+    const mac = $networkObject.getAttribute("mac-enp0s3");
     const gateway = $networkObject.getAttribute("data-gateway");
     const itemType = "item-dropped";
     const x = $networkObject.style.left;

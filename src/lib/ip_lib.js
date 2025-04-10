@@ -167,7 +167,7 @@ function showObjectInfo(id) {
 
         const ip = $networkObject.getAttribute("ip-enp0s3");
         const netmask = $networkObject.getAttribute("netmask-enp0s3");
-        const mac = $networkObject.getAttribute("data-mac");
+        const mac = $networkObject.getAttribute("mac-enp0s3");
 
         terminalMessage("1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000");
         terminalMessage("    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00");
@@ -187,7 +187,7 @@ function showObjectInfo(id) {
         const netmaskEnp0s3 = $networkObject.getAttribute("netmask-enp0s3");
         const netmaskEnp0s8 = $networkObject.getAttribute("netmask-enp0s8");
         const netmaskEnp0s9 = $networkObject.getAttribute("netmask-enp0s9");
-        const mac = $networkObject.getAttribute("data-mac");
+        const mac = $networkObject.getAttribute("mac-enp0s3");
 
         terminalMessage("1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000");
         terminalMessage("    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00");
