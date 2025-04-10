@@ -35,7 +35,7 @@ function GeneralOptions() {
             <input type="checkbox" class=${inputStyle} id="template-option" name="template-option">
         </div>
         
-        <button class=${btnStyle}>Aplicar</button>
+        <button class=${btnStyle}>Cerrar</button>
     `;
 
 
@@ -50,6 +50,6 @@ function GeneralOptions() {
 function generalOptionsHandler(event) {
     event.preventDefault();
     const $generalOptions = document.querySelector(".settings-modal");
-    if ($generalOptions.style.display === "none") $generalOptions.style.display = "flex";
-    else $generalOptions.style.display = "none";    
+    const isVisible = $generalOptions.style.display === "flex";
+    (isVisible) ? $generalOptions.style.display = "none" : $generalOptions.style.display = "flex";
 }
