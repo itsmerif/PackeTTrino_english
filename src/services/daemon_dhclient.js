@@ -1,5 +1,6 @@
 async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
 
+
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("data-mac");
@@ -8,6 +9,7 @@ async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
         terminalMessage("Error: Este equipo ya tiene una IP asignada.");
         return;
     };
+
 
     terminalMessage(`Listening on LPF/enp0s3/${networkObjectMac}`);
     terminalMessage(`Sending on   LPF/enp0s3/${networkObjectMac}`);
@@ -34,6 +36,7 @@ async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
     } catch (error) {
 
         terminalMessage("Error: " + error);
+        console.log(error);
         return;
 
     }
@@ -115,7 +118,10 @@ async function dhcpRequestGenerator(networkObjectId, switchId) {
         networkObjectId //hostname
     );
 
+    packet.origin_ip = networkObjectIp;
+    packet.destination_ip = dhcpServerIp;
     packet.ciaddr = networkObjectIp;
+
 
     if (!isSameNetwork) {
 

@@ -1,17 +1,12 @@
-function showOptions() {
+function GeneralOptions() {
 
-    if (document.querySelector(".settings-modal-container")) {
-        document.querySelector(".settings-modal-container").remove();
-        return;
-    }
-
-    const $modalComponent = document.createElement("div");
+    const $generalOptions = document.createElement("form");
     const btnStyle = "btn-modern-blue";
     const inputStyle = "btn-toggle";
-    $modalComponent.classList.add("settings-modal-container");
-    $modalComponent.innerHTML = `
 
-    <form class="settings-modal">
+    $generalOptions.classList.add("settings-modal");
+
+    $generalOptions.innerHTML = `
 
         <h1> Opciones Avanzadas </h1>
 
@@ -41,21 +36,20 @@ function showOptions() {
         </div>
         
         <button class=${btnStyle}>Aplicar</button>
+    `;
 
-    </form>`;
 
-    if (ignoreArpTraffic) $modalComponent.querySelector("#ignore-arp-traffic").checked = true;
-    if (visualToggle)$modalComponent.querySelector("#visual-toggle").checked = true;
+    $generalOptions.querySelector("#ignore-arp-traffic").addEventListener("change", function () { ignoreArpTraffic = this.checked; });
+    $generalOptions.querySelector("#visual-toggle").addEventListener("change", function () { visualToggle = this.checked; });
+    $generalOptions.querySelector(`.${btnStyle}`).addEventListener("click", generalOptionsHandler);
 
-    $modalComponent.querySelector("#ignore-arp-traffic").addEventListener("change", function () {ignoreArpTraffic = this.checked;});
-    $modalComponent.querySelector("#visual-toggle").addEventListener("change", function () {visualToggle = this.checked;});
-    $modalComponent.querySelector(`.${btnStyle}`).addEventListener("click", closeSettingsModal);
-    document.body.appendChild($modalComponent);
+    return $generalOptions;
 
 }
 
-function closeSettingsModal() {
-    const modalComponent = document.querySelector(".settings-modal-container");
-    document.querySelector(".modal-overlay").style.display = "none";
-    modalComponent.remove();
+function generalOptionsHandler(event) {
+    event.preventDefault();
+    const $generalOptions = document.querySelector(".settings-modal");
+    if ($generalOptions.style.display === "none") $generalOptions.style.display = "flex";
+    else $generalOptions.style.display = "none";    
 }

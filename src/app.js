@@ -12,6 +12,7 @@ body.render(router_menu());
 body.render(terminal());
 body.render(browser());
 body.render(packetTracer());
+body.render(GeneralOptions());
 html.event("keydown", documentKeyboardHandler);
 
 setTimeout(hideLoadingScreen, 1000);

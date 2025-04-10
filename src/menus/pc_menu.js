@@ -71,7 +71,7 @@ function showPcForm(id) {
     const netmask = $networkObject.getAttribute("netmask-enp0s3");
     const gateway = $networkObject.getAttribute("data-gateway");
     const dnsServer = $networkObject.getAttribute("data-dns-server");
-    const isDhcpOn = $networkObject.getAttribute("dhclient");
+    const isDhcpOn = $networkObject.getAttribute("dhclient") === "true";
     const isWebServerOn = $networkObject.getAttribute("apache");
 
     document.querySelector(".pc-form #ip").value = ip;
@@ -80,7 +80,7 @@ function showPcForm(id) {
     document.querySelector(".pc-form #gateway").value = gateway;
     document.querySelector(".pc-form #dns-server").value = dnsServer;
 
-    if (isDhcpOn === "true") {
+    if (isDhcpOn) {
         document.querySelector(".pc-form #dhcp").checked = true;
         $textInputs.forEach(input => input.disabled = true);
         if (!ip) $buttons.forEach(button => (button.id === "get-btn") ? button.style.display = "block" : button.style.display = "none");
@@ -119,14 +119,17 @@ async function submitPcForm(event) {
         },
 
         "get-btn": async () => {
+            if (visualToggle) document.querySelector(".pc-form").style.display = "none";
             await command_Dhcp($networkObject.id, ["dhcp", "-discover"]);
         },
 
         "renew-btn": async () => {
+            if (visualToggle) document.querySelector(".pc-form").style.display = "none";
             await command_Dhcp($networkObject.id, ["dhcp", "-renew"]);
         },
 
         "release-btn": async () => {
+            if (visualToggle) document.querySelector(".pc-form").style.display = "none";
             await command_Dhcp($networkObject.id, ["dhcp", "-release"]);
         },
 
@@ -138,7 +141,6 @@ async function submitPcForm(event) {
     $networkObject.setAttribute("dhclient", isDhcpOn);
     $networkObject.setAttribute("apache", isWebServerOn);
     $networkObjectIcon.src = (isWebServerOn) ? "./assets/board/www-server.svg" : "./assets/board/pc.svg";
-    if (visualToggle) document.querySelector(".pc-form").style.display = "none";
     (event.submitter.id in buttonFunctions) ? buttonFunctions[event.submitter.id]() : buttonFunctions["save-btn"]();
 }
 
@@ -152,11 +154,9 @@ function dhcpHandler(event) {
     if (!$dhcpToggle.checked) {
         $textInputs.forEach(input => input.disabled = false);
         $buttons.forEach(button => (button.id !== "save-btn") ? button.style.display = "none" : button.style.display = "block");
-        return;
+    }else {
+        $textInputs.forEach(input => input.disabled = true);
+        if (hasIp) $buttons.forEach(button => (button.id === "renew-btn" || button.id === "release-btn") ? button.style.display = "block" : button.style.display = "none");
+        else $buttons.forEach(button => (button.id === "get-btn") ? button.style.display = "block" : button.style.display = "none"); 
     }
-
-    $textInputs.forEach(input => input.disabled = true);
-    if (hasIp) $buttons.forEach(button => (button.id === "renew-btn" || button.id === "release-btn") ? button.style.display = "block" : button.style.display = "none");
-    else $buttons.forEach(button => (button.id === "get-btn") ? button.style.display = "block" : button.style.display = "none");
-
 }
