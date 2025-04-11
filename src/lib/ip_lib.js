@@ -19,7 +19,7 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
         return;
     }*/
     
-    if (destination !== "0.0.0.0" && nexthop === "0.0.0.0") { //añadimos una nueva regla de conexion directa
+    if (nexthop === "0.0.0.0") {
 
         let $rows = $table.querySelectorAll("tr");
         let $defaultRow = $table.querySelector("#default-route");
@@ -28,7 +28,7 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
         $rows.forEach((row) => {
             let cells = row.querySelectorAll("td");
             if (cells.length > 0 && cells[3].innerHTML === interface) {
-                cells[0].innerHTML = destination;
+                cells[0].innerHTML = (destination === "0.0.0.0") ? "" : destination;
                 cells[1].innerHTML = netmask;
                 cells[2].innerHTML = gateway;
                 ruleExists = true;
@@ -58,7 +58,7 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
 
     }
 
-    if (destination !== "0.0.0.0" && nexthop !== "0.0.0.0") { //añadimos una nueva regla remota
+    if (destination !== "0.0.0.0") {
 
         if (!gateway) {
             terminalMessage("Error: Interfaz " + interface + " no configurada.");
@@ -105,33 +105,34 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
 
     } 
     
-    //editamos la regla por defecto
+    if (nexthop !== "0.0.0.0" && destination === "0.0.0.0") {
 
-    const rows = $table.querySelectorAll("tr");
-    const defaultRule = rows[4];
-    const cells = defaultRule.querySelectorAll("td");
+        const rows = $table.querySelectorAll("tr");
+        const defaultRule = rows[4];
+        const cells = defaultRule.querySelectorAll("td");
 
-    if (netmask !== "0.0.0.0") {
-        terminalMessage("Error: No se puede cambiar la máscara de red de la regla por defecto.");
-        return;
+        if (netmask !== "0.0.0.0") {
+            terminalMessage("Error: No se puede cambiar la máscara de red de la regla por defecto.");
+            return;
+        }
+
+        if (!gateway) {
+            terminalMessage("Error: Interfaz " + interface + " no configurada.");
+            return;
+        }
+
+        if (getNetwork(gateway, netmask) !== getNetwork(nexthop, netmask)) {
+            terminalMessage("Error: La IP de siguiente salto no es accesible.");
+            return;
+        }
+
+        cells[2].innerHTML = gateway;
+        cells[3].innerHTML = interface;
+        cells[4].innerHTML = nexthop;
+
+        terminalMessage("La regla por defecto ha sido modificada correctamente.");
+
     }
-
-    if (!gateway) {
-        terminalMessage("Error: Interfaz " + interface + " no configurada.");
-        return;
-    }
-
-    if (getNetwork(gateway, netmask) !== getNetwork(nexthop, netmask)) {
-        terminalMessage("Error: La IP de siguiente salto no es accesible.");
-        return;
-    }
-
-    cells[2].innerHTML = gateway;
-    cells[3].innerHTML = interface;
-    cells[4].innerHTML = nexthop;
-
-    terminalMessage("La regla por defecto ha sido modificada correctamente.");
-
 
 }
 

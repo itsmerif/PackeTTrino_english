@@ -6,8 +6,12 @@ function router_menu() {
 
     $menu.innerHTML = `
         <p id="form-router-item-id"></p>
-        <select class="interfaces-container"></select>
-        <label for="router-ip">IP:</label>
+        <div class="interfaces-wrapper">
+            <select class="interfaces-container"></select>
+            <button class="btn-modern-red">Eliminar</button>
+            <button class="btn-modern-green">Añadir</button>
+        </div>
+        <label for="router-ip">Dirección IP:</label>
         <input type="text" id="router-ip" name="router-ip" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
         <label for="router-netmask">Máscara de Red:</label>
         <input type="text" name="router-netmask" id="router-netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
@@ -17,6 +21,8 @@ function router_menu() {
     $menu.addEventListener("submit", saveRouterSpecs);
     $menu.querySelector(".interfaces-container").addEventListener("change", selectInterface);
     $menu.querySelectorAll("input").forEach(input => input.addEventListener("change", registerNetworkChanges));
+    $menu.querySelector(".btn-modern-red").addEventListener("click", deleteInterface);
+    $menu.querySelector(".btn-modern-green").addEventListener("click", addInterface);
 
     return $menu;
 
@@ -106,4 +112,68 @@ function registerNetworkChanges(event)  {
     let netmask = $form.querySelector("#router-netmask").value;
     $networkObject.setAttribute("ip-" + $form.querySelector(".interfaces-container").value, ip);
     $networkObject.setAttribute("netmask-" + $form.querySelector(".interfaces-container").value, netmask);
+}
+
+function addInterface(event) {
+
+    event.preventDefault();
+
+    const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
+    const $interfacesContainer = document.querySelector(".router-form").querySelector(".interfaces-container");
+
+    let index = 10;
+    let ip = $networkObject.getAttribute("ip-enp0s" + index);
+    let netmask = $networkObject.getAttribute("netmask-enp0s" + index);
+
+    while ( ip !== null && netmask !== null ) {
+        index++;
+        ip = $networkObject.getAttribute("ip-enp0s" + index);
+        netmask = $networkObject.getAttribute("netmask-enp0s" + index);
+    }
+
+    $networkObject.setAttribute("ip-enp0s" + index, "");
+    $networkObject.setAttribute("netmask-enp0s" + index, "");
+    $networkObject.setAttribute("mac-enp0s" + index, getRandomMac());
+    $networkObject.setAttribute("data-switch-enp0s" + index, "");
+    $networkObject.querySelector("img").draggable = true;
+    addRoutingEntry($networkObject.id, "", "", "", "enp0s" + index, "0.0.0.0");
+    $interfacesContainer.innerHTML += `<option value="enp0s${index}">enp0s${index}</option>`;
+    bodyComponent.render(popupMessage(`Interfaz enp0s${index} agregada con éxito.`));
+  
+}
+
+function deleteInterface(event) {
+
+    event.preventDefault();
+
+    const $routerForm = document.querySelector(".router-form");
+    const currentInterface = $routerForm.querySelector(".interfaces-container").value;
+    const fixedInterfaces = ["enp0s3", "enp0s8", "enp0s9"];
+
+    if (fixedInterfaces.includes(currentInterface)) {
+        bodyComponent.render(popupMessage(`<span>Error: </span>La interfaz ${currentInterface} no se puede eliminar.`));
+        return;
+    }
+
+    const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
+    const $routingTableEntries = $networkObject.querySelector(".routing-table").querySelectorAll("tr");
+
+    $networkObject.removeAttribute("ip-" + currentInterface);
+    $networkObject.removeAttribute("netmask-" + currentInterface);
+    $networkObject.removeAttribute("mac-" + currentInterface);
+    $networkObject.removeAttribute("data-switch-" + currentInterface);
+    
+    $routingTableEntries.forEach($entry => {
+        let $cells = $entry.querySelectorAll("td");
+        if ($cells.length > 0) {
+            let interface = $cells[3].innerHTML;
+            if (interface === currentInterface) $entry.remove();
+        }
+    });
+
+    $routerForm.querySelector(".interfaces-container").querySelectorAll("option").forEach($option => {
+        if ($option.value === currentInterface) $option.remove();
+    });
+
+    bodyComponent.render(popupMessage(`Interfaz ${currentInterface} eliminada con éxito.`));
 }
