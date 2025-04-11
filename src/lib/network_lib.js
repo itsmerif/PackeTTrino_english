@@ -491,15 +491,13 @@ function getInterfaces(networkObjectId)  {
     const $networkObject = document.getElementById(networkObjectId);
     let response = [];
     let index = 3;
-    let interfaceName = "ip-enp0s" + index;
-    let networkInterface = $networkObject.getAttribute(interfaceName);
+    let networkInterface = $networkObject.getAttribute("ip-enp0s" + index);
 
     while (networkInterface !== null) {
-        response.push(interfaceName);
+        response.push(`enp0s` + index);
         if (index === 3) index = 8;
         else index++;
-        interfaceName = "ip-enp0s" + index;
-        networkInterface = $networkObject.getAttribute(interfaceName);
+        networkInterface = $networkObject.getAttribute("ip-enp0s" + index);
     }
 
     return response;
@@ -521,4 +519,20 @@ function isConnected(networkObjectId) {
 
     return false;
 
+}
+
+function getAvailableInterface(networkObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let index = 3;
+    let switchConn = $networkObject.getAttribute("data-switch-enp0s" + index);
+
+    while (switchConn !== null) {
+        if (switchConn === "") return `enp0s${index}`;
+        if (index === 3) index = 8;
+        else index++;
+        switchConn = $networkObject.getAttribute("data-switch-enp0s" + index);
+    }
+
+    return false;    
 }

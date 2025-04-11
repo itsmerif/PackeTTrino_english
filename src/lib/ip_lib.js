@@ -3,6 +3,7 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
     const $networkObject = document.getElementById(routerObjectId);
     const $table = $networkObject.querySelector(".routing-table").querySelector("table");
 
+    /*
     if (!isValidIp(destination)) {
         terminalMessage("Error: La red de destino introducida no es válida.");
         return;
@@ -16,7 +17,7 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
     if (!isValidIp(nexthop)) {
         terminalMessage("Error: La IP de siguiente salto introducida no es válida.");
         return;
-    }
+    }*/
     
     if (destination !== "0.0.0.0" && nexthop === "0.0.0.0") { //añadimos una nueva regla de conexion directa
 
@@ -26,7 +27,7 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
 
         $rows.forEach((row) => {
             let cells = row.querySelectorAll("td");
-            if ( cells.length > 0 && cells[3].innerHTML === interface) {
+            if (cells.length > 0 && cells[3].innerHTML === interface) {
                 cells[0].innerHTML = destination;
                 cells[1].innerHTML = netmask;
                 cells[2].innerHTML = gateway;

@@ -164,7 +164,8 @@ function addInterface(event) {
     $networkObject.setAttribute("netmask-enp0s" + index, "");
     $networkObject.setAttribute("mac-enp0s" + index, getRandomMac());
     $networkObject.setAttribute("data-switch-enp0s" + index, "");
-
+    $networkObject.querySelector("img").draggable = true;
+    addRoutingEntry($networkObject.id, "", "", "", "enp0s" + index, "0.0.0.0");
     bodyComponent.render(popupMessage(`Interfaz enp0s${index} agregada con éxito.`));
   
 }

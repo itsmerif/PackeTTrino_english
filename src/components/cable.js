@@ -42,38 +42,18 @@ function deleteCable(event) {
 
     const circle = event.target;
     const cableObject = circle.previousElementSibling;
-    const NetworkObject = document.getElementById(cableObject.getAttribute("end-start"));
-    const switchObject = document.getElementById(cableObject.getAttribute("end-end"));
-
-    if (!NetworkObject.id.startsWith("router-")) {
-
-        NetworkObject.setAttribute("data-switch-enp0s3", "");  //eliminamos la referencia al switch en el pc
-        NetworkObject.querySelector("img").draggable = true; //permitimos que el pc se pueda arrastrar
-
-    }
-
-    if (NetworkObject.id.startsWith("router-")) {
-
-        if (NetworkObject.getAttribute("data-switch-enp0s3") === switchObject.id) {
-            NetworkObject.setAttribute("data-switch-enp0s3", "");
+    const $networkObject = document.getElementById(cableObject.getAttribute("end-start"));
+    const $switchObject = document.getElementById(cableObject.getAttribute("end-end"));
+    
+    getInterfaces($networkObject.id).forEach(interface => {
+        if ( $networkObject.getAttribute(`data-switch-${interface}`) === $switchObject.id) {
+            $networkObject.setAttribute(`data-switch-${interface}`, "");
         }
-        if (NetworkObject.getAttribute("data-switch-enp0s8") === switchObject.id) {
-            NetworkObject.setAttribute("data-switch-enp0s8", "");
-        }
-        if (NetworkObject.getAttribute("data-switch-enp0s9") === switchObject.id) {
-            NetworkObject.setAttribute("data-switch-enp0s9", "");
-        }
+    });
 
-        NetworkObject.querySelector("img").draggable = true; //permitimos que el routerse pueda arrastrar
-
-    }
-
-    deleteMacEntry(switchObject.id, cableObject.getAttribute("end-start")); //eliminamos la entrada en la tabla MAC del switch
-
-    if (isMacTableEmpty(switchObject.id)) {
-        switchObject.querySelector("img").draggable = true; //permitimos que el switch se pueda arrastrar
-    }
-
+    $networkObject.querySelector("img").draggable = true;
+    deleteMacEntry($switchObject.id, cableObject.getAttribute("end-start"));
+    if (isMacTableEmpty($switchObject.id)) $switchObject.querySelector("img").draggable = true;
     circle.remove();
     cableObject.remove();
 }
