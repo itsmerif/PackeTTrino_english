@@ -1,26 +1,63 @@
-function addRoutingEntry(routerObjectId, destination, netmask, interface, nexthop) {
+function addRoutingEntry(routerObjectId, destination, netmask, gateway, interface, nexthop) {
 
-    const networkObject = document.getElementById(routerObjectId);
-    const table = networkObject.querySelector(".routing-table").querySelector("table");
+    const $networkObject = document.getElementById(routerObjectId);
+    const $table = $networkObject.querySelector(".routing-table").querySelector("table");
 
-    if (destination !== "0.0.0.0") { //añadimos una nueva regla
+    if (!isValidIp(destination)) {
+        terminalMessage("Error: La red de destino introducida no es válida.");
+        return;
+    }
 
-        const gateway = networkObject.getAttribute("ip-" + interface);
+    if (!isValidIp(netmask)) {
+        terminalMessage("Error: La máscara de red introducida no es válida.");
+        return;
+    }
 
-        if (!destination.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
-            terminalMessage("Error: La red de destino introducida no es válida.");
-            return;
-        }
+    if (!isValidIp(nexthop)) {
+        terminalMessage("Error: La IP de siguiente salto introducida no es válida.");
+        return;
+    }
+    
+    if (destination !== "0.0.0.0" && nexthop === "0.0.0.0") { //añadimos una nueva regla de conexion directa
 
-        if (!netmask.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
-            terminalMessage("Error: La máscara de red introducida no es válida.");
-            return;
-        }
+        let $rows = $table.querySelectorAll("tr");
+        let $defaultRow = $table.querySelector("#default-route");
+        let ruleExists = false;
 
-        if (!nexthop.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
-            terminalMessage("Error: La IP de siguiente salto introducida no es válida.");
-            return;
-        }
+        $rows.forEach((row) => {
+            let cells = row.querySelectorAll("td");
+            if ( cells.length > 0 && cells[3].innerHTML === interface) {
+                cells[0].innerHTML = destination;
+                cells[1].innerHTML = netmask;
+                cells[2].innerHTML = gateway;
+                ruleExists = true;
+            }
+        });
+
+        if (!ruleExists) {
+            
+            let newRow = document.createElement("tr");
+
+            newRow.innerHTML = `
+                <tr>
+                    <td>${destination}</td>
+                    <td>${netmask}</td>
+                    <td>${gateway}</td>
+                    <td>${interface}</td>
+                    <td>0.0.0.0</td>
+                </tr>`;
+            
+            $defaultRow.before(newRow);
+    
+            terminalMessage("La regla ha sido creada correctamente.");
+    
+        }   
+
+        return;
+
+    }
+
+    if (destination !== "0.0.0.0" && nexthop !== "0.0.0.0") { //añadimos una nueva regla remota
 
         if (!gateway) {
             terminalMessage("Error: Interfaz " + interface + " no configurada.");
@@ -32,15 +69,13 @@ function addRoutingEntry(routerObjectId, destination, netmask, interface, nextho
             return;
         }
 
-        //primero comprobamos si la regla ya existe
-
-        let rows = table.querySelectorAll("tr");
+        let rows = $table.querySelectorAll("tr");
 
         if (rows.length > 4) {
             for (let i = 5; i < rows.length; i++) {
                 let row = rows[i];
                 let cells = row.querySelectorAll("td");
-                if (destination === cells[0].innerHTML && netmask === cells[1].innerHTML) { //bingo, la regla ya existe
+                if (destination === cells[0].innerHTML && netmask === cells[1].innerHTML) {
                     cells[2].innerHTML = gateway;
                     cells[3].innerHTML = interface;
                     cells[4].innerHTML = nexthop;
@@ -61,39 +96,41 @@ function addRoutingEntry(routerObjectId, destination, netmask, interface, nextho
                 <td>${interface}</td>
                 <td>${nexthop}</td>
             </tr>`;
-        table.appendChild(newRow);
+        $table.appendChild(newRow);
 
         terminalMessage("La regla ha sido creada correctamente.");
 
-    } else { //editamos la regla por defecto
+        return;
 
-        const rows = table.querySelectorAll("tr");
-        const defaultRule = rows[4];
-        const cells = defaultRule.querySelectorAll("td");
-        const gateway = networkObject.getAttribute("ip-" + interface);
+    } 
+    
+    //editamos la regla por defecto
 
-        if (netmask !== "0.0.0.0") {
-            terminalMessage("Error: No se puede cambiar la máscara de red de la regla por defecto.");
-            return;
-        }
+    const rows = $table.querySelectorAll("tr");
+    const defaultRule = rows[4];
+    const cells = defaultRule.querySelectorAll("td");
 
-        if (!gateway) {
-            terminalMessage("Error: Interfaz " + interface + " no configurada.");
-            return;
-        }
-
-        if (getNetwork(gateway, netmask) !== getNetwork(nexthop, netmask)) {
-            terminalMessage("Error: La IP de siguiente salto no es accesible.");
-            return;
-        }
-
-        cells[2].innerHTML = gateway;
-        cells[3].innerHTML = interface;
-        cells[4].innerHTML = nexthop;
-
-        terminalMessage("La regla por defecto ha sido modificada correctamente.");
-
+    if (netmask !== "0.0.0.0") {
+        terminalMessage("Error: No se puede cambiar la máscara de red de la regla por defecto.");
+        return;
     }
+
+    if (!gateway) {
+        terminalMessage("Error: Interfaz " + interface + " no configurada.");
+        return;
+    }
+
+    if (getNetwork(gateway, netmask) !== getNetwork(nexthop, netmask)) {
+        terminalMessage("Error: La IP de siguiente salto no es accesible.");
+        return;
+    }
+
+    cells[2].innerHTML = gateway;
+    cells[3].innerHTML = interface;
+    cells[4].innerHTML = nexthop;
+
+    terminalMessage("La regla por defecto ha sido modificada correctamente.");
+
 
 }
 

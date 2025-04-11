@@ -70,24 +70,24 @@ function RouterObject(x, y) {
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td></td>
+                    <td>enp0s3</td>
                     <td> 0.0.0.0</td>
                 </tr>
                 <tr>
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td></td>
+                    <td>enp0s8</td>
                     <td> 0.0.0.0 </td>
                 </tr>
                 <tr>
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td></td>
+                    <td>enp0s9</td>
                     <td> 0.0.0.0 </td>
                 </tr>
-                <tr>
+                <tr id="default-route">
                     <td> 0.0.0.0 </td>
                     <td> 0.0.0.0 </td>
                     <td></td>
@@ -125,6 +125,7 @@ function RouterObject(x, y) {
     networkObjectAdvancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
         <button onclick="showRoutingTable(event)"> Ver Tabla de Enrutamiento </button>
+        <button onclick="addInterface(event)">Añadir Interfaz</button>
         <button onclick="showARPTable(event)">Ver Tabla ARP</button>
         <button onclick="showRouterFirewallTable(event)">Ver Tabla Firewall</button>
         <button onclick="deleteItem(event)">Eliminar</button>`;
@@ -141,4 +142,29 @@ function RouterObject(x, y) {
 
     return $networkObject;
 
+}
+
+function addInterface(event) {
+
+    event.preventDefault();
+
+    const $networkObject = event.target.closest(".item-dropped");
+
+    let index = 10;
+    let ip = $networkObject.getAttribute("ip-enp0s" + index);
+    let netmask = $networkObject.getAttribute("netmask-enp0s" + index);
+
+    while ( ip !== null && netmask !== null ) {
+        index++;
+        ip = $networkObject.getAttribute("ip-enp0s" + index);
+        netmask = $networkObject.getAttribute("netmask-enp0s" + index);
+    }
+
+    $networkObject.setAttribute("ip-enp0s" + index, "");
+    $networkObject.setAttribute("netmask-enp0s" + index, "");
+    $networkObject.setAttribute("mac-enp0s" + index, getRandomMac());
+    $networkObject.setAttribute("data-switch-enp0s" + index, "");
+
+    bodyComponent.render(popupMessage(`Interfaz enp0s${index} agregada con éxito.`));
+  
 }
