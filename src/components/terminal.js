@@ -73,7 +73,8 @@ function sendCommand(event) {
             "test": () => command_test(args),
             "traceroute": () => command_traceroute(dataId, args),
             "systemctl": () => command_systemctl(dataId, args),
-            "exit": () => closeTerminal(event)
+            "exit": () => closeTerminal(event),
+            "apt": () => command_Apt(dataId, args),
         }
 
         window.clearInterval(window.pingInterval); //limpiamos todos los procesos de terminal en funcionamiento
