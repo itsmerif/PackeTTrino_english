@@ -536,3 +536,46 @@ function getAvailableInterface(networkObjectId) {
 
     return false;    
 }
+
+function getInterfaceInfo(networkObjectId, switchObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let index = 3;
+    let switchConn = $networkObject.getAttribute("data-switch-enp0s" + index);
+    let response = [];
+
+    while (switchConn !== null) {
+
+        if (switchConn === switchObjectId) {
+            response.push($networkObject.getAttribute("ip-enp0s" + index));
+            response.push($networkObject.getAttribute("netmask-enp0s" + index));
+            response.push($networkObject.getAttribute("mac-enp0s" + index));
+            return response;
+        }
+
+        if (index === 3) index = 8;
+        else index++;
+        switchConn = $networkObject.getAttribute("data-switch-enp0s" + index);
+    }
+
+    return [false, false, false];
+
+}
+
+function getAvailableIps(networkObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let index = 3;
+    let networkObjectIp = $networkObject.getAttribute("ip-enp0s" + index);
+    let availableIps = [];
+
+    while (networkObjectIp !== null) {
+        if (networkObjectIp !== "") availableIps.push(networkObjectIp);
+        if (index === 3) index = 8;
+        else index++;
+        networkObjectIp = $networkObject.getAttribute("ip-enp0s" + index);
+    }
+
+    return availableIps;
+
+}
