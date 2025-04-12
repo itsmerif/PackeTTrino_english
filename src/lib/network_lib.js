@@ -601,7 +601,7 @@ function getReachableInterface(networkObjectId, ip)  {
     let networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s" + index);
 
     while (networkObjectIp !== null && networkObjectNetmask !== null) {
-        if (getNetwork(networkObjectIp, networkObjectNetmask) === getNetwork(ip, networkObjectNetmask) ) return `enp0s${index}`;
+        if (networkObjectIp !== "" && networkObjectNetmask !== "" && getNetwork(networkObjectIp, networkObjectNetmask) === getNetwork(ip, networkObjectNetmask) ) return `enp0s${index}`;
         if (index === 3) index = 8;
         else index++;
         networkObjectIp = $networkObject.getAttribute("ip-enp0s" + index);

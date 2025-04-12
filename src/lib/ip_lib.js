@@ -106,109 +106,27 @@ function printRoutingTable(networkObjectId) {
 }
 
 function showObjectInfo(id) {
-
     const $networkObject = document.getElementById(id);
-
-    if (!id.includes("router-")) {
-
-        const ip = $networkObject.getAttribute("ip-enp0s3");
-        const netmask = $networkObject.getAttribute("netmask-enp0s3");
-        const mac = $networkObject.getAttribute("mac-enp0s3");
-
-        terminalMessage("1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000");
-        terminalMessage("    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00");
-        terminalMessage("    inet 127.0.0.1/8 scope host lo");
-        terminalMessage("2: enp0s3: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000");
+    const interfaces = getInterfaces(id);
+    terminalMessage("1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000");
+    terminalMessage("    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00");
+    terminalMessage("    inet 127.0.0.1/8 scope host lo");
+    interfaces.forEach((interface,i) => {
+        const ip = $networkObject.getAttribute("ip-" + interface);
+        const netmask = $networkObject.getAttribute("netmask-" + interface);
+        const mac = $networkObject.getAttribute("mac-" + interface);
+        terminalMessage(`${i+1}: enp0s3: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000`);
         terminalMessage(`    link/ether ${mac} brd ff:ff:ff:ff:ff:ff`);
-        if (ip) terminalMessage(`    inet ${ip}/${netmaskToCidr(netmask)} brd 192.168.1.255 scope global dynamic enp0s3`);
-        return;
-
-    }
-
-    if (id.includes("router-")) {
-
-        const ipEnp0s3 = $networkObject.getAttribute("ip-enp0s3");
-        const ipEnp0s8 = $networkObject.getAttribute("ip-enp0s8");
-        const ipEnp0s9 = $networkObject.getAttribute("ip-enp0s9");
-        const netmaskEnp0s3 = $networkObject.getAttribute("netmask-enp0s3");
-        const netmaskEnp0s8 = $networkObject.getAttribute("netmask-enp0s8");
-        const netmaskEnp0s9 = $networkObject.getAttribute("netmask-enp0s9");
-        const mac = $networkObject.getAttribute("mac-enp0s3");
-
-        terminalMessage("1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000");
-        terminalMessage("    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00");
-        terminalMessage("    inet 127.0.0.1/8 scope host lo");
-        terminalMessage("2: enp0s3: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000");
-        terminalMessage(`    link/ether ${mac} brd ff:ff:ff:ff:ff:ff`);
-        if (ipEnp0s3) terminalMessage(`    inet ${ipEnp0s3}/${netmaskToCidr(netmaskEnp0s3)} brd ${getBroadcastIp(ipEnp0s3, netmaskEnp0s3)} scope global dynamic enp0s3`);
-        terminalMessage("3: enp0s8: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000");
-        terminalMessage(`    link/ether ${mac} brd ff:ff:ff:ff:ff:ff`);
-        if (ipEnp0s8) terminalMessage(`    inet ${ipEnp0s8}/${netmaskToCidr(netmaskEnp0s8)} brd ${getBroadcastIp(ipEnp0s8, netmaskEnp0s8)} scope global dynamic enp0s8`);
-        terminalMessage("4: enp0s9: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000");
-        terminalMessage(`    link/ether ${mac} brd ff:ff:ff:ff:ff:ff`);
-        if (ipEnp0s9) terminalMessage(`    inet ${ipEnp0s9}/${netmaskToCidr(netmaskEnp0s9)} brd ${getBroadcastIp(ipEnp0s9, netmaskEnp0s9)} scope global dynamic enp0s9`);
-
-        return;
-    }
-
+        if (ip) terminalMessage(`    inet ${ip}/${netmaskToCidr(netmask)} brd 192.168.1.255 scope global dynamic ${interface}`);
+    });   
 }
 
-function addNetwork(networkObjectId, ip, netmask, interface) {
-
+function configureInterface(networkObjectId, ip, netmask, interface) {
     const $networkObject = document.getElementById(networkObjectId);
-
-    // caso 1) es un equipo
-
-    if (!networkObjectId.includes("router-")) {
-
-        if (interface !== "enp0s3") {
-            terminalMessage("Error: La interfaz introducida no es válida.");
-            return;
-        }
-
-        $networkObject.setAttribute("ip-enp0s3", ip);
-        $networkObject.setAttribute("netmask-enp0s3", netmask);
-        terminalMessage("La red ha sido creada correctamente.");
-        return;
-    }
-
-    // caso 2) es un router
-
-    const rows = $networkObject.querySelector(".routing-table").querySelector("table").querySelectorAll("tr");
     $networkObject.setAttribute("ip-" + interface, ip);
     $networkObject.setAttribute("netmask-" + interface, netmask);
-
-    //ahora actualizamos la tabla de enrutamiento
-
-    if (interface === "enp0s3") {
-        let targetRow = rows[1];
-        let cells = targetRow.querySelectorAll("td");
-        cells[0].innerHTML = getNetwork(ip, netmask);
-        cells[1].innerHTML = netmask;
-        cells[2].innerHTML = ip;
-        cells[3].innerHTML = interface;
-    }
-
-    if (interface === "enp0s8") {
-        let targetRow = rows[2];
-        let cells = targetRow.querySelectorAll("td");
-        cells[0].innerHTML = getNetwork(ip, netmask);
-        cells[1].innerHTML = netmask;
-        cells[2].innerHTML = ip;
-        cells[3].innerHTML = interface;
-    }
-
-    if (interface === "enp0s9") {
-        let targetRow = rows[3];
-        let cells = targetRow.querySelectorAll("td");
-        cells[0].innerHTML = getNetwork(ip, netmask);
-        cells[1].innerHTML = netmask;
-        cells[2].innerHTML = ip;
-        cells[3].innerHTML = interface;
-    }
-
+    addRoutingEntry(networkObjectId, getNetwork(ip, netmask), netmask, ip, interface, "0.0.0.0");
     terminalMessage("La red ha sido creada correctamente.");
-
 }
 
 function removeNetwork(networkObjectId, interface) {

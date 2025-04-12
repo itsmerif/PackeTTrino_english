@@ -1,46 +1,41 @@
-function command_Ip(routerObjectId, args) {
+function command_Ip(networkObjectId, args) {
     
     if (args[1] === "addr" || args[1] === "a") {
 
         if (args.length === 2) {
-            showObjectInfo(routerObjectId);
+            showObjectInfo(networkObjectId);
             return;
         }
 
         if (args[2] === "add") {
 
-            if (args.length !== 7) {
-                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip] [netmask] dev [interface]');
+            if (args.length !== 6) {
+                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip]/[netmask] dev [interface]');
                 return;
             }
 
-            if (args[2] !== "add" && args[2] !== "del") {
-                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip] [netmask] dev [interface]');
-                return;
-            }
-
-            if (!isValidIp(args[3])) {
+            if (!isValidCidrIp(args[3])) {
                 terminalMessage("Error: La IP introducida no es válida.");
                 return;
             }
 
-            if (!isValidIp(args[4])) {
-                terminalMessage("Error: La máscara de red introducida no es válida.");
+            let [ip, netmask] = parseCidr(args[3]);
+
+            if (args[4] !== "dev") {
+                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip]/[netmask] dev [interface]');
                 return;
             }
 
-            if (args[5] !== "dev") {
-                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip] [netmask] dev [interface]');
+            if (!getInterfaces(networkObjectId).includes(args[5])) {
+                terminalMessage(`Error: Interfaz ${args[5]} no existe.`);
                 return;
             }
 
-            if (args[6] !== "enp0s3" && args[6] !== "enp0s8" && args[6] !== "enp0s9") {
-                terminalMessage("Error: La interfaz introducida no es válida.");
-                return;
-            }
+            let interface = args[5];
+            configureInterface(networkObjectId, ip, netmask, interface);
 
-            addNetwork(routerObjectId, args[3], args[4], args[6]);
             return;
+            
         }
 
         if (args[2] === "del") {
@@ -55,7 +50,7 @@ function command_Ip(routerObjectId, args) {
                 return;
             }
 
-            removeNetwork(routerObjectId, args[3]);
+            removeNetwork(networkObjectId, args[3]);
             return;
         }
 
@@ -64,7 +59,7 @@ function command_Ip(routerObjectId, args) {
     if (args[1] === "route" || args[1] === "r") { //ip route add 192.168.3.0/24 dev eth0
 
         if (args.length === 2) {
-            printRoutingTable(routerObjectId);
+            printRoutingTable(networkObjectId);
             return;
         }
 
@@ -93,16 +88,16 @@ function command_Ip(routerObjectId, args) {
             }
 
             let nexthop = args[5];
-            let interface = getReachableInterface(routerObjectId, nexthop);
+            let interface = getReachableInterface(networkObjectId, nexthop);
 
             if (!interface) {
                 terminalMessage("Error: El Siguiente Salto introducido no es accesible.");
                 return;
             }
 
-            let gateway = fromRouterInterface(routerObjectId, interface, "gateway");
+            let gateway = fromRouterInterface(networkObjectId, interface, "gateway");
 
-            addRoutingEntry(routerObjectId, destination, netmask, gateway, interface, nexthop); 
+            addRoutingEntry(networkObjectId, destination, netmask, gateway, interface, nexthop); 
 
             return;
 
@@ -115,12 +110,12 @@ function command_Ip(routerObjectId, args) {
                 return;
             }
 
-            removeRoutingEntry(routerObjectId, args[3], args[4]);
+            removeRoutingEntry(networkObjectId, args[3], args[4]);
             return;
         }
 
         if (args[2] === "restore") {
-            removeRemotesRules(routerObjectId);
+            removeRemotesRules(networkObjectId);
             return;
         }
 
