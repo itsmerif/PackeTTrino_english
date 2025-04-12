@@ -189,7 +189,7 @@ function getRoutingRules(routerObjectid, targetinterface) {
 async function minimizeTerminal() {
     return new Promise(resolve => {
         const $terminal = document.querySelector(".terminal-component");
-        if (!$terminal || $terminal.style.display === "none") return resolve();
+        if (!$terminal || window.getComputedStyle($terminal).display === "none") return resolve();
         const rect = $terminal.getBoundingClientRect();
         const targetWidth = rect.width * 0.3;
         const targetHeight = rect.height * 0.3;
