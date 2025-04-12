@@ -2,9 +2,7 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
 
     const $networkObject = document.getElementById(routerObjectId);
     const $table = $networkObject.querySelector(".routing-table").querySelector("table");
-    const $rows = $table.querySelectorAll("tr");
     const $defaultRow = $table.querySelector("#default-route");
-    let ruleExists = false;
 
     destination = destination.trim();
     netmask = netmask.trim();
@@ -12,87 +10,37 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
     interface = interface.trim();
     nexthop = nexthop.trim();
 
-    if (destination !== "0.0.0.0") {
+    if (destination === "" || netmask === "") return;
+    
+    let $routingRule = getRoutingRule($networkObject.id, destination, netmask);
 
-        if (nexthop === "0.0.0.0") {
+    if (!$routingRule) {
+        
+        let $newRow = document.createElement("tr");
 
-            destination = (destination === "0.0.0.0") ? "" : destination;
-    
-            $rows.forEach((row) => {
-                let cells = row.querySelectorAll("td");
-                if (cells.length > 0 && cells[3].innerHTML === interface) {
-                    cells[0].innerHTML = destination;
-                    cells[1].innerHTML = netmask;
-                    cells[2].innerHTML = gateway;
-                    ruleExists = true;
-                }
-            });
-    
-            if (!ruleExists) {
-    
-                let newRow = document.createElement("tr");
-    
-                newRow.innerHTML = `
-                    <tr>
-                        <td>${destination}</td>
-                        <td>${netmask}</td>
-                        <td>${gateway}</td>
-                        <td>${interface}</td>
-                        <td>0.0.0.0</td>
-                    </tr>`;
-    
-                $defaultRow.before(newRow);
-        
-            }
-            
-            terminalMessage("La regla se ha creado correctamente.");
-            return;
-    
-        }
-    
-        if (nexthop !== "0.0.0.0") {
-        
-            $rows.forEach((row) => {
-                let cells = row.querySelectorAll("td");
-                if (cells.length < 1) return;
-                if (destination === cells[0].innerHTML && netmask === cells[1].innerHTML) {
-                    ruleExists = true;
-                    cells[2].innerHTML = gateway;
-                    cells[3].innerHTML = interface;
-                    cells[4].innerHTML = nexthop;
-                }
-            });
-            
-            if (!ruleExists) {
-                
-                let newRow = document.createElement("tr");
-        
-                newRow.innerHTML = `
-                    <tr>
-                        <td>${destination}</td>
-                        <td>${netmask}</td>
-                        <td>${gateway}</td>
-                        <td>${interface}</td>
-                        <td>${nexthop}</td>
-                    </tr>`;
-                
-                $defaultRow.before(newRow);
-        
-            }
+        $newRow.innerHTML = `
+        <tr>
+            <td>${destination}</td>
+            <td>${netmask}</td>
+            <td>${gateway}</td>
+            <td>${interface}</td>
+            <td>${nexthop}</td>
+        </tr>`;
 
-            terminalMessage("La regla se ha creado correctamente.");
-        
-            return;
-    
-        }
+        $defaultRow.before($newRow);
+        terminalMessage("La regla se ha creado correctamente.");
 
-    } else { 
+    }else {
 
-        let $cells = $defaultRow.querySelectorAll("td");
+        let $cells = $routingRule.querySelectorAll("td");
+        $cells[0].innerHTML = destination;
+        $cells[1].innerHTML = netmask;
         $cells[2].innerHTML = gateway;
         $cells[3].innerHTML = interface;
         $cells[4].innerHTML = nexthop;
-        terminalMessage("La regla por defecto se ha modificado correctamente.");
+
+        terminalMessage("La regla ha sido modificada correctamente.");
+
     }
 
 }
@@ -382,4 +330,19 @@ function removeRemotesRules(routerObjectId) {
 
     terminalMessage("El enrutamiento ha sido restaurado correctamente.");
 
+}
+
+function getRoutingRule(routerObjectId, destination, netmask) {
+    const $networkObject = document.getElementById(routerObjectId);
+    const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
+    const $rows = $routingTable.querySelectorAll("tr");
+    let response = false;
+
+    for (let i = 1; i < $rows.length; i++) {
+        let $row = $rows[i];
+        let cells = $row.querySelectorAll("td");
+        if (cells.length > 0 && cells[0].innerHTML === destination && cells[1].innerHTML === netmask) response = $row;
+    }
+
+    return response;
 }

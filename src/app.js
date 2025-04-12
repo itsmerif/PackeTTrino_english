@@ -20,6 +20,6 @@ bodyComponent.render(
     GeneralOptions()
 );
 
-htmlComponent.event("keydown", documentKeyboardHandler);
+//htmlComponent.event("keydown", documentKeyboardHandler);
 
 setTimeout(hideLoadingScreen, 1000);

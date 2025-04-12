@@ -8,21 +8,21 @@ function router_menu() {
         <p id="form-router-item-id"></p>
         <div class="interfaces-wrapper">
             <select class="interfaces-container"></select>
-            <button class="btn-modern-red">Eliminar</button>
-            <button class="btn-modern-green">Añadir</button>
+            <button class="btn-modern-red" id="del-iface">Eliminar</button>
+            <button class="btn-modern-green" id="add-iface">Añadir</button>
         </div>
         <label for="router-ip">Dirección IP:</label>
-        <input type="text" id="router-ip" name="router-ip" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+        <input type="text" id="router-ip" name="router-ip">
         <label for="router-netmask">Máscara de Red:</label>
-        <input type="text" name="router-netmask" id="router-netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+        <input type="text" name="router-netmask" id="router-netmask">
         <button class="btn-modern-yellow" type="submit">Guardar</button>
     `;
 
     $menu.addEventListener("submit", saveRouterSpecs);
     $menu.querySelector(".interfaces-container").addEventListener("change", selectInterface);
     $menu.querySelectorAll("input").forEach(input => input.addEventListener("change", registerNetworkChanges));
-    $menu.querySelector(".btn-modern-red").addEventListener("click", deleteInterface);
-    $menu.querySelector(".btn-modern-green").addEventListener("click", addInterface);
+    $menu.querySelector("#del-iface").addEventListener("click", deleteInterface);
+    $menu.querySelector("#add-iface").addEventListener("click", addInterface);
 
     return $menu;
 
@@ -82,7 +82,18 @@ function saveRouterSpecs(event) {
     let netmask = $networkObject.getAttribute("netmask-enp0s" + index);
 
     while ( ip !== null && netmask !== null ) {
-        if (ip !== "") addRoutingEntry($networkObject.id, getNetwork(ip, netmask), netmask, ip, "enp0s" + index, "0.0.0.0");
+
+        if (!isValidIp(ip) && ip !== "") {
+            bodyComponent.render(popupMessage(`<span>Error: </span>La IP "${ip}" no es válida.`));
+            return;
+        }
+
+        if (!isValidIp(netmask) && netmask !== "") {
+            bodyComponent.render(popupMessage(`<span>Error: </span>La máscara de red "${netmask}" no es válida.`));
+            return;
+        }
+
+        addRoutingEntry($networkObject.id, (ip !== "") ? getNetwork(ip, netmask) :  "" , netmask, ip, "enp0s" + index, "0.0.0.0");
         if (index === 3) index=8;
         else index++;
         ip = $networkObject.getAttribute("ip-enp0s" + index);
@@ -91,7 +102,7 @@ function saveRouterSpecs(event) {
 
     $form.querySelector(".interfaces-container").innerHTML = "";
     $form.style.display = "none";
-    bodyComponent.render(popupMessage(`Las tablas de enrutamiento se han actualizado correctamente.`));
+    //bodyComponent.render(popupMessage(`Las tablas de enrutamiento se han actualizado correctamente.`));
 
 }
 

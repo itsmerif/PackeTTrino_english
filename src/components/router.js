@@ -66,27 +66,6 @@ function RouterObject(x, y) {
                     <th>Interface</th>
                     <th>Next Hop</th>
                 </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>enp0s3</td>
-                    <td>0.0.0.0</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>enp0s8</td>
-                    <td>0.0.0.0</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>enp0s9</td>
-                    <td>0.0.0.0</td>
-                </tr>
                 <tr id="default-route">
                     <td>0.0.0.0</td>
                     <td>0.0.0.0</td>

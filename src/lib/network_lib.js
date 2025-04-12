@@ -609,3 +609,21 @@ function getReachableInterface(networkObjectId, ip)  {
 
     return false;
 }
+
+function restoreNetworkConfiguration(networkObjectId)  {
+    
+    const $networkObject = document.getElementById(networkObjectId);
+    let index = 3;
+    let ip = $networkObject.getAttribute("ip-enp0s" + index);
+    let netmask = $networkObject.getAttribute("netmask-enp0s" + index);
+
+    while ( ip !== null && netmask !== null ) {
+        $networkObject.setAttribute("ip-enp0s" + index, "");
+        $networkObject.setAttribute("netmask-enp0s" + index, "");
+        if (index === 3) index=8;
+        else index++;
+        ip = $networkObject.getAttribute("ip-enp0s" + index);
+        netmask = $networkObject.getAttribute("netmask-enp0s" + index);
+    }
+
+}
