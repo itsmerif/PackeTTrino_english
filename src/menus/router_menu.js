@@ -33,20 +33,20 @@ function showRouterSpecs(event) {
     event.stopPropagation();
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
 
-    if (icmpTryoutToggle) {
-        icmpTryoutProcess(networkObject.id);
-        return;
-    }
-
     if (document.querySelector(".router-form").style.display === "flex") return;
 
-    const networkObject = event.target.closest(".item-dropped");
+    const $networkObject = event.target.closest(".item-dropped");
+
+    if (icmpTryoutToggle) {
+        icmpTryoutProcess($networkObject.id);
+        return;
+    }
 
     const $form = document.querySelector(".router-form");
     const $interfacesContainer = $form.querySelector(".interfaces-container");
     let index = 3;
-    let ip = networkObject.getAttribute("ip-enp0s" + index);
-    let netmask = networkObject.getAttribute("netmask-enp0s" + index);
+    let ip = $networkObject.getAttribute("ip-enp0s" + index);
+    let netmask = $networkObject.getAttribute("netmask-enp0s" + index);
 
     while ( ip !== null && netmask !== null ) {
 
@@ -62,12 +62,12 @@ function showRouterSpecs(event) {
 
         } else index++;
 
-        ip = networkObject.getAttribute("ip-enp0s" + index);
-        netmask = networkObject.getAttribute("netmask-enp0s" + index);
+        ip = $networkObject.getAttribute("ip-enp0s" + index);
+        netmask = $networkObject.getAttribute("netmask-enp0s" + index);
 
     }
 
-    document.getElementById("form-router-item-id").innerHTML = networkObject.id;
+    document.getElementById("form-router-item-id").innerHTML = $networkObject.id;
     $form.style.display = "flex";
 }
 

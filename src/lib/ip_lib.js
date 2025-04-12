@@ -19,6 +19,13 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
         return;
     }*/
     
+
+    destination = destination.trim();
+    netmask = netmask.trim();
+    gateway = gateway.trim();
+    interface = interface.trim();
+    nexthop = nexthop.trim();
+
     if (nexthop === "0.0.0.0") {
 
         let $rows = $table.querySelectorAll("tr");

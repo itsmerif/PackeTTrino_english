@@ -132,7 +132,7 @@ function terminalMessage(message) {
     const $terminal = document.querySelector(".terminal-component");
     const $output = document.querySelector(".terminal-output");
     const $messageElement = document.createElement("p");
-    if ($terminal.style.display === "none") return;
+    if (window.getComputedStyle($terminal).display === "none") return;
     $messageElement.className = "terminal-message";
     $messageElement.innerHTML = message;
     $output.appendChild($messageElement);
