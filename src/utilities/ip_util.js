@@ -1,9 +1,9 @@
-function command_Ip(id, args) {
-
+function command_Ip(routerObjectId, args) {
+    
     if (args[1] === "addr" || args[1] === "a") {
 
         if (args.length === 2) {
-            showObjectInfo(id);
+            showObjectInfo(routerObjectId);
             return;
         }
 
@@ -39,7 +39,7 @@ function command_Ip(id, args) {
                 return;
             }
 
-            addNetwork(id, args[3], args[4], args[6]);
+            addNetwork(routerObjectId, args[3], args[4], args[6]);
             return;
         }
 
@@ -55,33 +55,57 @@ function command_Ip(id, args) {
                 return;
             }
 
-            removeNetwork(id, args[3]);
+            removeNetwork(routerObjectId, args[3]);
             return;
         }
 
     }
 
-    if (args[1] === "route" || args[1] === "r") { 
+    if (args[1] === "route" || args[1] === "r") { //ip route add 192.168.3.0/24 dev eth0
 
         if (args.length === 2) {
-            printRoutingTable(id);
+            printRoutingTable(routerObjectId);
             return;
         }
 
         if (args[2] === "add") {
 
-            if (args.length !== 8) {
-                terminalMessage('Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]');
+            if (args.length !== 6) {
+                terminalMessage('Error de argumentos. Sintaxis: ip route add [destination/netmask] via [nexthop]');
                 return;
             }
-    
-            if (args[2] !== "add" && ( args[2] !== "del" || args[5] !== "via")) {
-                terminalMessage('Error de argumentos. Sintaxis: ip route [add|del] [destination] [netmask] via [interface] [nexthop]');
+            
+            if (!isValidCidrIp(args[3]) && args[3] !== "default") {
+                terminalMessage("Error: La red de destino introducida no es válida.");
                 return;
             }
 
-            addRoutingEntry(id, args[3], args[4], args[6], args[7]);
+            let [destination, netmask] = (args[3] === "default") ? ["0.0.0.0", "0.0.0.0"] : parseCidr(args[3]);
+
+            if (args[4] !== "via") {
+                terminalMessage('Error de argumentos. Sintaxis: ip route add [destination/netmask] via [nexthop]');
+                return;
+            }
+
+            if (!isValidIp(args[5])) {
+                terminalMessage("Error: La IP de siguiente salto introducida no es válida.");
+                return;
+            }
+
+            let nexthop = args[5];
+            let interface = getReachableInterface(routerObjectId, nexthop);
+
+            if (!interface) {
+                terminalMessage("Error: El Siguiente Salto introducido no es accesible.");
+                return;
+            }
+
+            let gateway = fromRouterInterface(routerObjectId, interface, "gateway");
+
+            addRoutingEntry(routerObjectId, destination, netmask, gateway, interface, nexthop); 
+
             return;
+
         }
 
         if (args[2] === "del") {
@@ -91,14 +115,15 @@ function command_Ip(id, args) {
                 return;
             }
 
-            removeRoutingEntry(id, args[3], args[4]);
+            removeRoutingEntry(routerObjectId, args[3], args[4]);
             return;
         }
 
         if (args[2] === "restore") {
-            removeRemotesRules(id);
+            removeRemotesRules(routerObjectId);
             return;
         }
+
     }
 
     terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');

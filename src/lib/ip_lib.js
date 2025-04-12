@@ -2,23 +2,9 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
 
     const $networkObject = document.getElementById(routerObjectId);
     const $table = $networkObject.querySelector(".routing-table").querySelector("table");
-
-    /*
-    if (!isValidIp(destination)) {
-        terminalMessage("Error: La red de destino introducida no es válida.");
-        return;
-    }
-
-    if (!isValidIp(netmask)) {
-        terminalMessage("Error: La máscara de red introducida no es válida.");
-        return;
-    }
-
-    if (!isValidIp(nexthop)) {
-        terminalMessage("Error: La IP de siguiente salto introducida no es válida.");
-        return;
-    }*/
-    
+    const $rows = $table.querySelectorAll("tr");
+    const $defaultRow = $table.querySelector("#default-route");
+    let ruleExists = false;
 
     destination = destination.trim();
     netmask = netmask.trim();
@@ -26,119 +12,87 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
     interface = interface.trim();
     nexthop = nexthop.trim();
 
-    if (nexthop === "0.0.0.0") {
-
-        let $rows = $table.querySelectorAll("tr");
-        let $defaultRow = $table.querySelector("#default-route");
-        let ruleExists = false;
-
-        $rows.forEach((row) => {
-            let cells = row.querySelectorAll("td");
-            if (cells.length > 0 && cells[3].innerHTML === interface) {
-                cells[0].innerHTML = (destination === "0.0.0.0") ? "" : destination;
-                cells[1].innerHTML = netmask;
-                cells[2].innerHTML = gateway;
-                ruleExists = true;
-            }
-        });
-
-        if (!ruleExists) {
-            
-            let newRow = document.createElement("tr");
-
-            newRow.innerHTML = `
-                <tr>
-                    <td>${destination}</td>
-                    <td>${netmask}</td>
-                    <td>${gateway}</td>
-                    <td>${interface}</td>
-                    <td>0.0.0.0</td>
-                </tr>`;
-            
-            $defaultRow.before(newRow);
-    
-            terminalMessage("La regla ha sido creada correctamente.");
-    
-        }   
-
-        return;
-
-    }
-
     if (destination !== "0.0.0.0") {
 
-        if (!gateway) {
-            terminalMessage("Error: Interfaz " + interface + " no configurada.");
-            return;
-        }
+        if (nexthop === "0.0.0.0") {
 
-        if (getNetwork(gateway, netmask) !== getNetwork(nexthop, netmask)) {
-            terminalMessage("Error: La IP de siguiente salto no es accesible.");
-            return;
-        }
-
-        let rows = $table.querySelectorAll("tr");
-
-        if (rows.length > 4) {
-            for (let i = 5; i < rows.length; i++) {
-                let row = rows[i];
+            destination = (destination === "0.0.0.0") ? "" : destination;
+    
+            $rows.forEach((row) => {
                 let cells = row.querySelectorAll("td");
+                if (cells.length > 0 && cells[3].innerHTML === interface) {
+                    cells[0].innerHTML = destination;
+                    cells[1].innerHTML = netmask;
+                    cells[2].innerHTML = gateway;
+                    ruleExists = true;
+                }
+            });
+    
+            if (!ruleExists) {
+    
+                let newRow = document.createElement("tr");
+    
+                newRow.innerHTML = `
+                    <tr>
+                        <td>${destination}</td>
+                        <td>${netmask}</td>
+                        <td>${gateway}</td>
+                        <td>${interface}</td>
+                        <td>0.0.0.0</td>
+                    </tr>`;
+    
+                $defaultRow.before(newRow);
+        
+            }
+            
+            terminalMessage("La regla se ha creado correctamente.");
+            return;
+    
+        }
+    
+        if (nexthop !== "0.0.0.0") {
+        
+            $rows.forEach((row) => {
+                let cells = row.querySelectorAll("td");
+                if (cells.length < 1) return;
                 if (destination === cells[0].innerHTML && netmask === cells[1].innerHTML) {
+                    ruleExists = true;
                     cells[2].innerHTML = gateway;
                     cells[3].innerHTML = interface;
                     cells[4].innerHTML = nexthop;
-                    return;
                 }
+            });
+            
+            if (!ruleExists) {
+                
+                let newRow = document.createElement("tr");
+        
+                newRow.innerHTML = `
+                    <tr>
+                        <td>${destination}</td>
+                        <td>${netmask}</td>
+                        <td>${gateway}</td>
+                        <td>${interface}</td>
+                        <td>${nexthop}</td>
+                    </tr>`;
+                
+                $defaultRow.before(newRow);
+        
             }
-        }
 
-        //si no existe, añadimos una nueva regla
-
-        let newRow = document.createElement("tr");
-
-        newRow.innerHTML = `
-            <tr>
-                <td>${destination}</td>
-                <td>${netmask}</td>
-                <td>${gateway}</td>
-                <td>${interface}</td>
-                <td>${nexthop}</td>
-            </tr>`;
-        $table.appendChild(newRow);
-
-        terminalMessage("La regla ha sido creada correctamente.");
-
-        return;
-
-    } 
+            terminalMessage("La regla se ha creado correctamente.");
+        
+            return;
     
-    if (nexthop !== "0.0.0.0" && destination === "0.0.0.0") {
-
-        const rows = $table.querySelectorAll("tr");
-        const defaultRule = rows[4];
-        const cells = defaultRule.querySelectorAll("td");
-
-        if (netmask !== "0.0.0.0") {
-            terminalMessage("Error: No se puede cambiar la máscara de red de la regla por defecto.");
-            return;
         }
 
-        if (!gateway) {
-            terminalMessage("Error: Interfaz " + interface + " no configurada.");
-            return;
-        }
+    } else { 
 
-        if (getNetwork(gateway, netmask) !== getNetwork(nexthop, netmask)) {
-            terminalMessage("Error: La IP de siguiente salto no es accesible.");
-            return;
-        }
-
-        cells[2].innerHTML = gateway;
-        cells[3].innerHTML = interface;
-        cells[4].innerHTML = nexthop;
-
-        terminalMessage("La regla por defecto ha sido modificada correctamente.");
-
+        let $cells = $defaultRow.querySelectorAll("td");
+        $cells[2].innerHTML = gateway;
+        $cells[3].innerHTML = interface;
+        $cells[4].innerHTML = nexthop;
+        terminalMessage("La regla por defecto se ha modificado correctamente.");
     }
 
 }
@@ -192,8 +146,6 @@ function printRoutingTable(networkObjectId) {
         let gateway = cells[2].innerHTML;
         let interface = cells[3].innerHTML;
         let formattedRoute = "";
-
-        console.log(destination, netmask, gateway, interface);
 
         if (destination.trim() === "0.0.0.0" && netmask.trim() === "0.0.0.0") {
             formattedRoute = `default via ${gateway || "-"} dev ${interface || "-"}`;

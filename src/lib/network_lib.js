@@ -98,19 +98,11 @@ function isValidIp(ip) {
 
 function isValidCidrIp(cidr) {
     let ip = cidr.split("/")[0];
-    let netmask = cidr.split("/")[1];
-
-    if (!isValidIp(ip)) {
-        return false;
-    }
-
-    let netmaskInt = parseInt(netmask);
-
-    if (isNaN(netmaskInt) || netmaskInt < 0 || netmaskInt > 32) {
-        return false;
-    }
-
-    return true;
+    let netmask = parseInt(cidr.split("/")[1]);
+    let response = true;
+    if (!isValidIp(ip)) response = false;
+    if (isNaN(netmask) || netmask < 0 || netmask > 32) response = false;
+    return response;
 }
 
 function isValidDomain(domain) {
@@ -578,4 +570,42 @@ function getAvailableIps(networkObjectId) {
 
     return availableIps;
 
+}
+
+function fromRouterInterface(routerObjectId, interface, attribute) {
+
+    const $routerObject = document.getElementById(routerObjectId);
+    const routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
+    const rows = routingTable.querySelectorAll("tr");
+    let response = "";
+
+    for (let i = 1; i < rows.length; i++) {
+        let row = rows[i];
+        let cells = row.querySelectorAll("td");
+        if (cells[3].innerHTML === interface) {
+            if (attribute === "destination") response = cells[0].innerHTML;
+            if (attribute === "netmask") response = cells[1].innerHTML;
+            if (attribute === "gateway") response = cells[2].innerHTML;
+            if (attribute === "nexthop") response = cells[4].innerHTML;
+        }
+    }
+
+    return response;
+}
+
+function getReachableInterface(networkObjectId, ip)  {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let index = 3;
+    let networkObjectIp = $networkObject.getAttribute("ip-enp0s" + index);
+    let networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s" + index);
+
+    while (networkObjectIp !== null && networkObjectNetmask !== null) {
+        if (getNetwork(networkObjectIp, networkObjectNetmask) === getNetwork(ip, networkObjectNetmask) ) return `enp0s${index}`;
+        if (index === 3) index = 8;
+        else index++;
+        networkObjectIp = $networkObject.getAttribute("ip-enp0s" + index);
+    }
+
+    return false;
 }

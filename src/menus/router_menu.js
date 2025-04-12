@@ -82,7 +82,7 @@ function saveRouterSpecs(event) {
     let netmask = $networkObject.getAttribute("netmask-enp0s" + index);
 
     while ( ip !== null && netmask !== null ) {
-        addRoutingEntry($networkObject.id, getNetwork(ip, netmask), netmask, ip, "enp0s" + index, "0.0.0.0");
+        if (ip !== "") addRoutingEntry($networkObject.id, getNetwork(ip, netmask), netmask, ip, "enp0s" + index, "0.0.0.0");
         if (index === 3) index=8;
         else index++;
         ip = $networkObject.getAttribute("ip-enp0s" + index);
@@ -91,7 +91,7 @@ function saveRouterSpecs(event) {
 
     $form.querySelector(".interfaces-container").innerHTML = "";
     $form.style.display = "none";
-    //bodyComponent.render(popupMessage(`La tabla de enrutamiento se ha actualizado correctamente.`));
+    bodyComponent.render(popupMessage(`Las tablas de enrutamiento se han actualizado correctamente.`));
 
 }
 
