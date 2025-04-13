@@ -19,43 +19,43 @@
     },
     {
         "name": "dhcpserver",
-        "image": "./assets/panel/dhcp.png",
+        "image": "./assets/panel/dhcpserver.svg",
         "draggable": true,
         "size": "100%"
     },
     {
         "name": "dhcprelay",
-        "image": "./assets/panel/dhcprelay.png",
+        "image": "./assets/panel/dhcprelay.svg",
         "draggable": true,
         "size": "100%"
     },
     {
         "name": "dnsserver",
-        "image": "./assets/panel/dns.png",
+        "image": "./assets/panel/dnsserver.svg",
         "draggable": true,
         "size": "100%"
     },
     {
         "name": "text",
-        "image": "./assets/panel/txt.png",
+        "image": "./assets/panel/annotation.svg",
         "draggable": true,
         "size": "100%"
     },
     {
         "name": "traffic",
-        "image": "./assets/panel/traffic.png",
+        "image": "./assets/panel/traffic.svg",
         "draggable": false,
         "size": "100%"
     },
     {
         "name": "ping",
-        "image": "./assets/panel/bus.png",
+        "image": "./assets/panel/bus.svg",
         "draggable": false,
         "size": "100%"
     },
     {
         "name": "settings",
-        "image": "./assets/panel/settings.png",
+        "image": "./assets/panel/settings.svg",
         "draggable": false,
         "size": "100%"
     }
