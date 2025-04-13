@@ -11,10 +11,9 @@
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.btn-yellow:hover {
-    background-color: rgb(203, 171, 0) !important;
+    &:hover {
+        background-color: rgb(203, 171, 0) !important;
+    }
 }
 
 .btn-green {
@@ -27,10 +26,9 @@
     color: white;
     cursor: pointer;
     transition: background-color 0.3s;
-}
-
-.btn-green:hover {
-    background-color: #45a049;
+    &:hover {
+        background-color: #45a049;
+    }
 }
 
 .btn-blue {
@@ -45,12 +43,13 @@
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
 
-.btn-blue:hover {
-    background-color: #0056b3;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    &:hover {
+        background-color: #0056b3;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
 }
 
 .btn-min-yt {
@@ -64,14 +63,14 @@
     cursor: pointer;
     transition: all 0.2s ease;
     box-sizing: border-box;
-}
 
-.btn-min-yt:hover {
-    background-color: #e8e8e8;
-}
+    &:hover {
+        background-color: #e8e8e8;
+    }
 
-.btn-min-yt:active {
-    background-color: #dcdcdc;
+    &:active {
+        background-color: #dcdcdc;
+    }
 }
 
 .btn-modern-blue {
@@ -91,12 +90,37 @@
     display: inline-block;
     outline: none;
     animation: fadeInWithBlur 0.1s ease-in-out;
+
+    &:hover {
+        background-color: #3a56d4;
+        transform: translate(0px, -3px);
+        box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
+    }
 }
 
-.btn-modern-blue:hover {
-    background-color: #3a56d4;
-    transform: translate(0px, -3px);
-    box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
+.btn-modern-blue.dark {
+    background-color: #2A6BAC;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    outline: none;
+    animation: fadeInWithBlur 0.1s ease-in-out;
+
+    &:hover {
+        background-color: #007bff;
+        transform: translate(0px, -3px);
+        box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
+    }
 }
 
 .btn-modern-yellow {
@@ -115,14 +139,15 @@
     text-decoration: none;
     display: inline-block;
     outline: none;
-}
 
-.btn-modern-yellow:hover {
-    background-color: rgb(197, 168, 6);
-    box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
+    &:hover {
+        background-color: rgb(197, 168, 6);
+        box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
+    }
 }
 
 .btn-modern-green {
+
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
@@ -137,35 +162,37 @@
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-}
+    animation: fadeInWithBlur 0.1s ease-in-out;
 
-.btn-modern-green:before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
-    transform: rotate(45deg);
-    opacity: 0;
-    transition: opacity 0.5s;
-}
+    &::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+        transform: rotate(45deg);
+        opacity: 0;
+        transition: opacity 0.5s;
+    }
 
-.btn-modern-green:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(22, 163, 74, 0.4);
-    background: linear-gradient(135deg, #4ade80, #15803d);
-}
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(22, 163, 74, 0.4);
+        background: linear-gradient(135deg, #4ade80, #15803d);
+    }
 
-.btn-modern-green:hover:before {
-    opacity: 1;
-    animation: shine 1.5s;
-}
+    &:hover:before {
+        opacity: 1;
+        animation: shine 1.5s;
+    }
 
-.btn-modern-green:active {
-    transform: translateY(1px);
-    box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+    &:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+    }
+
 }
 
 .btn-toggle {
@@ -181,30 +208,30 @@
     align-items: center;
     margin: 0px;
     scale: 0.7;
-}
 
-.btn-toggle::before {
-    content: "";
-    height: 25px;
-    width: 25px;
-    background-color: white;
-    border-radius: 50%;
-    box-sizing: border-box;
-    padding: 2px;
-    margin: 1px;
-    transition: transform 0.1s ease-in-out, background 0.2s ease-in-out;
-}
+    &::before {
+        content: "";
+        height: 25px;
+        width: 25px;
+        background-color: white;
+        border-radius: 50%;
+        box-sizing: border-box;
+        padding: 2px;
+        margin: 1px;
+        transition: transform 0.1s ease-in-out, background 0.2s ease-in-out;
+    }
 
-.btn-toggle:hover{
-    cursor: pointer;
-}
+    &:hover{
+        cursor: pointer;
+    }
 
-.btn-toggle:checked::before {
-    transform: translateX(33px);
-}
+    &:checked::before {
+        transform: translateX(33px);
+    }
 
-.btn-toggle:checked {
-    background: linear-gradient(135deg, #4ade80, #16a34a);
+    &:checked {
+        background: linear-gradient(135deg, #4ade80, #16a34a);
+    }
 }
 
 .btn-modern-red {
@@ -224,18 +251,18 @@
     display: inline-block;
     outline: none;
     animation: fadeInWithBlur 0.1s ease-in-out;
-}
 
-.btn-modern-red::before {
-    content: '';
-    background-color: blue;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-}
+    &::before {
+        content: '';
+        background-color: blue;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+    }
 
-.btn-modern-red:hover {
-    background-color: #bd0505;
-    transform: translate(0px, -3px);
-    box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
+    &:hover {
+        background-color: #bd0505;
+        transform: translate(0px, -3px);
+        box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
+    }
 }
