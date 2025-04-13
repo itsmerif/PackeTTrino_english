@@ -1,19 +1,19 @@
 [
     {
         "name": "pc",
-        "image": "./assets/panel/pc2.png",
+        "image": "./assets/panel/pc.svg",
         "draggable": true,
         "size": "100%"
     },
     {
         "name": "router",
-        "image": "./assets/panel/router2.png",
+        "image": "./assets/panel/router.svg",
         "draggable": true,
         "size": "100%"
     },
     {
         "name": "switch",
-        "image": "./assets/panel/switch2.png",
+        "image": "./assets/panel/switch.svg",
         "draggable": true,
         "size": "100%"
     },
