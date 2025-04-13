@@ -12,11 +12,11 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: 15px;
+    gap: 25px;
     z-index: 1000;
     animation: form-animation 0.25s ease-in-out;
     font-family: var(--inter);
-    min-width: 300px;
+    min-width: 450px;
 }
 
 .router-form .interfaces-wrapper {
@@ -27,7 +27,7 @@
     justify-content: center;
     width: fit-content;
     width: 100%;
-    gap: 10px;
+    gap: 35px;
 
     button {
         padding: 5px;
@@ -54,14 +54,14 @@
     left: 0;
     width: 100%;
     height: 12%;
-    background-color: rgb(223, 191, 12);
+    background-color: #2A6BAC;
     border-radius: 5px 5px 0px 0px;
     box-sizing: border-box;
     z-index: -1;
 }
 
 .router-form input{
-    width: 90%;
+    width: 100%;
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -84,6 +84,7 @@
     text-transform: uppercase;
     font-weight: bolder;
     align-self: center;
+    color: #fff;
 }
 
 .router-form button {

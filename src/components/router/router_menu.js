@@ -15,7 +15,7 @@ function router_menu() {
         <input type="text" id="router-ip" name="router-ip">
         <label for="router-netmask">Máscara de Red:</label>
         <input type="text" name="router-netmask" id="router-netmask">
-        <button class="btn-modern-yellow" type="submit">Guardar</button>
+        <button class="btn-modern-blue dark type="submit">Guardar</button>
     `;
 
     $menu.addEventListener("submit", saveRouterSpecs);
