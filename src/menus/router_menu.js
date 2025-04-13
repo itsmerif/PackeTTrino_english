@@ -158,6 +158,8 @@ function deleteInterface(event) {
     event.preventDefault();
 
     const $routerForm = document.querySelector(".router-form");
+    const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
+    const $routingTableEntries = $networkObject.querySelector(".routing-table").querySelectorAll("tr");
     const currentInterface = $routerForm.querySelector(".interfaces-container").value;
     const fixedInterfaces = ["enp0s3", "enp0s8", "enp0s9"];
 
@@ -166,8 +168,10 @@ function deleteInterface(event) {
         return;
     }
 
-    const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
-    const $routingTableEntries = $networkObject.querySelector(".routing-table").querySelectorAll("tr");
+    if ($networkObject.getAttribute("data-switch-" + currentInterface) !== "") {
+        bodyComponent.render(popupMessage(`<span>Error: </span>La interfaz ${currentInterface} tiene una conexión activa.`));
+        return;
+    }
 
     $networkObject.removeAttribute("ip-" + currentInterface);
     $networkObject.removeAttribute("netmask-" + currentInterface);
