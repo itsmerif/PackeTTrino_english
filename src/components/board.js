@@ -84,7 +84,6 @@ function deleteItem(event) {
 
     event.stopPropagation();
     const $networkObject = event.target.closest(".item-dropped") || event.target.closest(".text-annotation");
-
     if (!isConnected($networkObject.id)) $networkObject.remove();
     else boardComponent.render(popupMessage(`<span>Error: </span>No se puede eliminar un dispositivo con conexiones.`));
 

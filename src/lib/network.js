@@ -509,6 +509,8 @@ function isConnected(networkObjectId) {
         switchAttribute = $networkObject.getAttribute("data-switch-enp0s" + index);
     }
 
+    if (networkObjectId.startsWith("switch-")) return getDeviceTable(networkObjectId).length !== 0;
+
     return false;
 
 }
