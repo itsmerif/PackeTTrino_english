@@ -92,7 +92,7 @@ function installBind9(networkObjectId) {
 
     $networkObject.setAttribute("named", "true");
     $networkObject.setAttribute("recursion", "false");
-    $advancedOptions.innerHTML += `<button onclick="showDnsTable(event)">Ver Registros DNS</button>`;
+    $advancedOptions.innerHTML += `<button onclick="showObjectModalTable(event, '.dns-table')">Ver Registros DNS</button>`;
     $networkObjectDnsTable.classList.add("dns-table");
     $networkObjectDnsTable.innerHTML = `
         <table>
@@ -102,7 +102,7 @@ function installBind9(networkObjectId) {
                 <th>Value</th>
             </tr>
         </table>
-        <button onclick="closeDnsTable(event)">Cerrar</button>
+        <button onclick="closeObjectModalTable(event, '.dns-table')">Cerrar</button>
     `;
 
     $networkObject.appendChild($networkObjectDnsTable);

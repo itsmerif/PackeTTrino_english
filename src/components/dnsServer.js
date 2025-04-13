@@ -41,8 +41,8 @@ function DnsServerObject(x, y) {
     advancedOptions.classList.add("advanced-options-modal");
     advancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showDnsTable(event)">Ver Registros DNS</button>
-        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="showObjectModalTable(event, '.dns-table')">Ver Registros DNS</button>
+        <button onclick="showObjectModalTable(event, '.arp-table')">Ver Tabla ARP</button>
         <button onclick="deleteItem(event)">Eliminar</button>
     `;
 
@@ -58,7 +58,7 @@ function DnsServerObject(x, y) {
                 <th>MAC Address</th>
             </tr>
         </table>
-        <button onclick="closeARPTable(event)">Cerrar</button>`;
+        <button onclick="closeObjectModalTable(event, '.arp-table')">Cerrar</button>`;
     
     $dnsServerObject.appendChild(networkObjectArpTable);
 
@@ -91,7 +91,7 @@ function DnsServerObject(x, y) {
                         <th>Value</th>
                     </tr>
                 </table>
-                <button onclick="closeDnsTable(event)">Cerrar</button>`;
+                <button onclick="closeObjectModalTable(event, '.dns-table')">Cerrar</button>`;
 
     $dnsServerObject.appendChild(networkObjectDnsTable);
 
@@ -106,11 +106,4 @@ function DnsServerObject(x, y) {
 
     return $dnsServerObject;
     
-}
-
-function closeARPTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".arp-table");
-    table.style.display = "none";
 }

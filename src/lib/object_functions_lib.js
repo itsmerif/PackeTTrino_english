@@ -1,4 +1,4 @@
-function checkObjectClip(x, y) { //esta funcion comprueba si el objeto queda clipeado fuera del tablero
+function checkObjectClip(x, y) { 
 
     const $board = document.querySelector(".board");
     const boardProperties = window.getComputedStyle($board, null);
@@ -86,15 +86,15 @@ function showAdvancedOptions(event) {
     $modal.style.display = "flex";
 }
 
-function showObjectModalTable(event, class_name) {
+function showObjectModalTable(event, selector) {
     
     event.preventDefault();
     event.stopPropagation();
-
+    
     const $board = document.querySelector(".board");
     const $networkObject = event.target.closest(".item-dropped")
     const $advancedOptionsModal = $networkObject.querySelector(".advanced-options-modal");
-    const $Table = $networkObject.querySelector("." + class_name);
+    const $Table = $networkObject.querySelector(selector);
     const boardProperties = window.getComputedStyle($board, null);
     const boardHeight = parseInt(boardProperties.getPropertyValue("height"));
     const boardWidth = parseInt(boardProperties.getPropertyValue("width"));
@@ -145,51 +145,11 @@ function showObjectModalTable(event, class_name) {
 
 }
 
-function closeObjectModalTable(event, class_name) {
+function closeObjectModalTable(event, selector) {
     event.stopPropagation();
     const $networkObject = event.target.closest(".item-dropped");
-    const $Table = $networkObject.querySelector("." + class_name);
+    const $Table = $networkObject.querySelector(selector);
     $Table.style.display = "none";
-}
-
-function showARPTable(event) {
-    showObjectModalTable(event, "arp-table");
-}
-
-function showDhcpTable(event) {
-    showObjectModalTable(event, "dhcp-table");
-}
-
-function showDnsTable(event) {
-    showObjectModalTable(event, "dns-table");
-}
-
-function showRoutingTable(event) {
-    showObjectModalTable(event, "routing-table");
-}
-
-function showRouterFirewallTable(event) {
-    showObjectModalTable(event, "firewall-table");
-}
-
-function closeDhcpTable(event) {
-    closeObjectModalTable(event, "dhcp-table");
-}
-
-function closeRoutingTable(event) {
-    closeObjectModalTable(event, "routing-table");
-}
-
-function closeFirewallTable(event) {
-    closeObjectModalTable(event, "firewall-table");
-}
-
-function closeARPTable(event) {
-    closeObjectModalTable(event, "arp-table");
-}
-
-function closeDnsTable(event) {
-    closeObjectModalTable(event, "dns-table");
 }
 
 function createPacketIndicator(id) {

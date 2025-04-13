@@ -50,7 +50,7 @@ function RouterObject(x, y) {
                 <th>MAC Address</th>
             </tr>
         </table>
-        <button onclick="closeARPTable(event)">Cerrar</button>`;
+        <button onclick="closeObjectModalTable(event, '.arp-table')">Cerrar</button>`;
     
     $networkObject.appendChild(networkObjectArpTable);
 
@@ -74,7 +74,7 @@ function RouterObject(x, y) {
                     <td></td>
                 </tr>
             </table>
-            <button onclick="closeRoutingTable(event)">Cerrar</button>`;
+            <button onclick="closeObjectModalTable(event, '.routing-table')">Cerrar</button>`;
 
     $networkObject.appendChild(networkObjectRoutingTable);
 
@@ -94,7 +94,7 @@ function RouterObject(x, y) {
                     <th>Action</th>
                 </tr>
             </table>
-            <button onclick="closeFirewallTable(event)">Cerrar</button>`;
+            <button onclick="closeObjectModalTable(event, '.firewall-table')">Cerrar</button>`;
 
     $networkObject.appendChild(firewallTable);
 
@@ -103,9 +103,9 @@ function RouterObject(x, y) {
     networkObjectAdvancedOptions.classList.add("advanced-options-modal");
     networkObjectAdvancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showRoutingTable(event)"> Ver Tabla de Enrutamiento </button>
-        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
-        <button onclick="showRouterFirewallTable(event)">Ver Tabla Firewall</button>
+        <button onclick="showObjectModalTable(event, '.routing-table')"> Ver Tabla de Enrutamiento </button>
+        <button onclick="showObjectModalTable(event, '.arp-table')">Ver Tabla ARP</button>
+        <button onclick="showObjectModalTable(event, '.firewall-table')">Ver Tabla Firewall</button>
         <button onclick="deleteItem(event)">Eliminar</button>`;
     $networkObject.appendChild(networkObjectAdvancedOptions);
 

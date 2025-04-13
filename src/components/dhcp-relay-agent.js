@@ -40,7 +40,7 @@ function DhcpRelayObject(x, y) {
     advancedOptions.classList.add("advanced-options-modal");
     advancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showARPTable(event)">Ver Tabla ARP</button>
+        <button onclick="showObjectModalTable(event, '.arp-table')">Ver Tabla ARP</button>
         <button onclick="deleteItem(event)">Eliminar</button>
     `;
 
@@ -56,7 +56,7 @@ function DhcpRelayObject(x, y) {
                 <th>MAC Address</th>
             </tr>
         </table>
-        <button onclick="closeARPTable(event)">Cerrar</button>`;
+        <button onclick="closeObjectModalTable(event, '.arp-table')">Cerrar</button>`;
     
     $dhcpAgentObject.appendChild(networkObjectArpTable);
 
