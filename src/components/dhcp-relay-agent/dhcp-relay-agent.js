@@ -1,65 +1,36 @@
 function DhcpRelayObject(x, y) {
 
-    const $dhcpAgentObject = document.createElement("article");
-    const networkObjectIcon = document.createElement("img");
-    const advancedOptions = document.createElement("div");
-    const networkObjectArpTable = arpTable();
-    const networkObjectFirewallTable = firewallTable();
+    const $networkObject = document.createElement("article");
+    const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
+    const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
 
-    //caracteristicas generales
-
-    $dhcpAgentObject.id = `dhcp-relay-server-${itemIndex}`;
-    $dhcpAgentObject.classList.add("item-dropped", "dhcp-relay");
+    $networkObject.id = `dhcp-relay-server-${itemIndex}`;
     [x,y] = checkObjectClip(x, y);
-    $dhcpAgentObject.style.left = `${x}px`;
-    $dhcpAgentObject.style.top = `${y}px`;
-    $dhcpAgentObject.setAttribute("ip-enp0s3", "");
-    $dhcpAgentObject.setAttribute("netmask-enp0s3", "");
-    $dhcpAgentObject.setAttribute("mac-enp0s3", getRandomMac());
-    $dhcpAgentObject.setAttribute("data-gateway", "");
-    $dhcpAgentObject.setAttribute("data-switch-enp0s3", "");
-    $dhcpAgentObject.setAttribute("firewall-default-policy", "ACCEPT");
+    $networkObject.style.left = `${x}px`;
+    $networkObject.style.top = `${y}px`;
+    $networkObject.classList.add("item-dropped", "dhcp-relay");
 
-    //servicios
+    append(
+        IconObject("dhcprelay.svg"),
+        arpTable(),
+        firewallTable(),
+        advancedOptionsObject("terminal", "arp", "firewall", "delete")
+    );
 
-    $dhcpAgentObject.setAttribute("dhcrelay", "true");
+    attr("ip-enp0s3", "");
+    attr("netmask-enp0s3", "");
+    attr("mac-enp0s3", getRandomMac());
+    attr("data-gateway", "");
+    attr("data-switch-enp0s3", "");
+    attr("firewall-default-policy", "ACCEPT");
+    attr("dhcrelay", "true");
+    attr("data-main-server", "");
+    attr("ondragstart", "BoardItemDragStart(event)");
+    attr("oncontextmenu", "showAdvancedOptions(event)");
+    attr("onclick", "showDhcpRelaySpecs(event)");
 
-    //atributos de servicios
-
-    $dhcpAgentObject.setAttribute("data-main-server", "");
-
-    //icono
-
-    networkObjectIcon.src = "./assets/board/dhcprelay.svg";
-    networkObjectIcon.alt = "server";
-    networkObjectIcon.draggable = true;
-
-    //opciones avanzadas
-
-    advancedOptions.classList.add("advanced-options-modal");
-    advancedOptions.innerHTML = `
-        <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showObjectModalTable(event, '.arp-table')">Ver Tabla ARP</button>
-        <button onclick="deleteItem(event)">Eliminar</button>
-    `;
-
-    $dhcpAgentObject.appendChild(advancedOptions);
-
-    //construimos el objeto
-
-    $dhcpAgentObject.appendChild(networkObjectIcon);
-    $dhcpAgentObject.appendChild(advancedOptions);
-    $dhcpAgentObject.appendChild(networkObjectArpTable);
-    $dhcpAgentObject.appendChild(networkObjectFirewallTable);
-
-    //eventos
-
-    $dhcpAgentObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
-    $dhcpAgentObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
-    $dhcpAgentObject.setAttribute("onclick", "showDhcpRelaySpecs(event)");
-    advancedOptions.setAttribute("onclick", "event.stopPropagation()");
     itemIndex++;
 
-    return $dhcpAgentObject;
+    return $networkObject;
 
 }

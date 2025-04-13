@@ -1,69 +1,39 @@
 function RouterObject(x, y) {
 
     const $networkObject = document.createElement("article");
-    const networkObjectIcon = document.createElement("img");
-    const networkObjectArpTable = arpTable();
-    const networkObjectFirewallTable = firewallTable();
-    const networkObjectRoutingTable = routingTable();
-    const networkObjectAdvancedOptions = document.createElement("div");
-
-    //características generales
+    const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
+    const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
 
     $networkObject.id = `router-${itemIndex}`;
-    $networkObject.classList.add("item-dropped", "router");
-    [x,y] = checkObjectClip(x, y); //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
+    [x,y] = checkObjectClip(x, y);
     $networkObject.style.left = `${x}px`;
     $networkObject.style.top = `${y}px`;
-    $networkObject.setAttribute("firewall-default-policy", "ACCEPT");
+    $networkObject.classList.add("item-dropped", "router");
 
-    //icono
+    append(
+        IconObject("router.svg"),
+        arpTable(),
+        routingTable(),
+        firewallTable(),
+        advancedOptionsObject("terminal", "routing", "arp", "firewall", "delete")
+    );
 
-    networkObjectIcon.src = "./assets/board/router.svg";
-    networkObjectIcon.alt = "router";
-    networkObjectIcon.draggable = true;
-
-    //direcciones ip de cada interfaz del router
-
-    $networkObject.setAttribute("ip-enp0s3", "");
-    $networkObject.setAttribute("netmask-enp0s3", "");
-    $networkObject.setAttribute("mac-enp0s3", getRandomMac());
-    $networkObject.setAttribute("data-switch-enp0s3", "");
-
-    $networkObject.setAttribute("ip-enp0s8", "");
-    $networkObject.setAttribute("netmask-enp0s8", "");
-    $networkObject.setAttribute("mac-enp0s8", getRandomMac());
-    $networkObject.setAttribute("data-switch-enp0s8", "");
-
-    $networkObject.setAttribute("ip-enp0s9", "");
-    $networkObject.setAttribute("netmask-enp0s9", "");
-    $networkObject.setAttribute("mac-enp0s9", getRandomMac());
-    $networkObject.setAttribute("data-switch-enp0s9", "");
-
-    //opciones avanzadas
-
-    networkObjectAdvancedOptions.classList.add("advanced-options-modal");
-    networkObjectAdvancedOptions.innerHTML = `
-        <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showObjectModalTable(event, '.routing-table')"> Ver Tabla de Enrutamiento </button>
-        <button onclick="showObjectModalTable(event, '.arp-table')">Ver Tabla ARP</button>
-        <button onclick="showObjectModalTable(event, '.firewall-table')">Ver Tabla Firewall</button>
-        <button onclick="deleteItem(event)">Eliminar</button>`;
-
-    networkObjectAdvancedOptions.setAttribute("onclick", "event.stopPropagation()");
-
-    //construimos el objeto
-
-    $networkObject.appendChild(networkObjectIcon);
-    $networkObject.appendChild(networkObjectArpTable);
-    $networkObject.appendChild(networkObjectRoutingTable);
-    $networkObject.appendChild(networkObjectAdvancedOptions);
-    $networkObject.appendChild(networkObjectFirewallTable);
-
-    //eventos
-
-    $networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
-    $networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
-    $networkObject.setAttribute("onclick", "showRouterSpecs(event)");
+    attr("ip-enp0s3", "");
+    attr("netmask-enp0s3", "");
+    attr("mac-enp0s3", getRandomMac());
+    attr("data-switch-enp0s3", "");
+    attr("ip-enp0s8", "");
+    attr("netmask-enp0s8", "");
+    attr("mac-enp0s8", getRandomMac());
+    attr("data-switch-enp0s8", "");
+    attr("ip-enp0s9", "");
+    attr("netmask-enp0s9", "");
+    attr("mac-enp0s9", getRandomMac());
+    attr("data-switch-enp0s9", "");
+    attr("firewall-default-policy", "ACCEPT");
+    attr("ondragstart", "BoardItemDragStart(event)");
+    attr("oncontextmenu", "showAdvancedOptions(event)");
+    attr("onclick", "showRouterSpecs(event)");
     
     itemIndex++;
 

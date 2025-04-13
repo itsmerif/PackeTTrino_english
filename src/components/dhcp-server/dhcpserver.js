@@ -1,72 +1,43 @@
 function DhcpServerObject(x, y) {
 
-    const $dhcpServerObject = document.createElement("article");
-    const networkObjectIcon = document.createElement("img");
-    const $advancedOptions = document.createElement("div");
-    const $networkObjectArpTable = arpTable();
-    const $networkObjectDhcpTable = dhcpTable();
-    const $firewallTable = firewallTable();
+    const $networkObject = document.createElement("article");
+    const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
+    const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
 
-    //caracteristicas generales
-
-    $dhcpServerObject.id = `dhcp-server-${itemIndex}`;
-    $dhcpServerObject.classList.add("item-dropped", "dhcp-server");
+    $networkObject.id = `dhcp-server-${itemIndex}`;
     [x,y] = checkObjectClip(x, y);
-    $dhcpServerObject.style.left = `${x}px`;
-    $dhcpServerObject.style.top = `${y}px`;
-    $dhcpServerObject.setAttribute("ip-enp0s3", "");
-    $dhcpServerObject.setAttribute("netmask-enp0s3", "");
-    $dhcpServerObject.setAttribute("mac-enp0s3", getRandomMac());
-    $dhcpServerObject.setAttribute("data-gateway", "");
-    $dhcpServerObject.setAttribute("data-switch-enp0s3", "");
-    $dhcpServerObject.setAttribute("firewall-default-policy", "ACCEPT");
+    $networkObject.style.left = `${x}px`;
+    $networkObject.style.top = `${y}px`;
+    $networkObject.classList.add("item-dropped", "dhcp-server");
 
-    //servicios
+    append(
+        IconObject("dhcp.svg"),
+        arpTable(),
+        dhcpTable(),
+        firewallTable(),
+        advancedOptionsObject("terminal", "dhcp", "arp", "firewall", "delete")
+    );
 
-    $dhcpServerObject.setAttribute("dhcpd", "true");
+    attr("ip-enp0s3", "");
+    attr("netmask-enp0s3", "");
+    attr("mac-enp0s3", getRandomMac());
+    attr("data-gateway", "");
+    attr("data-switch-enp0s3", "");
+    attr("firewall-default-policy", "ACCEPT");
+    attr("dhcpd", "true");
+    attr("data-range-start", "");
+    attr("data-range-end", "");
+    attr("offer-gateway", "");
+    attr("offer-netmask", "");
+    attr("offer-dns", "");
+    attr("offer-lease-time", "");
+    attr("data-interval", "false");
+    attr("ondragstart", "BoardItemDragStart(event)");
+    attr("oncontextmenu", "showAdvancedOptions(event)");
+    attr("onclick", "showDhcpSpecs(event)");
 
-    //atributos de servicios
-
-    $dhcpServerObject.setAttribute("data-range-start", "");
-    $dhcpServerObject.setAttribute("data-range-end", "");
-    $dhcpServerObject.setAttribute("offer-gateway", "");
-    $dhcpServerObject.setAttribute("offer-netmask", "");
-    $dhcpServerObject.setAttribute("offer-dns", "");
-    $dhcpServerObject.setAttribute("offer-lease-time", "");
-    $dhcpServerObject.setAttribute("data-interval", "false");
-
-    //icono
-
-    networkObjectIcon.src = "./assets/board/dhcp.svg";
-    networkObjectIcon.alt = "server";
-    networkObjectIcon.draggable = true;
-    
-    //opciones avanzadas
-
-    $advancedOptions.classList.add("advanced-options-modal");
-    $advancedOptions.innerHTML = `
-        <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showObjectModalTable(event, '.dhcp-table')"> Ver Tabla de Alquileres </button>
-        <button onclick="showObjectModalTable(event, '.arp-table')">Ver Tabla ARP</button>
-        <button onclick="deleteItem(event)">Eliminar</button>
-    `;
-
-    //construimos el objeto
-
-    $dhcpServerObject.appendChild(networkObjectIcon);
-    $dhcpServerObject.appendChild($advancedOptions);
-    $dhcpServerObject.appendChild($networkObjectArpTable);
-    $dhcpServerObject.appendChild($networkObjectDhcpTable);
-    $dhcpServerObject.appendChild($firewallTable);
-
-    //eventos
-
-    $dhcpServerObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
-    $dhcpServerObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
-    $dhcpServerObject.setAttribute("onclick", "showDhcpSpecs(event)");
-    $advancedOptions.setAttribute("onclick", "event.stopPropagation()");
     itemIndex++;
 
-    return $dhcpServerObject;
+    return $networkObject;
 
 }

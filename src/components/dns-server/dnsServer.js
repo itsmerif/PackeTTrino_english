@@ -1,68 +1,37 @@
 function DnsServerObject(x, y) {
 
-    const $dnsServerObject = document.createElement("article");
-    const networkObjectIcon = document.createElement("img");
-    const advancedOptions = document.createElement("div");
-    const networkObjectArpTable = arpTable();
-    const networkObjectDnsTable = dnsTable();
-    const networkObjectFirewallTable = firewallTable();
+    const $networkObject = document.createElement("article");
+    const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
+    const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
 
-    //caracteristicas generales
-
-    $dnsServerObject.id = `dns-server-${itemIndex}`;
+    $networkObject.id = `dns-server-${itemIndex}`;
     [x,y] = checkObjectClip(x, y);
-    $dnsServerObject.style.left = `${x}px`;
-    $dnsServerObject.style.top = `${y}px`;
-    $dnsServerObject.classList.add("item-dropped", "dns-server");
-    $dnsServerObject.setAttribute("ip-enp0s3", "");
-    $dnsServerObject.setAttribute("netmask-enp0s3", "");
-    $dnsServerObject.setAttribute("mac-enp0s3", getRandomMac());
-    $dnsServerObject.setAttribute("data-gateway", "");
-    $dnsServerObject.setAttribute("data-switch-enp0s3", "");
-    $dnsServerObject.setAttribute("firewall-default-policy", "ACCEPT");
+    $networkObject.style.left = `${x}px`;
+    $networkObject.style.top = `${y}px`;
+    $networkObject.classList.add("item-dropped", "dns-server");
 
-    //servicios
+    append(
+        IconObject("dns.svg"),
+        arpTable(),
+        dnsTable(),
+        firewallTable(),
+        advancedOptionsObject("terminal", "dns", "arp", "firewall", "delete")
+    );
 
-    $dnsServerObject.setAttribute("named", "true");
+    attr("ip-enp0s3", "");
+    attr("netmask-enp0s3", "");
+    attr("mac-enp0s3", getRandomMac());
+    attr("data-gateway", "");
+    attr("data-switch-enp0s3", "");
+    attr("firewall-default-policy", "ACCEPT");
+    attr("named", "true");
+    attr("recursion", "false");
+    attr("ondragstart", "BoardItemDragStart(event)");
+    attr("oncontextmenu", "showAdvancedOptions(event)");
+    attr("onclick", "showDnsForm(event)");
 
-    //caracteristicas especiales
-
-    $dnsServerObject.setAttribute("recursion", "false");
-
-    //icono
-
-    networkObjectIcon.src = "./assets/board/dns.svg";
-    networkObjectIcon.alt = "server";
-    networkObjectIcon.draggable = true;
-
-    //opciones avanzadas
-
-    advancedOptions.classList.add("advanced-options-modal");
-    advancedOptions.innerHTML = `
-        <button onclick="showTerminal(event)">Modo Terminal</button>
-        <button onclick="showObjectModalTable(event, '.dns-table')">Ver Registros DNS</button>
-        <button onclick="showObjectModalTable(event, '.arp-table')">Ver Tabla ARP</button>
-        <button onclick="deleteItem(event)">Eliminar</button>
-    `;
-
-    $dnsServerObject.appendChild(advancedOptions);
-
-    //construimos el objeto
-
-    $dnsServerObject.appendChild(networkObjectIcon);
-    $dnsServerObject.appendChild(networkObjectArpTable);
-    $dnsServerObject.appendChild(networkObjectDnsTable);
-    $dnsServerObject.appendChild(networkObjectFirewallTable);
-    $dnsServerObject.appendChild(advancedOptions);
-
-    //eventos
-
-    $dnsServerObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
-    $dnsServerObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
-    $dnsServerObject.setAttribute("onclick", "showDnsForm(event)");
-    advancedOptions.setAttribute("onclick", "event.stopPropagation()");
     itemIndex++;
 
-    return $dnsServerObject;
+    return $networkObject;
     
 }
