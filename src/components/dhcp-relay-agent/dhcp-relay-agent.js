@@ -3,8 +3,8 @@ function DhcpRelayObject(x, y) {
     const $dhcpAgentObject = document.createElement("article");
     const networkObjectIcon = document.createElement("img");
     const advancedOptions = document.createElement("div");
-    const networkObjectArpTable = document.createElement("article");
-    const firewallTable = document.createElement("article");
+    const networkObjectArpTable = arpTable();
+    const networkObjectFirewallTable = firewallTable();
 
     //caracteristicas generales
 
@@ -33,7 +33,6 @@ function DhcpRelayObject(x, y) {
     networkObjectIcon.src = "./assets/board/dhcprelay.svg";
     networkObjectIcon.alt = "server";
     networkObjectIcon.draggable = true;
-    $dhcpAgentObject.appendChild(networkObjectIcon);
 
     //opciones avanzadas
 
@@ -46,38 +45,13 @@ function DhcpRelayObject(x, y) {
 
     $dhcpAgentObject.appendChild(advancedOptions);
 
-    //tabla de arp
+    //construimos el objeto
 
-    networkObjectArpTable.classList.add("arp-table");
-    networkObjectArpTable.innerHTML = `
-        <table>
-            <tr>
-                <th>IP Address</th>
-                <th>MAC Address</th>
-            </tr>
-        </table>
-        <button onclick="closeObjectModalTable(event, '.arp-table')">Cerrar</button>`;
-    
+    $dhcpAgentObject.appendChild(networkObjectIcon);
+    $dhcpAgentObject.appendChild(advancedOptions);
     $dhcpAgentObject.appendChild(networkObjectArpTable);
+    $dhcpAgentObject.appendChild(networkObjectFirewallTable);
 
-    //tabla de firewall
-
-    firewallTable.classList.add("firewall-table");
-    firewallTable.innerHTML = `
-            <table>
-                <tr>
-                    <th>Id</th>
-                    <th>Chain</th>
-                    <th>Protocol</th>
-                    <th>Origin IP</th>
-                    <th>Destination IP</th>
-                    <th>Port</th>
-                    <th>Action</th>
-                </tr>
-            </table>`;
-
-    $dhcpAgentObject.appendChild(firewallTable);
-    
     //eventos
 
     $dhcpAgentObject.setAttribute("ondragstart", "BoardItemDragStart(event)");

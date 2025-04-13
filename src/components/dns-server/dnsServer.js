@@ -3,9 +3,9 @@ function DnsServerObject(x, y) {
     const $dnsServerObject = document.createElement("article");
     const networkObjectIcon = document.createElement("img");
     const advancedOptions = document.createElement("div");
-    const networkObjectArpTable = document.createElement("article");
-    const networkObjectDnsTable = document.createElement("article");
-    const firewallTable = document.createElement("article");
+    const networkObjectArpTable = arpTable();
+    const networkObjectDnsTable = dnsTable();
+    const networkObjectFirewallTable = firewallTable();
 
     //caracteristicas generales
 
@@ -34,7 +34,6 @@ function DnsServerObject(x, y) {
     networkObjectIcon.src = "./assets/board/dns.svg";
     networkObjectIcon.alt = "server";
     networkObjectIcon.draggable = true;
-    $dnsServerObject.appendChild(networkObjectIcon);
 
     //opciones avanzadas
 
@@ -48,59 +47,19 @@ function DnsServerObject(x, y) {
 
     $dnsServerObject.appendChild(advancedOptions);
 
-    //tabla de arp
+    //construimos el objeto
 
-    networkObjectArpTable.classList.add("arp-table");
-    networkObjectArpTable.innerHTML = `
-        <table>
-            <tr>
-                <th>IP Address</th>
-                <th>MAC Address</th>
-            </tr>
-        </table>
-        <button onclick="closeObjectModalTable(event, '.arp-table')">Cerrar</button>`;
-    
+    $dnsServerObject.appendChild(networkObjectIcon);
     $dnsServerObject.appendChild(networkObjectArpTable);
-
-    //tabla de firewall
-
-    firewallTable.classList.add("firewall-table");
-    firewallTable.innerHTML = `
-            <table>
-                <tr>
-                    <th>Id</th>
-                    <th>Chain</th>
-                    <th>Protocol</th>
-                    <th>Origin IP</th>
-                    <th>Destination IP</th>
-                    <th>Port</th>
-                    <th>Action</th>
-                </tr>
-            </table>`;
-
-    $dnsServerObject.appendChild(firewallTable);
-
-    //tabla de registros dns
-
-    networkObjectDnsTable.classList.add("dns-table");
-    networkObjectDnsTable.innerHTML = `
-                <table>
-                    <tr>
-                        <th>Domain</th>
-                        <th>Type</th>
-                        <th>Value</th>
-                    </tr>
-                </table>
-                <button onclick="closeObjectModalTable(event, '.dns-table')">Cerrar</button>`;
-
     $dnsServerObject.appendChild(networkObjectDnsTable);
+    $dnsServerObject.appendChild(networkObjectFirewallTable);
+    $dnsServerObject.appendChild(advancedOptions);
 
     //eventos
 
     $dnsServerObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
     $dnsServerObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
     $dnsServerObject.setAttribute("onclick", "showDnsForm(event)");
-    networkObjectArpTable.setAttribute("onclick", "(event) => { event.stopPropagation(); }");
     advancedOptions.setAttribute("onclick", "event.stopPropagation()");
     itemIndex++;
 

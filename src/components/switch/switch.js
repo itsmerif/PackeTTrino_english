@@ -2,7 +2,7 @@ function SwitchObject(x, y) {
 
     const $switchObject = document.createElement("article");
     const networkObjectIcon = document.createElement("img");
-    const networkObjectTable = document.createElement("article");
+    const networkObjectMacTable = macTable();
     const networkObjectAdvancedOptions = document.createElement("div");
 
     //caracteristicas generales
@@ -20,21 +20,6 @@ function SwitchObject(x, y) {
     networkObjectIcon.src = "./assets/board/switch.svg";
     networkObjectIcon.alt = "switch";
     networkObjectIcon.draggable = true;
-    $switchObject.appendChild(networkObjectIcon);
-
-    //tabla de macs
-
-    networkObjectTable.classList.add("mac-table");
-    networkObjectTable.innerHTML = `
-            <table>
-                <tr>
-                    <th>Device</th>
-                    <th>MAC Address</th>
-                </tr>
-            </table>
-            <button onclick="closeMacTable(event)">Cerrar</button>`;
-
-    $switchObject.appendChild(networkObjectTable);
 
     //opciones avanzadas
 
@@ -43,6 +28,12 @@ function SwitchObject(x, y) {
         <button onclick="deleteItem(event)">Eliminar</button>
         <button class="clusterize-button" onclick="clusterizeSwitch(event)">Clusterizar</button>
         `;
+    $switchObject.appendChild(networkObjectAdvancedOptions);
+
+    //construimos el objeto
+
+    $switchObject.appendChild(networkObjectIcon);
+    $switchObject.appendChild(networkObjectMacTable);
     $switchObject.appendChild(networkObjectAdvancedOptions);
 
     //eventos

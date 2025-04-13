@@ -1,11 +1,10 @@
 function PcObject(x, y) {
 
-    const $board = document.querySelector(".board");
     const $networkObject = document.createElement("article");
     const $icon = document.createElement("img");
-    const $arpTable = document.createElement("article");
-    const $dnsTable = document.createElement("article");
-    const $firewallTable = document.createElement("article");
+    const $arpTable = arpTable();
+    const $dnsTable = cacheDnsTable();
+    const $firewallTable = firewallTable();
     const $advancedOptions = document.createElement("div");
 
     //caracteristicas generales
@@ -41,54 +40,6 @@ function PcObject(x, y) {
     $icon.src = "./assets/board/pc.svg";
     $icon.alt = "pc";
     $icon.draggable = true;
-
-    //tabla arp
-
-    $arpTable.classList.add("arp-table");
-    $arpTable.innerHTML = `
-        <table>
-            <tr>
-                <th>IP Address</th>
-                <th>MAC Address</th>
-            </tr>
-        </table>
-        <button onclick="closeObjectModalTable(event, '.arp-table')">Cerrar</button>
-    `;
-
-    $arpTable.setAttribute("onclick", "event.stopPropagation();");
-
-    //tabla de caché dns
-
-    $dnsTable.classList.add("cache-dns-table");
-    $dnsTable.innerHTML = `
-                <table>
-                    <tr>
-                        <th>Domain</th>
-                        <th>Type</th>
-                        <th>Value</th>
-                    </tr>
-                </table>
-                <button onclick="closeObjectModalTable(event, '.cache-dns-table')">Cerrar</button>
-    `;
-
-    $dnsTable.setAttribute("onclick", "event.stopPropagation();");
-
-    //tabla de firewall
-
-    $firewallTable.classList.add("firewall-table");
-    $firewallTable.innerHTML = `
-            <table>
-                <tr>
-                    <th>Id</th>
-                    <th>Chain</th>
-                    <th>Protocol</th>
-                    <th>Origin IP</th>
-                    <th>Destination IP</th>
-                    <th>Port</th>
-                    <th>Action</th>
-                </tr>
-            </table>
-    `;
 
     //opciones avanzadas
 

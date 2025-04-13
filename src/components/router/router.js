@@ -2,10 +2,10 @@ function RouterObject(x, y) {
 
     const $networkObject = document.createElement("article");
     const networkObjectIcon = document.createElement("img");
-    const networkObjectArpTable = document.createElement("article");
-    const networkObjectRoutingTable = document.createElement("article");
+    const networkObjectArpTable = arpTable();
+    const networkObjectFirewallTable = firewallTable();
+    const networkObjectRoutingTable = routingTable();
     const networkObjectAdvancedOptions = document.createElement("div");
-    const firewallTable = document.createElement("article");
 
     //características generales
 
@@ -21,7 +21,6 @@ function RouterObject(x, y) {
     networkObjectIcon.src = "./assets/board/router.svg";
     networkObjectIcon.alt = "router";
     networkObjectIcon.draggable = true;
-    $networkObject.appendChild(networkObjectIcon);
 
     //direcciones ip de cada interfaz del router
 
@@ -40,64 +39,6 @@ function RouterObject(x, y) {
     $networkObject.setAttribute("mac-enp0s9", getRandomMac());
     $networkObject.setAttribute("data-switch-enp0s9", "");
 
-    //tabla de arp
-
-    networkObjectArpTable.classList.add("arp-table");
-    networkObjectArpTable.innerHTML = `
-        <table>
-            <tr>
-                <th>IP Address</th>
-                <th>MAC Address</th>
-            </tr>
-        </table>
-        <button onclick="closeObjectModalTable(event, '.arp-table')">Cerrar</button>`;
-    
-    $networkObject.appendChild(networkObjectArpTable);
-
-    //tabla de enrutamiento
-
-    networkObjectRoutingTable.classList.add("routing-table");
-    networkObjectRoutingTable.innerHTML = `
-            <table>
-                <tr>
-                    <th>Destination</th>
-                    <th>Netmask</th>
-                    <th>Gateway</th>
-                    <th>Interface</th>
-                    <th>Next Hop</th>
-                </tr>
-                <tr id="default-route">
-                    <td>0.0.0.0</td>
-                    <td>0.0.0.0</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </table>
-            <button onclick="closeObjectModalTable(event, '.routing-table')">Cerrar</button>`;
-
-    $networkObject.appendChild(networkObjectRoutingTable);
-
-    //tabla de firewall
-
-    firewallTable.classList.add("firewall-table");
-    firewallTable.innerHTML = `
-            <table>
-                <tr>
-                    <th>Id</th>
-                    <th>Chain</th>
-                    <th>Protocol</th>
-                    <th>Origin IP</th>
-                    <th>Destination IP</th>
-                    <th>Source Port</th>
-                    <th>Destination Port</th>
-                    <th>Action</th>
-                </tr>
-            </table>
-            <button onclick="closeObjectModalTable(event, '.firewall-table')">Cerrar</button>`;
-
-    $networkObject.appendChild(firewallTable);
-
     //opciones avanzadas
 
     networkObjectAdvancedOptions.classList.add("advanced-options-modal");
@@ -107,15 +48,23 @@ function RouterObject(x, y) {
         <button onclick="showObjectModalTable(event, '.arp-table')">Ver Tabla ARP</button>
         <button onclick="showObjectModalTable(event, '.firewall-table')">Ver Tabla Firewall</button>
         <button onclick="deleteItem(event)">Eliminar</button>`;
+
+    networkObjectAdvancedOptions.setAttribute("onclick", "event.stopPropagation()");
+
+    //construimos el objeto
+
+    $networkObject.appendChild(networkObjectIcon);
+    $networkObject.appendChild(networkObjectArpTable);
+    $networkObject.appendChild(networkObjectRoutingTable);
     $networkObject.appendChild(networkObjectAdvancedOptions);
+    $networkObject.appendChild(networkObjectFirewallTable);
 
     //eventos
 
     $networkObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
     $networkObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
     $networkObject.setAttribute("onclick", "showRouterSpecs(event)");
-    networkObjectRoutingTable.setAttribute("onclick", "event.stopPropagation()");
-    networkObjectAdvancedOptions.setAttribute("onclick", "event.stopPropagation()");
+    
     itemIndex++;
 
     return $networkObject;

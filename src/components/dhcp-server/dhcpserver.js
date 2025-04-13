@@ -3,10 +3,9 @@ function DhcpServerObject(x, y) {
     const $dhcpServerObject = document.createElement("article");
     const networkObjectIcon = document.createElement("img");
     const $advancedOptions = document.createElement("div");
-    const $networkObjectArpTable = document.createElement("article");
-    const $networkObjectDhcpTable = document.createElement("article");
-    const $firewallTable = document.createElement("article");
-
+    const $networkObjectArpTable = arpTable();
+    const $networkObjectDhcpTable = dhcpTable();
+    const $firewallTable = firewallTable();
 
     //caracteristicas generales
 
@@ -41,8 +40,7 @@ function DhcpServerObject(x, y) {
     networkObjectIcon.src = "./assets/board/dhcp.svg";
     networkObjectIcon.alt = "server";
     networkObjectIcon.draggable = true;
-    $dhcpServerObject.appendChild(networkObjectIcon);
-
+    
     //opciones avanzadas
 
     $advancedOptions.classList.add("advanced-options-modal");
@@ -53,55 +51,13 @@ function DhcpServerObject(x, y) {
         <button onclick="deleteItem(event)">Eliminar</button>
     `;
 
+    //construimos el objeto
+
+    $dhcpServerObject.appendChild(networkObjectIcon);
     $dhcpServerObject.appendChild($advancedOptions);
-
-    //tabla de arp
-
-    $networkObjectArpTable.classList.add("arp-table");
-    $networkObjectArpTable.innerHTML = `
-        <table>
-            <tr>
-                <th>IP Address</th>
-                <th>MAC Address</th>
-            </tr>
-        </table>
-        <button onclick="closeObjectModalTable(event, '.arp-table')">Cerrar</button>`;
-    
     $dhcpServerObject.appendChild($networkObjectArpTable);
-
-    //tabla de firewall
-    
-    $firewallTable.classList.add("firewall-table");
-    $firewallTable.innerHTML = `
-            <table>
-                <tr>
-                    <th>Id</th>
-                    <th>Chain</th>
-                    <th>Protocol</th>
-                    <th>Origin IP</th>
-                    <th>Destination IP</th>
-                    <th>Port</th>
-                    <th>Action</th>
-                </tr>
-            </table>`;
-
-    $dhcpServerObject.appendChild($firewallTable);
-
-    //tabla de alquileres
-
-    $networkObjectDhcpTable.classList.add("dhcp-table");
-    $networkObjectDhcpTable.innerHTML = `
-                <table>
-                    <tr>
-                        <th>IP</th>
-                        <th>MAC</th>
-                        <th>Hostname</th>
-                        <th>Lease Time</th>
-                    </tr>
-                </table>
-                <button onclick="closeObjectModalTable(event, '.dhcp-table')">Cerrar</button>`;
-
     $dhcpServerObject.appendChild($networkObjectDhcpTable);
+    $dhcpServerObject.appendChild($firewallTable);
 
     //eventos
 
@@ -109,7 +65,6 @@ function DhcpServerObject(x, y) {
     $dhcpServerObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
     $dhcpServerObject.setAttribute("onclick", "showDhcpSpecs(event)");
     $advancedOptions.setAttribute("onclick", "event.stopPropagation()");
-    $networkObjectDhcpTable.setAttribute("onclick", "event.stopPropagation()");
     itemIndex++;
 
     return $dhcpServerObject;
