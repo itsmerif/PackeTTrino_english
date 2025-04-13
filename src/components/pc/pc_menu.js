@@ -30,11 +30,6 @@ function pc_menu() {
         </div>
 
         <div class="form-item">
-        <label for="wifi"> Modo Wi-Fi: </label>
-        <input class="btn-toggle" type="checkbox" id="wifi" name="wifi">
-        </div>
-
-        <div class="form-item">
         <label for="web-server"> Servidor Web: </label>
         <input class="btn-toggle" type="checkbox" id="web-server" name="web-server">
         </div>
