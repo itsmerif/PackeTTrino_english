@@ -34,7 +34,7 @@ async function domainNameResolution(dataId, domain) {
 function isDomainInCachePc(networkObjectId, targetDomain) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
+    const dnsTable = $networkObject.querySelector(".cache-dns-table").querySelector("table");
     const records = dnsTable.querySelectorAll("tr");
     let FQDN_targetDomain = targetDomain;
 
@@ -96,6 +96,32 @@ async function getDomainFromServer(dataId, domain, verbose = false, dnsServer = 
     if (isResolvedOn) addDnsCacheEntry(dataId, dnsReply.query, dnsReply.answer_type, dnsReply.answer, dnsReply.origin_ip);
 
     if (deleteAfterUse) delete buffer[dataId];
+
+}
+
+function addDnsCacheEntry(networkObjectId, query, answer_type, answer, server) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const dnsTable = $networkObject.querySelector(".cache-dns-table").querySelector("table");
+    const newRow = document.createElement("tr");
+    if (!query.endsWith(".")) query = query + "."; //los nombres se guardan como FQDN
+
+    if (typeof answer !== 'string') {
+        let i = 0;
+        while (i < answer.length && !isValidIp(answer[i])) {
+            i++;
+        }
+        answer = answer[i];
+    }
+
+    newRow.innerHTML = `
+        <tr>
+            <td>${query}</td>
+            <td>${answer_type}</td>
+            <td>${answer}</td>
+        </tr>`;
+    newRow.setAttribute("data-server", server);
+    dnsTable.appendChild(newRow);
 
 }
 

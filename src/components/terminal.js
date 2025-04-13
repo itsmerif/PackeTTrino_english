@@ -208,7 +208,7 @@ async function minimizeTerminal() {
 async function maximizeTerminal() {
     return new Promise(resolve => {
         const $terminal = document.querySelector(".terminal-component");
-        if (!$terminal || $terminal.style.display === "none") return resolve();
+        if (!$terminal || window.getComputedStyle($terminal).display === "none") return resolve();
         $terminal.style.transition = "all 1s ease-in-out";
         $terminal.style.width = "1000px";
         $terminal.style.height = "500px";

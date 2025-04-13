@@ -57,9 +57,9 @@ function PcObject(x, y) {
 
     $arpTable.setAttribute("onclick", "event.stopPropagation();");
 
-    //tabla de registros dns
+    //tabla de caché dns
 
-    $dnsTable.classList.add("dns-table", "cache");
+    $dnsTable.classList.add("cache-dns-table");
     $dnsTable.innerHTML = `
                 <table>
                     <tr>
@@ -68,7 +68,7 @@ function PcObject(x, y) {
                         <th>Value</th>
                     </tr>
                 </table>
-                <button onclick="closeObjectModalTable(event, '.dns-table')">Cerrar</button>
+                <button onclick="closeObjectModalTable(event, '.cache-dns-table')">Cerrar</button>
     `;
 
     $dnsTable.setAttribute("onclick", "event.stopPropagation();");
@@ -96,7 +96,7 @@ function PcObject(x, y) {
     $advancedOptions.innerHTML = `
         <button onclick="showTerminal(event)">Modo Terminal</button>
         <button onclick="showObjectModalTable(event,'.arp-table')">Ver Tabla ARP</button>
-        <button onclick="showObjectModalTable(event,'.dns-table')">Ver Caché DNS</button>
+        <button onclick="showObjectModalTable(event,'.cache-dns-table')">Ver Caché DNS</button>
         <button onclick="scanNetwork(event)" style="display: none;">Escanear Redes Disponibles</button>
         <button onclick="openBrowser(event)">Navegador</button>
         <button onclick="deleteItem(event)">Eliminar</button>
