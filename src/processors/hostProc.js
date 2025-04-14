@@ -128,12 +128,41 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     //daemons o servicios
 
     if (packet.protocol === "dhcp") {
-        if (activeServices.includes("dhclient")) await dhclient_service(networkObjectId, packet);
-        if (activeServices.includes("dhcpd")) await dhcpd_service(networkObjectId, packet);
-        if (activeServices.includes("dhcrelay")) await dhcrelay_service(networkObjectId, packet);
+
+        if (activeServices.includes("dhclient")) {
+            let replyPacket = await dhclient_service(networkObjectId, packet);
+            if (!replyPacket) return;
+            addPacketTraffic(replyPacket);
+            await switchProcessor(switchId, networkObjectId, replyPacket);
+        }
+
+        if (activeServices.includes("dhcpd")) {
+            let replyPacket = await dhcpd_service(networkObjectId, packet);
+            if (!replyPacket) return;
+            addPacketTraffic(replyPacket);
+            await switchProcessor(switchId, networkObjectId, replyPacket);
+        }
+
+        if (activeServices.includes("dhcrelay"))  {
+            let replyPacket = await dhcrelay_service(networkObjectId, packet);
+            if (!replyPacket) return;
+            addPacketTraffic(replyPacket);
+            await switchProcessor(switchId, networkObjectId, replyPacket);
+        }
+
     }
 
-    if (packet.protocol === "dns" && packet.type === "request" && activeServices.includes("named") ) await named_service(networkObjectId, packet);
+    if (packet.protocol === "dns" && packet.type === "request" && activeServices.includes("named") ) {
+        let replyPacket = await named_service(networkObjectId, packet);
+        if (!replyPacket) return;
+        addPacketTraffic(replyPacket);
+        await switchProcessor(switchId, networkObjectId, replyPacket);
+    }
 
-    if (packet.protocol === "http" && packet.type === "request" && activeServices.includes("apache")) await apache_service(networkObjectId, packet);
+    if (packet.protocol === "http" && packet.type === "request" && activeServices.includes("apache")) {
+        let replyPacket = await apache_service(networkObjectId, packet);
+        if (!replyPacket) return;
+        addPacketTraffic(replyPacket);
+        await switchProcessor(switchId, networkObjectId, replyPacket);
+    }
 }

@@ -49,9 +49,8 @@ async function dhcpd_service(serverObjectId, packet) {
 
         }
 
-        addPacketTraffic(newPacket);
-        await switchProcessor(switchId, serverObjectId, newPacket);
-        return;
+        return newPacket;
+
     }
 
     if (packet.type === "request" && packet.ciaddr === "0.0.0.0") {
@@ -79,9 +78,8 @@ async function dhcpd_service(serverObjectId, packet) {
         }
 
         addDhcpEntry(serverObjectId, packet.yiaddr, packet.chaddr, packet.hostname);
-        addPacketTraffic(newPacket)
-        await switchProcessor(switchId, serverObjectId, newPacket);
-        return;
+
+        return newPacket;
 
     }
 
@@ -103,9 +101,8 @@ async function dhcpd_service(serverObjectId, packet) {
 
         newPacket.destination_ip = packet.origin_ip;
         newPacket.destination_mac = packet.origin_mac;
-        addPacketTraffic(newPacket);
-        await switchProcessor(switchId, serverObjectId, newPacket);
-        return;
+
+        return newPacket;
 
     }
 

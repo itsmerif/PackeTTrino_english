@@ -216,6 +216,7 @@ async function dhclient_service(networkObjectId, packet) {
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const switchId = $networkObject.getAttribute("data-switch-enp0s3");
     const isDhclientOn = $networkObject.getAttribute("dhclient") === "true";
+    let responsePacket;
 
     if (!isDhclientOn) return;
     
@@ -247,8 +248,7 @@ async function dhclient_service(networkObjectId, packet) {
 
             terminalMessage(`DHCPREQUEST for ${packet.yiaddr} on enp0s3 to ${packet.siaddr} port 67`);
 
-            addPacketTraffic(newPacket);
-            await switchProcessor(switchId, networkObjectId, newPacket);
+            return newPacket;
 
         }
 

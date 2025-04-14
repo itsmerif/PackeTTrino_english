@@ -12,7 +12,7 @@ async function apache_service(networkObjectId, packet) {
 
     let newPacket = new httpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
     newPacket.body = $networkObject.getAttribute("web-content");
-    addPacketTraffic(newPacket);
-    await switchProcessor(switchId, networkObjectId, newPacket);
+    
+    return newPacket;
     
 }

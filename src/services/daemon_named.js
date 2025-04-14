@@ -9,11 +9,9 @@ async function named_service(networkObjectId, packet) {
     if (packet.destination_mac !== networkObjectMac || packet.destination_ip !== networkObjectIp) return;
 
     let newPacket = new dnsReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac, packet.query, ""); //inicializamos el paquete sin respuesta
-    let answer;
 
     if (packet.answer_type === "SOA") {
-        let authority_domain;
-        [authority_domain, answer] = dns_SOA_Request_Proc(networkObjectId, packet);
+        let [authority_domain, answer] = dns_SOA_Request_Proc(networkObjectId, packet);
         newPacket.answer_type = "SOA";
         newPacket.answer = answer;
         newPacket.authority_domain = authority_domain;
@@ -21,15 +19,13 @@ async function named_service(networkObjectId, packet) {
     }
 
     if (packet.answer_type === "A") {
-        answer = dns_A_Request_Proc(networkObjectId, packet);
+        let answer = dns_A_Request_Proc(networkObjectId, packet);
         if (!answer && isRecursive !== "false") answer = await recursiveDNSResolve(packet.query);
         newPacket.answer_type = "A";
         newPacket.answer = answer;
     }
 
-    addPacketTraffic(newPacket);
-    await switchProcessor(switchId, networkObjectId, newPacket);
-    return;
+    return newPacket;
 
 }
 

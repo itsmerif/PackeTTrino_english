@@ -17,9 +17,7 @@ async function dhcrelay_service(agentObjectId, packet) {
             packet.destination_ip = "255.255.255.255";
             packet.origin_mac = agentObjectMac;
             packet.destination_mac = packet.chaddr;
-            addPacketTraffic(packet);
-            await switchProcessor(switchId, agentObjectId, packet);
-            return;
+            return packet;
         }
 
         if (packet.type === "ack") {
@@ -28,9 +26,7 @@ async function dhcrelay_service(agentObjectId, packet) {
             packet.destination_ip = "255.255.255.255";
             packet.origin_mac = agentObjectMac;
             packet.destination_mac = packet.chaddr;
-            addPacketTraffic(packet);
-            await switchProcessor(switchId, agentObjectId, packet);
-            return;
+            return packet;
         }
 
     }
@@ -55,21 +51,20 @@ async function dhcrelay_service(agentObjectId, packet) {
             }
 
             packet.destination_mac = defaultGatewayMac;
-            addPacketTraffic(packet);
-            await switchProcessor(switchId, agentObjectId, packet);
-            return;
+
+            return packet;
 
         }
 
         if (packet.type === "request") {
+            
             if (packet.giaddr !== agentObjectIp) return;
             packet.origin_ip = agentObjectIp;
             packet.destination_ip = mainServer;
             packet.origin_mac = agentObjectMac;
             packet.destination_mac = isIpInARPTable(agentObjectId, defaultGateway);
-            addPacketTraffic(packet);
-            await switchProcessor(switchId, agentObjectId, packet);
-            return;
+
+            return packet;
         }
 
     }
