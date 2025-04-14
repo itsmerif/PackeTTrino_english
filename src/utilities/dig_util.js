@@ -56,19 +56,6 @@ async function command_dig(dataId, args) {
         return;
     }
 
-    if (visualToggle) await minimizeTerminal();
-
-    try {
-
-        cleanPacketTraffic();
-
-        await getDomainFromServer(dataId, domain, true, dnsServer, query_type, true);
-
-    } catch (error) {
-
-        console.log(error);
-
-    }
-
-    if (visualToggle) await maximizeTerminal();
+    dig(dataId, domain, query_type, dnsServer);
+        
 }

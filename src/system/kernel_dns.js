@@ -1,3 +1,31 @@
+async function dig(dataId, domain, query_type, dnsServer) {
+
+    if (visualToggle) await minimizeTerminal();
+
+    try {
+
+        cleanPacketTraffic();
+
+        await getDomainFromServer(
+            dataId, //id del objeto
+            domain, //dominio
+            true, // verbose
+            dnsServer, //ip del servidor
+            query_type, //tipo de registro
+            true, //eliminar despues de usar
+            false //no generar cache
+        );
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
+
+    if (visualToggle) await maximizeTerminal();
+
+}
+
 async function domainNameResolution(dataId, domain) {
 
     const $networkObject = document.getElementById(dataId);
@@ -13,7 +41,15 @@ async function domainNameResolution(dataId, domain) {
 
         try {
 
-            await getDomainFromServer(dataId, domain, false, "", "A", false);
+            await getDomainFromServer(
+                dataId, //id del objeto
+                domain, //dominio
+                false, //verbose
+                "", //ip del servidor
+                "A", //tipo de registro
+                false //eliminar despues de usar
+            );
+
             let dnsReply = buffer[dataId];
             delete buffer[dataId];
 
@@ -70,7 +106,7 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
 
 }
 
-async function getDomainFromServer(dataId, domain, verbose = false, dnsServer = "", query_type = "A", deleteAfterUse) {
+async function getDomainFromServer(dataId, domain, verbose = false, dnsServer = "", query_type = "A", deleteAfterUse, genCache = true) {
 
     const $networkObject = document.getElementById(dataId);
     const switchId = $networkObject.getAttribute("data-switch-enp0s3");
@@ -93,7 +129,7 @@ async function getDomainFromServer(dataId, domain, verbose = false, dnsServer = 
 
     if (!dnsReply.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
 
-    if (isResolvedOn) addDnsCacheEntry(dataId, dnsReply.query, dnsReply.answer_type, dnsReply.answer, dnsReply.origin_ip);
+    if (isResolvedOn && genCache) addDnsCacheEntry(dataId, dnsReply.query, dnsReply.answer_type, dnsReply.answer, dnsReply.origin_ip);
 
     if (deleteAfterUse) delete buffer[dataId];
 
