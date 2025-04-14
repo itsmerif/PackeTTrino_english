@@ -6,7 +6,7 @@ function installApache2(networkObjectId) {
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
     const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
-    const addOption = (html) => $advancedOptions.innerHTML += html;
+    const addOption = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));
 
     attr("apache", "true");
     attr("web-content", "");

@@ -5,7 +5,8 @@ function installDhclient(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
-    const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));            
+    const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
+    const addOption = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));           
 
     attr("dhclient", "false");   
     attr("data-dhcp-server", "");

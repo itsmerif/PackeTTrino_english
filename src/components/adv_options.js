@@ -1,25 +1,96 @@
 function advancedOptionsObject(...options) {
 
     const $advancedOptions = document.createElement("div");
-    const addOption = (html) => $advancedOptions.innerHTML += html;
+    const append = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));
     $advancedOptions.classList.add("advanced-options-modal");
     $advancedOptions.setAttribute("onclick", "event.stopPropagation()");
 
-    const availableOptions = {
-        "terminal": () => addOption(`<button id="terminal-option"onclick="showTerminal(event)">Modo Terminal</button>`),
-        "arp": () => addOption(`<button id="arp-option" onclick="showObjectModalTable(event, '.arp-table')">Ver Tabla ARP</button>`),
-        "cacheDns": () => addOption(`<button id="cache-dns-option" onclick="showObjectModalTable(event, '.cache-dns-table')">Ver Caché DNS</button>`),
-        "browser": () =>addOption(`<button id="browser-option"onclick="openBrowser(event)">Navegador</button>`),
-        "delete": () =>addOption(`<button id="delete-option" onclick="deleteItem(event)">Eliminar</button>`),
-        "firewall": () => addOption(`<button id="firewall-option" onclick="showObjectModalTable(event, '.firewall-table')">Ver Tabla Firewall</button>`),
-        "routing": () => addOption(`<button id="routing-option" onclick="showObjectModalTable(event, '.routing-table')">Ver Tabla de Enrutamiento</button>`),
-        "dhcp": () => addOption(`<button id="dhcp-option" onclick="showObjectModalTable(event, '.dhcp-table')"> Ver Tabla de Alquileres </button>`),
-        "dns": () => addOption(`<button id="dns-option"onclick="showObjectModalTable(event, '.dns-table')"> Ver Tabla de Registros DNS </button>`)
+    const availableButtons = {
+        "terminal": () => terminalOptionButton(),
+        "arp": () => arpOptionButton(),
+        "cacheDns": () => cacheDnsOptionButton(),
+        "browser": () => browserOptionButton(),
+        "delete": () => deleteOptionButton(),
+        "firewall": () => firewallOptionButton(),
+        "routing": () => routingOptionButton(),
+        "dhcp": () => dhcpOptionButton(),
+        "dns": () => dnsOptionButton(),
     }
 
-    options.forEach(option => availableOptions[option] && availableOptions[option]());
+    options.forEach(option => availableButtons[option] && append(availableButtons[option]()));
 
     return $advancedOptions;
     
 }
 
+function terminalOptionButton() {
+    const $button = document.createElement("button");
+    $button.id = "terminal-option";
+    $button.innerHTML = "Modo Terminal";
+    $button.setAttribute("onclick", "showTerminal(event)");
+    return $button;
+}
+
+function arpOptionButton() {
+    const $button = document.createElement("button");
+    $button.id = "arp-option";
+    $button.innerHTML = "Ver Tabla ARP";
+    $button.setAttribute("onclick", "showObjectModalTable(event, '.arp-table')");
+    return $button;
+}
+
+function cacheDnsOptionButton() {
+    const $button = document.createElement("button");
+    $button.id = "cache-dns-option";
+    $button.innerHTML = "Ver Caché DNS";
+    $button.setAttribute("onclick", "showObjectModalTable(event, '.cache-dns-table')");
+    return $button;
+}
+
+function browserOptionButton() {
+    const $button = document.createElement("button");
+    $button.id = "browser-option";
+    $button.innerHTML = "Navegador";
+    $button.setAttribute("onclick", "openBrowser(event)");
+    return $button;
+}
+
+function deleteOptionButton() {
+    const $button = document.createElement("button");
+    $button.id = "delete-option";
+    $button.innerHTML = "Eliminar";
+    $button.setAttribute("onclick", "deleteItem(event)");
+    return $button;
+}
+
+function firewallOptionButton() {
+    const $button = document.createElement("button");
+    $button.id = "firewall-option";
+    $button.innerHTML = "Ver Tabla Firewall";
+    $button.setAttribute("onclick", "showObjectModalTable(event, '.firewall-table')");
+    return $button;
+}
+
+function routingOptionButton() {
+    const $button = document.createElement("button");
+    $button.id = "routing-option";
+    $button.innerHTML = "Ver Tabla de Enrutamiento";
+    $button.setAttribute("onclick", "showObjectModalTable(event, '.routing-table')");
+    return $button;
+}
+
+function dhcpOptionButton() {
+    const $button = document.createElement("button");
+    $button.id = "dhcp-option";
+    $button.innerHTML = "Ver Tabla de Alquileres";
+    $button.setAttribute("onclick", "showObjectModalTable(event, '.dhcp-table')");
+    return $button;
+}
+
+function dnsOptionButton() {
+    const $button = document.createElement("button");
+    $button.id = "dns-option";
+    $button.innerHTML = "Ver Tabla de Registros DNS";
+    $button.setAttribute("onclick", "showObjectModalTable(event, '.dns-table')");
+    return $button;
+}

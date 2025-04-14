@@ -6,7 +6,7 @@ function installDhcpd(networkObjectId) {
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
     const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
-    const addOption = (html) => $advancedOptions.innerHTML += html;
+    const addOption = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));
 
     append(dhcpTable());
     attr("dhcpd", "true");
@@ -17,7 +17,7 @@ function installDhcpd(networkObjectId) {
     attr("offer-dns", "");
     attr("offer-lease-time", "");
     attr("data-interval", "false");
-    addOption(`<button id="dhcp-option" onclick="showObjectModalTable(event, '.dhcp-table')">Ver Tabla de Alquileres</button>`);
+    addOption(dhcpOptionButton());
 
     terminalMessage("DHCP Server instalado correctamente.");
 }
