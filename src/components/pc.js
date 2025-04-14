@@ -25,13 +25,17 @@ function PcObject(x, y) {
     attr("data-gateway", "");
     attr("data-etc-hosts", `{ "127.0.0.1": ["localhost"] }`);
     attr("firewall-default-policy", "ACCEPT");
-    attr("dhclient", "false");
-    attr("apache", "false");
-    attr("resolved", "true");
-    attr("data-dhcp-server", "");
     attr("data-dns-server", "");
+
+    attr("dhclient", "false");   
+    attr("data-dhcp-server", "");
     attr("data-dhcp-lease-time", "");
+
+    attr("apache", "false");
     attr("web-content", "");
+
+    attr("resolved", "true");
+
     attr("onclick", "showPcForm('" + $networkObject.id + "')");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("ondragstart", "BoardItemDragStart(event)");

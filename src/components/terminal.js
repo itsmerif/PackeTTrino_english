@@ -38,9 +38,9 @@ function terminal() {
     $terminal.querySelector(".file-editor").addEventListener("click", event => { event.stopPropagation(); });
     $terminal.querySelector(".file-editor").addEventListener("dragstart", event => { event.stopPropagation(); });
     $terminal.querySelector(".file-editor").addEventListener("keydown", fileEditorKeyboard);
-    
+
     return $terminal;
-    
+
 }
 
 function sendCommand(event) {
@@ -236,12 +236,116 @@ function closeTerminal(event) {
     event.preventDefault();
     const $terminal = document.querySelector(".terminal-component");
     clearInterval(window.pingInterval);
-    terminalBuffer = []; 
+    terminalBuffer = [];
     currentCommandIndex = 0;
     document.querySelector(".terminal-output").innerHTML = "";
-    $terminal.querySelector("input").value = ""; 
+    $terminal.querySelector("input").value = "";
     $terminal.style.top = "40%";
     $terminal.style.left = "50%";
     $terminal.style.transform = "translate(-50%, -50%)";
     $terminal.style.display = "none";
+}
+
+function fileEditorKeyboard(event) {
+
+    event.stopPropagation();
+
+    const textarea = event.target;
+
+    if (event.ctrlKey && event.key === "s") {
+        event.preventDefault();
+        closeEditor();
+        document.querySelector(".terminal-component").querySelector("input").focus();
+    }
+
+    if (event.key === "Tab") {
+        event.preventDefault();
+        let start = textarea.selectionStart;
+        let end = textarea.selectionEnd;
+        textarea.value = textarea.value.substring(0, start) + "\t" + textarea.value.substring(end);
+        textarea.selectionStart = textarea.selectionEnd = start + 1;
+    }
+
+}
+
+function closeEditor() {
+
+    const fileEditor = document.querySelector(".file-editor");
+    const fileName = fileEditor.getAttribute("data-file");
+    const networkObjectId = document.querySelector(".terminal-component").dataset.id;
+
+    if (fileName === "/etc/network/interfaces") {
+
+        if (networkObjectId.startsWith("router-")) {
+            routingTableRestore(document.querySelector(".terminal-component").dataset.id);
+        }
+
+        try {
+
+            parserNetworkFile();
+            document.querySelector(".editor-container").style.display = "none";
+            document.querySelector(".file-editor").value = "";
+
+        } catch (error) {
+
+            document.querySelector(".file-editor-error").innerHTML = error.message;
+            document.querySelector(".file-editor-error").style.display = "block";
+
+            setTimeout(() => {
+                document.querySelector(".file-editor-error").style.display = "none";
+            }, 3000);
+
+        }
+
+        return;
+
+    }
+
+    if (fileName === "/etc/resolv.conf") {
+
+        try {
+
+            parserResolvConf();
+            document.querySelector(".editor-container").style.display = "none";
+            document.querySelector(".file-editor").value = "";
+
+        } catch (error) {
+
+            document.querySelector(".file-editor-error").innerHTML = error.message;
+            document.querySelector(".file-editor-error").style.display = "block";
+
+            setTimeout(() => {
+                document.querySelector(".file-editor-error").style.display = "none";
+            }, 3000);
+
+        }
+    }
+
+    if (fileName === "/var/www/html/index.html") {
+        savewebContent();
+        document.querySelector(".editor-container").style.display = "none";
+        document.querySelector(".file-editor").value = "";
+    }
+
+    if (fileName === "/etc/hosts") {
+
+        try {
+
+            parserEtcHosts();
+            document.querySelector(".editor-container").style.display = "none";
+            document.querySelector(".file-editor").value = "";
+            terminalMessage("El archivo se ha cargado correctamente.");
+
+        } catch (error) {
+
+            document.querySelector(".file-editor-error").innerHTML = error.message;
+            document.querySelector(".file-editor-error").style.display = "block";
+
+            setTimeout(() => {
+                document.querySelector(".file-editor-error").style.display = "none";
+            }, 3000);
+
+        }
+
+    }
 }

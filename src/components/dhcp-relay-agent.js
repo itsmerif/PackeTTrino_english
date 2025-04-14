@@ -23,8 +23,10 @@ function DhcpRelayObject(x, y) {
     attr("data-gateway", "");
     attr("data-switch-enp0s3", "");
     attr("firewall-default-policy", "ACCEPT");
+
     attr("dhcrelay", "true");
     attr("data-main-server", "");
+    
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showDhcpRelaySpecs(event)");

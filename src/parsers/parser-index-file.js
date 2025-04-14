@@ -1,14 +1,19 @@
 function loadApacheIndexContent(networkObjectId) {
-    if (!networkObjectId.startsWith("pc-")) {
-        terminalMessage("Error: Comando solo puede ser ejecutado desde un equipo host.");
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const isApacheInstalled = $networkObject.getAttribute("apache") !== null;
+
+    if (!isApacheInstalled) {
+        terminalMessage("Error: El archivo /var/www/html/index.html no se puede editar porque el servidor web no está instalado.");
         return;
     }
+
     const fileEditorContainer = document.querySelector(".editor-container");
-    const $networkObject = document.getElementById(networkObjectId); //recuperamos el objeto
-    let webContent = $networkObject.getAttribute("web-content"); //obtenemos el contenido web
+    let webContent = $networkObject.getAttribute("web-content");
     let content = fileEditorContainer.querySelector(".file-editor");
     content.value = webContent; 
-    fileEditorContainer.style.display = "block"; //mostramos el editor
+    fileEditorContainer.style.display = "block";
+    content.focus();
 }
 
 

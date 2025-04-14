@@ -23,7 +23,9 @@ function DhcpServerObject(x, y) {
     attr("mac-enp0s3", getRandomMac());
     attr("data-gateway", "");
     attr("data-switch-enp0s3", "");
+
     attr("firewall-default-policy", "ACCEPT");
+
     attr("dhcpd", "true");
     attr("data-range-start", "");
     attr("data-range-end", "");
@@ -32,6 +34,7 @@ function DhcpServerObject(x, y) {
     attr("offer-dns", "");
     attr("offer-lease-time", "");
     attr("data-interval", "false");
+    
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showDhcpSpecs(event)");

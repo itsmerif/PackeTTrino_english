@@ -1,112 +1,64 @@
 function dpkg(networkObjectId, option, package) {
     
-    const managerFunctions = {
-        "apache2": () => manageApache(networkObjectId, option),
-        "bind9": () => manageBind(networkObjectId, option),
-        "isc-dhcp-server": () => manageDhcpd(networkObjectId, option),
-        "isc-dhcp-relay": () => manageDhcprelay(networkObjectId, option),
-        "isc-dhcp-client": () => manageDhclient(networkObjectId, option),
+    const packagesToServices = {
+        "apache2": "apache",
+        "bind9": "named",
+        "isc-dhcp-server": "dhcpd",
+        "isc-dhcp-relay": "dhcrelay",
+        "isc-dhcp-client": "dhclient",
     }
 
-    managerFunctions[package]();
+    const $networkObject = document.getElementById(networkObjectId);
+    const service = packagesToServices[package];
+
+    if (!service) {
+        terminalMessage("Error: El paquete " + package + " no tiene soporte.");
+        return;
+    }
+
+    const isServiceInstalled = $networkObject.getAttribute(service) !== null;
+
+    if (option === "install" && isServiceInstalled) {
+        terminalMessage("Error: El servicio " + service + " ya está instalado.");
+        return;
+    }
+
+    if (option === "remove" && !isServiceInstalled) {
+        terminalMessage("Error: El servicio " + service + " no está instalado.");
+        return;
+    }
+
+    if (option === "install") dpkgInstaller(networkObjectId, package);
+
+    if (option === "remove") dpkgUninstaller(networkObjectId, package);
+    
 }
 
 
-function manageApache(networkObjectId, option) {
+function dpkgInstaller(networkObjectId, package) {
 
-    const $networkObject = document.getElementById(networkObjectId);
-    const isApacheInstalled = $networkObject.getAttribute("apache") !== null;
-
-    if (option === "install") {
-
-        if (isApacheInstalled) {
-            terminalMessage("Error: El paquete Apache ya está instalado.");
-            return;
-        }
-
-        terminalMessage("Instalando Apache...");
-        $networkObject.setAttribute("apache", "true");
-        $networkObject.setAttribute("web-content", "");
-        terminalMessage("Apache instalado correctamente.");
-
+    const installFunctions = {
+        "apache2": () => installApache2(networkObjectId),
+        "bind9": () => installBind9(networkObjectId),
+        "isc-dhcp-server": () => installDhcpd(networkObjectId),
+        "isc-dhcp-relay": () => installDhcprelay(networkObjectId),
+        "isc-dhcp-client": () => installDhclient(networkObjectId),
     }
 
-    if (option === "remove") {
-
-        if (!isApacheInstalled) {
-            terminalMessage("Error: El paquete Apache no está instalado.");
-            return;
-        }
-
-        terminalMessage("Desinstalando Apache...");
-        $networkObject.removeAttribute("apache");
-        $networkObject.removeAttribute("web-content");
-        terminalMessage("Apache desinstalado correctamente.");
-
-    }
-
-    command_systemctl(networkObjectId, ["systemctl", "status", "apache"]);
+    installFunctions[package]();
 
 }
 
+function dpkgUninstaller(networkObjectId, package) {
 
-function manageBind(networkObjectId, option) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    const isBindInstalled = $networkObject.getAttribute("named") !== null;
-
-    if (option === "install") {
-
-        if (isBindInstalled) {
-            terminalMessage("Error: El paquete Bind ya está instalado.");
-            return;
-        }
-
-        installBind9(networkObjectId);
+    const uninstallFunctions = {
+        "apache2": () => uninstallApache2(networkObjectId),
+        "bind9": () => uninstallBind9(networkObjectId),
+        "isc-dhcp-server": () => uninstallDhcpd(networkObjectId),
+        "isc-dhcp-relay": () => uninstallDhcprelay(networkObjectId),
+        "isc-dhcp-client": () => uninstallDhclient(networkObjectId),
     }
 
-    if (option === "remove") {
-
-        if (!isBindInstalled) {
-            terminalMessage("Error: El paquete Bind no está instalado.");
-            return;
-        }
-
-        terminalMessage("Desinstalando Bind...");
-        $networkObject.removeAttribute("bind");
-        terminalMessage("Bind desinstalado correctamente.");
-
-    }
-
-    command_systemctl(networkObjectId, ["systemctl", "status", "named"]);
-
-}
-
-function installBind9(networkObjectId) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
-    const $networkObjectDnsTable = document.createElement("article");
-
-    terminalMessage("Instalando Bind...");
-
-    $networkObject.setAttribute("named", "true");
-    $networkObject.setAttribute("recursion", "false");
-    $advancedOptions.innerHTML += `<button onclick="showObjectModalTable(event, '.dns-table')">Ver Registros DNS</button>`;
-    $networkObjectDnsTable.classList.add("dns-table");
-    $networkObjectDnsTable.innerHTML = `
-        <table>
-            <tr>
-                <th>Domain</th>
-                <th>Type</th>
-                <th>Value</th>
-            </tr>
-        </table>
-        <button onclick="closeObjectModalTable(event, '.dns-table')">Cerrar</button>
-    `;
-
-    $networkObject.appendChild($networkObjectDnsTable);
-
-    terminalMessage("Bind instalado correctamente.");
+    uninstallFunctions[package]();
 
 }
