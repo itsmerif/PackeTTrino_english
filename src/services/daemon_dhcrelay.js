@@ -4,12 +4,11 @@ async function dhcrelay_service(agentObjectId, packet) {
     const agentObjectIp = $agentObject.getAttribute("ip-enp0s3");
     const mainServer = $agentObject.getAttribute("data-main-server");
     const defaultGateway = $agentObject.getAttribute("data-gateway");
-    const switchId = $agentObject.getAttribute("data-switch-enp0s3");
     const isDhcpRelayOn = $agentObject.getAttribute("dhcrelay") === "true";
 
     if (!isDhcpRelayOn) return;
 
-    if (packet.destination_ip === agentObjectIp) {
+    if (packet.destination_ip === agentObjectIp) { /** PAQUETE VIENE DEL SERVIDOR PRINCIPAL **/
 
         if (packet.type === "offer") {
             if (packet.giaddr !== agentObjectIp) return;
@@ -31,7 +30,7 @@ async function dhcrelay_service(agentObjectId, packet) {
 
     }
 
-    if (packet.destination_ip = "255.255.255.255") {
+    if (packet.destination_ip = "255.255.255.255") { /** PAQUETE VIENE DE UN CLIENTE DHCP **/
         
         if (packet.type === "discover") {
 

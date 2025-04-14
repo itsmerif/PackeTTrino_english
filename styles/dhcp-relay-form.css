@@ -35,7 +35,7 @@
 }
 
 .dhcp-relay-form input, select {
-    width: 90%;
+    width: 100%;
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;

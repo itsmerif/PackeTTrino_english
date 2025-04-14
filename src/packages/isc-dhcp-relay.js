@@ -10,6 +10,7 @@ function installDhcprelay(networkObjectId) {
 
     attr("dhcrelay", "true");
     attr("data-main-server", "");
+    addOption(dhcpRelayConfig());
 
     terminalMessage("DHCP Relay instalado correctamente.");
 }
@@ -25,6 +26,7 @@ function uninstallDhcprelay(networkObjectId) {
     const remOption = (...options) => options.forEach(option => $advancedOptions.querySelector("#" + option).remove());
 
     rattr("dhcrelay", "data-main-server");
+    remOption("dhcp-relay-option");
 
     terminalMessage("DHCP Relay desinstalado correctamente.");
 }

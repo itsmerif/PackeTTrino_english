@@ -4,23 +4,20 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
 
     if (!firewallProcessorRouter(routerObjectId, packet)) return;
 
-    if (packet.destination_ip === "255.255.255.255") return; //TODO: chequear servicios primero
-
     const [routerObjectIp, routerObjectNetmask, routerObjectMac] = getInterfaceInfo(routerObjectId, switchId);
-    if (!routerObjectIp || !routerObjectNetmask || !routerObjectMac) return;
-    const isSameNetwork = getNetwork(packet.destination_ip, routerObjectNetmask) === getNetwork(routerObjectIp, routerObjectNetmask);
     const availableIps = getAvailableIps(routerObjectId);
     const activeServices = getactiveServices(routerObjectId);
 
-    if (packet.ttl && !availableIps.includes(packet.origin_ip)) {
+    if (!routerObjectIp || !routerObjectNetmask || !routerObjectMac) return;
+
+    if (packet.ttl) {
         packet.ttl--;
         if (packet.ttl < 1) {
             packet = new IcmpTimeExceeded(routerObjectIp, packet.origin_ip, routerObjectMac, routerObjectMac);
         }
     }
 
-
-    if (availableIps.includes(packet.destination_ip)) {  //paquete va dirigido al router 
+    if (availableIps.includes(packet.destination_ip) || packet.destination_ip === "255.255.255.255") {
 
         let replyPacket;
 
@@ -56,15 +53,44 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
             replyPacket = await named_service(routerObjectId, packet);
         }
 
+        if (packet.protocol === "dhcp") {
+
+            if (activeServices.includes("dhcpd")) {
+                replyPacket = await dhcpd_service(routerObjectId, packet);
+                if (!replyPacket) return;
+                if (replyPacket.destination_ip !== "255.255.255.255") await routing(routerObjectId, replyPacket);
+                else switchProcessor(switchId, routerObjectId, replyPacket);
+                return;
+            }
+
+            if (activeServices.includes("dhcrelay"))  {
+
+                replyPacket = await dhcrelay_service(routerObjectId, packet);
+
+                if (!replyPacket) return;
+
+                if (replyPacket.type === "discover") await routing(routerObjectId, replyPacket);
+                
+                if (replyPacket.type === "request") await routing(routerObjectId, replyPacket);
+
+                if (replyPacket.type === "offer" || replyPacket.type === "ack") {
+                    let switchOut = getInfoFromIp(routerObjectId, replyPacket.giaddr)[1];
+                    if (!switchOut) return;
+                    await switchProcessor(switchOut, routerObjectId, replyPacket);
+                }
+
+                return;
+            }
+
+        }
+
         if (!replyPacket) return;
         await routing(routerObjectId, replyPacket);
         return;
 
     }
 
-    //paquete a enrrutar
-
-    if (!isSameNetwork || availableIps.includes(packet.origin_ip)) await routing(routerObjectId, packet);
+    await routing(routerObjectId, packet);
 
 }
 

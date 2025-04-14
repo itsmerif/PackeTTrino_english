@@ -104,3 +104,11 @@ function dhcpServerConfig() {
     $button.setAttribute("onclick", "showDhcpSpecs(event)");
     return $button;
 }
+
+function dhcpRelayConfig() {
+    const $button = document.createElement("button");
+    $button.id = "dhcp-relay-config";
+    $button.innerHTML = "Configurar Relay DHCP";
+    $button.setAttribute("onclick", "showDhcpRelaySpecs(event)");
+    return $button;
+}

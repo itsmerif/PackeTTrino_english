@@ -67,20 +67,32 @@ function dhcp_server_menu() {
     
 }
 
-function showDhcpSpecs(event) { 
+function showDhcpSpecs(event) {
+
     event.stopPropagation();
+    
     const networkObject = event.target.closest(".item-dropped");
     const itemId = networkObject.id; //obtenemos el id del elemento
+    const isNotDhcpServer = !itemId.startsWith("dhcp-server-");
+    const $form = document.querySelector(".dhcp-form");
 
     if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
         icmpTryoutProcess(itemId);
         return;
     }
 
-    //obtenemos los atributos del servidor
+    //red básico
+
     const ip = networkObject.getAttribute("ip-enp0s3");
     const netmask = networkObject.getAttribute("netmask-enp0s3");
     const gateway = networkObject.getAttribute("data-gateway");
+
+    $form.querySelector("#ip-dhcp").value = ip;
+    $form.querySelector("#netmask-dhcp").value = netmask;
+    $form.querySelector("#gateway-dhcp").value = gateway;
+
+    //atributos de servidor
+
     const rangeStart = networkObject.getAttribute("data-range-start");
     const rangeEnd = networkObject.getAttribute("data-range-end");
     const offerGateway = networkObject.getAttribute("offer-gateway");
@@ -88,21 +100,25 @@ function showDhcpSpecs(event) {
     const offerDns = networkObject.getAttribute("offer-dns");
     const offerLeaseTime = networkObject.getAttribute("offer-lease-time");
 
-    //mostramos el formulario
-    document.querySelector(".dhcp-form #ip-dhcp").value = ip;
-    document.querySelector(".dhcp-form #netmask-dhcp").value = netmask;
-    document.querySelector(".dhcp-form #gateway-dhcp").value = gateway;
-    document.querySelector(".dhcp-form #range-start").value = rangeStart;
-    document.querySelector(".dhcp-form #range-end").value = rangeEnd;
+    $form.querySelector("#range-start").value = rangeStart;
+    $form.querySelector("#range-end").value = rangeEnd;
     document.getElementById("form-dhcp-item-id").innerHTML = itemId;
-    document.querySelector(".dhcp-form #offer-gateway").value = offerGateway;
-    document.querySelector(".dhcp-form #offer-netmask").value = offerNetmask;
-    document.querySelector(".dhcp-form #offer-dns").value = offerDns;
-    document.querySelector(".dhcp-form #offer-lease-time").value = offerLeaseTime;
+    $form.querySelector("#offer-gateway").value = offerGateway;
+    $form.querySelector("#offer-netmask").value = offerNetmask;
+    $form.querySelector("#offer-dns").value = offerDns;
+    $form.querySelector("#offer-lease-time").value = offerLeaseTime;
+
+    //si no es un servidor dhcp, bloqueamos la red basica
+
+    $form.querySelector("#ip-dhcp").disabled = isNotDhcpServer;
+    $form.querySelector("#netmask-dhcp").disabled = isNotDhcpServer;
+    $form.querySelector("#gateway-dhcp").disabled = isNotDhcpServer;
 
     //ocultamos y mostramos
+
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
     document.querySelector(".dhcp-form").style.display = "flex";
+
 }
 
 function saveDhcpSpecs(event) {

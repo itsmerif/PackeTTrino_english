@@ -27,27 +27,43 @@ function dhcp_agent_menu() {
 }
 
 function showDhcpRelaySpecs(event) {
+
     event.stopPropagation();
     const networkObject = event.target.closest(".item-dropped");
+    const itemId = networkObject.id; //obtenemos el id del elemento
+    const $form = document.querySelector(".dhcp-relay-form");
+    const isNotDhcpRelay = !itemId.startsWith("dhcp-relay-server-");
 
     if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
         icmpTryoutProcess(networkObject.id);
         return;
     }
-    
+
     //obtenemos los atributos del servidor
+
     const ip = networkObject.getAttribute("ip-enp0s3");
     const netmask = networkObject.getAttribute("netmask-enp0s3");
     const gateway = networkObject.getAttribute("data-gateway");
     const mainServer = networkObject.getAttribute("data-main-server");
+
     //mostramos el formulario
-    document.querySelector(".dhcp-relay-form #ip-relay").value = ip;
-    document.querySelector(".dhcp-relay-form #netmask-relay").value = netmask;
-    document.querySelector(".dhcp-relay-form #gateway-relay").value = gateway;
-    document.querySelector(".dhcp-relay-form #main-server").value = mainServer;
+
+    $form.querySelector("#ip-relay").value = ip;
+    $form.querySelector("#netmask-relay").value = netmask;
+    $form.querySelector("#gateway-relay").value = gateway;
+    $form.querySelector("#main-server").value = mainServer;
     document.getElementById("form-dhcp-relay-item-id").innerHTML = networkObject.id;
-    document.querySelector(".dhcp-relay-form").style.display = "flex";
+
+    //si no es un servidor dhcp, bloqueamos la red basica
+
+    $form.querySelector("#ip-relay").disabled = isNotDhcpRelay;
+    $form.querySelector("#netmask-relay").disabled = isNotDhcpRelay;
+    $form.querySelector("#gateway-relay").disabled = isNotDhcpRelay;
+
+    //ocultamos y mostramos
+
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
+    $form.style.display = "flex";
 }
 
 function saveDhcpRelaySpecs(event) {
