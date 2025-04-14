@@ -17,7 +17,7 @@ function installDhcpd(networkObjectId) {
     attr("offer-dns", "");
     attr("offer-lease-time", "");
     attr("data-interval", "false");
-    addOption(dhcpOptionButton());
+    addOption(dhcpOptionButton(), dhcpServerConfig());
 
     terminalMessage("DHCP Server instalado correctamente.");
 }
@@ -34,7 +34,7 @@ function uninstallDhcpd(networkObjectId) {
     const remOption = (...options) => options.forEach(option => $advancedOptions.querySelector("#" + option).remove());
 
     rattr("dhcpd", "data-range-start", "data-range-end", "offer-gateway", "offer-netmask", "offer-dns", "offer-lease-time", "data-interval");
-    remOption("dhcp-option");
+    remOption("dhcp-option", "dhcp-server-config");
     remove($dhcpTable);
 
     terminalMessage("DHCP Server desinstalado correctamente.");

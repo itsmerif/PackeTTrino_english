@@ -94,3 +94,13 @@ function dnsOptionButton() {
     $button.setAttribute("onclick", "showObjectModalTable(event, '.dns-table')");
     return $button;
 }
+
+//funciones para acceder a configuraciones instaladas
+
+function dhcpServerConfig() {
+    const $button = document.createElement("button");
+    $button.id = "dhcp-server-config";
+    $button.innerHTML = "Configurar Servidor DHCP";
+    $button.setAttribute("onclick", "showDhcpSpecs(event)");
+    return $button;
+}
