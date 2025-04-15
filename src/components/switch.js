@@ -40,7 +40,7 @@ function SwitchObject(x, y) {
 
     $switchObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
     $switchObject.setAttribute("ondrop", "switchConn(event)");
-    $switchObject.setAttribute("onclick", "showMacTable(event)");
+    $switchObject.setAttribute("onclick", "showObjectModalTable(event, '.mac-table')");
     $switchObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
     itemIndex++;
 
@@ -83,13 +83,6 @@ function switchConn(event) {
         }
 
     }
-}
-
-function showMacTable(event) {
-    event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const table = networkObject.querySelector(".mac-table");
-    table.style.display = "flex";
 }
 
 function closeMacTable(event) {
