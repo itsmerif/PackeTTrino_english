@@ -10,8 +10,8 @@ function DynamicRoutingMenu() {
             <h1> Herramienta de Enrutamiento Automático </h1>
 
             <div class="default-network-routing-container">
-                <p>Enrutar por defecto a la red (Opcional):</p>
-                <input class="default-network-routing" type="text" placeholder="8.0.0.0/8">
+                <p>Enrutar por defecto a una red (Opcional):</p>
+                <input class="default-network-routing" type="text" placeholder="Por ejemplo, 8.0.0.0/8">
             </div>
 
             <p>⚠︎ ¿Estás seguro de que quieres activar la funcionalidad de Enrutamiento Automático?</p>
