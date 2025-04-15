@@ -99,7 +99,7 @@
 }
 
 .btn-modern-blue.dark {
-    background-color: #2A6BAC;
+    background-color: var(--darkblue);
     color: white;
     padding: 12px 24px;
     border: none;
