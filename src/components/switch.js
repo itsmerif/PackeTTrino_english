@@ -182,7 +182,7 @@ function desClusterizeSwitch(event) {
     $advancedOptions.querySelector(".clusterize-button").innerHTML = "Clusterizar";
     $advancedOptions.querySelector(".clusterize-button").setAttribute("onclick", "clusterizeSwitch(event)");
     $switchObject.setAttribute("clusterized", "false");
-    $icon.src = "./assets/board/switch.png";
+    $icon.src = "./assets/board/switch.svg";
     $advancedOptions.style.display = "none";
 }
 
