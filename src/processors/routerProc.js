@@ -22,16 +22,18 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
         let replyPacket;
 
         if (packet.protocol === "arp" && packet.type === "request") {
+            if (!availableIps.includes(packet.destination_ip)) return;
             addARPEntry(routerObjectId, packet.origin_ip, packet.origin_mac);
             replyPacket = new ArpReply(routerObjectIp, packet.origin_ip, routerObjectMac, packet.origin_mac);
         }
 
         if (packet.protocol === "icmp" && packet.type === "request") {
+            if (!availableIps.includes(packet.destination_ip)) return;
             replyPacket = new IcmpEchoReply(routerObjectIp, packet.origin_ip, routerObjectMac, packet.origin_mac);
         }
 
         if (packet.protocol === "arp" && packet.type === "reply") {
-
+            if (!availableIps.includes(packet.destination_ip)) return;
             arpFlag = true;
             addARPEntry(routerObjectId, packet.origin_ip, packet.origin_mac);
             let bufferPacket = buffer[routerObjectId];
@@ -45,11 +47,13 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
         }
 
         if (packet.protocol === "icmp" && packet.type === "reply") {
+            if (!availableIps.includes(packet.destination_ip)) return;
             icmpFlag = true;
             return;
         }
 
         if (packet.protocol === "dns" && packet.type === "request" && activeServices.includes("named")) {
+            if (!availableIps.includes(packet.destination_ip)) return;
             replyPacket = await named_service(routerObjectId, packet);
         }
 
@@ -96,7 +100,7 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
 
 async function routing(routerObjectId, packet) {
 
-    if (packet.destination_ip === "255.255.255.255") return; //no enrutamos broadcast
+    if (packet.destination_ip === "255.255.255.255" || packet.destination_mac === "ff:ff:ff:ff:ff:ff") return; //no enrutamos broadcast
 
     const $routerObject = document.getElementById(routerObjectId);
     const $routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
