@@ -3,7 +3,6 @@ function clearAllRoutingTables() {
     for (let i = 0; i < $routerElements.length - 1; i++) {
         routingTableRestore($routerElements[i].id);
     }
-    console.log("cleared");
 }
 
 function getNodes() {
@@ -325,7 +324,7 @@ function groupByDefaultRules(matrix) {
     let newMatrix = [];
     let nextHopDefault;
 
-    if (defaultNetwork === "0.0.0.0") { //agrupamos por mayor numero de reglas para cada siguiente salto
+    if (defaultNetwork === "") { //agrupamos por mayor numero de reglas para cada siguiente salto
         
         for (let i = 0; i < matrix.length; i++) {
             let nextHop = matrix[i][2];
@@ -387,6 +386,7 @@ function groupByDefaultRules(matrix) {
         }
 
         newMatrix[newMatrix.length] = ["0.0.0.0", "0.0.0.0", nextHopDefault, defaultGateway, defaultInterface];
+
         return newMatrix;
 
     }
@@ -399,6 +399,7 @@ function dynamicRouting() {
     const $routers = document.querySelectorAll(".router");
 
     for (let i = 0; i < $routers.length - 1; i++) {
+        removeRemoteRules($routers[i].id);
         autoInputRules($routers[i].id);
     }
 

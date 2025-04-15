@@ -4,6 +4,8 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
     const $table = $networkObject.querySelector(".routing-table").querySelector("table");
     const $defaultRow = $table.querySelector("#default-route");
 
+    if (!destination || !netmask || !gateway || !interface || !nexthop) return;
+
     destination = destination.trim();
     netmask = netmask.trim();
     gateway = gateway.trim();
@@ -149,28 +151,6 @@ function routingTableRestore(routerObjectid) {
 
 }
 
-function removeRemotesRules(routerObjectId) {
-
-    const $routerObject = document.getElementById(routerObjectId);
-    const routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
-    const rows = routingTable.querySelectorAll("tr");
-
-    //restauramos la regla por defecto
-
-    let defaultRule = rows[4];
-    let cells = defaultRule.querySelectorAll("td");
-    cells[0].innerHTML = "0.0.0.0";
-    cells[1].innerHTML = "0.0.0.0";
-    cells[2].innerHTML = "";
-    cells[3].innerHTML = "";
-    cells[4].innerHTML = "";
-
-    Array.from(rows).slice(5).forEach(row => row.remove());
-
-    terminalMessage("El enrutamiento ha sido restaurado correctamente.");
-
-}
-
 function getRoutingRule(routerObjectId, destination, netmask) {
     const $networkObject = document.getElementById(routerObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
@@ -205,4 +185,25 @@ function fromRouterInterface(routerObjectId, interface, attribute) {
     }
 
     return response;
+}
+
+function removeRemoteRules($routerObjectId) {
+
+    const $networkObject = document.getElementById($routerObjectId);
+    const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
+    const $rules = $routingTable.querySelectorAll("tr");
+
+    $rules.forEach($rule => {
+        const $cells = $rule.querySelectorAll("td");
+        if ($cells.length > 1 && $cells[4].innerHTML !== "0.0.0.0" && $cells[0].innerHTML !== "0.0.0.0" ) $rule.remove();
+    });
+
+    const $defaultRow = $routingTable.querySelector("#default-route");
+    let cells = $defaultRow.querySelectorAll("td");
+    cells[0].innerHTML = "0.0.0.0";
+    cells[1].innerHTML = "0.0.0.0";
+    cells[2].innerHTML = "";
+    cells[3].innerHTML = "";
+    cells[4].innerHTML = "";
+
 }

@@ -1,6 +1,6 @@
 async function movePacket(x1, y1, x2, y2, type) {
     return new Promise(resolve => {
-        const svg = document.getElementById("svg-board");
+        const $svg = document.getElementById("svg-board");
         const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
         x1 = parseInt(x1.replace("px", ""));
         y1 = parseInt(y1.replace("px", ""));
@@ -11,7 +11,7 @@ async function movePacket(x1, y1, x2, y2, type) {
         img.setAttribute("height", "50");
         img.setAttribute("x", x1);
         img.setAttribute("y", y1);
-        svg.appendChild(img);
+        $svg.appendChild(img);
 
         let startTime;
 
@@ -26,7 +26,7 @@ async function movePacket(x1, y1, x2, y2, type) {
             if (progress < 1) {
                 requestAnimationFrame(animateMove);
             } else {
-                svg.removeChild(img);
+                $svg.removeChild(img);
                 resolve();
             }
         }

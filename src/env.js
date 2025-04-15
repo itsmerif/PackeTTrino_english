@@ -25,6 +25,6 @@ let traceFlag = false;
 let nodes = {};
 let nodesNetmask = {};
 let nodesIp = {};
-let defaultNetwork = "0.0.0.0";
+let defaultNetwork = "";
 let icmpTryoutToggle = false;
 let icmpTryoutObject =  "";
