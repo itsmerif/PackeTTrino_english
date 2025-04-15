@@ -24,7 +24,7 @@ function dns_server_menu() {
         <input class="btn-toggle" type="checkbox" id="dns-recursive" name="dns-recursive">
         </div>
 
-        <button class="btn-modern-green" type="submit">Guardar</button>
+        <button class="btn-modern-blue dark" type="submit">Guardar</button>
     `;
 
     $menu.addEventListener("submit", saveDnsSpecs);
