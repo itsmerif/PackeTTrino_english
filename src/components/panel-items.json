@@ -58,5 +58,23 @@
         "image": "./assets/panel/settings.svg",
         "draggable": false,
         "size": "100%"
+    },
+    {
+        "name": "upload",
+        "image": "./assets/panel/upload.svg",
+        "draggable": false,
+        "size": "100%"
+    },
+    {
+        "name": "load",
+        "image": "./assets/panel/load.svg",
+        "draggable": false,
+        "size": "100%"
+    },
+    {
+        "name": "download",
+        "image": "./assets/panel/download.svg",
+        "draggable": false,
+        "size": "100%"
     }
 ]

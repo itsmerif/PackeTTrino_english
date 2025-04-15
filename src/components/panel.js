@@ -4,17 +4,13 @@ function itemPanel() {
     $panel.id = "item-panel";
 
     $panel.innerHTML = `
-            <div class="file-options">
-                <button onclick="downloadState()"> Descargar Esquema </button>
-                <input type="file" id="fileInput" accept=".html" data-content="Seleccionar archivo">
-                <button onclick="loadState()"> Cargar Esquema </button>
-            </div>
+            <input type="file" id="fileInput" accept=".html" style="display: none;">
 
             <div class="item-panel-elements">
                 <article class="item dynrouting" draggable="false">
-                <img src="./assets/panel/dynrouter.png" alt="dynrouting" draggable="false" style="width: 100%; height: 100%;">
-                <div class="pulse"></div>
-                <div class="radar-line"></div>
+                    <img src="./assets/panel/dynrouter.png" alt="dynrouting" draggable="false" style="width: 100%; height: 100%;">
+                    <div class="pulse"></div>
+                    <div class="radar-line"></div>
                 </article>
             </div>
     `;
@@ -34,10 +30,13 @@ function itemPanel() {
             container.appendChild(itemElement);
         });
 
-        $panel.querySelector(".ping").addEventListener("click", icmpTryoutStart); //añadimos eventos de clic al item ping del panel
-        $panel.querySelector(".dynrouting").addEventListener("click", () => bodyComponent.render(DynamicRoutingMenu())); //añadimos eventos de doble clic al item ping del panel
-        $panel.querySelector(".settings").addEventListener("click", generalOptionsHandler); //añadimos eventos de doble clic al item ping del panel
-        $panel.querySelector(".traffic").addEventListener("click", showPacketTraffic); //añadimos eventos de clic al item de la tabla de tráfico*/
+        $panel.querySelector(".ping").addEventListener("click", icmpTryoutStart);
+        $panel.querySelector(".dynrouting").addEventListener("click", () => bodyComponent.render(DynamicRoutingMenu()));
+        $panel.querySelector(".settings").addEventListener("click", generalOptionsHandler);
+        $panel.querySelector(".traffic").addEventListener("click", showPacketTraffic);
+        $panel.querySelector(".upload").addEventListener("click", () => $panel.querySelector("#fileInput").click());
+        $panel.querySelector(".load").addEventListener("click", loadState);
+        $panel.querySelector(".download").addEventListener("click", downloadState);
 
     });
 
