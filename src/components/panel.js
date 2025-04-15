@@ -35,7 +35,7 @@ function itemPanel() {
         });
 
         $panel.querySelector(".ping").addEventListener("click", icmpTryoutStart); //añadimos eventos de clic al item ping del panel
-        $panel.querySelector(".dynrouting").addEventListener("click", showDynamicRoutingModal); //añadimos eventos de doble clic al item ping del panel
+        $panel.querySelector(".dynrouting").addEventListener("click", () => bodyComponent.render(DynamicRoutingMenu())); //añadimos eventos de doble clic al item ping del panel
         $panel.querySelector(".settings").addEventListener("click", generalOptionsHandler); //añadimos eventos de doble clic al item ping del panel
         $panel.querySelector(".traffic").addEventListener("click", showPacketTraffic); //añadimos eventos de clic al item de la tabla de tráfico*/
 

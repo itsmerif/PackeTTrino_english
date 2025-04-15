@@ -3,15 +3,15 @@ function popupMessage(message) {
     closeAllModals();
 
     let $popup = document.createElement("div");
-
+    
     $popup.innerHTML = `
         <div class="popup-content">
             <p>${message}</p>
-            <button class="btn-blue">Ok</button>
+            <button class="btn-modern-red" style="padding: 5px;" > Cerrar </button>
         </div>
     `;
 
-    $popup.querySelector(".btn-blue").addEventListener("click", closePopup);
+    $popup.querySelector("button").addEventListener("click", closePopup);
 
     return $popup;
     

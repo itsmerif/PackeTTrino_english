@@ -121,6 +121,10 @@
         transform: translate(0px, -3px);
         box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
     }
+
+    &.no-animation {
+        animation: none;
+    }
 }
 
 .btn-modern-yellow {
@@ -235,6 +239,7 @@
 }
 
 .btn-modern-red {
+
     background-color: #ff0000d5;
     color: white;
     padding: 12px 24px;
@@ -265,4 +270,9 @@
         transform: translate(0px, -3px);
         box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
     }
+
+    &.no-animation {
+        animation: none;
+    }
+
 }
