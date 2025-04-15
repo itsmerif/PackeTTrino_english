@@ -477,7 +477,7 @@ function setRouterIps($router, ip1, ip2 = "", ip3 = "") {
     });
 
 }
-
+/**ESTA FUNCION DEVUELVA LAS INTERFACES DE UN DISPOSITIVO COMO ARRAY [INTERFAZ1, INTERFAZ2, ...] */
 function getInterfaces(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);

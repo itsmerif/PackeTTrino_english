@@ -1,5 +1,5 @@
 function TextObject(x, y) {
-    const $board = document.querySelector(".board");
+
     const $textObject = document.createElement("article");
     const $input = document.createElement("input");
     const $advancedOptions = document.createElement("div");
@@ -31,8 +31,9 @@ function TextObject(x, y) {
 
     $textObject.appendChild($advancedOptions);
     $textObject.appendChild($input);
-    $board.appendChild($textObject);
     itemIndex++;
+
+    return $textObject;
 }
 
 function autoExtendText() {

@@ -15,20 +15,26 @@ function getNodes() {
     const $routerElements = document.querySelectorAll('.router');
 
     for (let i = 0; i < $routerElements.length - 1; i++) {
+
         const $router = $routerElements[i];
-        const routingTable = $router.querySelector('.routing-table').querySelector('table');
-        const routingRules = routingTable.querySelectorAll('tr');
-        for (let j = 1; j < 4; j++) {
-            const cells = routingRules[j].querySelectorAll('td');
+        const interfaces = getInterfaces($router.id);
+
+        interfaces.forEach((interface) => {
+
             if (!nodes[$router.id]) nodes[$router.id] = [];
             if (!nodesIp[$router.id]) nodesIp[$router.id] = [];
             if (!nodesNetmask[$router.id]) nodesNetmask[$router.id] = [];
-            if (cells[0].innerText !== '') {
-                nodes[$router.id].push(cells[0].innerText); //guardamos los nodos
-                nodesNetmask[$router.id].push(cells[1].innerText); //guardamos las netmasks
-                nodesIp[$router.id].push(cells[2].innerText); //guardamos las IPs
-            }
-        }
+
+            let ip = $router.getAttribute("ip-" + interface);
+            let netmask = $router.getAttribute("netmask-" + interface);
+            let network = getNetwork(ip, netmask);
+
+            nodes[$router.id].push(network);
+            nodesIp[$router.id].push(ip);
+            nodesNetmask[$router.id].push(netmask);
+
+        });
+
     }
 
 }
@@ -45,6 +51,7 @@ function getAllNetworks() {
 }
 
 function findShortestPath(startNetwork, endNetwork) {
+
     getNodes();
 
     const networkTopology = nodes;
@@ -108,10 +115,14 @@ function findShortestPath(startNetwork, endNetwork) {
         current = previous[current];
     }
 
+    //return pathNodes;
+    
+    
     // Convertir el camino de nodos a IPs
     const pathIPs = mapPathToIPs(pathNodes);
 
     return pathIPs;
+
 }
 
 function getRoutersForNetwork(network) {
@@ -152,6 +163,7 @@ function mapPathToIPs(pathNodes) {
 }
 
 function buildGraphFromNetwork(networkTopology) {
+
     const graph = {};
     const routerMap = {}; // Para mapear redes a sus routers
 
@@ -270,6 +282,7 @@ function getRoutes(routerId) {
     }
 
     return groupByDefaultRules(removeDuplicateRows(matrix));
+    
 }
 
 function removeDuplicateRows(matrix) {
@@ -299,8 +312,9 @@ function autoInputRules($routerObjectId) {
         let destination = matrix[i][0];
         let netmask = matrix[i][1];
         let nexthop = matrix[i][2];
+        let gateway = matrix[i][3];
         let interface = matrix[i][4];
-        addRoutingEntry($routerObjectId, destination, netmask, interface, nexthop);
+        addRoutingEntry($routerObjectId, destination, netmask, gateway, interface, nexthop);
     }
 
 }
@@ -312,8 +326,6 @@ function groupByDefaultRules(matrix) {
     let nextHopDefault;
 
     if (defaultNetwork === "0.0.0.0") { //agrupamos por mayor numero de reglas para cada siguiente salto
-
-        console.log("agrupando por reglas por defecto");
         
         for (let i = 0; i < matrix.length; i++) {
             let nextHop = matrix[i][2];
