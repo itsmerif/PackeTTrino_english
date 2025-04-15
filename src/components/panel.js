@@ -30,6 +30,12 @@ function itemPanel() {
             container.appendChild(itemElement);
         });
 
+        $panel.querySelector("#fileInput").addEventListener("change", (event) => { 
+            if (event.target.files.length > 0) $panel.querySelector(".load").classList.add("file-loaded");
+            let fileName = event.target.files[0].name;
+            bodyComponent.render(popupMessage(`Archivo <em>${fileName}</em> cargado con éxito. Para mostrar el contenido, haz click en:`, "/assets/panel/load.svg"));
+        });
+
         $panel.querySelector(".ping").addEventListener("click", icmpTryoutStart);
         $panel.querySelector(".dynrouting").addEventListener("click", () => bodyComponent.render(DynamicRoutingMenu()));
         $panel.querySelector(".settings").addEventListener("click", generalOptionsHandler);
@@ -63,7 +69,7 @@ function loadState() {
     const archivoInput = document.getElementById("fileInput");
 
     if (archivoInput.files.length === 0) {
-        alert("Por favor, selecciona un archivo.");
+        boardComponent.render(popupMessage("Por favor, sube un archivo primero."));
         return;
     }
 
