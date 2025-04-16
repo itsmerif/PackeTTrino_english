@@ -3,6 +3,7 @@ async function dhclient_service(networkObjectId, packet) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const isDhclientOn = $networkObject.getAttribute("dhclient") === "true";
+    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId;
 
     if (!isDhclientOn) return;
 
@@ -16,7 +17,7 @@ async function dhclient_service(networkObjectId, packet) {
 
         dhcpDiscoverFlag[networkObjectId] = true;
 
-        terminalMessage(`DHCPOFFER of ${packet.yiaddr} from ${packet.siaddr}`);
+        if (terminalPrint) terminalMessage(`DHCPOFFER of ${packet.yiaddr} from ${packet.siaddr}`);
 
         dhcpOfferBuffer[networkObjectId] = true;
 
@@ -32,7 +33,7 @@ async function dhclient_service(networkObjectId, packet) {
         newPacket.giaddr = packet.giaddr;
         newPacket.chaddr = packet.chaddr;
 
-        terminalMessage(`DHCPREQUEST for ${packet.yiaddr} on enp0s3 to ${packet.siaddr} port 67`);
+        if (terminalPrint) terminalMessage(`DHCPREQUEST for ${packet.yiaddr} on enp0s3 to ${packet.siaddr} port 67`);
 
         return newPacket;
 
@@ -42,7 +43,7 @@ async function dhclient_service(networkObjectId, packet) {
 
         if (packet.chaddr !== networkObjectMac) return;
 
-        terminalMessage(`DHCPACK of ${packet.yiaddr} from ${packet.siaddr}`);
+        if (terminalPrint) terminalMessage(`DHCPACK of ${packet.yiaddr} from ${packet.siaddr}`);
 
         dhcpRequestFlag[networkObjectId] = true;
 
@@ -52,7 +53,7 @@ async function dhclient_service(networkObjectId, packet) {
         
         updateClientLeaseTimer(networkObjectId);
         
-        terminalMessage(`Bound to ${packet.yiaddr} -- renewal in ${packet.leasetime} seconds.`);
+        if (terminalPrint) terminalMessage(`Bound to ${packet.yiaddr} -- renewal in ${packet.leasetime} seconds.`);
 
     }
 
@@ -147,10 +148,12 @@ async function dhcpReleaseGenerator(networkObjectId, switchId) {
     const isDHCPon = $networkObject.getAttribute("dhclient");
     const dhcpServerIp = $networkObject.getAttribute("data-dhcp-server");
     const isSameNetwork = getNetwork(networkObjectIp, neworkObjectNetmask) === getNetwork(dhcpServerIp, neworkObjectNetmask);
+    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId;
+
     let packet = new dhcpRelease(networkObjectIp, dhcpServerIp, networkObjectMac, "");
 
     if (isDHCPon === "false" || !dhcpServerIp) {
-        terminalMessage(networkObjectId + " : No se ha definido el servidor DHCP");
+        if (terminalPrint) terminalMessage(networkObjectId + " : No se ha definido el servidor DHCP");
         return;
     }
 

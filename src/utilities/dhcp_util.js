@@ -37,21 +37,23 @@ async function command_Dhcp(dataId, args) {
 
 async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
 
-
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
+    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId;
 
     if (networkObjectIp !== "") {
-        terminalMessage("Error: Este equipo ya tiene una IP asignada.");
+        if (terminalPrint) terminalMessage("Error: Este equipo ya tiene una IP asignada.");
         return;
     };
 
 
-    terminalMessage(`Listening on LPF/enp0s3/${networkObjectMac}`);
-    terminalMessage(`Sending on   LPF/enp0s3/${networkObjectMac}`);
-    terminalMessage("Sending on   Socket/fallback");
-    terminalMessage(`DHCPDISCOVER on enp0s3 to 255.255.255.255 port 67 interval 6`);
+    if (terminalPrint) {
+        terminalMessage(`Listening on LPF/enp0s3/${networkObjectMac}`);
+        terminalMessage(`Sending on   LPF/enp0s3/${networkObjectMac}`);
+        terminalMessage("Sending on   Socket/fallback");
+        terminalMessage(`DHCPDISCOVER on enp0s3 to 255.255.255.255 port 67 interval 6`);
+    }
 
     try {
 
@@ -65,14 +67,14 @@ async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
         if (visualToggle) await maximizeTerminal();
 
         if (dhcpDiscoverFlag[networkObjectId] === false || dhcpRequestFlag[networkObjectId] === false) {
-            terminalMessage("Error: No se pudo encontrar un servidor DHCP.");
+            if (terminalPrint) terminalMessage("Error: No se pudo encontrar un servidor DHCP.");
             return;
         }
 
 
     } catch (error) {
 
-        terminalMessage("Error: " + error);
+        if (terminalPrint) terminalMessage("Error: " + error);
         console.log(error);
         return;
 
@@ -86,9 +88,10 @@ async function dhcpRenewHandler(networkObjectId, switchObjectId, renewPhase = "T
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
+    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId;
 
     if (!networkObjectIp || !networkObjectNetmask || !networkObjectDhcpServer) {
-        terminalMessage("Error en la configuración de red.");
+        if (terminalPrint) terminalMessage("Error en la configuración de red.");
         return;
     }
 
@@ -99,15 +102,15 @@ async function dhcpRenewHandler(networkObjectId, switchObjectId, renewPhase = "T
     try {
         await dhcpRequestGenerator(networkObjectId, switchObjectId, renewPhase);
     } catch (error) {
-        terminalMessage("Error: " + error);
+        if (terminalPrint) terminalMessage("Error: " + error);
     }
 
     if (dhcpRequestFlag[networkObjectId] === false) {
-        terminalMessage("Error: No se pudo renovar la IP.");
+        if (terminalPrint) terminalMessage("Error: No se pudo renovar la IP.");
         return;
     }
 
-    terminalMessage("IP renovada correctamente.");
+    if (terminalPrint) terminalMessage("IP renovada correctamente.");
 
     if (visualToggle) await maximizeTerminal();
 
@@ -122,16 +125,20 @@ async function dhcpReleaseHandler(networkObjectId, switchObjectId) {
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
+    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId;
 
     if (!networkObjectIp || !networkObjectNetmask || !networkObjectDhcpServer) {
-        terminalMessage("Error en la configuración de red.");
+        if (terminalPrint) terminalMessage("Error en la configuración de red.");
         return;
     }
 
-    terminalMessage(`Listening on LPF/enp0s3/${networkObjectMac}`);
-    terminalMessage(`Sending on   LPF/enp0s3/${networkObjectMac}`);
-    terminalMessage("Sending on   Socket/fallback");
-    terminalMessage(`DHCPRELEASE of ${networkObjectIp} on enp0s3 to ${networkObjectDhcpServer} port 67`);
+    if (terminalPrint) {
+        terminalMessage(`Listening on LPF/enp0s3/${networkObjectMac}`);
+        terminalMessage(`Sending on   LPF/enp0s3/${networkObjectMac}`);
+        terminalMessage("Sending on   Socket/fallback");
+        terminalMessage(`DHCPRELEASE of ${networkObjectIp} on enp0s3 to ${networkObjectDhcpServer} port 67`);
+    }
+    
     await dhcpReleaseGenerator(networkObjectId, switchObjectId);
     return;
 }
