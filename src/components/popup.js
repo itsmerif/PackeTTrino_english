@@ -1,10 +1,12 @@
 function popupMessage(message, imgsrc = "") {
 
+    if (document.querySelectorAll(".popup-content").length > 0) return;
+
     closeAllModals();
 
     let $popup = document.createElement("div");
     
-    $popup.classList.add("popup-content");
+    $popup.classList.add("popup-content", "message");
     
     let imgFragment = (imgsrc !== "") ? `<img src="${imgsrc}" alt="icon">` : "";
 

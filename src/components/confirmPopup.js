@@ -1,8 +1,10 @@
 function confirmPopup(message, callback)  {
 
+    if (document.querySelectorAll(".popup-content").length > 0) return;
+
     const $popup = document.createElement("div");
 
-    $popup.classList.add("popup-content");
+    $popup.classList.add("popup-content", "confirm");
 
     $popup.innerHTML = `
         <p>${message}</p>
