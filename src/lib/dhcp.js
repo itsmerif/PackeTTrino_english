@@ -140,6 +140,7 @@ function updateServerLeaseTimes(serverObjectId) {
 function startLeaseTimers() {
 
     const $dhcpServers = Array.from(document.querySelectorAll(".item-dropped")).filter($networkObject => $networkObject.getAttribute("dhcpd") !== null);
+    const $dhcpClients = Array.from(document.querySelectorAll(".item-dropped")).filter($networkObject => $networkObject.getAttribute("dhclient") !== null);
 
     $dhcpServers.forEach(server => {
         const serverObjectId = server.id;
@@ -147,6 +148,14 @@ function startLeaseTimers() {
         const leases = table.querySelectorAll("tr");
         if (leases.length > 1 && !serverLeaseTimers[serverObjectId]) {
             serverLeaseTimers[serverObjectId] = setInterval(() => updateServerLeaseTimes(serverObjectId), 1000);
+        }
+    });
+
+    $dhcpClients.forEach(client => {
+        const clientObjectId = client.id;
+        const leaseTime = client.getAttribute("data-dhcp-lease-time");
+        if (leaseTime !== "" && !clientLeaseTimers[clientObjectId]) {
+            clientLeaseTimers[clientObjectId] = setInterval( async () => { await reducePcLeaseTime(clientObjectId)}, 1000 );
         }
     });
 
@@ -209,7 +218,7 @@ function setDhcpInfo(networkObjectId, packet) {
     $networkObject.setAttribute("data-dhcp-lease-time", newLeaseTime);
 
     //si tenemos el menu grafico abierto, se actualizan los campos
-    if ($pcForm.style.display === "flex") {
+    if ($pcForm.style.display === "flex" && $pcForm.querySelector("#form-item-id").innerHTML === networkObjectId) {
         $pcForm.querySelector("#ip").value = newIp;
         $pcForm.querySelector("#netmask").value = newNetmask;
         $pcForm.querySelector("#gateway").value = newGateway;
@@ -290,7 +299,7 @@ function deleteDhcpInfo(networkObjectId) {
     $networkObject.setAttribute("data-dhcp-flag-t1", "false");
     $networkObject.setAttribute("data-dhcp-flag-t2", "false");
 
-    if ($pcForm.style.display === "flex") {
+    if ($pcForm.style.display === "flex" && $pcForm.querySelector("#form-item-id").innerHTML === networkObjectId) {
         $pcForm.querySelector("#ip").value = "";
         $pcForm.querySelector("#netmask").value = "";
         $pcForm.querySelector("#gateway").value = "";
