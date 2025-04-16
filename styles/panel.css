@@ -44,6 +44,7 @@
 .item:hover {
     cursor: pointer;
     transform: translateY(-2px);
+    filter: brightness(1.1)
 }
 
 .board-cleaner {
