@@ -38,34 +38,27 @@ async function itemPanel() {
         $container.appendChild(itemElement);
     });
 
-    $panel.querySelector("#fileInput").addEventListener("change", fileUploadHandler);
+    $panel.querySelector("#fileInput").addEventListener("change", fileInputChangeHandler);
     $panel.querySelector(".ping").addEventListener("click", icmpTryoutStart);
     $panel.querySelector(".dynrouting").addEventListener("click", () => bodyComponent.render(DynamicRoutingMenu()));
     $panel.querySelector(".settings").addEventListener("click", generalOptionsHandler);
     $panel.querySelector(".traffic").addEventListener("click", showPacketTraffic);
     $panel.querySelector(".upload").addEventListener("click", () => $panel.querySelector("#fileInput").click());
-    $panel.querySelector(".load").addEventListener("click", loadState);
+    $panel.querySelector(".load").addEventListener("click", fileInputLoadHandler);
     $panel.querySelector(".download").addEventListener("click", downloadState);
 
     return $panel;
 
 }
 
-function downloadState() {
-    const elemento = document.querySelector(".board");
-    const contenidoHTML = elemento.innerHTML;
-    const blob = new Blob([contenidoHTML], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const enlace = document.createElement("a");
-    enlace.href = url;
-    enlace.download = "contenido.html";
-    document.body.appendChild(enlace);
-    enlace.click();
-    document.body.removeChild(enlace);
-    URL.revokeObjectURL(url);
+function fileInputChangeHandler(event) {
+    const $panel = document.querySelector("#item-panel");
+    if (event.target.files.length > 0) $panel.querySelector(".load").classList.add("file-loaded");
+    let fileName = event.target.files[0].name;
+    bodyComponent.render(popupMessage(`Archivo <em>${fileName}</em> cargado con éxito. Para mostrar el contenido, haz click en:`, "/assets/panel/load.svg"));
 }
 
-function loadState() {
+function fileInputLoadHandler() {
 
     const archivoInput = document.getElementById("fileInput");
 
@@ -74,51 +67,9 @@ function loadState() {
         return;
     }
 
-    const archivo = archivoInput.files[0];
+    const fileName = archivoInput.files[0].name;
 
-    const lector = new FileReader();
-
-    lector.onload = function (event) {
-        const contenido = event.target.result;
-        document.querySelector(".board").innerHTML = contenido;
-        setNewIndex();
-        setTextContents();
-        startLeaseTimers();
-    };
-
-    lector.readAsText(archivo);
-
-    function setTextContents() {
-
-        const itemsText = document.querySelectorAll(".text-annotation");
-
-        for (let i = 0; i < itemsText.length; i++) {
-            let text = itemsText[i].getAttribute("data-text");
-            let input = itemsText[i].querySelector("input");
-            input.value = text;
-        }
-    }
-
-}
-
-function setNewIndex() {
-    const itemsDropped = document.querySelectorAll(".item-dropped");
-    const itemsText = document.querySelectorAll(".text-annotation");
-    let indexes = [];
-
-    itemsDropped.forEach(item => {
-        let itemid = item.id;
-        let itemindex = parseInt(itemid.split("-")[1]);
-        if (!isNaN(itemindex)) indexes.push(itemindex);
-    });
-
-    itemsText.forEach(item => {
-        let itemid = item.id;
-        let itemindex = parseInt(itemid.split("-")[1]);
-        if (!isNaN(itemindex)) indexes.push(itemindex);
-    });
-
-    itemIndex = (indexes.length > 0) ? Math.max(...indexes) + 1 : 1;
+    bodyComponent.render(confirmPopup(`¿Deseas cargar el archivo ${fileName}?`, loadState));
 
 }
 
@@ -173,9 +124,66 @@ function icmpTryoutStart() {
 
 }
 
-function fileUploadHandler(event) {
-    const $panel = document.querySelector("#item-panel");
-    if (event.target.files.length > 0) $panel.querySelector(".load").classList.add("file-loaded");
-    let fileName = event.target.files[0].name;
-    bodyComponent.render(popupMessage(`Archivo <em>${fileName}</em> cargado con éxito. Para mostrar el contenido, haz click en:`, "/assets/panel/load.svg"));
+function downloadState() {
+    const elemento = document.querySelector(".board");
+    const contenidoHTML = elemento.innerHTML;
+    const blob = new Blob([contenidoHTML], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const enlace = document.createElement("a");
+    enlace.href = url;
+    enlace.download = "contenido.html";
+    document.body.appendChild(enlace);
+    enlace.click();
+    document.body.removeChild(enlace);
+    URL.revokeObjectURL(url);
+}
+
+function loadState() {
+
+    const archivoInput = document.getElementById("fileInput");
+    const archivo = archivoInput.files[0];
+    const lector = new FileReader();
+
+    lector.onload = function (event) {
+        const contenido = event.target.result;
+        document.querySelector(".board").innerHTML = contenido;
+        setNewIndex();
+        setTextContents();
+        startLeaseTimers();
+    };
+
+    lector.readAsText(archivo);
+
+    function setTextContents() {
+
+        const itemsText = document.querySelectorAll(".text-annotation");
+
+        for (let i = 0; i < itemsText.length; i++) {
+            let text = itemsText[i].getAttribute("data-text");
+            let input = itemsText[i].querySelector("input");
+            input.value = text;
+        }
+    }
+
+}
+
+function setNewIndex() {
+    const itemsDropped = document.querySelectorAll(".item-dropped");
+    const itemsText = document.querySelectorAll(".text-annotation");
+    let indexes = [];
+
+    itemsDropped.forEach(item => {
+        let itemid = item.id;
+        let itemindex = parseInt(itemid.split("-")[1]);
+        if (!isNaN(itemindex)) indexes.push(itemindex);
+    });
+
+    itemsText.forEach(item => {
+        let itemid = item.id;
+        let itemindex = parseInt(itemid.split("-")[1]);
+        if (!isNaN(itemindex)) indexes.push(itemindex);
+    });
+
+    itemIndex = (indexes.length > 0) ? Math.max(...indexes) + 1 : 1;
+
 }
