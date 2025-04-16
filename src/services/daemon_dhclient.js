@@ -1,96 +1,61 @@
-async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
-
-
-    const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
-
-    if (networkObjectIp !== "") {
-        terminalMessage("Error: Este equipo ya tiene una IP asignada.");
-        return;
-    };
-
-
-    terminalMessage(`Listening on LPF/enp0s3/${networkObjectMac}`);
-    terminalMessage(`Sending on   LPF/enp0s3/${networkObjectMac}`);
-    terminalMessage("Sending on   Socket/fallback");
-    terminalMessage(`DHCPDISCOVER on enp0s3 to 255.255.255.255 port 67 interval 6`);
-
-    try {
-
-        dhcpDiscoverFlag = false;
-        dhcpRequestFlag = false;
-
-        if (visualToggle) await minimizeTerminal();
-
-        await dhcpDiscoverGenerator(networkObjectId, switchObjectId);
-
-        if (visualToggle) await maximizeTerminal();
-
-        if (dhcpDiscoverFlag === false || dhcpRequestFlag === false) {
-            terminalMessage("Error: No se pudo encontrar un servidor DHCP.");
-            return;
-        }
-
-
-    } catch (error) {
-
-        terminalMessage("Error: " + error);
-        console.log(error);
-        return;
-
-    }
-
-}
-
-async function dhcpRenewHandler(networkObjectId, switchObjectId) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
-    const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
-
-    if (!networkObjectIp || !networkObjectNetmask || !networkObjectDhcpServer) {
-        terminalMessage("Error en la configuración de red.");
-        return;
-    }
-
-    if (visualToggle) await minimizeTerminal();
-
-    try {
-
-        await dhcpRequestGenerator(networkObjectId, switchObjectId);
-        terminalMessage("IP renovada correctamente.");
-
-    } catch (error) {
-
-        terminalMessage("Error: " + error);
-
-    }
-
-    if (visualToggle) await maximizeTerminal();
-
-}
-
-async function dhcpReleaseHandler(networkObjectId, switchObjectId) {
+async function dhclient_service(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
-    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
-    const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
+    const isDhclientOn = $networkObject.getAttribute("dhclient") === "true";
 
-    if (!networkObjectIp || !networkObjectNetmask || !networkObjectDhcpServer) {
-        terminalMessage("Error en la configuración de red.");
-        return;
+    if (!isDhclientOn) return;
+
+    if (packet.type === "offer") {
+
+        if (dhcpOfferBuffer[networkObjectId]) return;
+
+        if ($networkObject.getAttribute("ip-enp0s3") !== "") return;
+
+        if (packet.chaddr !== networkObjectMac) return;
+
+        dhcpDiscoverFlag = true;
+
+        terminalMessage(`DHCPOFFER of ${packet.yiaddr} from ${packet.siaddr}`);
+
+        dhcpOfferBuffer[networkObjectId] = true;
+
+        let newPacket = new dhcpRequest(
+            networkObjectMac, //origin mac
+            packet.yiaddr, //requested ip
+            packet.siaddr, //server ip
+            networkObjectId //hostname
+        );
+
+        newPacket.destination_mac = packet.origin_mac;
+        newPacket.yiaddr = packet.yiaddr;
+        newPacket.giaddr = packet.giaddr;
+        newPacket.chaddr = packet.chaddr;
+
+        terminalMessage(`DHCPREQUEST for ${packet.yiaddr} on enp0s3 to ${packet.siaddr} port 67`);
+
+        return newPacket;
+
     }
 
-    terminalMessage(`Listening on LPF/enp0s3/${networkObjectMac}`);
-    terminalMessage(`Sending on   LPF/enp0s3/${networkObjectMac}`);
-    terminalMessage("Sending on   Socket/fallback");
-    terminalMessage(`DHCPRELEASE of ${networkObjectIp} on enp0s3 to ${networkObjectDhcpServer} port 67`);
-    await dhcpReleaseGenerator(networkObjectId, switchObjectId);
-    return;
+    if (packet.type === "ack") {
+
+        if (packet.chaddr !== networkObjectMac) return;
+
+        terminalMessage(`DHCPACK of ${packet.yiaddr} from ${packet.siaddr}`);
+
+        dhcpRequestFlag = true;
+
+        delete dhcpOfferBuffer[networkObjectId];
+
+        setDhcpInfo(networkObjectId, packet);
+        
+        updateClientLeaseTimer(networkObjectId);
+        
+        terminalMessage(`Bound to ${packet.yiaddr} -- renewal in ${packet.leasetime} seconds.`);
+
+    }
+
 }
 
 async function dhcpDiscoverGenerator(networkObjectId, switchId) {
@@ -102,7 +67,7 @@ async function dhcpDiscoverGenerator(networkObjectId, switchId) {
     return;
 }
 
-async function dhcpRequestGenerator(networkObjectId, switchId) {
+async function dhcpRequestGenerator(networkObjectId, switchId, renewPhase = "T1") {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
@@ -133,7 +98,13 @@ async function dhcpRequestGenerator(networkObjectId, switchId) {
     packet.netmask = networkObjectNetmask;
     packet.dns = networkObjectDns;
 
-    //enviamos el paquete
+    if (renewPhase === "T2") { //en el caso de T2, el paquete se envia directamente por broadcast
+        packet.destination_ip = "255.255.255.255";
+        packet.destination_mac = "ff:ff:ff:ff:ff:ff";
+        addPacketTraffic(packet);
+        await switchProcessor(switchId, networkObjectId, packet);
+        return;
+    }
 
     if (!isSameNetwork) {
 
@@ -219,63 +190,5 @@ async function dhcpReleaseGenerator(networkObjectId, switchId) {
     addPacketTraffic(packet);
     deleteDhcpInfo(networkObjectId);
     await switchProcessor(switchId, networkObjectId, packet);
-
-}
-
-async function dhclient_service(networkObjectId, packet) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
-    const isDhclientOn = $networkObject.getAttribute("dhclient") === "true";
-
-    if (!isDhclientOn) return;
-
-    if (packet.type === "offer") {
-
-        if (dhcpOfferBuffer[networkObjectId]) return;
-
-        if ($networkObject.getAttribute("ip-enp0s3") !== "") return;
-
-        if (packet.chaddr !== networkObjectMac) return;
-
-        dhcpDiscoverFlag = true;
-
-        terminalMessage(`DHCPOFFER of ${packet.yiaddr} from ${packet.siaddr}`);
-
-        dhcpOfferBuffer[networkObjectId] = true;
-
-        let newPacket = new dhcpRequest(
-            networkObjectMac, //origin mac
-            packet.yiaddr, //requested ip
-            packet.siaddr, //server ip
-            networkObjectId //hostname
-        );
-
-        newPacket.destination_mac = packet.origin_mac;
-        newPacket.yiaddr = packet.yiaddr;
-        newPacket.giaddr = packet.giaddr;
-        newPacket.chaddr = packet.chaddr;
-
-        terminalMessage(`DHCPREQUEST for ${packet.yiaddr} on enp0s3 to ${packet.siaddr} port 67`);
-
-        return newPacket;
-
-    }
-
-    if (packet.type === "ack") {
-
-        if (packet.chaddr !== networkObjectMac) return;
-
-        terminalMessage(`DHCPACK of ${packet.yiaddr} from ${packet.siaddr}`);
-
-        dhcpRequestFlag = true;
-
-        delete dhcpOfferBuffer[networkObjectId];
-
-        setDhcpInfo(networkObjectId, packet);
-        
-        terminalMessage(`Bound to ${packet.yiaddr} -- renewal in ${packet.leasetime} seconds.`);
-
-    }
 
 }
