@@ -154,6 +154,28 @@ function loadState() {
 
     lector.readAsText(archivo);
 
+    function setNewIndex() {
+        
+        const itemsDropped = document.querySelectorAll(".item-dropped");
+        const itemsText = document.querySelectorAll(".text-annotation");
+        let indexes = [];
+    
+        itemsDropped.forEach(item => {
+            let itemid = item.id;
+            let itemindex = parseInt(itemid.split("-")[1]);
+            if (!isNaN(itemindex)) indexes.push(itemindex);
+        });
+    
+        itemsText.forEach(item => {
+            let itemid = item.id;
+            let itemindex = parseInt(itemid.split("-")[1]);
+            if (!isNaN(itemindex)) indexes.push(itemindex);
+        });
+    
+        itemIndex = (indexes.length > 0) ? Math.max(...indexes) + 1 : 1;
+    
+    }
+
     function setTextContents() {
 
         const itemsText = document.querySelectorAll(".text-annotation");
@@ -164,26 +186,5 @@ function loadState() {
             input.value = text;
         }
     }
-
-}
-
-function setNewIndex() {
-    const itemsDropped = document.querySelectorAll(".item-dropped");
-    const itemsText = document.querySelectorAll(".text-annotation");
-    let indexes = [];
-
-    itemsDropped.forEach(item => {
-        let itemid = item.id;
-        let itemindex = parseInt(itemid.split("-")[1]);
-        if (!isNaN(itemindex)) indexes.push(itemindex);
-    });
-
-    itemsText.forEach(item => {
-        let itemid = item.id;
-        let itemindex = parseInt(itemid.split("-")[1]);
-        if (!isNaN(itemindex)) indexes.push(itemindex);
-    });
-
-    itemIndex = (indexes.length > 0) ? Math.max(...indexes) + 1 : 1;
 
 }

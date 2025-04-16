@@ -88,26 +88,3 @@ function deleteItem(event) {
     else boardComponent.render(popupMessage(`<span>Error: </span>No se puede eliminar un dispositivo con conexiones.`));
 
 }
-
-function getConns(networkObjectId) {
-    const $lines = document.querySelectorAll("line");
-    const $circles = document.querySelectorAll("circle");
-    let finalLines = [];
-    let finalCircles = [];
-
-    for (let i = 0; i < $lines.length; i++) {
-        let conn = $lines[i];
-        if (conn.getAttribute("end-start") === networkObjectId) {
-            finalLines.push(conn);
-        }
-    }
-
-    for (let i = 0; i < $circles.length; i++) {
-        let conn = $circles[i];
-        if (conn.getAttribute("end-start") === networkObjectId) {
-            finalCircles.push(conn);
-        }
-    }
-
-    return [finalLines, finalCircles];
-}

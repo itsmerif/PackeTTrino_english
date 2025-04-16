@@ -124,17 +124,20 @@ function updateLeaseTime(serverObjectId) {
 }
 
 function startLeaseTimers() {
-    const dhcpServers = document.querySelectorAll(".dhcp-server");
 
-    dhcpServers.forEach(server => {
+    const $dhcpServers = Array.from(document.querySelectorAll(".item-dropped")).filter($networkObject => $networkObject.getAttribute("dhcpd") !== null);
+
+    console.log($dhcpServers);
+
+    $dhcpServers.forEach(server => {
         const serverObjectId = server.id;
         const table = server.querySelector(".dhcp-table table");
         const leases = table.querySelectorAll("tr");
-
         if (leases.length > 1 && !leaseTimers[serverObjectId]) {
             leaseTimers[serverObjectId] = setInterval(() => updateLeaseTime(serverObjectId), 1000);
         }
     });
+
 }
 
 function deleteDhcpEntry(serverObjectId, targetip) {

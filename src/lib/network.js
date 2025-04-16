@@ -688,7 +688,7 @@ function removeNetwork(networkObjectId, interface) {
 
 }
 
-/**ESTA FUNCION DEVUELVE LA INFORMACION DE UNA INTERFAZ COMO ARRAY [INTERFAZ, SWITCH AL QUE ESTÁ CONECTADA, DIRECCIÓN MAC ]**/
+/**ESTA FUNCION DEVUELVE LA INFORMACION DE UNA INTERFAZ COMO ARRAY [INTERFAZ, SWITCH AL QUE ESTÁ CONECTADA, DIRECCIÓN MAC ]*/
 
 function getInfoFromIp(networkObjectId, ip) {
 
@@ -715,3 +715,4 @@ function getInfoFromIp(networkObjectId, ip) {
     return response;
 
 }
+
