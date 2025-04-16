@@ -3,7 +3,7 @@ async function dhclient_service(networkObjectId, packet) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const isDhclientOn = $networkObject.getAttribute("dhclient") === "true";
-    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId;
+    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId; //solucion temporal para evitar que se imprima en la consola
 
     if (!isDhclientOn) return;
 

@@ -40,7 +40,7 @@ async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
-    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId;
+    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId; //solucion temporal para evitar que se imprima en la consola
 
     if (networkObjectIp !== "") {
         if (terminalPrint) terminalMessage("Error: Este equipo ya tiene una IP asignada.");
@@ -88,7 +88,7 @@ async function dhcpRenewHandler(networkObjectId, switchObjectId, renewPhase = "T
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
-    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId;
+    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId; //solucion temporal para evitar que se imprima en la consola
 
     if (!networkObjectIp || !networkObjectNetmask || !networkObjectDhcpServer) {
         if (terminalPrint) terminalMessage("Error en la configuración de red.");
@@ -125,7 +125,7 @@ async function dhcpReleaseHandler(networkObjectId, switchObjectId) {
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
-    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId;
+    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId; //solucion temporal para evitar que se imprima en la consola
 
     if (!networkObjectIp || !networkObjectNetmask || !networkObjectDhcpServer) {
         if (terminalPrint) terminalMessage("Error en la configuración de red.");
