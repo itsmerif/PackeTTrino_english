@@ -7,8 +7,8 @@ function arpTable() {
     $arpTable.innerHTML = `
         <table>
             <tr>
-                <th>IP Address</th>
-                <th>MAC Address</th>
+                <th>IP</th>
+                <th>MAC</th>
             </tr>
         </table>
         <button onclick="closeObjectModalTable(event, '.arp-table')">Cerrar</button>

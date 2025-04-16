@@ -8,12 +8,12 @@ function firewallTable() {
         <table>
             <tr>
                 <th>Id</th>
-                <th>Chain</th>
-                <th>Protocol</th>
-                <th>Origin IP</th>
-                <th>Destination IP</th>
-                <th>Port</th>
-                <th>Action</th>
+                <th>Cadena</th>
+                <th>Protocolo</th>
+                <th>Ip de Origen</th>
+                <th>Ip de Destino</th>
+                <th>Puerto</th>
+                <th>Acción</th>
             </tr>
         </table>
 

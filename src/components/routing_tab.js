@@ -6,11 +6,11 @@ function routingTable() {
     $routingTable.innerHTML = `
         <table>
             <tr>
-                <th>Destination</th>
-                <th>Netmask</th>
-                <th>Gateway</th>
-                <th>Interface</th>
-                <th>Next Hop</th>
+                <th>Red de Destino</th>
+                <th>Máscara de Red</th>
+                <th>Salida</th>
+                <th>Interfaz</th>
+                <th>Siguiente Salto</th>
             </tr>
             <tr id="default-route">
                 <td>0.0.0.0</td>

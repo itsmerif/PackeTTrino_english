@@ -9,8 +9,8 @@ function dhcpTable() {
             <tr>
                 <th>IP</th>
                 <th>MAC</th>
-                <th>Hostname</th>
-                <th>Lease Time</th>
+                <th>Host</th>
+                <th>Tiempo de Alquiler</th>
             </tr>
         </table>
         <button onclick="closeObjectModalTable(event, '.dhcp-table')">Cerrar</button>

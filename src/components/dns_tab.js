@@ -6,9 +6,9 @@ function dnsTable() {
     $dnsTable.innerHTML = `
                 <table>
                     <tr>
-                        <th>Domain</th>
-                        <th>Type</th>
-                        <th>Value</th>
+                        <th>Dominio</th>
+                        <th>Tipo de Registro</th>
+                        <th>Valor</th>
                     </tr>
                 </table>
                 <button onclick="closeObjectModalTable(event, '.dns-table')">Cerrar</button>`;
