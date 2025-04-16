@@ -1,6 +1,7 @@
-function itemPanel() {
+async function itemPanel() {
 
     const $panel = document.createElement("section");
+    let panelItems;
     $panel.id = "item-panel";
 
     $panel.innerHTML = `
@@ -15,39 +16,39 @@ function itemPanel() {
             </div>
     `;
 
-    fetch("./src/components/panel-items.json")
-    .then(response => response.json())
-    .then(data => {
+    const $container = $panel.querySelector(".item-panel-elements");
 
-        const container = $panel.querySelector(".item-panel-elements");
-        
-        data.forEach(item => {
-            const itemElement = document.createElement("article");
-            itemElement.classList.add("item", item.name);
-            itemElement.draggable = item.draggable;
-            itemElement.ondragstart = dragStart;
-            itemElement.innerHTML = `<img src="${item.image}" alt="${item.name}" draggable="${item.draggable}" style="width: ${item.size}; height: ${item.size};" />`;
-            container.appendChild(itemElement);
-        });
+    try {
+        const response = await fetch("./src/components/panel-items.json");
+        panelItems = await response.json();
+    } catch (error) {
+        console.log(error);
+    }
 
-        $panel.querySelector("#fileInput").addEventListener("change", (event) => { 
-            if (event.target.files.length > 0) $panel.querySelector(".load").classList.add("file-loaded");
-            let fileName = event.target.files[0].name;
-            bodyComponent.render(popupMessage(`Archivo <em>${fileName}</em> cargado con éxito. Para mostrar el contenido, haz click en:`, "/assets/panel/load.svg"));
-        });
-
-        $panel.querySelector(".ping").addEventListener("click", icmpTryoutStart);
-        $panel.querySelector(".dynrouting").addEventListener("click", () => bodyComponent.render(DynamicRoutingMenu()));
-        $panel.querySelector(".settings").addEventListener("click", generalOptionsHandler);
-        $panel.querySelector(".traffic").addEventListener("click", showPacketTraffic);
-        $panel.querySelector(".upload").addEventListener("click", () => $panel.querySelector("#fileInput").click());
-        $panel.querySelector(".load").addEventListener("click", loadState);
-        $panel.querySelector(".download").addEventListener("click", downloadState);
-
+    panelItems.forEach(panelItem => {
+        const itemElement = document.createElement("article");
+        itemElement.classList.add("item", panelItem.name);
+        itemElement.draggable = panelItem.draggable;
+        itemElement.ondragstart = dragStart;
+        itemElement.innerHTML = `
+            <img src="${panelItem.image}" 
+            alt="${panelItem.name}"
+            draggable="${panelItem.draggable}" 
+            style="width: ${panelItem.size}; height: ${panelItem.size};" />`;
+        $container.appendChild(itemElement);
     });
 
+    $panel.querySelector("#fileInput").addEventListener("change", fileUploadHandler);
+    $panel.querySelector(".ping").addEventListener("click", icmpTryoutStart);
+    $panel.querySelector(".dynrouting").addEventListener("click", () => bodyComponent.render(DynamicRoutingMenu()));
+    $panel.querySelector(".settings").addEventListener("click", generalOptionsHandler);
+    $panel.querySelector(".traffic").addEventListener("click", showPacketTraffic);
+    $panel.querySelector(".upload").addEventListener("click", () => $panel.querySelector("#fileInput").click());
+    $panel.querySelector(".load").addEventListener("click", loadState);
+    $panel.querySelector(".download").addEventListener("click", downloadState);
+
     return $panel;
-    
+
 }
 
 function downloadState() {
@@ -76,7 +77,7 @@ function loadState() {
     const archivo = archivoInput.files[0];
 
     const lector = new FileReader();
-    
+
     lector.onload = function (event) {
         const contenido = event.target.result;
         document.querySelector(".board").innerHTML = contenido;
@@ -90,7 +91,7 @@ function loadState() {
     function setTextContents() {
 
         const itemsText = document.querySelectorAll(".text-annotation");
-    
+
         for (let i = 0; i < itemsText.length; i++) {
             let text = itemsText[i].getAttribute("data-text");
             let input = itemsText[i].querySelector("input");
@@ -170,4 +171,11 @@ function icmpTryoutStart() {
         document.body.style.cursor = "default";
     }
 
+}
+
+function fileUploadHandler(event) {
+    const $panel = document.querySelector("#item-panel");
+    if (event.target.files.length > 0) $panel.querySelector(".load").classList.add("file-loaded");
+    let fileName = event.target.files[0].name;
+    bodyComponent.render(popupMessage(`Archivo <em>${fileName}</em> cargado con éxito. Para mostrar el contenido, haz click en:`, "/assets/panel/load.svg"));
 }

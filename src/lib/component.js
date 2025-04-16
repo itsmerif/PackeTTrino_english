@@ -4,9 +4,10 @@ class componentToken {
         this.element = element;
     }
     
-    render(...componentes) {
+    async render(...componentes) {
         const $elements = document.querySelectorAll(this.element);
-        $elements.forEach( $element => { 
+        componentes = await Promise.all(componentes);
+        $elements.forEach($element => {
             componentes.forEach(componente => $element.appendChild(componente));
         });
     }
