@@ -14,7 +14,7 @@ async function dhclient_service(networkObjectId, packet) {
 
         if (packet.chaddr !== networkObjectMac) return;
 
-        dhcpDiscoverFlag = true;
+        dhcpDiscoverFlag[networkObjectId] = true;
 
         terminalMessage(`DHCPOFFER of ${packet.yiaddr} from ${packet.siaddr}`);
 
@@ -44,7 +44,7 @@ async function dhclient_service(networkObjectId, packet) {
 
         terminalMessage(`DHCPACK of ${packet.yiaddr} from ${packet.siaddr}`);
 
-        dhcpRequestFlag = true;
+        dhcpRequestFlag[networkObjectId] = true;
 
         delete dhcpOfferBuffer[networkObjectId];
 

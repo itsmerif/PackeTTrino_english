@@ -114,11 +114,11 @@ async function getDomainFromServer(dataId, domain, verbose = false, dnsServer = 
 
     if (!domain.endsWith(".")) domain = domain + ".";
 
-    dnsRequestFlag = false;
+    dnsRequestFlag[dataId] = false;
 
     await dnsRequestPacketGenerator(dataId, switchId, domain, dnsServer, query_type);
 
-    if (!dnsRequestFlag) {
+    if (dnsRequestFlag[dataId] === false) {
         if (verbose) terminalMessage(`communications error to ${dnsServer}#53: timed out`);
         throw new Error("Error: No se pudo resolver el nombre de dominio.");
     }

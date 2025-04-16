@@ -34,7 +34,7 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
 
         if (packet.protocol === "arp" && packet.type === "reply") {
             if (!availableIps.includes(packet.destination_ip)) return;
-            arpFlag = true;
+            arpFlag[routerObjectId] = true;
             addARPEntry(routerObjectId, packet.origin_ip, packet.origin_mac);
             let bufferPacket = buffer[routerObjectId];
 
@@ -43,12 +43,11 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
                 delete buffer[routerObjectId];
                 replyPacket = bufferPacket;
             }
-
         }
 
         if (packet.protocol === "icmp" && packet.type === "reply") {
             if (!availableIps.includes(packet.destination_ip)) return;
-            icmpFlag = true;
+            icmpFlag[routerObjectId] = true;
             return;
         }
 

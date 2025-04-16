@@ -1,5 +1,5 @@
 async function tcp(networkObjectId, destination, port) {
-    tcpSyncFlag = false;
+    tcpSyncFlag[networkObjectId] = false;
     const $networkObject = document.getElementById(networkObjectId);
     const switchId = $networkObject.getAttribute("data-switch-enp0s3");
     await tcpSynPacketGenerator(networkObjectId, switchId, destination, port);

@@ -38,7 +38,7 @@ async function ping(dataId, args) {
 
     try {
 
-        icmpFlag = false;
+        icmpFlag[dataId] = false;
         await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, destination);
 
     } catch (error) {
@@ -49,7 +49,7 @@ async function ping(dataId, args) {
 
     }
 
-    if (!icmpFlag) pingFailure(destination);
+    if (icmpFlag[dataId] === false) pingFailure(destination);
     else pingSuccess(destination);
 
     if (visualToggle) await maximizeTerminal();
@@ -60,8 +60,8 @@ async function traceroute(dataId, destination, numeric = false) {
 
     cleanPacketTraffic()
     
-    trace = true; //se activa el traceroute
-    traceFlag = false; //ponemos a falso el flag de traceroute
+    trace[dataId] = true; //se activa el traceroute
+    traceFlag[dataId] = false; //ponemos a falso el flag de traceroute
 
     const $networkObject = document.getElementById(dataId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
@@ -74,26 +74,31 @@ async function traceroute(dataId, destination, numeric = false) {
     //comprobamos si el destino es una ip o un nombre de dominio
 
     if (!isValidIp(destination)) {
-        try {
-            await dig(dataId, destination, false);
-            destination = isDomainInCachePc(dataId, destination)[1];
-        }catch (error) {
-            terminalMessage("Error: No se pudo resolver el nombre de dominio.");
+
+        const domain = destination;
+        destination = await domainNameResolution(dataId, args[1]);
+
+        if (!destination) {
+            if (visualToggle) await maximizeTerminal();
+            terminalMessage(`traceroute: ${domain}: Nombre o servicio desconocido`)
             return;
         }
+
     }
 
     //generamos el primer paquete
 
     let packet = new IcmpEchoRequest(networkObjectIp, destination, networkObjectMac, "");
     packet.ttl = 1;
-    traceBuffer = [networkObjectIp]; //se agrega el origen al buffer de traceroute
+
+    traceBuffer[dataId] = [networkObjectIp]; //se agrega el origen al buffer de traceroute
+    traceReturn[dataId] = false;
 
     await customPacketGenerator(dataId, packet);
 
-    while (traceReturn) {
-        terminalMessage(hops + " " + traceBuffer[traceBuffer.length - 2].toString().padEnd(15," ") + traceBuffer[traceBuffer.length - 1].toString());
-        traceReturn = false;
+    while (traceReturn[dataId] === true) {
+        terminalMessage(hops + " " + traceBuffer[dataId][traceBuffer[dataId].length - 2].toString().padEnd(15," ") + traceBuffer[dataId][traceBuffer[dataId].length - 1].toString());
+        traceReturn[dataId] = false;
         packet.ttl++;
         hops = numeric ? hops + 1 : "";
         await customPacketGenerator(dataId, packet);
@@ -101,13 +106,14 @@ async function traceroute(dataId, destination, numeric = false) {
 
     if (visualToggle) await maximizeTerminal();
 
-    if (traceFlag) {
-        terminalMessage(hops + " " + traceBuffer[traceBuffer.length - 2].toString().padEnd(15," ") + traceBuffer[traceBuffer.length - 1].toString());
+    if (traceFlag[dataId] === true) {
+        terminalMessage(hops + " " + traceBuffer[dataId][traceBuffer[dataId].length - 2].toString().padEnd(15," ") + traceBuffer[dataId][traceBuffer[dataId].length - 1].toString());
     } else {
-        traceRouteFail(traceBuffer[traceBuffer.length - 1], hops, numeric);
+        traceRouteFail(traceBuffer[dataId][traceBuffer[dataId].length - 1], hops, numeric);
     }
 
-    trace = false; //desactivamos el traceroute
+    trace[dataId] 
+    = false; //desactivamos el traceroute
 }
 
 async function icmpRequestPacketGenerator(networkObjectId, switchId, originIp, destinationIp) {

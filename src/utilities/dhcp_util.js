@@ -55,8 +55,8 @@ async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
 
     try {
 
-        dhcpDiscoverFlag = false;
-        dhcpRequestFlag = false;
+        dhcpDiscoverFlag[networkObjectId] = false;
+        dhcpRequestFlag[networkObjectId] = false;
 
         if (visualToggle) await minimizeTerminal();
 
@@ -64,7 +64,7 @@ async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
 
         if (visualToggle) await maximizeTerminal();
 
-        if (dhcpDiscoverFlag === false || dhcpRequestFlag === false) {
+        if (dhcpDiscoverFlag[networkObjectId] === false || dhcpRequestFlag[networkObjectId] === false) {
             terminalMessage("Error: No se pudo encontrar un servidor DHCP.");
             return;
         }
@@ -94,7 +94,7 @@ async function dhcpRenewHandler(networkObjectId, switchObjectId, renewPhase = "T
 
     if (visualToggle) await minimizeTerminal();
 
-    dhcpRequestFlag = false;
+    dhcpRequestFlag[networkObjectId] = false;
 
     try {
         await dhcpRequestGenerator(networkObjectId, switchObjectId, renewPhase);
@@ -102,7 +102,7 @@ async function dhcpRenewHandler(networkObjectId, switchObjectId, renewPhase = "T
         terminalMessage("Error: " + error);
     }
 
-    if (!dhcpRequestFlag) {
+    if (dhcpRequestFlag[networkObjectId] === false) {
         terminalMessage("Error: No se pudo renovar la IP.");
         return;
     }

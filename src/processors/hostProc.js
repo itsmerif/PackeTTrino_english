@@ -26,7 +26,7 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
 
         if (packet.destination_ip !== networkObjectIp) return;
 
-        arpFlag = true;
+        arpFlag[networkObjectId] = true;
 
         addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
 
@@ -57,9 +57,9 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
 
         if (packet.destination_ip !== networkObjectIp) return;
         
-        if (trace) {
-            traceReturn = true;
-            traceBuffer.push(packet.origin_ip);
+        if (trace[networkObjectId] === true) {
+            traceReturn[networkObjectId] = true;
+            traceBuffer[networkObjectId].push(packet.origin_ip);
         }
 
         return;
@@ -69,11 +69,11 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
 
         if (packet.destination_ip !== networkObjectIp) return;
 
-        icmpFlag = true;
+        icmpFlag[networkObjectId] = true;
 
-        if (trace){
-            traceBuffer.push(packet.origin_ip);
-            traceFlag = true;
+        if (trace[networkObjectId] === true){
+            traceBuffer[networkObjectId].push(packet.origin_ip);
+            traceFlag[networkObjectId] = true;
         }
 
         return;
@@ -105,7 +105,7 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     if (packet.protocol === "tcp" && packet.type === "syn-ack-reply") {
         if (packet.destination_ip !== networkObjectIp) return;
         if (packet.ack_number !== tcpBuffer[networkObjectId] + 1) return;
-        tcpSyncFlag = true;
+        tcpSyncFlag[networkObjectId] = true;
         return;
     }
 
@@ -119,7 +119,7 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
 
         if (packet.destination_ip !== networkObjectIp) return;
         
-        dnsRequestFlag = true;
+        dnsRequestFlag[networkObjectId] = true;
         buffer[networkObjectId] = packet;
         return;
 

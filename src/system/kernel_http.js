@@ -21,7 +21,7 @@ async function http(networkObjectId, arg) {
     //http viaja por tcp, necesitamos establecer la conexión
 
     await tcp(networkObjectId, destinationIp, 80);
-    if (!tcpSyncFlag) {
+    if (tcpSyncFlag === false) {
         if (visualToggle) await maximizeTerminal();
         throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
     }
