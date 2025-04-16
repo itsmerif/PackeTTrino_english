@@ -8,8 +8,8 @@ function router_menu() {
         <p id="form-router-item-id"></p>
         <div class="interfaces-wrapper">
             <select class="interfaces-container"></select>
-            <button class="btn-modern-red" id="del-iface">Eliminar</button>
-            <button class="btn-modern-green" id="add-iface">Añadir</button>
+            <button class="btn-modern-blue dark" id="del-iface">Eliminar</button>
+            <button class="btn-modern-blue dark" id="add-iface">Añadir</button>
         </div>
         <label for="router-ip">Dirección IP:</label>
         <input type="text" id="router-ip" name="router-ip">
