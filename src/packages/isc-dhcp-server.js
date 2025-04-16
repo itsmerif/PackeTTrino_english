@@ -24,6 +24,11 @@ function installDhcpd(networkObjectId) {
 
 function uninstallDhcpd(networkObjectId) {
 
+    if (networkObjectId.startsWith("dhcp-server-")) {
+        terminalMessage("Error: no se puede desinstalar isc-dhcp-server en este dispositivo.");
+        return;
+    }
+
     terminalMessage("Desinstalando DHCP Server...");
 
     const $networkObject = document.getElementById(networkObjectId);

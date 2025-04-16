@@ -17,6 +17,11 @@ function installDhcprelay(networkObjectId) {
 
 function uninstallDhcprelay(networkObjectId) {
 
+    if (networkObjectId.startsWith("dhcp-relay-server-")) {
+        terminalMessage("Error: No se puede desinstalar isc-dhcp-relay en este dispositivo.");
+        return;
+    }
+
     terminalMessage("Desinstalando DHCP Relay...");
 
     const $networkObject = document.getElementById(networkObjectId);

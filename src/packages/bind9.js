@@ -18,6 +18,11 @@ function installBind9(networkObjectId) {
 
 function uninstallBind9(networkObjectId) {
 
+    if (networkObjectId.startsWith("dns-server-")) {
+        terminalMessage("Error: No se puede desinstalar Bind en este dispositivo.");
+        return;
+    }
+
     terminalMessage("Desinstalando Bind...");
 
     const $networkObject = document.getElementById(networkObjectId);
