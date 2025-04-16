@@ -130,24 +130,36 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     if (packet.protocol === "dhcp") {
 
         if (activeServices.includes("dhclient")) {
+
             let replyPacket = await dhclient_service(networkObjectId, packet);
-            if (!replyPacket) return;
-            addPacketTraffic(replyPacket);
-            await switchProcessor(switchId, networkObjectId, replyPacket);
+
+            if (replyPacket) {
+                addPacketTraffic(replyPacket);
+                await switchProcessor(switchId, networkObjectId, replyPacket);
+            }
+
         }
 
         if (activeServices.includes("dhcpd")) {
+
             let replyPacket = await dhcpd_service(networkObjectId, packet);
-            if (!replyPacket) return;
-            addPacketTraffic(replyPacket);
-            await switchProcessor(switchId, networkObjectId, replyPacket);
+
+            if (replyPacket) {
+                addPacketTraffic(replyPacket);
+                await switchProcessor(switchId, networkObjectId, replyPacket);
+            }
+
         }
 
         if (activeServices.includes("dhcrelay"))  {
+
             let replyPacket = await dhcrelay_service(networkObjectId, packet);
-            if (!replyPacket) return;
-            addPacketTraffic(replyPacket);
-            await switchProcessor(switchId, networkObjectId, replyPacket);
+            
+            if (replyPacket) {
+                addPacketTraffic(replyPacket);
+                await switchProcessor(switchId, networkObjectId, replyPacket);
+            }
+
         }
 
     }

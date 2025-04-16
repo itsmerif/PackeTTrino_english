@@ -8,54 +8,46 @@ function dhcp_server_menu() {
         <p id="form-dhcp-item-id"></p>
 
         <div>
-        <label for="ip-dhcp">IP:</label>
-        <input type="text" id="ip-dhcp" name="ip-dhcp"
-            pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+            <label for="ip-dhcp">Dirección IP (ipv4):</label>
+            <input type="text" id="ip-dhcp" name="ip-dhcp" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+        </div>
+
+        <div >
+            <label for="netmask-dhcp">Máscara de Red:</label>
+            <input type="text" id="netmask-dhcp" name="netmask-dhcp" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+        </div>
+
+        <div >
+            <label for="gateway-dhcp">Puerta de enlace:</label>
+            <input type="text" id="gateway-dhcp" name="gateway-dhcp" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+        </div>
+
+        <p> Opciones de Servicio DHCP </p>
+
+        <div>
+            <label for="range-start">Rango de IPs:</label>
+            <input type="text" id="range-start" name="range-start" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+            <input type="text" id="range-end" name="range-end" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
         </div>
 
         <div>
-        <label for="netmask-dhcp">Netmask:</label>
-        <input type="text" id="netmask-dhcp" name="netmask-dhcp"
-            pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+            <label for="offer-netmask">Oferta Netmask:</label>
+            <input type="text" id="offer-netmask" name="offer-netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
         </div>
 
         <div>
-        <label for="gateway-dhcp">Gateway:</label>
-        <input type="text" id="gateway-dhcp" name="gateway-dhcp"
-            pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-        </div>
-
-        <p> Opciones de Servicio </p>
-
-        <div>
-        <label for="range-start">Rango de IPs:</label>
-        <input type="text" id="range-start" name="range-start"
-            pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-        <input type="text" id="range-end" name="range-end"
-            pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+            <label for="offer-gateway">Oferta Gateway:</label>
+            <input type="text" id="offer-gateway" name="offer-gateway" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
         </div>
 
         <div>
-        <label for="offer-netmask">Oferta Netmask:</label>
-        <input type="text" id="offer-netmask" name="offer-netmask"
-            pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+            <label for="offer-dns">Oferta Servidor DNS:</label>
+            <input type="text" id="offer-dns" name="offer-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
         </div>
 
         <div>
-        <label for="offer-gateway">Oferta Gateway:</label>
-        <input type="text" id="offer-gateway" name="offer-gateway"
-            pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-        </div>
-
-        <div>
-        <label for="offer-dns">Oferta Servidor DNS:</label>
-        <input type="text" id="offer-dns" name="offer-dns"
-            pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-        </div>
-
-        <div>
-        <label for="offer-lease-time">Oferta Tiempo de Alquiler:</label>
-        <input type="text" id="offer-lease-time" name="offer-lease-time" pattern="^[0-9]+$">
+            <label for="offer-lease-time">Oferta Tiempo de Alquiler:</label>
+            <input type="text" id="offer-lease-time" name="offer-lease-time" pattern="^[0-9]+$">
         </div>
 
         <button class="btn-modern-blue" type="submit">Guardar</button>
@@ -73,15 +65,13 @@ function showDhcpSpecs(event) {
     
     const networkObject = event.target.closest(".item-dropped");
     const itemId = networkObject.id; //obtenemos el id del elemento
-    const isNotDhcpServer = !itemId.startsWith("dhcp-server-");
+    const isDhcpServer = itemId.startsWith("dhcp-server-");
     const $form = document.querySelector(".dhcp-form");
 
-    if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
+    if (icmpTryoutToggle) {
         icmpTryoutProcess(itemId);
         return;
     }
-
-    //red básico
 
     const ip = networkObject.getAttribute("ip-enp0s3");
     const netmask = networkObject.getAttribute("netmask-enp0s3");
@@ -90,8 +80,6 @@ function showDhcpSpecs(event) {
     $form.querySelector("#ip-dhcp").value = ip;
     $form.querySelector("#netmask-dhcp").value = netmask;
     $form.querySelector("#gateway-dhcp").value = gateway;
-
-    //atributos de servidor
 
     const rangeStart = networkObject.getAttribute("data-range-start");
     const rangeEnd = networkObject.getAttribute("data-range-end");
@@ -102,20 +90,18 @@ function showDhcpSpecs(event) {
 
     $form.querySelector("#range-start").value = rangeStart;
     $form.querySelector("#range-end").value = rangeEnd;
-    document.getElementById("form-dhcp-item-id").innerHTML = itemId;
     $form.querySelector("#offer-gateway").value = offerGateway;
     $form.querySelector("#offer-netmask").value = offerNetmask;
     $form.querySelector("#offer-dns").value = offerDns;
     $form.querySelector("#offer-lease-time").value = offerLeaseTime;
 
-    //si no es un servidor dhcp, bloqueamos la red basica
-
-    $form.querySelector("#ip-dhcp").disabled = isNotDhcpServer;
-    $form.querySelector("#netmask-dhcp").disabled = isNotDhcpServer;
-    $form.querySelector("#gateway-dhcp").disabled = isNotDhcpServer;
+    $form.querySelector("#ip-dhcp").disabled = (isDhcpServer) ? false : true;
+    $form.querySelector("#netmask-dhcp").disabled = (isDhcpServer) ? false : true;
+    $form.querySelector("#gateway-dhcp").disabled = (isDhcpServer) ? false : true;
 
     //ocultamos y mostramos
 
+    document.getElementById("form-dhcp-item-id").innerHTML = itemId;
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
     document.querySelector(".dhcp-form").style.display = "flex";
 

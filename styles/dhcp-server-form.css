@@ -41,7 +41,7 @@
     margin: auto;
 }
 
-.dhcp-form input, select {
+.dhcp-form input {
     width: 100px;
     padding: 8px 12px;
     border: 1px solid #ddd;
@@ -66,9 +66,16 @@
     text-transform: uppercase;
     font-weight: bolder;
     align-self: center;
+}
+
+#form-dhcp-item-id {
     color: #fff;
 }
 
 .dhcp-form button {
     align-self: center;
+}
+
+.dhcp-form .basic-network input {
+    width: 300px;
 }
