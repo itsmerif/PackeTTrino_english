@@ -108,8 +108,15 @@ async function dhcpRequestGenerator(networkObjectId, switchId) {
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
+    const networkObjectGateway = $networkObject.getAttribute("data-gateway");
+    const networkObjectDns = $networkObject.getAttribute("data-dns-server");
+
+    const networkObjectLeaseTime = $networkObject.getAttribute("data-dhcp-lease-time");
     const dhcpServerIp = $networkObject.getAttribute("data-dhcp-server");
+
     const isSameNetwork = getNetwork(networkObjectIp, networkObjectNetmask) === getNetwork(dhcpServerIp, networkObjectNetmask);
+
+    //construimos el paquete
 
     let packet = new dhcpRequest(
         networkObjectMac, //origin mac
@@ -121,7 +128,12 @@ async function dhcpRequestGenerator(networkObjectId, switchId) {
     packet.origin_ip = networkObjectIp;
     packet.destination_ip = dhcpServerIp;
     packet.ciaddr = networkObjectIp;
+    packet.leasetime = networkObjectLeaseTime;
+    packet.gateway = networkObjectGateway;
+    packet.netmask = networkObjectNetmask;
+    packet.dns = networkObjectDns;
 
+    //enviamos el paquete
 
     if (!isSameNetwork) {
 
@@ -143,7 +155,7 @@ async function dhcpRequestGenerator(networkObjectId, switchId) {
 
     const destination_mac = isIpInARPTable(networkObjectId, dhcpServerIp);
 
-    if (!destination_mac) { 
+    if (!destination_mac) {
         buffer[networkObjectId] = packet;
         await arpResolve(networkObjectId, dhcpServerIp);
         return;
@@ -176,10 +188,10 @@ async function dhcpReleaseGenerator(networkObjectId, switchId) {
         const defaultGateway = $networkObject.getAttribute("data-gateway");
 
         if (!defaultGateway) throw new Error("Error: Puerta de Enlace Predeterminada No Configurada");
-        
+
         const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
 
-        if (!defaultGatewayMac) { 
+        if (!defaultGatewayMac) {
             buffer[networkObjectId] = packet;
             await arpResolve(networkObjectId, defaultGateway);
             deleteDhcpInfo(networkObjectId);
@@ -196,7 +208,7 @@ async function dhcpReleaseGenerator(networkObjectId, switchId) {
 
     const serverObjectMac = isIpInARPTable(networkObjectId, dhcpServerIp);
 
-    if (!serverObjectMac) { 
+    if (!serverObjectMac) {
         buffer[networkObjectId] = packet;
         await arpResolve(networkObjectId, dhcpServerIp);
         deleteDhcpInfo(networkObjectId);
@@ -214,55 +226,55 @@ async function dhclient_service(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
-    const switchId = $networkObject.getAttribute("data-switch-enp0s3");
     const isDhclientOn = $networkObject.getAttribute("dhclient") === "true";
-    let responsePacket;
 
     if (!isDhclientOn) return;
-    
+
     if (packet.type === "offer") {
 
         if (dhcpOfferBuffer[networkObjectId]) return;
 
         if ($networkObject.getAttribute("ip-enp0s3") !== "") return;
 
-        if (packet.chaddr === networkObjectMac) {
+        if (packet.chaddr !== networkObjectMac) return;
 
-            dhcpDiscoverFlag = true;
+        dhcpDiscoverFlag = true;
 
-            terminalMessage(`DHCPOFFER of ${packet.yiaddr} from ${packet.siaddr}`);
+        terminalMessage(`DHCPOFFER of ${packet.yiaddr} from ${packet.siaddr}`);
 
-            dhcpOfferBuffer[networkObjectId] = true;
+        dhcpOfferBuffer[networkObjectId] = true;
 
-            let newPacket = new dhcpRequest(
-                networkObjectMac, //origin mac
-                packet.yiaddr, //requested ip
-                packet.siaddr, //server ip
-                networkObjectId //hostname
-            );
+        let newPacket = new dhcpRequest(
+            networkObjectMac, //origin mac
+            packet.yiaddr, //requested ip
+            packet.siaddr, //server ip
+            networkObjectId //hostname
+        );
 
-            newPacket.destination_mac = packet.origin_mac;
-            newPacket.yiaddr = packet.yiaddr;
-            newPacket.giaddr = packet.giaddr;
-            newPacket.chaddr = packet.chaddr;
+        newPacket.destination_mac = packet.origin_mac;
+        newPacket.yiaddr = packet.yiaddr;
+        newPacket.giaddr = packet.giaddr;
+        newPacket.chaddr = packet.chaddr;
 
-            terminalMessage(`DHCPREQUEST for ${packet.yiaddr} on enp0s3 to ${packet.siaddr} port 67`);
+        terminalMessage(`DHCPREQUEST for ${packet.yiaddr} on enp0s3 to ${packet.siaddr} port 67`);
 
-            return newPacket;
-
-        }
+        return newPacket;
 
     }
 
     if (packet.type === "ack") {
 
-        if (packet.chaddr === networkObjectMac) {
-            terminalMessage(`DHCPACK of ${packet.yiaddr} from ${packet.siaddr}`);
-            dhcpRequestFlag = true;
-            delete dhcpOfferBuffer[networkObjectId];
-            setDhcpInfo(networkObjectId, packet);
-            terminalMessage(`Bound to ${packet.yiaddr} -- renewal in ${packet.leasetime} seconds.`);
-        }
+        if (packet.chaddr !== networkObjectMac) return;
+
+        terminalMessage(`DHCPACK of ${packet.yiaddr} from ${packet.siaddr}`);
+
+        dhcpRequestFlag = true;
+
+        delete dhcpOfferBuffer[networkObjectId];
+
+        setDhcpInfo(networkObjectId, packet);
+        
+        terminalMessage(`Bound to ${packet.yiaddr} -- renewal in ${packet.leasetime} seconds.`);
 
     }
 

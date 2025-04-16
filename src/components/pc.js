@@ -30,6 +30,7 @@ function PcObject(x, y) {
     attr("dhclient", "false");   
     attr("data-dhcp-server", "");
     attr("data-dhcp-lease-time", "");
+    attr("data-dhcp-current-lease-time", "");
 
     attr("apache", "false");
     attr("web-content", "");

@@ -5,13 +5,12 @@ async function dhcpd_service(serverObjectId, packet) {
     const serverObjectIp = $serverObject.getAttribute("ip-enp0s3");
     const serverObjectNetmask = $serverObject.getAttribute("netmask-enp0s3");
     const serverObjectNetwork = getNetwork(serverObjectIp, serverObjectNetmask);
+
     const defaultGateway = $serverObject.getAttribute("data-gateway");
-    const switchId = $serverObject.getAttribute("data-switch-enp0s3");
     const rangeStart = $serverObject.getAttribute("data-range-start");
     const rangeEnd = $serverObject.getAttribute("data-range-end");
     const netmaskOffer = $serverObject.getAttribute("offer-netmask");
     const leaseTime = $serverObject.getAttribute("offer-lease-time");
-    const networkOffer = getNetwork(rangeStart, netmaskOffer);
     const gatewayOffer = $serverObject.getAttribute("offer-gateway") || "";
     const dnsOffer = $serverObject.getAttribute("offer-dns") || "";
     const isDhcpServerOn = $serverObject.getAttribute("dhcpd") === "true";
@@ -87,20 +86,22 @@ async function dhcpd_service(serverObjectId, packet) {
 
         if (packet.siaddr !== serverObjectIp) return;
 
-        updateDhcpEntry(serverObjectId, packet.ciaddr);
+        if (!updateDhcpEntry(serverObjectId, packet)) return;
 
         let newPacket = new dhcpAck(
-            serverObjectMac,
-            packet.ciaddr,
-            serverObjectIp,
-            defaultGateway,
-            networkOffer,
-            dnsOffer,
-            packet.hostname
+            serverObjectMac, //origin mac
+            packet.ciaddr, //ip asignada
+            serverObjectIp, //ip del servidor
+            packet.gateway, // oferta gateway
+            packet.netmask, //oferta mascara
+            packet.dns, //oferta dns
+            packet.hostname, //hostname
+            leaseTime //oferta tiempo de alquiler
         );
 
         newPacket.destination_ip = packet.origin_ip;
         newPacket.destination_mac = packet.origin_mac;
+        newPacket.chaddr = packet.chaddr;
 
         return newPacket;
 

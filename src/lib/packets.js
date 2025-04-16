@@ -109,7 +109,7 @@ class dhcpRequest extends packet {
 }
 
 class dhcpAck extends packet {
-    constructor(origin_mac, assigned_ip, server_ip, gateway, netmask, dns, hostname, leasetime) {
+    constructor(origin_mac, assigned_ip, server_ip, offergateway, offernetmask, offerdns, hostname, leasetime) {
         super(server_ip, "255.255.255.255", origin_mac, "ff:ff:ff:ff:ff:ff");
         this.transport_protocol = "udp";
         this.protocol = "dhcp";
@@ -119,10 +119,11 @@ class dhcpAck extends packet {
         this.ciaddr = "0.0.0.0";
         this.yiaddr = assigned_ip;
         this.siaddr = server_ip;
+        this.chaddr = "";
         // DHCP options
-        this.gateway = gateway;
-        this.netmask = netmask;
-        this.dns = dns;
+        this.gateway = offergateway;
+        this.netmask = offernetmask;
+        this.dns = offerdns;
         this.hostname = hostname;
         this.leasetime = leasetime;
     }
