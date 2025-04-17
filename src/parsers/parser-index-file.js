@@ -4,7 +4,7 @@ function loadApacheIndexContent(networkObjectId) {
     const isApacheInstalled = $networkObject.getAttribute("apache") !== null;
 
     if (!isApacheInstalled) {
-        terminalMessage("Error: El archivo /var/www/html/index.html no se puede editar porque el servidor web no está instalado.");
+        terminalMessage("Error: El archivo /var/www/html/index.html no se puede editar porque el servidor web no está instalado.", networkObjectId);
         return;
     }
 
@@ -22,5 +22,4 @@ function savewebContent() {
     const fileEditor = document.querySelector(".file-editor");
     const fileContent = fileEditor.value;
     $networkObject.setAttribute("web-content", fileContent);
-    terminalMessage("El contenido se ha guardado correctamente.");
 }

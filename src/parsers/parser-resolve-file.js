@@ -1,7 +1,7 @@
 function loadResolvConf(networkObjectId) {
 
     if (networkObjectId.startsWith("router-")) {
-        terminalMessage("Error: El archivo /etc/resolv.conf no se puede editar en un router.");
+        terminalMessage("Error: El archivo /etc/resolv.conf no se puede editar en un router.", networkObjectId);
         return;
     }
 
@@ -41,7 +41,6 @@ function parserResolvConf() {
             }
 
             $networkObject.setAttribute("data-dns-server", ip);
-            terminalMessage("El archivo se ha cargado correctamente.");
             return;
             
         }

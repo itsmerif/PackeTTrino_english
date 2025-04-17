@@ -1,14 +1,14 @@
-function command_nano(dataId, args) {
+function command_nano(networkObjectId, args) {
 
     const fileName = args[1];
     const fileEditor = document.querySelector(".file-editor");
     const frameTitle = document.querySelector(".editor-frame").querySelector("span");
 
     const fileActions = {
-        "/etc/network/interfaces": () => loadNetworkFile(dataId),
-        "/etc/resolv.conf": () => loadResolvConf(dataId),
-        "/var/www/html/index.html": () => loadApacheIndexContent(dataId),
-        "/etc/hosts": () => loadEtcHostsContent(dataId),
+        "/etc/network/interfaces": () => loadNetworkFile(networkObjectId),
+        "/etc/resolv.conf": () => loadResolvConf(networkObjectId),
+        "/var/www/html/index.html": () => loadApacheIndexContent(networkObjectId),
+        "/etc/hosts": () => loadEtcHostsContent(networkObjectId),
     }
 
     if (fileActions[fileName]) {
@@ -20,6 +20,6 @@ function command_nano(dataId, args) {
         return;
     }
 
-    terminalMessage(`Error: No se reconoce el archivo ${fileName}.`);
+    terminalMessage(`Error: No se reconoce el archivo ${fileName}.`, networkObjectId);
 
 }

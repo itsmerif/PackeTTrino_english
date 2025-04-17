@@ -74,8 +74,8 @@ function printRoutingTable(networkObjectId) {
         const netmask = $networkObject.getAttribute("netmask-enp0s3");
         const network = getNetwork(ip, netmask);
         const gateway = $networkObject.getAttribute("data-gateway");
-        terminalMessage(`${network}/${netmaskToCidr(netmask)} via ${ip} dev enp0s3`);
-        terminalMessage(`default via ${gateway || "-"} dev enp0s3`);
+        terminalMessage(`${network}/${netmaskToCidr(netmask)} via ${ip} dev enp0s3`, networkObjectId);
+        terminalMessage(`default via ${gateway || "-"} dev enp0s3`, networkObjectId);
         return;
     }
 
@@ -98,7 +98,7 @@ function printRoutingTable(networkObjectId) {
             formattedRoute = `${destination}/${netmaskToCidr(netmask)} via ${gateway} dev ${interface}`;
         }
 
-        terminalMessage(formattedRoute);
+        terminalMessage(formattedRoute, networkObjectId);
     }
 }
 
