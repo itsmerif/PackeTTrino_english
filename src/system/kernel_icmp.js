@@ -54,22 +54,38 @@ async function traceroute(dataId, destination, numeric = false) {
     await customPacketGenerator(dataId, packet);
 
     while (traceReturn[dataId] === true) {
-        terminalMessage(hops + " " + traceBuffer[dataId][traceBuffer[dataId].length - 2].toString().padEnd(15," ") + traceBuffer[dataId][traceBuffer[dataId].length - 1].toString(), dataId);
+        terminalMessage(
+            hops + " " + 
+            traceBuffer[dataId][traceBuffer[dataId].length - 2].toString().padEnd(15," ") + 
+            traceBuffer[dataId][traceBuffer[dataId].length - 1].toString(),
+        dataId);
         traceReturn[dataId] = false;
         packet.ttl++;
         hops = numeric ? hops + 1 : "";
         await customPacketGenerator(dataId, packet);
     }
 
-    if (visualToggle) await maximizeTerminal();
-
     if (traceFlag[dataId] === true) {
-        terminalMessage(hops + " " + traceBuffer[dataId][traceBuffer[dataId].length - 2].toString().padEnd(15," ") + traceBuffer[dataId][traceBuffer[dataId].length - 1].toString(), dataId);
+        terminalMessage(
+            hops + " " + 
+            traceBuffer[dataId][traceBuffer[dataId].length - 2].toString().padEnd(15," ") + 
+            traceBuffer[dataId][traceBuffer[dataId].length - 1].toString(), 
+            dataId);
     } else {
         traceRouteFail(traceBuffer[dataId][traceBuffer[dataId].length - 1], hops, numeric);
     }
 
     trace[dataId] = false;
+
+    function traceRouteFail(origin, seq, numeric = false) {
+        if (document.querySelector(".terminal-component").style.display === "none") return;
+        seq = numeric ? seq + 1 : "";
+        terminalMessage(seq + " " + origin.toString().padEnd(15," ") + " *\n", dataId);
+        window.pingInterval = setInterval(() => {
+            seq = numeric ? seq + 1 : "";
+            terminalMessage(seq + " " + `*               *\n`);
+        }, 500);
+    }
 
 }
 
