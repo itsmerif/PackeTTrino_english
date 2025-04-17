@@ -30,32 +30,34 @@ async function command_dig(dataId, args) {
     args = args.slice($OPTS['IND'] + 1)
 
     if (args.length === 0) {
-        terminalMessage("Error: falta el argumento dominio o ip.");
+        terminalMessage("Error: falta el argumento dominio o ip.", dataId);
         return;
     }
 
     domain = args[0];
 
     if (opt_t && !validTypes.includes(query_type)) {
-        terminalMessage("Error: tipo de registro desconocido.")
+        terminalMessage("Error: tipo de registro desconocido.", dataId);
         return;
     }
 
     if (!opt_x && !isValidDomain(domain)) {
-        terminalMessage("Error: el dominio no es válido.");
+        terminalMessage("Error: el dominio no es válido.", dataId);
         return;
     }
 
     if (opt_x && !isValidIp(domain)) {
-        terminalMessage("Error: ip no válida para la consulta inversa.");
+        terminalMessage("Error: ip no válida para la consulta inversa.", dataId);
         return;
     }
 
     if (opt_server && !isValidIp(dnsServer)) {
-        terminalMessage("Error: ip del servidor no válida.");
+        terminalMessage("Error: ip del servidor no válida.", dataId);
         return;
     }
 
-    dig(dataId, domain, query_type, dnsServer);
-        
+    cleanPacketTraffic();
+    if (visualToggle) await minimizeTerminal();
+    await dig(dataId, domain, query_type, dnsServer);
+    if (visualToggle) await maximizeTerminal();
 }

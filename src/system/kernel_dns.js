@@ -1,13 +1,9 @@
-async function dig(dataId, domain, query_type, dnsServer) {
-
-    if (visualToggle) await minimizeTerminal();
+async function dig(networkObjectId, domain, query_type, dnsServer) {
 
     try {
 
-        cleanPacketTraffic();
-
         await getDomainFromServer(
-            dataId, //id del objeto
+            networkObjectId, //id del objeto
             domain, //dominio
             true, // verbose
             dnsServer, //ip del servidor
@@ -18,31 +14,29 @@ async function dig(dataId, domain, query_type, dnsServer) {
 
     } catch (error) {
 
-        console.log(error);
-
+        console.log(error.message);
+        
     }
-
-    if (visualToggle) await maximizeTerminal();
 
 }
 
-async function domainNameResolution(dataId, domain) {
+async function domainNameResolution(networkObjectId, domain) {
 
-    const $networkObject = document.getElementById(dataId);
+    const $networkObject = document.getElementById(networkObjectId);
     const useCache = $networkObject.getAttribute("resolved") === "true";
 
     let response = false;
 
-    response = isDomainInEtcHosts(dataId, domain);
+    response = isDomainInEtcHosts(networkObjectId, domain);
 
-    if (!response && useCache) response = isDomainInCachePc(dataId, domain)[1];
+    if (!response && useCache) response = isDomainInCachePc(networkObjectId, domain)[1];
 
     if (!response) {
 
         try {
 
             await getDomainFromServer(
-                dataId, //id del objeto
+                networkObjectId, //id del objeto
                 domain, //dominio
                 false, //verbose
                 "", //ip del servidor
@@ -50,8 +44,8 @@ async function domainNameResolution(dataId, domain) {
                 false //eliminar despues de usar
             );
 
-            let dnsReply = buffer[dataId];
-            delete buffer[dataId];
+            let dnsReply = buffer[networkObjectId];
+            delete buffer[networkObjectId];
 
             response = dnsReply.answer;
 
@@ -65,6 +59,92 @@ async function domainNameResolution(dataId, domain) {
 
     return response;
     
+}
+
+async function getDomainFromServer(networkObjectId, domain, verbose = false, dnsServer = "", query_type = "A", deleteAfterUse, genCache = true) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const switchId = $networkObject.getAttribute("data-switch-enp0s3");
+    const isResolvedOn = $networkObject.getAttribute("resolved") === "true";
+
+    if (!domain.endsWith(".")) domain = domain + ".";
+
+    dnsRequestFlag[networkObjectId] = false;
+
+    await dnsRequestPacketGenerator(networkObjectId, switchId, domain, dnsServer, query_type);
+
+    if (dnsRequestFlag[networkObjectId] === false) {
+        if (verbose) terminalMessage(`communications error to ${dnsServer}#53: timed out`, networkObjectId);
+        throw new Error("Error: No se pudo resolver el nombre de dominio.");
+    }
+
+    let dnsReply = buffer[networkObjectId];
+
+    if (verbose) generateDnsOuput(dnsReply, networkObjectId);
+
+    if (!dnsReply.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
+
+    if (isResolvedOn && genCache) addDnsCacheEntry(networkObjectId, dnsReply.query, dnsReply.answer_type, dnsReply.answer, dnsReply.origin_ip);
+
+    if (deleteAfterUse) delete buffer[networkObjectId];
+
+}
+
+function generateDnsOuput(packet, networkObjectId) {
+
+    //campos del paquete
+
+    let query = packet.query;
+    let answer = packet.answer || "";
+    let answer_type = packet.answer_type;
+    let authority = packet.authority || "0"; //solo para SOA
+    let authority_domain = packet.authority_domain || ""; //solo para SOA
+    let server_ip = packet.origin_ip;
+    let answerBoolean = (!answer || (authority === "1" && query !== authority_domain)) ? "0" : "1";
+
+    //fecha actual
+
+    const currentDate = new Date();
+    const currentDateString = currentDate.toString();
+
+    //header
+
+    terminalMessage(`<p>QUERY: 1, ANSWER: ${answerBoolean}, AUTHORITY: ${authority}, ADDITIONAL: 0</p>`, networkObjectId);
+    terminalMessage("<p></p>", networkObjectId);
+
+    //seccion de query
+
+    terminalMessage(`<p>QUESTION SECTION: </p>`, networkObjectId);
+    terminalMessage(`<p>${query.padEnd(15, " ")}` + " IN " + `${answer_type} </p>`, networkObjectId);
+    terminalMessage("<p></p>", networkObjectId);
+
+    //seccion de respuesta
+
+    if (answer) {
+        terminalMessage(`ANSWER SECTION:`, networkObjectId);
+        if (typeof answer === 'string') {
+            terminalMessage(`<p>${query.padEnd(15, " ")} 86400 IN ${answer_type} ${answer}</p>`, networkObjectId);
+        } else {
+            for (let i = 0; i < answer.length; i++) {
+                terminalMessage(`<p>${query.padEnd(15, " ")} 86400 IN ${answer_type} ${answer[i]}</p>`, networkObjectId);
+            }
+        }
+        terminalMessage("<p></p>", networkObjectId);
+    }
+
+    //seccion de autoridad
+
+    if (authority !== "0") {
+        terminalMessage(`AUTHORITY SECTION:`, networkObjectId);
+        terminalMessage(`<p>${authority_domain.padEnd(15, " ")}` + " 86400 IN " + `${answer_type}` + " " + `${authority} </p>`, networkObjectId);
+        terminalMessage("<p></p>", networkObjectId);
+    }
+
+    //seccion de tiempo
+    terminalMessage("<p>Query time: 4 msec<p>", networkObjectId);
+    terminalMessage(`<p>SERVER: ${server_ip}#53(${server_ip}) (UDP)</p>`, networkObjectId);
+    terminalMessage("<p>WHEN: " + currentDateString + "</p>", networkObjectId);
+    terminalMessage("<p>MSG SIZE  rcvd: 87</p>", networkObjectId);
 }
 
 function isDomainInCachePc(networkObjectId, targetDomain) {
@@ -103,35 +183,6 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
     }
 
     return [false, false, false];
-
-}
-
-async function getDomainFromServer(dataId, domain, verbose = false, dnsServer = "", query_type = "A", deleteAfterUse, genCache = true) {
-
-    const $networkObject = document.getElementById(dataId);
-    const switchId = $networkObject.getAttribute("data-switch-enp0s3");
-    const isResolvedOn = $networkObject.getAttribute("resolved") === "true";
-
-    if (!domain.endsWith(".")) domain = domain + ".";
-
-    dnsRequestFlag[dataId] = false;
-
-    await dnsRequestPacketGenerator(dataId, switchId, domain, dnsServer, query_type);
-
-    if (dnsRequestFlag[dataId] === false) {
-        if (verbose) terminalMessage(`communications error to ${dnsServer}#53: timed out`);
-        throw new Error("Error: No se pudo resolver el nombre de dominio.");
-    }
-
-    let dnsReply = buffer[dataId];
-
-    if (verbose) generateDnsOuput(dnsReply);
-
-    if (!dnsReply.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
-
-    if (isResolvedOn && genCache) addDnsCacheEntry(dataId, dnsReply.query, dnsReply.answer_type, dnsReply.answer, dnsReply.origin_ip);
-
-    if (deleteAfterUse) delete buffer[dataId];
 
 }
 
