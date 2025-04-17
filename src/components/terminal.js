@@ -62,19 +62,15 @@ function sendCommand(event) {
             "ip": () => command_Ip(dataId, args, originIP),
             "dns": () => command_dns(dataId, args),
             "dig": () => command_dig(dataId, args),
-            "tcp": () => command_tcp(dataId, args),
-            "http": () => command_http(dataId, args),
             "arp": () => command_arp(dataId, args),
             "apache": () => command_apache(dataId, args),
             "nano": () => command_nano(dataId, args),
             "help": () => command_help(),
             "man": () => command_man(args[1]),
-            "visual": () => command_visual(args),
-            "test": () => command_test(args),
             "traceroute": () => command_traceroute(dataId, args),
             "systemctl": () => command_systemctl(dataId, args),
-            "exit": () => closeTerminal(event),
             "apt": () => command_Apt(dataId, args),
+            "exit": () => closeTerminal(event)
         }
 
         window.clearInterval(window.pingInterval); //limpiamos todos los procesos de terminal en funcionamiento
