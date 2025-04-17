@@ -1,59 +1,40 @@
-function command_dns(dataId, args) {
+function command_dns(networkObjectId, args) {
 
-    const $serverObject = document.getElementById(dataId);
+    const $serverObject = document.getElementById(networkObjectId);
+    const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
     const isNamedOn = $serverObject.getAttribute("named") === "true";
-    const forbiddenChars = ["\\", "/", "ñ"];
-
-    if (args[1] === "--cache") {
-        terminalMessage($serverObject.querySelector(".cache-dns-table").querySelector("table").outerHTML);
-        return;
-    }
 
     if (!isNamedOn) {
-        terminalMessage("Error: Utilidad no disponible en este equipo.");
+        terminalMessage("Error: Utilidad no disponible en este equipo.", networkObjectId);
         return;
     }
     
     if (args[1] === "-s" || args[1] === "--show") {
-        terminalMessage($serverObject.querySelector(".dns-table").querySelector("table").outerHTML);
+        terminalMessage($dnsTable.outerHTML, networkObjectId);
         return;
     }
 
     if (args[1] === "-f" || args[1] === "--flush") {
-        $serverObject.querySelector(".dns-table").querySelector("table").innerHTML = `
-                    <tr>
-                        <th>Dominio</th>
-                        <th>Tipo</th>
-                        <th>Valor</th>
-                    </tr>`;
-        terminalMessage("La tabla de registros DNS ha sido limpiada correctamente.");
+
+        $dnsTable.innerHTML = `
+            <tr>
+                <th>Dominio</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+            </tr>
+        `;
+
+        terminalMessage("La tabla de registros DNS ha sido limpiada correctamente.", networkObjectId);
         return;
     }
 
     if (args[1] === "add") {
 
-        if (args[2] !== "-t"){  
-
-            if (args.length !== 4) { 
-                terminalMessage("Error: Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]</p>");
-                return;
-            }
-
-            forbiddenChars.forEach( char => { 
-                if (args[2].includes(char)){
-                    terminalMessage("Error: Nombre de Dominio Contiene Carácteres No Válidos")
-                    return ;
-                } 
-            });
-
-            if (!isValidIp(args[3])) {
-                terminalMessage("Error: IP Invalida");
-                return;
-            }
-
+        if (args[2] !== "-t"){  //dns add &lt;domain&gt; &lt;ip&gt;
             let record = new dnsRecord(args[2], "A", args[3]);
-            addDnsEntry(dataId, record);
-
+            addDnsEntry(networkObjectId, record);
+            terminalMessage("Se ha añadido correctamente el registro DNS.", networkObjectId);
+            return;
         }
 
         if (args[2] === "-t") {
@@ -62,25 +43,32 @@ function command_dns(dataId, args) {
             type = type.toUpperCase();
 
             const dnsRecordTypes = {
-                "SOA": () => dns_SOA(dataId, args),
-                "NS": () => dns_NS(dataId, args),
-                "A": () => dns_A(dataId, args),
-                "CNAME": () => dns_CNAME(dataId, args),
-                "PTR": () => dns_PTR(dataId, args)
+                "SOA": () => dns_SOA(networkObjectId, args),
+                "NS": () => dns_NS(networkObjectId, args),
+                "A": () => dns_A(networkObjectId, args),
+                "CNAME": () => dns_CNAME(networkObjectId, args),
+                "PTR": () => dns_PTR(networkObjectId, args)
             }
 
-            if (type in dnsRecordTypes) dnsRecordTypes[type]()
-            else terminalMessage("Error: Tipo de Registro Desconocido.");
+            if (type in dnsRecordTypes) {
+                dnsRecordTypes[type]();
+                terminalMessage("Se ha añadido correctamente el registro DNS.", networkObjectId);
+                return;
+            }
+            
+            terminalMessage("Error: Tipo de Registro Desconocido.", networkObjectId);
+
         }
 
         return;
     }
     
     if (args[1] === "del") {       
-        delDnsEntry(dataId, args[2]);
+        delDnsEntry(networkObjectId, args[2]);
+        terminalMessage("Se ha eliminado correctamente el registro DNS.", networkObjectId);
         return;
     }
        
-    terminalMessage("Error: Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]");
+    terminalMessage("Error: Sintaxis: dns &lt;add|del&gt; [-t &lt;type&gt;] &lt;domain|cname&gt; [ip|domain]", networkObjectId);
 
 }

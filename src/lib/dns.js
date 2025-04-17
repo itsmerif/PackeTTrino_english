@@ -78,65 +78,64 @@ function generateDnsOuput(packet) {
 function dns_SOA(dataId, args) {
 
     if (args.length !== 6) {
-        terminalMessage("Error: Sintaxis: dns add -t SOA &lt;domain&gt; &lt;ns&gt; </p>");
+        terminalMessage("Error: Sintaxis: dns add -t SOA &lt;domain&gt; &lt;ns&gt; </p>", dataId);
         return;
     }
 
     if (!isValidDomain(args[4])) {
-        terminalMessage("Error: Dominio Invalido");
+        terminalMessage("Error: Dominio Invalido", dataId);
         return;
     }
 
     if (!args[4].endsWith(".")) {
-        terminalMessage("Error: Dominio Debe Ser UN FQDN");
+        terminalMessage("Error: Dominio Debe Ser UN FQDN", dataId);
         return;
     }
 
     if (!isValidDomain(args[5])) {
-        terminalMessage("Error: Autoridad Invalida");
+        terminalMessage("Error: Autoridad Invalida", dataId);
         return;
     }
 
     if (!args[5].endsWith(".")) {
-        terminalMessage("Error: Autoridad Debe Ser UN FQDN");
+        terminalMessage("Error: Autoridad Debe Ser UN FQDN", dataId);
         return;
     }
 
     if (isSOA(dataId, args[4])) {
-        terminalMessage("Error: Ya existe un registro de SOA para este dominio.");
+        terminalMessage("Error: Ya existe un registro de SOA para este dominio.", dataId);
         return;
     }
 
     let record = new dnsRecord(args[4], "SOA", args[5]);
     addDnsEntry(dataId, record);
-    terminalMessage("Registro SOA agregado correctamente para el dominio " + args[4]);
 
 }
 
 function dns_NS(dataId, args) {
 
     if (args.length !== 6) {
-        terminalMessage("Error: Sintaxis: dns add -t NS &lt;domain&gt; &lt;authority&gt; </p>");
+        terminalMessage("Error: Sintaxis: dns add -t NS &lt;domain&gt; &lt;authority&gt; </p>", dataId);
         return;
     }
 
     if (!isValidDomain(args[4])) {
-        terminalMessage("Error: Dominio Invalido");
+        terminalMessage("Error: Dominio Invalido", dataId);
         return;
     }
 
     if (!args[4].endsWith(".")) {
-        terminalMessage("Error: Dominio Debe Ser UN FQDN");
+        terminalMessage("Error: Dominio Debe Ser UN FQDN", dataId);
         return;
     }
 
     if (!isValidDomain(args[5])) {
-        terminalMessage("Error: Autoridad Invalida");
+        terminalMessage("Error: Autoridad Invalida", dataId);
         return;
     }
 
     if (!args[5].endsWith(".")) {
-        terminalMessage("Error: Autoridad Debe Ser UN FQDN");
+        terminalMessage("Error: Autoridad Debe Ser UN FQDN", dataId);
         return;
     }
 
@@ -148,34 +147,33 @@ function dns_NS(dataId, args) {
 function dns_A(dataId, args) {
 
     if (args.length !== 6) {
-        terminalMessage("Error: Sintaxis: dns add -t A &lt;domain&gt; &lt;ip&gt; </p>");
+        terminalMessage("Error: Sintaxis: dns add -t A &lt;domain&gt; &lt;ip&gt; </p>", dataId);
         return;
     }
 
     if (!isValidDomain(args[4])) {
-        terminalMessage("Error: Dominio Invalido");
+        terminalMessage("Error: Dominio Invalido", dataId);
         return;
     }
 
     if (!args[4].endsWith(".")) {
-        terminalMessage("Error: Dominio Debe Ser UN FQDN");
+        terminalMessage("Error: Dominio Debe Ser UN FQDN", dataId);
         return;
     }
     
     if (!isValidIp(args[5])) {
-        terminalMessage("Error: IP Invalida");
+        terminalMessage("Error: IP Invalida", dataId);
         return;
     }
 
     let record = new dnsRecord(args[4], "A", args[5]);
     addDnsEntry(dataId, record);
-    terminalMessage("Registro A agregado correctamente para el dominio " + args[4]);
 }
 
 function dns_CNAME(dataId, args) {
 
     if (args.length !== 6) {
-        terminalMessage("Error: Sintaxis: dns add -t CNAME &lt;domain&gt; &lt;alias&gt; </p>");
+        terminalMessage("Error: Sintaxis: dns add -t CNAME &lt;domain&gt; &lt;alias&gt; </p>", dataId);
         return;
     }
 
@@ -230,21 +228,25 @@ function addDnsEntry(serverObjectId, newrecord) {
 
 function delDnsEntry(dataId, targetDomain) {
     const $serverObject = document.getElementById(dataId);
-    const dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
-    const records = dnsTable.querySelectorAll("tr");
+    const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
+    const $records = $dnsTable.querySelectorAll("tr");
     let i = 1;
+    let found = false;
 
-    while ( i < records.length ) {
-        let record = records[i];
-        let cells = record.querySelectorAll("td");
-        let domain = cells[0].innerHTML;
+    while ( i < $records.length && !found ) {
+
+        let $record = $records[i];
+
+        let $fields = $record.querySelectorAll("td");
+
+        let domain = $fields[0].innerHTML;
+
         if (domain === targetDomain) {
-            record.remove();
-            terminalMessage(`Dominio ${targetDomain} borrado correctamente`);
-            return;
+            $record.remove();
+            found = true;
         }
+
         i++;
     }
 
-    terminalMessage("Error: No se encontró el nombre de dominio en la tabla de registros DNS.");
 }
