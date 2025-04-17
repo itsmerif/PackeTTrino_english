@@ -7,8 +7,8 @@ function command_systemctl(networkObjectId, args) {
     const validServices = ["dhcpd", "apache", "dhclient", "dhcrelay", "resolved", "named"];
 
     if (!validOptions.includes(option)) {
-        terminalMessage("Error: Opción no reconocida.");
-        terminalMessage("Sintaxis: systemctl [start|restart|stop|status] &lt;nombre del servicio&gt;");
+        terminalMessage("Error: Opción no reconocida.", networkObjectId);
+        terminalMessage("Sintaxis: systemctl [start|restart|stop|status] &lt;nombre del servicio&gt;", networkObjectId);
         return;
     }
 
@@ -18,7 +18,7 @@ function command_systemctl(networkObjectId, args) {
     };
 
     if (!validServices.includes(service)) {
-        terminalMessage("Error: Servicio no reconocido.");
+        terminalMessage("Error: Servicio no reconocido.", networkObjectId);
         return;
     }
 

@@ -5,7 +5,7 @@ function systemd(networkObjectId, service, option) {
     let daemonStatus = $networkObject.getAttribute(service);
 
     if (!daemonStatus) {
-        terminalMessage("Error: Servicio no disponible para este equipo.");
+        terminalMessage("Error: Servicio no disponible para este equipo.", networkObjectId);
         return;
     }
 
@@ -13,26 +13,26 @@ function systemd(networkObjectId, service, option) {
 
         "start": () => {
             $networkObject.setAttribute(service, "true");
-            terminalMessage(`${service}.service`)
-            terminalMessage("Servicio Iniciado.")
+            terminalMessage(`${service}.service`, networkObjectId);
+            terminalMessage("Servicio Iniciado.", networkObjectId);
         },
 
         "restart": () => {
             $networkObject.setAttribute(service, "true");
-            terminalMessage(`${service}.service`)
-            terminalMessage("Servicio Iniciado.")
+            terminalMessage(`${service}.service`, networkObjectId);
+            terminalMessage("Servicio Iniciado.", networkObjectId);
         },
 
         "stop": () => {
             $networkObject.setAttribute(service, "false");
-            terminalMessage(`${service}.service`)
-            terminalMessage("Servicio Interrumpido.")
+            terminalMessage(`${service}.service`, networkObjectId);
+            terminalMessage("Servicio Interrumpido.", networkObjectId);
         },
 
         "status": () => {
             let daemonMessage = (daemonStatus === "true") ? "<span style='color:#4ade80;'> Activo (running)</span>" : "<span style='color:red;'> Inactivo (dead) </span>";
-            terminalMessage(`${service}.service`)
-            terminalMessage(`Status: ${daemonMessage}`);
+            terminalMessage(`${service}.service`, networkObjectId);
+            terminalMessage(`Status: ${daemonMessage}`, networkObjectId);
         },
 
     }
@@ -53,7 +53,7 @@ function listallServices(networkObjectId) {
         if (isServiceAvailable) {
             let isServiceActive = $networkObject.getAttribute(service) === "true";
             let status = (isServiceActive) ? "<span style='color:#4ade80;'> Activo (running) </span>" : "<span style='color:red;'> Inactivo (dead) </span>";
-            terminalMessage(`${(service + ".service:").padEnd(20, " ")} ${status}`);
+            terminalMessage(`${(service + ".service:").padEnd(20, " ")} ${status}`, networkObjectId);
         }
 
     });
