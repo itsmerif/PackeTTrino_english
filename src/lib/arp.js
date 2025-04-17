@@ -75,3 +75,15 @@ function isIpInARPTable(networkObjectId, ipAddress) {
     return false;
 
 }
+
+function getcurrentARPTable(networkObjectId) {
+    const $networkObject = document.getElementById(networkObjectId);
+    return $networkObject.querySelector(".arp-table").querySelector("table").outerHTML;
+}
+
+function clearARPTable(networkObjectId) {
+    const $networkObject = document.getElementById(networkObjectId);
+    const $arpTable = $networkObject.querySelector(".arp-table").querySelector("table");
+    const $entries = $arpTable.querySelectorAll("tr");
+    for (let i = 1; i < $entries.length; i++) $entries[i].remove();
+}

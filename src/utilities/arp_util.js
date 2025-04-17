@@ -1,22 +1,17 @@
-function command_arp(dataId, args) {
-
-    const $networkObject = document.getElementById(dataId);
+function command_arp(networkObjectId, args) {
 
     if (args[1] === "-s" || args[1] === "--show") {
-        terminalMessage($networkObject.querySelector(".arp-table").querySelector("table").outerHTML);
+        let arpTable = getcurrentARPTable(networkObjectId);
+        terminalMessage(arpTable, networkObjectId);
         return;
     }
 
     if (args[1] === "-f" || args[1] === "--flush") {
-        $networkObject.querySelector(".arp-table").querySelector("table").innerHTML = `
-                <tr>
-                    <th>IP Address</th>
-                    <th>MAC Address</th>
-                </tr>`;
-        terminalMessage("La tabla ARP ha sido limpiada correctamente.");
+        clearARPTable(networkObjectId)
+        terminalMessage("La tabla ARP ha sido limpiada correctamente.", networkObjectId);
         return;
     }
 
-    terminalMessage("Error: Sintaxis: arp &lt;-n&gt; ");
+    terminalMessage("Error: Sintaxis: arp &lt;-n&gt; ", networkObjectId);
 
 }
