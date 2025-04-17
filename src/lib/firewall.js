@@ -10,6 +10,16 @@ class iptablesRule {
     }
 }
 
+function getFirewallDefaultPolicy(networkObjectId) {
+    const $networkObject = document.getElementById(networkObjectId);
+    return $networkObject.getAttribute("firewall-default-policy");
+}
+
+function getFirewallTable(networkObjectId) {
+    const $networkObject = document.getElementById(networkObjectId);
+    return $networkObject.querySelector(".firewall-table").querySelector("table").outerHTML;
+}
+
 function isValidFirewallRule(rule) {
 
     const validChains = ["INPUT", "OUTPUT", "FORWARD"];
@@ -57,10 +67,12 @@ function isValidFirewallRule(rule) {
 }
 
 function addFirewallRule(routerObjectId, newRule) {
+
     const $networkObject = document.getElementById(routerObjectId);
     const ruleTable = $networkObject.querySelector(".firewall-table").querySelector("table");
     const numberOfRows = ruleTable.querySelectorAll("tr").length;
     const newRow = document.createElement("tr");
+
     newRow.innerHTML = `
         <tr>
             <td>${numberOfRows}</td>
@@ -73,10 +85,11 @@ function addFirewallRule(routerObjectId, newRule) {
             <td>${newRule.j}</td>
         </tr>`;
     ruleTable.appendChild(newRow);
-    terminalMessage("Comando firewall ejecutado correctamente");
+
 }
 
 function deleteFirewallRule(routerObjectId, id) {
+
     const $networkObject = document.getElementById(routerObjectId);
     const ruleTable = $networkObject.querySelector(".firewall-table").querySelector("table");
     const rows = ruleTable.querySelectorAll("tr");
@@ -91,12 +104,6 @@ function deleteFirewallRule(routerObjectId, id) {
             found = true;
         }
         i++;
-    }
-
-    if (!found) {
-        terminalMessage("Error: no se encontró la regla");
-    } else {
-        terminalMessage("Comando firewall ejecutado correctamente");
     }
 
 }
@@ -114,13 +121,4 @@ function clearFirewall(networkObjectId, chain = "ALL") {
         }
     }
 
-    terminalMessage("Cortafuegos reestablecido correctamente.");
-}
-
-function showFirewallRules(networkObjectId) {
-    const $networkObject = document.getElementById(networkObjectId);
-    const defaultPolicy = $networkObject.getAttribute("firewall-default-policy");
-    const firewallTable = $networkObject.querySelector(".firewall-table").querySelector("table");
-    terminalMessage(`Firewall Default Policy: ${defaultPolicy}`);
-    terminalMessage(`${firewallTable.outerHTML}`);
 }

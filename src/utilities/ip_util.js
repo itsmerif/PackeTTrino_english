@@ -56,7 +56,7 @@ function command_Ip(networkObjectId, args) {
 
     }
 
-    if (args[1] === "route" || args[1] === "r") { //ip route add 192.168.3.0/24 dev eth0
+    if (args[1] === "route" || args[1] === "r") {
 
         if (args.length === 2) {
             printRoutingTable(networkObjectId);
@@ -66,24 +66,24 @@ function command_Ip(networkObjectId, args) {
         if (args[2] === "add") {
 
             if (args.length !== 6) {
-                terminalMessage('Error de argumentos. Sintaxis: ip route add [destination/netmask] via [nexthop]');
+                terminalMessage('Error de argumentos. Sintaxis: ip route add [destination/netmask] via [nexthop]', networkObjectId);
                 return;
             }
             
             if (!isValidCidrIp(args[3]) && args[3] !== "default") {
-                terminalMessage("Error: La red de destino introducida no es válida.");
+                terminalMessage("Error: La red de destino introducida no es válida.", networkObjectId);
                 return;
             }
 
             let [destination, netmask] = (args[3] === "default") ? ["0.0.0.0", "0.0.0.0"] : parseCidr(args[3]);
 
             if (args[4] !== "via") {
-                terminalMessage('Error de argumentos. Sintaxis: ip route add [destination/netmask] via [nexthop]');
+                terminalMessage('Error de argumentos. Sintaxis: ip route add [destination/netmask] via [nexthop]', networkObjectId);
                 return;
             }
 
             if (!isValidIp(args[5])) {
-                terminalMessage("Error: La IP de siguiente salto introducida no es válida.");
+                terminalMessage("Error: La IP de siguiente salto introducida no es válida.", networkObjectId);
                 return;
             }
 
@@ -91,7 +91,7 @@ function command_Ip(networkObjectId, args) {
             let interface = getReachableInterface(networkObjectId, nexthop);
 
             if (!interface) {
-                terminalMessage("Error: El Siguiente Salto introducido no es accesible.");
+                terminalMessage("Error: El Siguiente Salto introducido no es accesible.", networkObjectId);
                 return;
             }
 
@@ -106,7 +106,7 @@ function command_Ip(networkObjectId, args) {
         if (args[2] === "del") {
 
             if (args.length !== 5) {
-                terminalMessage('Error de argumentos. Sintaxis: ip route del [destination] [netmask]');
+                terminalMessage('Error de argumentos. Sintaxis: ip route del [destination] [netmask]', networkObjectId);
                 return;
             }
 
@@ -121,6 +121,6 @@ function command_Ip(networkObjectId, args) {
 
     }
 
-    terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]');
+    terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]', networkObjectId);
 
 }

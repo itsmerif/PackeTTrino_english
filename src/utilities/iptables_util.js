@@ -1,13 +1,30 @@
 function command_Iptables(networkObjectId, args) {
 
-    let rule = new iptablesRule();
-    let $OPTS = catchopts(["-A:", "-D:", "-p:", "-s:", "-d:", "--sport:", "--dport:", "-j:", "-S", "-F:"], args);
+    if (args[1] === "-D") {
+        deleteFirewallRule(networkObjectId, args[2]);
+        terminalMessage("Se ha eliminado la regla correctamente.", networkObjectId);
+        return;
+    }
 
-    let optionActions = {
+    if (args[1] === "-S") {
+        let defaultPolicy = getFirewallDefaultPolicy(networkObjectId);
+        let firewallTable = getFirewallTable(networkObjectId);
+        terminalMessage(`Firewall Default Policy: ${defaultPolicy}`, networkObjectId);
+        terminalMessage(`${firewallTable}`, networkObjectId);
+        return;
+    }
+
+    if (args[1] === "-F") {
+        clearFirewall(networkObjectId, args[2]);
+        terminalMessage("Se han eliminado las reglas correctamente.", networkObjectId);
+        return;
+    }
+
+    let rule = new iptablesRule();
+    let $OPTS = catchopts(["-A:", "-p:", "-s:", "-d:", "--sport:", "--dport:", "-j:"], args);
+
+    let optionHandlers = {
         "-A": () => rule.chain = $OPTS["-A"],
-        "-D": () => deleteFirewallRule(networkObjectId, $OPTS["-D"]),
-        "-S": () => showFirewallRules(networkObjectId),
-        "-F": () => clearFirewall(networkObjectId, $OPTS["-F"]),
         "-p": () => rule.p = $OPTS["-p"],
         "-s": () => rule.s = $OPTS["-s"],
         "-d": () => rule.d = $OPTS["-d"],
@@ -17,20 +34,15 @@ function command_Iptables(networkObjectId, args) {
     }
 
     for (option in $OPTS) {
-        optionActions[option]();
+        if (optionHandlers[option]) optionHandlers[option]();
     }
 
     try {
-
         isValidFirewallRule(rule);
         addFirewallRule(networkObjectId, rule);
-
+        terminalMessage("Se ha añadido la regla correctamente.", networkObjectId);
     } catch (error) {
-
-        terminalMessage(error.message);
-        console.log(error);
-        return;
-
+        terminalMessage(error.message, networkObjectId);
     }
 
 }
