@@ -1,6 +1,6 @@
 function installDhcpd(networkObjectId) {
 
-    terminalMessage("Instalando DHCP Server...");
+    terminalMessage("Instalando DHCP Server...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -19,17 +19,17 @@ function installDhcpd(networkObjectId) {
     attr("data-interval", "false");
     addOption(dhcpOptionButton(), dhcpServerConfig());
 
-    terminalMessage("DHCP Server instalado correctamente.");
+    terminalMessage("DHCP Server instalado correctamente.", networkObjectId);
 }
 
 function uninstallDhcpd(networkObjectId) {
 
     if (networkObjectId.startsWith("dhcp-server-")) {
-        terminalMessage("Error: no se puede desinstalar isc-dhcp-server en este dispositivo.");
+        terminalMessage("Error: no se puede desinstalar isc-dhcp-server en este dispositivo.", networkObjectId);
         return;
     }
 
-    terminalMessage("Desinstalando DHCP Server...");
+    terminalMessage("Desinstalando DHCP Server...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -42,5 +42,5 @@ function uninstallDhcpd(networkObjectId) {
     remOption("dhcp-option", "dhcp-server-config");
     remove($dhcpTable);
 
-    terminalMessage("DHCP Server desinstalado correctamente.");
+    terminalMessage("DHCP Server desinstalado correctamente.", networkObjectId);
 } 

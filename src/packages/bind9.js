@@ -1,6 +1,6 @@
 function installBind9(networkObjectId) {
 
-    terminalMessage("Instalando Bind...");
+    terminalMessage("Instalando Bind...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -13,17 +13,17 @@ function installBind9(networkObjectId) {
     attr("recursion", "false");
     addOption(dnsOptionButton());
 
-    terminalMessage("Bind instalado correctamente.");
+    terminalMessage("Bind instalado correctamente.", networkObjectId);
 }
 
 function uninstallBind9(networkObjectId) {
 
     if (networkObjectId.startsWith("dns-server-")) {
-        terminalMessage("Error: No se puede desinstalar Bind en este dispositivo.");
+        terminalMessage("Error: No se puede desinstalar Bind en este dispositivo.", networkObjectId);
         return;
     }
 
-    terminalMessage("Desinstalando Bind...");
+    terminalMessage("Desinstalando Bind...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -36,5 +36,5 @@ function uninstallBind9(networkObjectId) {
     rattr("named","recursion");
     remOption("dns-option");   
 
-    terminalMessage("Bind desinstalado correctamente.");
+    terminalMessage("Bind desinstalado correctamente.", networkObjectId);
 }

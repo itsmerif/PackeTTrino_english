@@ -1,6 +1,6 @@
 function installDhclient(networkObjectId) {
 
-    terminalMessage("Instalando DHCP Client...");
+    terminalMessage("Instalando DHCP Client...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -15,13 +15,13 @@ function installDhclient(networkObjectId) {
     attr("data-dhcp-flag-t1", "false");
     attr("data-dhcp-flag-t2", "false");
 
-    terminalMessage("DHCP Client instalado correctamente.");
+    terminalMessage("DHCP Client instalado correctamente.", networkObjectId);
 
 }
 
 function uninstallDhclient(networkObjectId) {
 
-    terminalMessage("Desinstalando DHCP Client...");
+    terminalMessage("Desinstalando DHCP Client...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -39,6 +39,6 @@ function uninstallDhclient(networkObjectId) {
 
     //TODO -> eliminar los setIntervals asociado con este objeto
     
-    terminalMessage("DHCP Client desinstalado correctamente.");
+    terminalMessage("DHCP Client desinstalado correctamente.", networkObjectId);
 
 }

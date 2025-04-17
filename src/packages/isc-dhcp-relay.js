@@ -1,6 +1,6 @@
 function installDhcprelay(networkObjectId) {
 
-    terminalMessage("Instalando DHCP Relay...");
+    terminalMessage("Instalando DHCP Relay...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -12,17 +12,17 @@ function installDhcprelay(networkObjectId) {
     attr("data-main-server", "");
     addOption(dhcpRelayConfig());
 
-    terminalMessage("DHCP Relay instalado correctamente.");
+    terminalMessage("DHCP Relay instalado correctamente.", networkObjectId);
 }
 
 function uninstallDhcprelay(networkObjectId) {
 
     if (networkObjectId.startsWith("dhcp-relay-server-")) {
-        terminalMessage("Error: No se puede desinstalar isc-dhcp-relay en este dispositivo.");
+        terminalMessage("Error: No se puede desinstalar isc-dhcp-relay en este dispositivo.", networkObjectId);
         return;
     }
 
-    terminalMessage("Desinstalando DHCP Relay...");
+    terminalMessage("Desinstalando DHCP Relay...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -33,5 +33,5 @@ function uninstallDhcprelay(networkObjectId) {
     rattr("dhcrelay", "data-main-server");
     remOption("dhcp-relay-option");
 
-    terminalMessage("DHCP Relay desinstalado correctamente.");
+    terminalMessage("DHCP Relay desinstalado correctamente.", networkObjectId);
 }

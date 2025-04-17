@@ -1,6 +1,6 @@
 function installApache2(networkObjectId) {
 
-    terminalMessage("Instalando Apache...");
+    terminalMessage("Instalando Apache...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -11,12 +11,12 @@ function installApache2(networkObjectId) {
     attr("apache", "true");
     attr("web-content", "");
 
-    terminalMessage("Apache instalado correctamente.");
+    terminalMessage("Apache instalado correctamente.", networkObjectId);
 }
 
 function uninstallApache2(networkObjectId) {
 
-    terminalMessage("Desinstalando Apache...");
+    terminalMessage("Desinstalando Apache...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -26,6 +26,6 @@ function uninstallApache2(networkObjectId) {
 
     rattr("apache", "web-content");
 
-    terminalMessage("Apache desinstalado correctamente.");
+    terminalMessage("Apache desinstalado correctamente.", networkObjectId);
 
 }

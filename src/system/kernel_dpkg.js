@@ -12,19 +12,19 @@ function dpkg(networkObjectId, option, package) {
     const service = packagesToServices[package];
 
     if (!service) {
-        terminalMessage("Error: El paquete " + package + " no tiene soporte.");
+        terminalMessage("Error: El paquete " + package + " no tiene soporte.", networkObjectId);
         return;
     }
 
     const isServiceInstalled = $networkObject.getAttribute(service) !== null;
 
     if (option === "install" && isServiceInstalled) {
-        terminalMessage("Error: El servicio " + service + " ya está instalado.");
+        terminalMessage("Error: El servicio " + service + " ya está instalado.", networkObjectId);
         return;
     }
 
     if (option === "remove" && !isServiceInstalled) {
-        terminalMessage("Error: El servicio " + service + " no está instalado.");
+        terminalMessage("Error: El servicio " + service + " no está instalado.", networkObjectId);
         return;
     }
 
