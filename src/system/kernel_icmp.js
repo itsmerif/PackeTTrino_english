@@ -1,58 +1,32 @@
-async function ping(dataId, args) {
+async function ping(dataId, destination) {
 
     const $networkObject = document.getElementById(dataId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const switchObjectId = $networkObject.getAttribute("data-switch-enp0s3");
-    let destination = args[1];
-
-    cleanPacketTraffic();
-
-    if (visualToggle) await minimizeTerminal();
 
     if (!isValidIp(destination)) {
-
-        const domain = destination;
-        destination = await domainNameResolution(dataId, args[1]);
-
-        if (!destination) {
-            if (visualToggle) await maximizeTerminal();
-            terminalMessage(`ping: ${domain}: Nombre o servicio desconocido`)
-            return;
-        }
-
+        destination = await domainNameResolution(dataId, destination[1]);
+        if (!destination) return 1;
     }
 
-    if (destination === getNetwork(destination, networkObjectNetmask)) {
-        if (visualToggle) await maximizeTerminal();
-        pingFailure(destination);
-        return;
-    }
+    if (destination === getNetwork(destination, networkObjectNetmask)) return 2;
 
     if (destination === networkObjectIp || getNetwork(destination, "255.0.0.0") === "127.0.0.0") {
         await new Promise(resolve => setTimeout(resolve, 50));
-        if (visualToggle) await maximizeTerminal();
-        pingSuccess(destination);
-        return;
+        return 0;
     }
+
+    icmpFlag[dataId] = false;
 
     try {
-
-        icmpFlag[dataId] = false;
         await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, destination);
-
     } catch (error) {
-
-        if (visualToggle) await maximizeTerminal();
-        pingFailure(destination);
-        return;
-
+        return 3;
     }
 
-    if (icmpFlag[dataId] === false) pingFailure(destination);
-    else pingSuccess(destination);
-
-    if (visualToggle) await maximizeTerminal();
+    if (icmpFlag[dataId] === false) return 3;
+    else return 0;
 
 }
 

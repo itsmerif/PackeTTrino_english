@@ -5,6 +5,13 @@ async function command_ping(dataId, args) {
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
 
+    const erroHandler = {
+        0: () => pingSuccess(args[1]),
+        1: () => terminalMessage(`ping: ${args[1]}: Nombre o servicio desconocido.`, dataId),
+        2: () => terminalMessage(`ping: ${args[1]}: La dirección IP no es válida.`, dataId),
+        3: () => pingFailure(args[1])
+    }
+
     if (args.length !== 2) {
         terminalMessage("Error: Sintaxis: ping  &lt;ip | dominio&gt;");
         return;
@@ -15,7 +22,12 @@ async function command_ping(dataId, args) {
         return;
     }
 
-    await ping(dataId, args);
+    cleanPacketTraffic();
+
+    if (visualToggle) await minimizeTerminal();
+    let errorCode = await ping(dataId, args[1]);
+    erroHandler[errorCode]();
+    if (visualToggle) await maximizeTerminal();
 
 }
 
