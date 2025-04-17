@@ -82,7 +82,7 @@ function sendCommand(event) {
         terminalBuffer.push(input); //añadimos el comando en el buffer
         currentCommandIndex++; //actualizamos el indice del cursor de comandos
         document.querySelector(".terminal-component").querySelector("input").value = ""; //limpiamos la entrada
-        commandFunctions[command] ? commandFunctions[command]() : terminalMessage(`Error: comando ${command} desconocido.`); //ejecutamos la función correspondiente
+        commandFunctions[command] ? commandFunctions[command]() : terminalMessage(`Error: comando ${command} desconocido.`, dataId); //ejecutamos la función correspondiente
     }
 
 }
@@ -129,15 +129,15 @@ function dragTerminal(event) {
 
 }
 
-function terminalMessage(message) {
+function terminalMessage(message, networkObjectId) {
     const $terminal = document.querySelector(".terminal-component");
     const $output = document.querySelector(".terminal-output");
     const $messageElement = document.createElement("p");
     if (window.getComputedStyle($terminal).display === "none") return;
+    if ($terminal.dataset.id !== networkObjectId) return;
     $messageElement.className = "terminal-message";
     $messageElement.innerHTML = message;
     $output.appendChild($messageElement);
-    //terminal.scrollTop = output.scrollHeight;
 }
 
 function terminalKeyboard(event) {
