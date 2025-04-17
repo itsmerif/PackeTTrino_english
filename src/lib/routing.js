@@ -30,7 +30,6 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
         </tr>`;
 
         $defaultRow.before($newRow);
-        terminalMessage("La regla se ha creado correctamente.");
 
     }else {
 
@@ -41,36 +40,34 @@ function addRoutingEntry(routerObjectId, destination, netmask, gateway, interfac
         $cells[3].innerHTML = interface;
         $cells[4].innerHTML = nexthop;
 
-        terminalMessage("La regla ha sido modificada correctamente.");
-
     }
 
 }
 
 function removeRoutingEntry(routerObjectId, destination, netmask) {
-    const networkObject = document.getElementById(routerObjectId);
-    const table = networkObject.querySelector(".routing-table").querySelector("table");
-    const rows = table.querySelectorAll("tr");
 
-    for (let i = 5; i < rows.length; i++) {
-        const row = rows[i];
-        const cells = row.querySelectorAll("td");
+    const $networkObject = document.getElementById(routerObjectId);
+    const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
+    const $rules = $routingTable.querySelectorAll("tr");
 
-        if (cells[0].innerHTML === destination && cells[1].innerHTML === netmask) {
-            row.parentNode.removeChild(row);
-            terminalMessage("La regla ha sido eliminada correctamente.");
+    for (let i = 5; i < $rules.length; i++) {
+
+        const $rule = $rules[i];
+
+        const $fields = $rule.querySelectorAll("td");
+    
+        if ($fields[0].innerHTML === destination && $fields[1].innerHTML === netmask) {
+            $rule.remove();
             return;
         }
+
     }
 
-    terminalMessage("Error: La regla no existe.");
 }
 
 function printRoutingTable(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
-
-    // caso 1) es un equipo
 
     if (!networkObjectId.includes("router-")) {
         const ip = $networkObject.getAttribute("ip-enp0s3");
@@ -81,8 +78,6 @@ function printRoutingTable(networkObjectId) {
         terminalMessage(`default via ${gateway || "-"} dev enp0s3`);
         return;
     }
-
-    // caso 2) es un router
 
     const table = $networkObject.querySelector(".routing-table").querySelector("table");
     const rows = table.querySelectorAll("tr");

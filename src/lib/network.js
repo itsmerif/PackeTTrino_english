@@ -609,19 +609,19 @@ function restoreNetworkConfiguration(networkObjectId) {
 
 }
 
-function showObjectInfo(id) {
-    const $networkObject = document.getElementById(id);
-    const interfaces = getInterfaces(id);
-    terminalMessage("1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000");
-    terminalMessage("    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00");
-    terminalMessage("    inet 127.0.0.1/8 scope host lo");
+function showObjectInfo(networkObjectId) {
+    const $networkObject = document.getElementById(networkObjectId);
+    const interfaces = getInterfaces(networkObjectId);
+    terminalMessage("1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000", networkObjectId);
+    terminalMessage("    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00", networkObjectId);
+    terminalMessage("    inet 127.0.0.1/8 scope host lo", networkObjectId);
     interfaces.forEach((interface, i) => {
         const ip = $networkObject.getAttribute("ip-" + interface);
         const netmask = $networkObject.getAttribute("netmask-" + interface);
         const mac = $networkObject.getAttribute("mac-" + interface);
-        terminalMessage(`${i + 1}: enp0s3: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000`);
-        terminalMessage(`    link/ether ${mac} brd ff:ff:ff:ff:ff:ff`);
-        if (ip) terminalMessage(`    inet ${ip}/${netmaskToCidr(netmask)} brd 192.168.1.255 scope global dynamic ${interface}`);
+        terminalMessage(`${i + 1}: enp0s3: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000`, networkObjectId);
+        terminalMessage(`    link/ether ${mac} brd ff:ff:ff:ff:ff:ff`, networkObjectId);
+        if (ip) terminalMessage(`    inet ${ip}/${netmaskToCidr(netmask)} brd 192.168.1.255 scope global dynamic ${interface}`, networkObjectId);
     });
 }
 
@@ -630,62 +630,15 @@ function configureInterface(networkObjectId, ip, netmask, interface) {
     $networkObject.setAttribute("ip-" + interface, ip);
     $networkObject.setAttribute("netmask-" + interface, netmask);
     if (networkObjectId.startsWith("router-")) addRoutingEntry(networkObjectId, getNetwork(ip, netmask), netmask, ip, interface, "0.0.0.0");
-    terminalMessage("La interfaz se ha configurado correctamente.");
 }
 
-function removeNetwork(networkObjectId, interface) {
-
+function deconfigureInterface(networkObjectId, interface) {
     const $networkObject = document.getElementById(networkObjectId);
-    const rows = $networkObject.querySelector(".routing-table").querySelector("table").querySelectorAll("tr");
-
-    if (!networkObjectId.includes("router-")) {
-
-        if (interface !== "enp0s3") {
-            terminalMessage("Error: La interfaz introducida no es válida.");
-            return;
-        }
-
-        $networkObject.setAttribute("ip-enp0s3", "");
-        $networkObject.setAttribute("netmask-enp0s3", "");
-
-        terminalMessage("La red ha sido eliminada correctamente.");
-        return;
-    }
-
-    $networkObject.setAttribute("ip-" + interface, "");
-    $networkObject.setAttribute("netmask-" + interface, "");
-
-    //ahora actualizamos la tabla de enrutamiento
-
-    if (interface === "enp0s3") {
-        let targetRow = rows[1];
-        let cells = targetRow.querySelectorAll("td");
-        cells[0].innerHTML = "";
-        cells[1].innerHTML = "";
-        cells[2].innerHTML = "";
-        cells[3].innerHTML = "";
-    }
-
-    if (interface === "enp0s8") {
-        let targetRow = rows[2];
-        let cells = targetRow.querySelectorAll("td");
-        cells[0].innerHTML = "";
-        cells[1].innerHTML = "";
-        cells[2].innerHTML = "";
-        cells[3].innerHTML = "";
-    }
-
-    if (interface === "enp0s9") {
-        let targetRow = rows[3];
-        let cells = targetRow.querySelectorAll("td");
-        cells[0].innerHTML = "";
-        cells[1].innerHTML = "";
-        cells[2].innerHTML = "";
-        cells[3].innerHTML = "";
-    }
-
-    terminalMessage("La red ha sido eliminada correctamente.");
-
+    const ip = $networkObject.getAttribute("ip-" + interface);
+    const netmask = $networkObject.getAttribute("netmask-" + interface);
+    $networkObject.removeAttribute("ip-" + interface);
+    $networkObject.removeAttribute("netmask-" + interface);
+    if (networkObjectId.startsWith("router-")) removeRoutingEntry(networkObjectId, getNetwork(ip, netmask), netmask);
 }
 
 /**ESTA FUNCION DEVUELVE LA INFORMACION DE UNA INTERFAZ COMO ARRAY [INTERFAZ, SWITCH AL QUE ESTÁ CONECTADA, DIRECCIÓN MAC ]*/

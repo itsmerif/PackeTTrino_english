@@ -4,45 +4,26 @@ async function http(networkObjectId, arg) {
     const switchId = $networkObject.getAttribute("data-switch-enp0s3");
     delete browserBuffer[networkObjectId];
     let destinationIp = arg;
-    cleanPacketTraffic();
-
-    if (visualToggle) await minimizeTerminal();
-
-    //si es un dominio, intentamos resolverlo
 
     if (!isValidIp(destinationIp)) {
         destinationIp = await domainNameResolution(networkObjectId, destinationIp);
-        if (!destinationIp) {
-            if (visualToggle) await maximizeTerminal();
-            throw new Error("Error: No se pudo resolver el dominio.");
-        }
+        if (!destinationIp) throw new Error("Error: No se pudo resolver el dominio.");
     }
-
-    //http viaja por tcp, necesitamos establecer la conexión
 
     await tcp(networkObjectId, destinationIp, 80);
-    if (tcpSyncFlag === false) {
-        if (visualToggle) await maximizeTerminal();
-        throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
-    }
-
-    //hemos establecido la conexión, enviamos el paquete
+    if (tcpSyncFlag === false) throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
 
     await httpRequestPacketGenerator(networkObjectId, switchId, destinationIp);
     let htmlReply = browserBuffer[networkObjectId];
 
-    if (!htmlReply) {
-        if (visualToggle) await maximizeTerminal();
-        throw new Error("Error: No se ha recibido respuesta del servidor web.");
-    }
+    if (!htmlReply) throw new Error("Error: No se ha recibido respuesta del servidor web.");
 
-    //si todo salió bien, mostramos el contenido
+    terminalMessage("Conexión establecida con el servidor web.", networkObjectId);
 
-    if (visualToggle) await maximizeTerminal();
-    terminalMessage("Conexión establecida con el servidor web.");
     let content = htmlReply.body;
     const $browserContent = document.querySelector(".browser-content");
     $browserContent.srcdoc = content;
+
 }
 
 async function httpRequestPacketGenerator(networkObjectId, switchId, destinationIp) {

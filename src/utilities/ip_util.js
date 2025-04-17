@@ -2,55 +2,56 @@ function command_Ip(networkObjectId, args) {
     
     if (args[1] === "addr" || args[1] === "a") {
 
-        if (args.length === 2) {
+        if (args.length === 2) { //ip addr
             showObjectInfo(networkObjectId);
             return;
         }
 
-        if (args[2] === "add") {
+        if (args[2] === "add") { //ip addr add [ip]/[netmask] dev [interface]
 
             if (args.length !== 6) {
-                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip]/[netmask] dev [interface]');
+                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip]/[netmask] dev [interface]', networkObjectId);
                 return;
             }
 
             if (!isValidCidrIp(args[3])) {
-                terminalMessage("Error: La IP introducida no es válida.");
+                terminalMessage("Error: La IP introducida no es válida.", networkObjectId);
                 return;
             }
 
             let [ip, netmask] = parseCidr(args[3]);
 
             if (args[4] !== "dev") {
-                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip]/[netmask] dev [interface]');
+                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip]/[netmask] dev [interface]', networkObjectId);
                 return;
             }
 
             if (!getInterfaces(networkObjectId).includes(args[5])) {
-                terminalMessage(`Error: Interfaz ${args[5]} no existe.`);
+                terminalMessage(`Error: Interfaz ${args[5]} no existe.`, networkObjectId);
                 return;
             }
 
             let interface = args[5];
             configureInterface(networkObjectId, ip, netmask, interface);
-
+            terminalMessage("La interfaz se ha configurado correctamente.", networkObjectId);
             return;
             
         }
 
-        if (args[2] === "del") {
+        if (args[2] === "del") { //ip addr del [interface]
 
             if (args.length !== 4) {
-                terminalMessage('Error de argumentos. Sintaxis: ip addr del [interface]');
+                terminalMessage('Error de argumentos. Sintaxis: ip addr del [interface]', networkObjectId);
+                return;
+            }
+            
+            if (!getInterfaces(networkObjectId).includes(args[3])) {
+                terminalMessage(`Error: La interfaz ${args[3]} no se reconoce.`, networkObjectId);
                 return;
             }
 
-            if (args[3] !== "enp0s3" && args[3] !== "enp0s8" && args[3] !== "enp0s9") {
-                terminalMessage("Error: La interfaz introducida no es válida.");
-                return;
-            }
-
-            removeNetwork(networkObjectId, args[3]);
+            deconfigureInterface(networkObjectId, args[3]);
+            terminalMessage("La interfaz se ha desconfigurado correctamente.", networkObjectId);
             return;
         }
 
@@ -97,8 +98,8 @@ function command_Ip(networkObjectId, args) {
 
             let gateway = fromRouterInterface(networkObjectId, interface, "gateway");
 
-            addRoutingEntry(networkObjectId, destination, netmask, gateway, interface, nexthop); 
-
+            addRoutingEntry(networkObjectId, destination, netmask, gateway, interface, nexthop);
+            terminalMessage("La regla ha sido añadida correctamente.", networkObjectId);
             return;
 
         }
@@ -111,14 +112,10 @@ function command_Ip(networkObjectId, args) {
             }
 
             removeRoutingEntry(networkObjectId, args[3], args[4]);
+            terminalMessage("La regla ha sido eliminada correctamente.", networkObjectId);
             return;
         }
-
-        if (args[2] === "restore") {
-            removeRemotesRules(networkObjectId);
-            return;
-        }
-
+        
     }
 
     terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]', networkObjectId);
