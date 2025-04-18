@@ -1,7 +1,7 @@
 function terminal() {
 
     const $terminal = document.createElement("div");
-    $terminal.classList.add("terminal-component");
+    $terminal.classList.add("terminal-component", "draggable-modal");
     $terminal.id = "terminal-network";
     $terminal.setAttribute("data-id", "");
 
@@ -27,7 +27,7 @@ function terminal() {
     `;
 
     $terminal.addEventListener("keydown", terminalKeyboard);
-    $terminal.addEventListener("mousedown", dragTerminal);
+    $terminal.addEventListener("mousedown", dragModal);
     $terminal.addEventListener("click", clickTerminal);
     $terminal.querySelector(".terminal-input").addEventListener("keydown", sendCommand);
     $terminal.querySelector(".terminal-output").addEventListener("click", clickTerminal);
@@ -89,42 +89,6 @@ function clickTerminal(event) {
     input.focus();
 }
 
-function dragTerminal(event) {
-
-    event.preventDefault();
-    const $terminal = event.target.closest(".terminal-component");
-    let rect = $terminal.getBoundingClientRect();
-    let offsetX = event.clientX - rect.left;
-    let offsetY = event.clientY - rect.top;
-
-    $terminal.style.left = `${rect.left}px`;
-    $terminal.style.top = `${rect.top}px`;
-    $terminal.style.transform = 'none';
-    $terminal.style.position = 'fixed';
-
-    function moveTerminal(moveEvent) {
-        let x = moveEvent.clientX - offsetX;
-        let y = moveEvent.clientY - offsetY;
-        let maxX = window.innerWidth - $terminal.offsetWidth;
-        let maxY = window.innerHeight - $terminal.offsetHeight;
-        $terminal.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
-        $terminal.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
-        document.body.style.cursor = "grabbing";
-    }
-
-    function stopDragging() {
-        document.body.style.cursor = "default";
-        document.removeEventListener('mousemove', moveTerminal);
-        document.removeEventListener('mouseup', stopDragging);
-        const input = $terminal.querySelector('input');
-        if (input) input.focus();
-    }
-
-    document.addEventListener('mousemove', moveTerminal);
-    document.addEventListener('mouseup', stopDragging);
-
-}
-
 function terminalMessage(message, networkObjectId) {
     const $terminal = document.querySelector(".terminal-component");
     const $output = document.querySelector(".terminal-output");
@@ -161,26 +125,6 @@ function terminalKeyboard(event) {
         currentCommandIndex++;
         document.querySelector(".terminal-component").querySelector("input").value = terminalBuffer[currentCommandIndex] || "";
     }
-}
-
-function getRoutingRules(routerObjectid, targetinterface) {
-
-    const $routerObject = document.getElementById(routerObjectid);
-    const $routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
-    const $rows = $routingTable.querySelectorAll("tr");
-    const rules = [];
-
-    for (let i = 4; i < $rows.length; i++) {
-        let $row = $rows[i];
-        let $cells = $row.querySelectorAll("td");
-        let destination = $cells[0].innerHTML.trim();
-        let netmask = $cells[1].innerHTML.trim();
-        let interface = $cells[3].innerHTML.trim();
-        let nextHop = $cells[4].innerHTML.trim();
-        if (interface === targetinterface && nextHop !== "0.0.0.0") rules.push(`ip route add ${destination}/${netmaskToCidr(netmask)} via ${nextHop}`);
-    }
-
-    return rules;
 }
 
 async function minimizeTerminal() {

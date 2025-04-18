@@ -1,7 +1,7 @@
 function browser() {
 
     const $browser = document.createElement("div");
-    $browser.classList.add("browser-component");
+    $browser.classList.add("browser-component", "draggable-modal");
     $browser.setAttribute("data-id", "");
     
     $browser.innerHTML = `
@@ -40,7 +40,7 @@ function browser() {
         <iframe class="browser-content"></iframe>
     `;
     
-    $browser.addEventListener("mousedown", dragBroswer);
+    $browser.addEventListener("mousedown", dragModal);
     $browser.querySelector(".control.close").addEventListener("click", closeBrowser);
     $browser.querySelector(".control.minimize").addEventListener("click", minimizeBrowser);
     $browser.querySelector(".control.maximize").addEventListener("click", maximizeBrowser);
@@ -113,42 +113,6 @@ const $forbidden403 = `
         </div></div>
     </body>
 </html>`;
-
-//funciones de navegador
-
-function dragBroswer(event) {
-
-    event.preventDefault();
-    const $browser = event.target.closest(".browser-component");
-    let rect = $browser.getBoundingClientRect();
-    let offsetX = event.clientX - rect.left;
-    let offsetY = event.clientY - rect.top;
-
-    $browser.style.left = `${rect.left}px`;
-    $browser.style.top = `${rect.top}px`;
-    $browser.style.transform = 'none';
-    $browser.style.position = 'fixed';
-
-    function moveBrowser(moveEvent) {
-        let x = moveEvent.clientX - offsetX;
-        let y = moveEvent.clientY - offsetY;
-        let maxX = window.innerWidth - $browser.offsetWidth;
-        let maxY = window.innerHeight - $browser.offsetHeight;
-        $browser.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
-        $browser.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
-    }
-
-    function stopDraggingBrowser() {
-        document.removeEventListener('mousemove', moveBrowser);
-        document.removeEventListener('mouseup', stopDraggingBrowser);
-        const input = $browser.querySelector('input');
-        if (input) input.focus();
-    }
-
-    document.addEventListener('mousemove', moveBrowser);
-    document.addEventListener('mouseup', stopDraggingBrowser);
-
-}
 
 async function browserSearch(event) {
 

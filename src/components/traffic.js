@@ -3,7 +3,7 @@ let trafficBuffer = [];
 function packetTracer() {
 
     const $packetTracer = document.createElement("article");
-    $packetTracer.classList.add("packet-traffic");
+    $packetTracer.classList.add("packet-traffic", "draggable-modal");
 
     $packetTracer.innerHTML = `
         <div class="filter-traffic">
@@ -25,7 +25,7 @@ function packetTracer() {
         </table>
     `;
 
-
+    $packetTracer.addEventListener("mousedown", dragModal);
     $packetTracer.querySelector("input").addEventListener("keydown", (event) => { if (event.key === "Enter") filterPacketTraffic(); });
     $packetTracer.querySelector("#filter-traffic-button").addEventListener("click", filterPacketTraffic);
     $packetTracer.querySelector("#clean-traffic-button").addEventListener("click", cleanPacketTraffic);
@@ -132,4 +132,3 @@ function closePacketFieldsModal() {
     modalComponent.removeEventListener("click", closePacketFieldsModal);
     modalComponent.remove();
 }
-

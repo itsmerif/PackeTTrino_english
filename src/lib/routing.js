@@ -195,3 +195,23 @@ function removeRemoteRules($routerObjectId) {
     cells[4].innerHTML = "";
 
 }
+
+function getRoutingRules(routerObjectid, targetinterface) {
+
+    const $routerObject = document.getElementById(routerObjectid);
+    const $routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
+    const $rows = $routingTable.querySelectorAll("tr");
+    const rules = [];
+
+    for (let i = 4; i < $rows.length; i++) {
+        let $row = $rows[i];
+        let $cells = $row.querySelectorAll("td");
+        let destination = $cells[0].innerHTML.trim();
+        let netmask = $cells[1].innerHTML.trim();
+        let interface = $cells[3].innerHTML.trim();
+        let nextHop = $cells[4].innerHTML.trim();
+        if (interface === targetinterface && nextHop !== "0.0.0.0") rules.push(`ip route add ${destination}/${netmaskToCidr(netmask)} via ${nextHop}`);
+    }
+
+    return rules;
+}

@@ -219,3 +219,40 @@ function getConns(networkObjectId) {
 
     return [finalLines, finalCircles];
 }
+
+/**ESTA FUNCION PERMITE A LOS MODALES MOVERSE  */
+function dragModal(event) {
+
+    event.preventDefault();
+    const $modal = event.target.closest(".draggable-modal");
+    let rect = $modal.getBoundingClientRect();
+    let offsetX = event.clientX - rect.left;
+    let offsetY = event.clientY - rect.top;
+
+    $modal.style.left = `${rect.left}px`;
+    $modal.style.top = `${rect.top}px`;
+    $modal.style.transform = 'none';
+    $modal.style.position = 'fixed';
+
+    function moveModal(moveEvent) {
+        let x = moveEvent.clientX - offsetX;
+        let y = moveEvent.clientY - offsetY;
+        let maxX = window.innerWidth - $modal.offsetWidth;
+        let maxY = window.innerHeight - $modal.offsetHeight;
+        $modal.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+        $modal.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+        document.body.style.cursor = "grabbing";
+    }
+
+    function stopDraggingModal() {
+        document.body.style.cursor = "default";
+        document.removeEventListener('mousemove', moveModal);
+        document.removeEventListener('mouseup', stopDraggingModal);
+        const input = $modal.querySelector('input');
+        if (input) input.focus();
+    }
+
+    document.addEventListener('mousemove', moveModal);
+    document.addEventListener('mouseup', stopDraggingModal);
+
+}
