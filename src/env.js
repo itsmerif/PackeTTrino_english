@@ -28,3 +28,4 @@ let nodesIp = {};
 let defaultNetwork = "";
 let icmpTryoutToggle = false;
 let icmpTryoutObject =  "";
+let routerChangesBuffer = {};
