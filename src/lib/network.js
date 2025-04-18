@@ -197,26 +197,6 @@ function getRoutingTable(routerObjectId) {
 
 }
 
-function ipCheck(switchObjectId, networkObjectId, ip) {
-
-    const networkObject = document.getElementById(networkObjectId);
-    let networkObjectIp = "";
-
-    if (networkObjectId.startsWith("pc-") || networkObjectId.startsWith("dhcp-server-")) {
-        networkObjectIp = networkObject.getAttribute("ip-enp0s3");
-    }
-    if (networkObjectId.startsWith("router-")) {
-        networkObjectIp = getRouterIp(networkObjectId, switchObjectId);
-    }
-
-    if (networkObjectIp === ip) {
-        return true;
-    }
-
-    return false;
-
-}
-
 function getDeviceFromMac(switchObjectId, mac) {
 
     const switchObject = document.getElementById(switchObjectId);
@@ -234,42 +214,6 @@ function getDeviceFromMac(switchObjectId, mac) {
     }
 }
 
-function macCheck(networkObjectId, mac) {
-
-    const networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = networkObject.getAttribute("mac-enp0s3");
-
-    if (networkObjectMac === mac) {
-        return true;
-    }
-
-    return false;
-
-}
-
-function isMacinNetwork(switchObjectId, mac) {
-
-    const switchObject = document.getElementById(switchObjectId);
-    const macTable = switchObject.querySelector("table");
-    const rows = macTable.querySelectorAll("tr");
-
-    for (let i = 1; i < rows.length; i++) {
-
-        const row = rows[i];
-        const cells = row.querySelectorAll("td");
-        const networkObjectId = cells[0].innerHTML; //dispositivo conectado
-
-        if (macCheck(networkObjectId, mac)) { // si la mac que le enviamos coincide con la que tiene el dispositivo, este nos envia una confirmacion
-
-            return networkObjectId;
-
-        }
-
-    }
-
-    return false;
-}
-
 function getDeviceTable(switchObjectId) {
 
     const switchOriginObject = document.getElementById(switchObjectId);
@@ -283,52 +227,6 @@ function getDeviceTable(switchObjectId) {
     }
 
     return devicesArray;
-
-}
-
-function isIpInNetwork(switchObjectId, ipAddress) {
-
-    const devices = getDeviceTable(switchObjectId);
-
-    for (let i = 0; i < devices.length; i++) {
-
-        const networkObject = document.getElementById(devices[i]);
-        const mac = networkObject.getAttribute("mac-enp0s3");
-        let ip = "";
-
-        if (devices[i].startsWith("pc-") || devices[i].startsWith("dhcp-server-")) {
-            ip = networkObject.getAttribute("ip-enp0s3");
-        }
-
-        if (devices[i].startsWith("router-")) {
-            ip = getRouterIp(devices[i], switchObjectId);
-        }
-
-        if (ip === ipAddress) {
-            return [devices[i], mac];
-        }
-
-    }
-
-    return false;
-}
-
-async function broadcastSwitch(switchObjectId, excludeId) {
-
-    const switchObject = document.getElementById(switchObjectId);
-    const devices = getDeviceTable(switchObjectId);
-
-    for (let i = 0; i < devices.length; i++) {
-
-        if (devices[i] !== excludeId) {
-
-            const networkObject = document.getElementById(devices[i]);
-            const x = networkObject.style.left;
-            const y = networkObject.style.top;
-            movePacket(switchObject.style.left, switchObject.style.top, x, y, "broadcast");
-
-        }
-    }
 
 }
 
@@ -619,7 +517,7 @@ function showObjectInfo(networkObjectId) {
         const ip = $networkObject.getAttribute("ip-" + interface);
         const netmask = $networkObject.getAttribute("netmask-" + interface);
         const mac = $networkObject.getAttribute("mac-" + interface);
-        terminalMessage(`${i + 1}: enp0s3: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000`, networkObjectId);
+        terminalMessage(`${i + 1}: ${interface}: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000`, networkObjectId);
         terminalMessage(`    link/ether ${mac} brd ff:ff:ff:ff:ff:ff`, networkObjectId);
         if (ip) terminalMessage(`    inet ${ip}/${netmaskToCidr(netmask)} brd 192.168.1.255 scope global dynamic ${interface}`, networkObjectId);
     });
