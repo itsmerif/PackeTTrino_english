@@ -8,7 +8,8 @@ function packetTracer() {
     $packetTracer.innerHTML = `
         <div class="filter-traffic">
             <input type="text">
-            <button>Filtrar</button>
+            <button id="filter-traffic-button">Filtrar</button>
+            <button id="clean-traffic-button">Limpiar</button>
         </div>
         <table>
         <tr>
@@ -26,7 +27,8 @@ function packetTracer() {
 
 
     $packetTracer.querySelector("input").addEventListener("keydown", (event) => { if (event.key === "Enter") filterPacketTraffic(); });
-    $packetTracer.querySelector("button").addEventListener("click", filterPacketTraffic);
+    $packetTracer.querySelector("#filter-traffic-button").addEventListener("click", filterPacketTraffic);
+    $packetTracer.querySelector("#clean-traffic-button").addEventListener("click", cleanPacketTraffic);
 
     return $packetTracer;
 
