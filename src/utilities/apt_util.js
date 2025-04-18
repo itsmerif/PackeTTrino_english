@@ -1,4 +1,4 @@
-function command_Apt(networkObjectId, args) {
+function command_apt(networkObjectId, args) {
 
     const option =  args[1];
     const package = args[2];

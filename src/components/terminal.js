@@ -69,7 +69,7 @@ function sendCommand(event) {
             "man": () => command_man(args[1]),
             "traceroute": () => command_traceroute(dataId, args),
             "systemctl": () => command_systemctl(dataId, args),
-            "apt": () => command_Apt(dataId, args),
+            "apt": () => command_apt(dataId, args),
             "exit": () => closeTerminal(event)
         }
 

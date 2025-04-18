@@ -72,14 +72,12 @@ function fileInputLoadHandler() {
 function dragStart(event) {
     const networkObjectId = event.target.closest("img").alt;
     const itemType = "item";
-    const x = event.clientX;
-    const y = event.clientY;
+
     event.dataTransfer.setData("json", JSON.stringify({
         itemType: itemType,
         itemId: networkObjectId,
-        originx: x,
-        originy: y
     }));
+
 }
 
 function icmpTryoutStart() {

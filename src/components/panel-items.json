@@ -63,36 +63,36 @@
         "tooltip": "Servidor DNS"
     },
     {
-        "name": "packages",
+        "name": "isc-dhcp-server",
         "image": "./assets/packages/isc-dhcp-server.svg",
         "draggable": true,
         "size": "100%",
         "tooltip": "isc-dhcp-server"
     },
     {
-        "name": "packages",
-        "image": "./assets/packages/isc-dhcp-server.svg",
+        "name": "isc-dhcp-client",
+        "image": "./assets/packages/isc-dhcp-client.svg",
         "draggable": true,
         "size": "100%",
         "tooltip": "isc-dhcp-client"
     },
     {
-        "name": "packages",
-        "image": "./assets/packages/isc-dhcp-server.svg",
+        "name": "isc-dhcp-relay",
+        "image": "./assets/packages/isc-dhcp-relay.svg",
         "draggable": true,
         "size": "100%",
         "tooltip": "isc-dhcp-relay"
     },
     {
-        "name": "packages",
-        "image": "./assets/packages/isc-dhcp-server.svg",
+        "name": "bind9",
+        "image": "./assets/packages/bind9.svg",
         "draggable": true,
         "size": "100%",
         "tooltip": "bind9"
     },
     {
-        "name": "packages",
-        "image": "./assets/packages/isc-dhcp-server.svg",
+        "name": "apache2",
+        "image": "./assets/packages/apache2.svg",
         "draggable": true,
         "size": "100%",
         "tooltip": "apache2"

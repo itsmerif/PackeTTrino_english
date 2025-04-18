@@ -9,7 +9,7 @@ function itemBoard() {
 
     $board.classList.add("board");
     $board.setAttribute("ondragover", "dragOverBoard(event)");
-    $board.setAttribute("ondrop", "dropItem(event)");
+    $board.setAttribute("ondrop", "dropItemOverBoard(event)");
     $board.setAttribute("onclick", "closeAllModals()");
 
     $board.innerHTML = `
@@ -49,7 +49,7 @@ function BoardItemDragStart(event) {
     }));
 }
 
-function dropItem(event) {
+function dropItemOverBoard(event) {
 
     const item = event.dataTransfer.getData("json");
     const itemType = JSON.parse(item).itemType;
@@ -70,7 +70,7 @@ function dropItem(event) {
         "text": () => boardComponent.render(TextObject(x, y))
     }
 
-    if (itemType === "item") boardItemRender[itemId] ? boardItemRender[itemId]() : bodyComponent.render(popupMessage("Error: Tipo de objeto no reconocido"));
+    if (itemType === "item" && boardItemRender[itemId]) boardItemRender[itemId]();
 
     if (itemType === "item-dropped" && !isConnected(itemId)) {
         [x, y] = checkObjectClip(x, y);
@@ -86,5 +86,27 @@ function deleteItem(event) {
     const $networkObject = event.target.closest(".item-dropped") || event.target.closest(".text-annotation");
     if (!isConnected($networkObject.id)) $networkObject.remove();
     else boardComponent.render(popupMessage(`<span>Error: </span>No se puede eliminar un dispositivo con conexiones.`));
+
+}
+
+function dropPackageOverItem(event) {
+
+    const package = event.dataTransfer.getData("json");
+    const $networkObject = event.target.closest(".item-dropped");
+    const networkObjectId = $networkObject.id;
+    const itemType = JSON.parse(package).itemType;
+    const itemId = JSON.parse(package).itemId;
+    
+    if (itemType !== "item") return;
+
+    const packageInstallers = {
+        "isc-dhcp-server": () => command_apt(networkObjectId, ["apt","install","isc-dhcp-server"]),
+        "isc-dhcp-client": () => command_apt(networkObjectId, ["apt","install","isc-dhcp-client"]),
+        "isc-dhcp-relay": () => command_apt(networkObjectId, ["apt","install","isc-dhcp-relay"]),
+        "bind9": () => command_apt(networkObjectId, ["apt","install","bind9"]),
+        "apache2": () => command_apt(networkObjectId, ["apt","install","apache2"])
+    }
+
+    if (packageInstallers[itemId]) packageInstallers[itemId]();
 
 }

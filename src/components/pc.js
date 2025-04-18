@@ -42,6 +42,7 @@ function PcObject(x, y) {
     attr("onclick", "showPcForm('" + $networkObject.id + "')");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("ondragstart", "BoardItemDragStart(event)");
+    attr("ondrop", "dropPackageOverItem(event)");
 
     itemIndex++;
 
