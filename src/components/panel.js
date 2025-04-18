@@ -26,16 +26,19 @@ async function itemPanel() {
     }
 
     panelItems.forEach(panelItem => {
-        const itemElement = document.createElement("article");
-        itemElement.classList.add("item", panelItem.name);
-        itemElement.draggable = panelItem.draggable;
-        itemElement.ondragstart = dragStart;
-        itemElement.innerHTML = `
+        const $itemElement = document.createElement("article");
+        $itemElement.classList.add("item", panelItem.name);
+        $itemElement.draggable = panelItem.draggable;
+        $itemElement.ondragstart = dragStart;
+        $itemElement.innerHTML = `
             <img src="${panelItem.image}" 
             alt="${panelItem.name}"
             draggable="${panelItem.draggable}" 
             style="width: ${panelItem.size}; height: ${panelItem.size};" />`;
-        $container.appendChild(itemElement);
+
+        $itemElement.setAttribute("onmouseenter", `showTooltip("${panelItem.tooltip}", event)`);
+        $itemElement.setAttribute("onmouseleave", `deleteTooltip(event)`);
+        $container.appendChild($itemElement);
     });
 
     $panel.querySelector("#fileInput").addEventListener("change", fileInputChangeHandler);
@@ -187,4 +190,17 @@ function loadState() {
         }
     }
 
+}
+
+function showTooltip(name, event) {
+    const $panelItem = event.target.closest(".item");
+    if ($panelItem.querySelector(".tooltip")) return;
+    $panelItem.appendChild(tooltip(name));
+}
+
+function deleteTooltip(event) {
+    const $panelItem = event.target.closest(".item");
+    if ($panelItem.querySelector(".tooltip")) {
+        $panelItem.querySelector(".tooltip").remove();
+    }
 }

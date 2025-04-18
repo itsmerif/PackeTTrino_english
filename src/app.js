@@ -17,7 +17,7 @@ bodyComponent.render(
     terminal(),
     browser(),
     packetTracer(),
-    GeneralOptions()
+    GeneralOptions(),
 );
 
 //htmlComponent.event("keydown", documentKeyboardHandler);
