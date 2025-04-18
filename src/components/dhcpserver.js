@@ -38,6 +38,7 @@ function DhcpServerObject(x, y) {
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showDhcpSpecs(event)");
+    attr("ondrop", "dropPackageOverItem(event)");
 
     itemIndex++;
 

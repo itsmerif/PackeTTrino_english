@@ -29,6 +29,7 @@ function DnsServerObject(x, y) {
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showDnsForm(event)");
+    attr("ondrop", "dropPackageOverItem(event)");
 
     itemIndex++;
 

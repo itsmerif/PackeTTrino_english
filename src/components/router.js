@@ -34,6 +34,7 @@ function RouterObject(x, y) {
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showRouterSpecs(event)");
+    attr("ondrop", "dropPackageOverItem(event)");
     
     itemIndex++;
 
