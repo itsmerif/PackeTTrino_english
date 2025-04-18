@@ -50,9 +50,9 @@ async function domainNameResolution(networkObjectId, domain) {
             response = dnsReply.answer;
 
         } catch (error) {
-
-            console.log(error);
-
+            
+            response = false;
+            
         }
 
     }

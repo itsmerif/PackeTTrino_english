@@ -56,9 +56,7 @@ async function icmpTryoutProcess(id) {
 
     visualToggle =  true;
 
-    await ping(icmpTryoutObject, ["ping", objectIp]);
-
-    visualToggle = false;
+    await ping(icmpTryoutObject, objectIp);
     
     $board.querySelectorAll(".pack-cursor").forEach(cursor => {cursor.remove();});
 
