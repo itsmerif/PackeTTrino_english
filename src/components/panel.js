@@ -1,22 +1,15 @@
 async function itemPanel() {
 
     const $panel = document.createElement("section");
-    let panelItems;
+    const $itemsContainer = document.createElement("div");
     $panel.id = "item-panel";
+    $panel.innerHTML = `<input type="file" id="fileInput" accept=".html" style="display: none;">`;
+    $itemsContainer.classList.add("item-panel-elements");
+    $itemsContainer.appendChild(dynamicRoutingButton());
+    $panel.appendChild($itemsContainer);
 
-    $panel.innerHTML = `
-            <input type="file" id="fileInput" accept=".html" style="display: none;">
-
-            <div class="item-panel-elements">
-                <article class="item dynrouting" draggable="false">
-                    <img src="./assets/panel/dynrouter.png" alt="dynrouting" draggable="false" style="width: 100%; height: 100%;">
-                    <div class="pulse"></div>
-                    <div class="radar-line"></div>
-                </article>
-            </div>
-    `;
-
-    const $container = $panel.querySelector(".item-panel-elements");
+    //pedimos los items del panel
+    let panelItems;
 
     try {
         const response = await fetch("./src/components/panel-items.json");
@@ -25,6 +18,7 @@ async function itemPanel() {
         console.log(error);
     }
 
+    //agregamos los items del panel
     panelItems.forEach(panelItem => {
         const $itemElement = document.createElement("article");
         $itemElement.classList.add("item", panelItem.name);
@@ -38,9 +32,10 @@ async function itemPanel() {
 
         $itemElement.setAttribute("onmouseenter", `showTooltip("${panelItem.tooltip}", event)`);
         $itemElement.setAttribute("onmouseleave", `deleteTooltip(event)`);
-        $container.appendChild($itemElement);
+        $itemsContainer.appendChild($itemElement);
     });
 
+    //agregamos eventos
     $panel.querySelector("#fileInput").addEventListener("change", fileInputChangeHandler);
     $panel.querySelector(".ping").addEventListener("click", icmpTryoutStart);
     $panel.querySelector(".dynrouting").addEventListener("click", () => bodyComponent.render(DynamicRoutingMenu()));
@@ -55,8 +50,6 @@ async function itemPanel() {
 }
 
 function fileInputChangeHandler(event) {
-    const $panel = document.querySelector("#item-panel");
-    if (event.target.files.length > 0) $panel.querySelector(".load").classList.add("file-loaded");
     let fileName = event.target.files[0].name;
     bodyComponent.render(popupMessage(`Archivo <em>${fileName}</em> cargado con éxito. Para mostrar el contenido, haz click en:`, "/assets/panel/load.svg"));
 }
