@@ -16,7 +16,7 @@
     z-index: 1000;
     animation: form-animation 0.25s ease-in-out;
     font-family: var(--inter);
-    min-width: 450px;
+    min-width: 300px;
 }
 
 .router-form .interfaces-wrapper {
@@ -90,4 +90,5 @@
 .router-form button {
     width: 30%;
     align-self: center;
+    padding: 5px;
 }
