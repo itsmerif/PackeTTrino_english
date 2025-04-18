@@ -11,7 +11,7 @@ function router_menu() {
             <button class="btn-modern-blue dark" id="del-iface">Eliminar</button>
             <button class="btn-modern-blue dark" id="add-iface">Añadir</button>
         </div>
-        <label for="router-ip">Dirección IP:</label>
+        <label for="router-ip">Dirección IP (ipv4):</label>
         <input type="text" id="router-ip" name="router-ip">
         <label for="router-netmask">Máscara de Red:</label>
         <input type="text" name="router-netmask" id="router-netmask">

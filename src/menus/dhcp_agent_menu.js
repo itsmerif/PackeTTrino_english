@@ -5,16 +5,16 @@ function dhcp_agent_menu() {
 
     $menu.innerHTML = `
         <p id="form-dhcp-relay-item-id"></p>
-        <label for="ip-relay">IP:</label>
+        <label for="ip-relay">Dirección IP (ipv4):</label>
         <input type="text" id="ip-relay" name="ip-relay"
         pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-        <label for="netmask-relay">Netmask:</label>
+        <label for="netmask-relay">Máscara de Red:</label>
         <input type="text" id="netmask-relay" name="netmask-relay"
         pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-        <label for="gateway-relay">Gateway:</label>
+        <label for="gateway-relay">Puerta de enlace:</label>
         <input type="text" id="gateway-relay" name="gateway-relay"
         pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-        <label for="main-server">IP del Servidor DHCP Principal:</label>
+        <label for="main-server">Servidor DHCP Principal:</label>
         <input type="text" id="main-server" name="main-server"
         pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
         <button class="btn-modern-blue" type="submit">Guardar</button>   

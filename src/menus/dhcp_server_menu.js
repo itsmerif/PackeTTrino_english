@@ -31,22 +31,22 @@ function dhcp_server_menu() {
         </div>
 
         <div>
-            <label for="offer-netmask">Oferta Netmask:</label>
+            <label for="offer-netmask">Máscara de Red:</label>	
             <input type="text" id="offer-netmask" name="offer-netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
         </div>
 
         <div>
-            <label for="offer-gateway">Oferta Gateway:</label>
+            <label for="offer-gateway">Puerta de Enlace:</label>
             <input type="text" id="offer-gateway" name="offer-gateway" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
         </div>
 
         <div>
-            <label for="offer-dns">Oferta Servidor DNS:</label>
+            <label for="offer-dns">Servidor DNS:</label>
             <input type="text" id="offer-dns" name="offer-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
         </div>
 
         <div>
-            <label for="offer-lease-time">Oferta Tiempo de Alquiler:</label>
+            <label for="offer-lease-time">Tiempo de Alquiler:</label>
             <input type="text" id="offer-lease-time" name="offer-lease-time" pattern="^[0-9]+$">
         </div>
 

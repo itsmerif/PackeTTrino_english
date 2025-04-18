@@ -20,8 +20,8 @@ function dns_server_menu() {
         pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
 
         <div class="form-item">
-        <label for="dns-recursive">Servidor DNS Recursivo:</label>
-        <input class="btn-toggle" type="checkbox" id="dns-recursive" name="dns-recursive">
+            <label for="dns-recursive">Servidor DNS Recursivo:</label>
+            <input class="btn-toggle" type="checkbox" id="dns-recursive" name="dns-recursive">
         </div>
 
         <button class="btn-modern-blue dark" type="submit">Guardar</button>

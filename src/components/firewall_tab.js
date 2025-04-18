@@ -20,6 +20,7 @@ function firewallTable() {
         <button onclick="closeObjectModalTable(event, '.firewall-table')">Cerrar</button>
     `;
 
+    $firewallTable.addEventListener("click", (event) => event.stopPropagation());
     return $firewallTable;
     
 }
