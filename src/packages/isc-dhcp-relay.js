@@ -14,15 +14,11 @@ function installDhcprelay(networkObjectId) {
 
     terminalMessage("DHCP Relay instalado correctamente.", networkObjectId);
 
-    return "Se instaló DHCP Relay correctamente.";
 }
 
 function uninstallDhcprelay(networkObjectId) {
 
-    if (networkObjectId.startsWith("dhcp-relay-server-")) {
-        terminalMessage("Error: No se puede desinstalar isc-dhcp-relay en este dispositivo.", networkObjectId);
-        return;
-    }
+    if (networkObjectId.startsWith("dhcp-relay-server-")) throw new Error("Error: No se puede desinstalar isc-dhcp-relay en este dispositivo.");
 
     terminalMessage("Desinstalando DHCP Relay...", networkObjectId);
 
@@ -37,5 +33,4 @@ function uninstallDhcprelay(networkObjectId) {
 
     terminalMessage("DHCP Relay desinstalado correctamente.", networkObjectId);
 
-    return "Se desinstaló DHCP Relay correctamente.";
 }

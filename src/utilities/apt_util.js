@@ -6,16 +6,18 @@ function command_apt(networkObjectId, args) {
 
     if (args.length !== 3) {
         terminalMessage("Error de argumentos: Sintaxis: apt [install|remove] &lt;nombre del paquete&gt;", networkObjectId);
-        return;
+        throw new Error("Error de argumentos: Sintaxis: apt [install|remove] &lt;nombre del paquete&gt;");
     }
 
     if (!availableOptions.includes(args[1])) {
         terminalMessage("Error: Opción no reconocida.", networkObjectId);
-        return;
+        throw new Error("Error: Opción no reconocida.");
     }
 
-    let log = dpkg(networkObjectId, option, package);
-
-    return log;
-
+    try {
+        dpkg(networkObjectId, option, package);
+    }catch(error) {
+        terminalMessage(error.message, networkObjectId);
+    }
+    
 }

@@ -10,30 +10,16 @@ function dpkg(networkObjectId, option, package) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const service = packagesToServices[package];
-    let log;
 
-    if (!service) {
-        terminalMessage("Error: El paquete " + package + " no tiene soporte.", networkObjectId);
-        return "Error: El paquete " + package + " no tiene soporte.";
-    }
+    if (!service) throw new Error("Error: El paquete " + package + " no tiene soporte.");
 
     const isServiceInstalled = $networkObject.getAttribute(service) !== null;
 
-    if (option === "install" && isServiceInstalled) {
-        terminalMessage("Error: El servicio " + service + " ya está instalado.", networkObjectId);
-        return "Error: El servicio " + service + " ya está instalado.";
-    }
-
-    if (option === "remove" && !isServiceInstalled) {
-        terminalMessage("Error: El servicio " + service + " no está instalado.", networkObjectId);
-        return "Error: El servicio " + service + " no está instalado.";
-    }
-
-    if (option === "install") log = dpkgInstaller(networkObjectId, package);
-    if (option === "remove") log = dpkgUninstaller(networkObjectId, package);
+    if (option === "install" && isServiceInstalled) throw new Error("Error: El servicio " + service + " ya está instalado.");
+    if (option === "remove" && !isServiceInstalled) throw new Error("Error: El servicio " + service + " no está instalado.");
+    if (option === "install") dpkgInstaller(networkObjectId, package);
+    if (option === "remove") dpkgUninstaller(networkObjectId, package);
     
-    return log;
-
 }
 
 
@@ -47,8 +33,7 @@ function dpkgInstaller(networkObjectId, package) {
         "isc-dhcp-client": () => installDhclient(networkObjectId),
     }
 
-    let log = installFunctions[package]();
-    return log;
+    installFunctions[package]();
 
 }
 
@@ -62,6 +47,6 @@ function dpkgUninstaller(networkObjectId, package) {
         "isc-dhcp-client": () => uninstallDhclient(networkObjectId),
     }
 
-    let log = uninstallFunctions[package]();
-    return log;
+    uninstallFunctions[package]();
+    
 }

@@ -13,7 +13,6 @@ function installApache2(networkObjectId) {
 
     terminalMessage("Apache instalado correctamente.", networkObjectId);
 
-    return "Se instaló Apache correctamente.";
 }
 
 function uninstallApache2(networkObjectId) {
@@ -29,7 +28,5 @@ function uninstallApache2(networkObjectId) {
     rattr("apache", "web-content");
 
     terminalMessage("Apache desinstalado correctamente.", networkObjectId);
-
-    return "Se desinstaló Apache correctamente.";
 
 }

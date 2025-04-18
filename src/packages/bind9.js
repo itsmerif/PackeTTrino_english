@@ -15,15 +15,11 @@ function installBind9(networkObjectId) {
 
     terminalMessage("Bind instalado correctamente.", networkObjectId);
 
-    return "Se instaló Bind correctamente.";
 }
 
 function uninstallBind9(networkObjectId) {
 
-    if (networkObjectId.startsWith("dns-server-")) {
-        terminalMessage("Error: No se puede desinstalar Bind en este dispositivo.", networkObjectId);
-        return;
-    }
+    if (networkObjectId.startsWith("dns-server-")) throw new Error("Error: No se puede desinstalar Bind en este dispositivo.");
 
     terminalMessage("Desinstalando Bind...", networkObjectId);
 
@@ -40,5 +36,4 @@ function uninstallBind9(networkObjectId) {
 
     terminalMessage("Bind desinstalado correctamente.", networkObjectId);
 
-    return "Se desinstaló Bind correctamente.";
 }

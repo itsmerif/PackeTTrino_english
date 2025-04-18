@@ -99,17 +99,11 @@ function dropPackageOverItem(event) {
     
     if (itemType !== "item") return;
 
-    const packageInstallers = {
-        "isc-dhcp-server": () => command_apt(networkObjectId, ["apt","install","isc-dhcp-server"]),
-        "isc-dhcp-client": () => command_apt(networkObjectId, ["apt","install","isc-dhcp-client"]),
-        "isc-dhcp-relay": () => command_apt(networkObjectId, ["apt","install","isc-dhcp-relay"]),
-        "bind9": () => command_apt(networkObjectId, ["apt","install","bind9"]),
-        "apache2": () => command_apt(networkObjectId, ["apt","install","apache2"])
-    }
-
-    if (packageInstallers[itemId]) {
-        let log = packageInstallers[itemId]();
-        boardComponent.render(popupMessage(log));
+    try {
+        dpkg(networkObjectId, "install", itemId);
+        boardComponent.render(popupMessage(`Se instaló el paquete ${itemId} con éxito.`));
+    }catch(error) {
+        boardComponent.render(popupMessage(error.message));
     }
 
 }

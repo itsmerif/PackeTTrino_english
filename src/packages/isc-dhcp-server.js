@@ -21,15 +21,11 @@ function installDhcpd(networkObjectId) {
 
     terminalMessage("DHCP Server instalado correctamente.", networkObjectId);
 
-    return "Se instaló DHCP Server correctamente.";
 }
 
 function uninstallDhcpd(networkObjectId) {
 
-    if (networkObjectId.startsWith("dhcp-server-")) {
-        terminalMessage("Error: no se puede desinstalar isc-dhcp-server en este dispositivo.", networkObjectId);
-        return;
-    }
+    if (networkObjectId.startsWith("dhcp-server-")) throw new Error("Error: no se puede desinstalar isc-dhcp-server en este dispositivo.", networkObjectId);
 
     terminalMessage("Desinstalando DHCP Server...", networkObjectId);
 
@@ -46,5 +42,4 @@ function uninstallDhcpd(networkObjectId) {
 
     terminalMessage("DHCP Server desinstalado correctamente.", networkObjectId);
 
-    return "Se desinstaló DHCP Server correctamente.";
 } 
