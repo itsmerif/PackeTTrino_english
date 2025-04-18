@@ -16,18 +16,8 @@ function GeneralOptions() {
         </div>
 
         <div class="options-group">
-            <label for="ignore-arp-traffic"> Ignorar Tráfico ARP (Visual) </label>
+            <label for="ignore-arp-traffic"> No mostrar paquetes ARP </label>
             <input type="checkbox" class=${inputStyle} id="ignore-arp-traffic" name="ignore-arp-traffic">
-        </div>
-
-        <div class="options-group">
-            <label for="legacy-icons"> Iconos Legado </label>
-            <input type="checkbox" class=${inputStyle} id="legacy-icons" name="legacy-icons">
-        </div>
-
-        <div class="options-group">
-            <label for="dark-mode"> Modo Oscuro </label>
-            <input type="checkbox" class=${inputStyle} id="dark-mode" name="dark-mode">
         </div>
 
         <div class="options-group">
@@ -37,7 +27,6 @@ function GeneralOptions() {
         
         <button class=${btnStyle}>Cerrar</button>
     `;
-
 
     $generalOptions.querySelector("#ignore-arp-traffic").addEventListener("change", function () { ignoreArpTraffic = this.checked; });
     $generalOptions.querySelector("#visual-toggle").addEventListener("change", function () { visualToggle = this.checked; });
@@ -51,5 +40,7 @@ function generalOptionsHandler(event) {
     event.preventDefault();
     const $generalOptions = document.querySelector(".settings-modal");
     const isVisible = $generalOptions.style.display === "flex";
+    $generalOptions.querySelector("#visual-toggle").checked = visualToggle;
+    $generalOptions.querySelector("#ignore-arp-traffic").checked = ignoreArpTraffic;
     (isVisible) ? $generalOptions.style.display = "none" : $generalOptions.style.display = "flex";
 }
