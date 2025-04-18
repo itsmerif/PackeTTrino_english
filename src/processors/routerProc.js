@@ -22,7 +22,7 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
         let replyPacket;
 
         if (packet.protocol === "arp" && packet.type === "request") {
-            if (!availableIps.includes(packet.destination_ip)) return;
+            if (packet.destination_ip !== routerObjectIp) return;
             addARPEntry(routerObjectId, packet.origin_ip, packet.origin_mac);
             replyPacket = new ArpReply(routerObjectIp, packet.origin_ip, routerObjectMac, packet.origin_mac);
         }
