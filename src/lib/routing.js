@@ -49,19 +49,12 @@ function removeRoutingEntry(routerObjectId, destination, netmask) {
     const $networkObject = document.getElementById(routerObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
     const $rules = $routingTable.querySelectorAll("tr");
-
-    for (let i = 5; i < $rules.length; i++) {
-
-        const $rule = $rules[i];
-
-        const $fields = $rule.querySelectorAll("td");
     
-        if ($fields[0].innerHTML === destination && $fields[1].innerHTML === netmask) {
-            $rule.remove();
-            return;
-        }
-
-    }
+    $rules.forEach($rule => {
+        const $fields = $rule.querySelectorAll("td");
+        if ($fields.length === 0) return;
+        if ($fields[0].innerHTML === destination && $fields[1].innerHTML === netmask) $rule.remove();
+    });
 
 }
 

@@ -83,7 +83,7 @@ async function traceroute(dataId, destination, numeric = false) {
         terminalMessage(seq + " " + origin.toString().padEnd(15," ") + " *\n", dataId);
         window.pingInterval = setInterval(() => {
             seq = numeric ? seq + 1 : "";
-            terminalMessage(seq + " " + `*               *\n`);
+            terminalMessage(seq + " " + `*               *\n`, dataId);
         }, 500);
     }
 
