@@ -636,8 +636,8 @@ function deconfigureInterface(networkObjectId, interface) {
     const $networkObject = document.getElementById(networkObjectId);
     const ip = $networkObject.getAttribute("ip-" + interface);
     const netmask = $networkObject.getAttribute("netmask-" + interface);
-    $networkObject.removeAttribute("ip-" + interface);
-    $networkObject.removeAttribute("netmask-" + interface);
+    $networkObject.setAttribute("ip-" + interface, "");
+    $networkObject.setAttribute("netmask-" + interface, "");
     if (networkObjectId.startsWith("router-")) removeRoutingEntry(networkObjectId, getNetwork(ip, netmask), netmask);
 }
 
