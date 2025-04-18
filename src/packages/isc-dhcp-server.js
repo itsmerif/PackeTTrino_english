@@ -20,6 +20,8 @@ function installDhcpd(networkObjectId) {
     addOption(dhcpOptionButton(), dhcpServerConfig());
 
     terminalMessage("DHCP Server instalado correctamente.", networkObjectId);
+
+    return "Se instaló DHCP Server correctamente.";
 }
 
 function uninstallDhcpd(networkObjectId) {
@@ -43,4 +45,6 @@ function uninstallDhcpd(networkObjectId) {
     remove($dhcpTable);
 
     terminalMessage("DHCP Server desinstalado correctamente.", networkObjectId);
+
+    return "Se desinstaló DHCP Server correctamente.";
 } 

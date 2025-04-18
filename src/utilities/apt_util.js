@@ -14,6 +14,8 @@ function command_apt(networkObjectId, args) {
         return;
     }
 
-    dpkg(networkObjectId, option, package);
+    let log = dpkg(networkObjectId, option, package);
+
+    return log;
 
 }

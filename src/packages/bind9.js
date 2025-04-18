@@ -14,6 +14,8 @@ function installBind9(networkObjectId) {
     addOption(dnsOptionButton());
 
     terminalMessage("Bind instalado correctamente.", networkObjectId);
+
+    return "Se instaló Bind correctamente.";
 }
 
 function uninstallBind9(networkObjectId) {
@@ -37,4 +39,6 @@ function uninstallBind9(networkObjectId) {
     remOption("dns-option");   
 
     terminalMessage("Bind desinstalado correctamente.", networkObjectId);
+
+    return "Se desinstaló Bind correctamente.";
 }

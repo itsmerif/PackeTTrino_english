@@ -13,6 +13,8 @@ function installDhcprelay(networkObjectId) {
     addOption(dhcpRelayConfig());
 
     terminalMessage("DHCP Relay instalado correctamente.", networkObjectId);
+
+    return "Se instaló DHCP Relay correctamente.";
 }
 
 function uninstallDhcprelay(networkObjectId) {
@@ -34,4 +36,6 @@ function uninstallDhcprelay(networkObjectId) {
     remOption("dhcp-relay-option");
 
     terminalMessage("DHCP Relay desinstalado correctamente.", networkObjectId);
+
+    return "Se desinstaló DHCP Relay correctamente.";
 }

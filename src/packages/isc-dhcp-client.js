@@ -17,6 +17,8 @@ function installDhclient(networkObjectId) {
 
     terminalMessage("DHCP Client instalado correctamente.", networkObjectId);
 
+    return "Se instaló DHCP Client correctamente.";
+
 }
 
 function uninstallDhclient(networkObjectId) {
@@ -40,5 +42,7 @@ function uninstallDhclient(networkObjectId) {
     //TODO -> eliminar los setIntervals asociado con este objeto
     
     terminalMessage("DHCP Client desinstalado correctamente.", networkObjectId);
+
+    return "Se desinstaló DHCP Client correctamente.";
 
 }

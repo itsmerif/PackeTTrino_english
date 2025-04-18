@@ -107,6 +107,9 @@ function dropPackageOverItem(event) {
         "apache2": () => command_apt(networkObjectId, ["apt","install","apache2"])
     }
 
-    if (packageInstallers[itemId]) packageInstallers[itemId]();
+    if (packageInstallers[itemId]) {
+        let log = packageInstallers[itemId]();
+        boardComponent.render(popupMessage(log));
+    }
 
 }

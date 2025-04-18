@@ -66,7 +66,11 @@ async function dynamicRoutingHandler() {
 
     $modalComponent.innerHTML += `<div class="loader"></div>`;
 
-    dynamicRouting();
+    try {
+        dynamicRouting();
+    }catch(error) {
+        bodyComponent.render(popupMessage(`<span>Error: </span>Ha ocurrido un error al activar la funcionalidad de Enrutamiento Automático.`));
+    }
     
     return new Promise(resolve => {
         setTimeout(() => {
