@@ -58,11 +58,7 @@ async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
         dhcpDiscoverFlag[networkObjectId] = false;
         dhcpRequestFlag[networkObjectId] = false;
 
-        if (visualToggle && terminalPrint) await minimizeTerminal();
-
         await dhcpDiscoverGenerator(networkObjectId, switchObjectId);
-
-        if (visualToggle && terminalPrint) await maximizeTerminal();
 
         if (dhcpDiscoverFlag[networkObjectId] === false || dhcpRequestFlag[networkObjectId] === false) {
             terminalMessage("Error: No se pudo encontrar un servidor DHCP.", networkObjectId);
