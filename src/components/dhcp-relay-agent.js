@@ -30,8 +30,8 @@ function DhcpRelayObject(x, y) {
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showDhcpRelaySpecs(event)");
-    attr("ondrop", "dropPackageOverItem(event)");
 
+      
     itemIndex++;
 
     return $networkObject;

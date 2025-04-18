@@ -61,16 +61,26 @@ function dropItemOverBoard(event) {
     let y = event.clientY - boardRect.top;
 
     const boardItemRender = {
-        "pc": () => boardComponent.render(PcObject(x, y)),
-        "router": () => boardComponent.render(RouterObject(x, y)),
-        "switch": () => boardComponent.render(SwitchObject(x, y)),
-        "dhcpserver": () => boardComponent.render(DhcpServerObject(x, y)),
-        "dhcprelay": () => boardComponent.render(DhcpRelayObject(x, y)),
-        "dnsserver": () => boardComponent.render(DnsServerObject(x, y)),
-        "text": () => boardComponent.render(TextObject(x, y))
+        "pc": () => PcObject(x, y),
+        "router": () => RouterObject(x, y),
+        "switch": () => SwitchObject(x, y),
+        "dhcpserver": () => DhcpServerObject(x, y),
+        "dhcprelay": () => DhcpRelayObject(x, y),
+        "dnsserver": () => DnsServerObject(x, y),
+        "text": () => TextObject(x, y),
     }
 
-    if (itemType === "item" && boardItemRender[itemId]) boardItemRender[itemId]();
+    if (itemType === "item" && boardItemRender[itemId]) {
+
+        let $newItem = boardItemRender[itemId]();
+
+        $newItem.addEventListener("drop", (event) => {
+            dropPackageOverItem(event);
+            dropSwitchOverItem(event);
+        });
+
+        boardComponent.render($newItem);
+    }
 
     if (itemType === "item-dropped" && !isConnected(itemId)) {
         [x, y] = checkObjectClip(x, y);
@@ -104,6 +114,31 @@ function dropPackageOverItem(event) {
         boardComponent.render(popupMessage(`Se instaló el paquete ${itemId} con éxito.`));
     }catch(error) {
         boardComponent.render(popupMessage(error.message));
+    }
+
+}
+
+function dropSwitchOverItem(event) {
+    
+    const switchInfo = event.dataTransfer.getData("json");
+    const switchId = JSON.parse(switchInfo).itemId;
+
+    if (!switchId.startsWith("switch-")) return;
+
+    const $switchObject = document.getElementById(switchId);
+    const switchX = JSON.parse(switchInfo).originx;
+    const switchY = JSON.parse(switchInfo).originy;
+    const $networkObject = event.target.closest(".item-dropped");
+    const networkObjectId = $networkObject.id;
+    const networkObjectX = $networkObject.style.left;
+    const networkObjectY = $networkObject.style.top;
+    const availableInterface = getAvailableInterface(networkObjectId);
+
+    if (availableInterface) {
+        CableObject(networkObjectX, networkObjectY, switchX, switchY, networkObjectId, switchId, availableInterface);
+        saveConn(switchId, networkObjectId);
+        $networkObject.setAttribute(`data-switch-${availableInterface}`, switchId);
+        if(!getAvailableInterface(networkObjectId)) $networkObject.querySelector("img").draggable = false;
     }
 
 }

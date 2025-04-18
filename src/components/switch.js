@@ -78,7 +78,6 @@ function switchConn(event) {
             CableObject(x1, y1, $switchObject.style.left, $switchObject.style.top, itemId, $switchObject.id, availableInterface);
             saveConn($switchObject.id, itemId);
             $networkObject.setAttribute(`data-switch-${availableInterface}`, $switchObject.id);
-            $switchObject.querySelector("img").draggable = false;
             if(!getAvailableInterface(itemId)) $networkObject.querySelector("img").draggable = false;
         }
 
