@@ -67,7 +67,35 @@
         "image": "./assets/packages/isc-dhcp-server.svg",
         "draggable": true,
         "size": "100%",
-        "tooltip": "Paquetes"
+        "tooltip": "isc-dhcp-server"
+    },
+    {
+        "name": "packages",
+        "image": "./assets/packages/isc-dhcp-server.svg",
+        "draggable": true,
+        "size": "100%",
+        "tooltip": "isc-dhcp-client"
+    },
+    {
+        "name": "packages",
+        "image": "./assets/packages/isc-dhcp-server.svg",
+        "draggable": true,
+        "size": "100%",
+        "tooltip": "isc-dhcp-relay"
+    },
+    {
+        "name": "packages",
+        "image": "./assets/packages/isc-dhcp-server.svg",
+        "draggable": true,
+        "size": "100%",
+        "tooltip": "bind9"
+    },
+    {
+        "name": "packages",
+        "image": "./assets/packages/isc-dhcp-server.svg",
+        "draggable": true,
+        "size": "100%",
+        "tooltip": "apache2"
     },
     {
         "name": "text",

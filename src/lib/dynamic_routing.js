@@ -28,10 +28,12 @@ function getNodes() {
             let netmask = $router.getAttribute("netmask-" + interface);
             let network = getNetwork(ip, netmask);
 
-            nodes[$router.id].push(network);
-            nodesIp[$router.id].push(ip);
-            nodesNetmask[$router.id].push(netmask);
-
+            if (ip) {
+                nodes[$router.id].push(network);
+                nodesIp[$router.id].push(ip);
+                nodesNetmask[$router.id].push(netmask);
+            }
+            
         });
 
     }
