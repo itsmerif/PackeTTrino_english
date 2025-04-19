@@ -529,9 +529,32 @@ function showObjectInfo(networkObjectId) {
 
 function configureInterface(networkObjectId, ip, netmask, interface) {
     const $networkObject = document.getElementById(networkObjectId);
-    $networkObject.setAttribute("ip-" + interface, ip);
+    $networkObject.setAttribute("ip-" + interface, ip); 
     $networkObject.setAttribute("netmask-" + interface, netmask);
-    if (networkObjectId.startsWith("router-")) addRoutingEntry(networkObjectId, getNetwork(ip, netmask), netmask, ip, interface, "0.0.0.0");
+
+    if (networkObjectId.startsWith("router-")) {
+
+        const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
+        const $routingRules = $routingTable.querySelectorAll("tr");
+        let found = false;
+
+        $routingRules.forEach($routingRule =>{
+
+            const $fields = $routingRule.querySelectorAll("td");
+
+            if ($fields.length === 0) return;
+
+            if ($fields[3].innerHTML === interface && $fields[4].innerHTML === "0.0.0.0") {
+                found = true;
+                $fields[0].innerHTML = getNetwork(ip, netmask);
+                $fields[1].innerHTML = netmask;
+                $fields[2].innerHTML = ip;
+            }
+
+        });
+
+        if (!found) addRoutingEntry(networkObjectId, getNetwork(ip, netmask), netmask, ip, interface, "0.0.0.0");
+    }
 }
 
 function deconfigureInterface(networkObjectId, interface) {

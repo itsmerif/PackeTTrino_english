@@ -56,8 +56,8 @@ function showRouterSpecs(event) {
         `;
 
         routerChangesBuffer["enp0s" + index] = {
-            ip: "",
-            netmask: ""
+            ip: ip,
+            netmask: netmask
         }
 
         if (index === 3) {
