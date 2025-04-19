@@ -20,8 +20,8 @@ async function dhcpd_service(serverObjectId, packet) {
     if (packet.type === "discover") { //descubrimiento por un cliente
 
         if (!rangeStart || !rangeEnd || !netmaskOffer || !leaseTime) return;
-   
-        let offerIP = getRandomIpfromDhcp(serverObjectId);
+        
+        let offerIP = getReservedIp(serverObjectId, packet.chaddr) || getRandomIPfromDhcp(serverObjectId);
         
         let newPacket = new dhcpOffer(
             serverObjectIp,

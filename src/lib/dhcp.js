@@ -23,10 +23,11 @@ function isDHCPinNetwork(switchObjectId) {
 
 }
 
-function getRandomIpfromDhcp(serverObjectId) {
+function getRandomIPfromDhcp(serverObjectId) {
 
     const $serverObject = document.getElementById(serverObjectId);
     const rangeStart = $serverObject.getAttribute("data-range-start");
+
     const rangeEnd = $serverObject.getAttribute("data-range-end");
     const offerNetmask = $serverObject.getAttribute("offer-netmask");
 
@@ -170,6 +171,19 @@ function deleteAllDhcpLeases(serverObjectId) {
         clearInterval(window.leaseTimer);
         serverObject.setAttribute("data-interval", "false");
     }
+}
+
+function getReservedIp(serverObjectId, mac) {
+
+    const $serverObject = document.getElementById(serverObjectId);
+    const reservations = JSON.parse($serverObject.getAttribute("ip-reservations"));
+    let filteredMac = mac.trim().toUpperCase();
+
+    for (let reservation in reservations) {
+        if (reservation === filteredMac) return reservations[reservation];
+    }
+
+    return false;
 }
 
 /**ESTA FUNCION DEVUELVE LAS RESERVAS DE DHCP DE UN DISPOSITIVO COMO ARRAY DE TRs*/

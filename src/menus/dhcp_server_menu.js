@@ -62,6 +62,10 @@ function dhcp_server_menu() {
 
         </div>
 
+        <div class="advanced-section" style="display: none;">
+
+        </div>  
+
         <div class="reservations-section" style="display: none;">
 
             <div>
@@ -183,7 +187,7 @@ function showReservTab(event) {
     const $menu = document.querySelector(".dhcp-form");
     $menu.querySelector(".main-section").style.display = "none";
     $menu.querySelector(".reservations-section").style.display = "flex";
-    $menu.querySelector(".adv-tab").style.display = "none";
+    $menu.querySelector(".advanced-section").style.display = "none";
 }
 
 function showBasicTab(event) {
@@ -192,7 +196,7 @@ function showBasicTab(event) {
     const $menu = document.querySelector(".dhcp-form");
     $menu.querySelector(".main-section").style.display = "flex";
     $menu.querySelector(".reservations-section").style.display = "none";
-    $menu.querySelector(".adv-tab").style.display = "none";
+    $menu.querySelector(".advanced-section").style.display = "none";
 }
 
 function showAdvTab(event) {
@@ -201,7 +205,7 @@ function showAdvTab(event) {
     const $menu = document.querySelector(".dhcp-form");
     $menu.querySelector(".main-section").style.display = "none";
     $menu.querySelector(".reservations-section").style.display = "none";
-    $menu.querySelector(".adv-tab").style.display = "flex";
+    $menu.querySelector(".advanced-section").style.display = "flex";
 }
 
 function addDhcpReservationHandler(event) {
