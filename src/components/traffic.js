@@ -3,13 +3,16 @@ let trafficBuffer = [];
 function packetTracer() {
 
     const $packetTracer = document.createElement("article");
-    $packetTracer.classList.add("packet-traffic", "draggable-modal");
+    $packetTracer.classList.add("packet-traffic");
 
     $packetTracer.innerHTML = `
         <div class="filter-traffic">
             <input type="text">
             <button id="filter-traffic-button">Filtrar</button>
             <button id="clean-traffic-button">Limpiar</button>
+            <select id="filter-by-device">
+                <option value="all">Todos</option>
+            </select>
         </div>
         <table>
         <tr>
@@ -25,10 +28,10 @@ function packetTracer() {
         </table>
     `;
 
-    $packetTracer.addEventListener("mousedown", dragModal);
     $packetTracer.querySelector("input").addEventListener("keydown", (event) => { if (event.key === "Enter") filterPacketTraffic(); });
     $packetTracer.querySelector("#filter-traffic-button").addEventListener("click", filterPacketTraffic);
     $packetTracer.querySelector("#clean-traffic-button").addEventListener("click", cleanPacketTraffic);
+    $packetTracer.querySelector("#filter-by-device").addEventListener("change", filterPacketTrafficbyDevice);
 
     return $packetTracer;
 
@@ -61,13 +64,19 @@ function addPacketTraffic(packet) {
 }
 
 function showPacketTraffic() {
+
     const $packetTraffic = document.querySelector(".packet-traffic");
+
     if ($packetTraffic.style.display === "flex") {
+        removeDevicesFromTraffic();
+        $packetTraffic.style.overflow = "hidden";
         $packetTraffic.style.display = "none";
-    } else {
-        $packetTraffic.style.overflow = "auto";
-        $packetTraffic.style.display = "flex";
+        return;
     }
+
+    insertDevicesToTraffic();
+    $packetTraffic.style.overflow = "auto";
+    $packetTraffic.style.display = "flex";
 }
 
 function cleanPacketTraffic() {
@@ -131,4 +140,42 @@ function closePacketFieldsModal() {
     document.querySelector(".modal-overlay").style.display = "none";
     modalComponent.removeEventListener("click", closePacketFieldsModal);
     modalComponent.remove();
+}
+
+function insertDevicesToTraffic() {
+    const $packetTraffic = document.querySelector(".packet-traffic");
+    const $packetTrafficSelect = $packetTraffic.querySelector("#filter-by-device");
+    const $devices = document.querySelectorAll(".item-dropped");
+    $devices.forEach(($device) => {
+        let deviceName = $device.id;
+        if (deviceName.startsWith("switch-")) return;
+        $packetTrafficSelect.innerHTML += `<option value="${$device.id}">${$device.id}</option>`;
+    });
+}
+
+function removeDevicesFromTraffic() {
+    const $packetTraffic = document.querySelector(".packet-traffic");
+    const $packetTrafficSelect = $packetTraffic.querySelector("#filter-by-device");
+    $packetTrafficSelect.innerHTML = `<option value="all">Todos</option>`;
+}
+
+function filterPacketTrafficbyDevice() {
+    const $packetTraffic = document.querySelector(".packet-traffic");
+    const $packetTrafficTable = $packetTraffic.querySelector("table");
+    const $device = document.getElementById($packetTraffic.querySelector("#filter-by-device").value);
+    const deviceMacs = getMacAddresses($device.id);
+    const $packets = $packetTrafficTable.querySelectorAll("tr");
+
+    $packets.forEach(($packet) => {
+        let $fields = $packet.querySelectorAll("td");
+        if ($fields.length < 1) return;
+        let originMac = $fields[5].innerHTML;
+        let destinationMac = $fields[6].innerHTML;
+        if (deviceMacs.includes(originMac) || deviceMacs.includes(destinationMac)) {
+            $packet.style.display = "table-row";
+        } else {
+            $packet.style.display = "none";
+        }
+    });
+
 }

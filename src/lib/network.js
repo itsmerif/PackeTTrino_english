@@ -567,3 +567,21 @@ function getInfoFromIp(networkObjectId, ip) {
 
 }
 
+/**ESTA FUNCION DEVUELVE UN ARRAY CON LAS DIRECCIONES MAC DE TODAS LAS INTERFAZ DE UN DISPOSITIVO */
+function getMacAddresses(networkObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let index = 3;
+    let mac = $networkObject.getAttribute("mac-enp0s" + index);
+    let macs = [];
+
+    while (mac !== null) {
+        macs.push(mac);
+        if (index === 3) index = 8;
+        else index++;
+        mac = $networkObject.getAttribute("mac-enp0s" + index);
+    }
+
+    return macs;
+
+}

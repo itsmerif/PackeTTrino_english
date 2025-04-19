@@ -80,7 +80,7 @@
     box-sizing: border-box;
 }
 
-.filter-traffic input {
+.filter-traffic input, .filter-traffic select{
     padding: 8px 16px;
     border: none;
     border-radius: 6px;
