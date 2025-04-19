@@ -31,6 +31,7 @@ function terminal() {
     $terminal.addEventListener("click", clickTerminal);
     $terminal.querySelector(".terminal-input").addEventListener("keydown", sendCommand);
     $terminal.querySelector(".terminal-output").addEventListener("click", clickTerminal);
+    $terminal.querySelector(".terminal-output").addEventListener("mousedown", event => { event.stopPropagation(); });
     $terminal.querySelector(".file-editor-error").addEventListener("mousedown", event => { event.stopPropagation(); });
     $terminal.querySelector(".file-editor-error").addEventListener("mouseup", event => { event.stopPropagation(); });
     $terminal.querySelector(".file-editor").addEventListener("mousedown", event => { event.stopPropagation(); });

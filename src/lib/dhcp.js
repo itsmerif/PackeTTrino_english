@@ -171,3 +171,21 @@ function deleteAllDhcpLeases(serverObjectId) {
         serverObject.setAttribute("data-interval", "false");
     }
 }
+
+/**ESTA FUNCION DEVUELVE LAS RESERVAS DE DHCP DE UN DISPOSITIVO COMO ARRAY DE TRs*/
+
+function addDhcpReservation(networkObjectId, mac, ip) {
+    const $networkObject = document.getElementById(networkObjectId);
+    const reservations = JSON.parse($networkObject.getAttribute("ip-reservations"));
+    if (!isValidIp(ip)) throw new Error("Error: La IP introducida no es valida.");
+    if (!isValidMac(mac)) throw new Error("Error: La MAC introducida no es valida.");
+    reservations[mac] = ip;
+    $networkObject.setAttribute("ip-reservations", JSON.stringify(reservations));
+}
+
+function removeDhcpReservation(networkObjectId, mac) {
+    const $networkObject = document.getElementById(networkObjectId);
+    const reservations = JSON.parse($networkObject.getAttribute("ip-reservations"));
+    delete reservations[mac];
+    $networkObject.setAttribute("ip-reservations", JSON.stringify(reservations));
+}

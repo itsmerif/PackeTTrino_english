@@ -74,6 +74,7 @@
 }
 
 .btn-modern-blue {
+
     background-color: #4361ee;
     color: white;
     padding: 12px 24px;
@@ -96,35 +97,26 @@
         transform: translate(0px, -3px);
         box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
     }
-}
 
-.btn-modern-blue.dark {
-    background-color: var(--darkblue);
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    outline: none;
-    animation: fadeInWithBlur 0.1s ease-in-out;
+    &.dark {
+        background-color: var(--darkblue);
+    }
 
-    &:hover {
-        background-color: #007bff;
-        transform: translate(0px, -3px);
-        box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
+    &.small {
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 500;
     }
 
     &.no-animation {
         animation: none;
+        &:hover {
+            transform: none;
+            background-color: #4361ee;
+            box-shadow: none;
+        }
     }
+
 }
 
 .btn-modern-yellow {
@@ -273,6 +265,11 @@
 
     &.no-animation {
         animation: none;
+        &:hover {
+            transform: none;
+            background-color: #ff0000d5;
+            box-shadow: none;
+        }
     }
 
 }

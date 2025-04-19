@@ -36,6 +36,8 @@ function DhcpServerObject(x, y) {
     attr("offer-lease-time", "");
     attr("data-interval", "false");
     
+    attr("ip-reservations", `{}`);
+    
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showDhcpSpecs(event)");

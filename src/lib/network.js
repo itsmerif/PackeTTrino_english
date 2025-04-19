@@ -109,6 +109,10 @@ function isValidDomain(domain) {
     return /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])\.?$/.test(domain);
 }
 
+function isValidMac(mac) {
+    return /^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$/.test(mac);
+}
+
 function getMACTable(switchObjectId) {
 
     const switchOriginObject = document.getElementById(switchObjectId);
