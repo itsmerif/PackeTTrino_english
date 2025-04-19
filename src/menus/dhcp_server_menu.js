@@ -7,6 +7,12 @@ function dhcp_server_menu() {
     
         <p id="form-dhcp-item-id"></p>
 
+        <div>
+            <button class="btn-modern-blue dark" id="btn-basic-tab">Básico</button>
+            <button class="btn-modern-blue dark" id="btn-adv-tab">Avanzado</button>
+            <button class="btn-modern-blue dark" id="btn-reservations">Reservas</button>
+        </div>
+
         <div class="main-section">
 
             <div>
@@ -52,18 +58,27 @@ function dhcp_server_menu() {
                 <input type="text" id="offer-lease-time" name="offer-lease-time" pattern="^[0-9]+$">
             </div>
 
-            <button class="btn-modern-blue dark" id="show-reservations">Ver IPs Reservadas</button>           
-            <button class="btn-modern-blue" type="submit">Guardar</button>
+            <button class="btn-modern-blue" type="submit" id="btn-save-form">Guardar</button>
 
         </div>
 
         <div class="reservations-section" style="display: none;">
 
             <div>
-                <input type="text" id="mac-for-reserve" name="mac-for-reserve" pattern="^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$">
-                <input type="text" id="ip-to-reserve" name="ip-to-reserve" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-                <button class="btn-modern-blue dark small" id="add-reservation">Agregar</button>
+                <label for="mac-for-reserve">Dirección MAC:</label>
+                <input type="text" id="mac-for-reserve" name="mac-for-reserve" 
+                pattern="^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$" 
+                placeholder="00:00:00:00:00:00">
             </div>
+
+            <div>
+                <label for="ip-to-reserve">Dirección IP (IPv4):</label>
+                <input type="text" id="ip-to-reserve" name="ip-to-reserve" 
+                pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+                placeholder="192.168.0.1">
+            </div>
+            
+            <button class="btn-modern-blue dark small" id="add-reservation">Agregar</button>
 
             <div class="reservations-table-wrapper">
                 <table id="reservations-table">
@@ -74,16 +89,16 @@ function dhcp_server_menu() {
                 </table>
             </div>
 
-            <button class="btn-modern-blue dark" id="go-back">Volver</button>
-
         </div>
 
     `;
 
     $menu.addEventListener("submit", saveDhcpSpecs);
-    $menu.querySelector("#show-reservations").addEventListener("click", showReservationsSection);
-    $menu.querySelector("#go-back").addEventListener("click", goBacktoMainDchpForm);
+    $menu.querySelector("#btn-basic-tab").addEventListener("click", showBasicTab);
+    $menu.querySelector("#btn-adv-tab").addEventListener("click", showAdvTab);
+    $menu.querySelector("#btn-reservations").addEventListener("click", showReservTab);
     $menu.querySelector("#add-reservation").addEventListener("click", addDhcpReservationHandler);
+
     return $menu;
     
 }
@@ -162,20 +177,31 @@ function saveDhcpSpecs(event) {
     $menu.style.display = "none";
 }
 
-function showReservationsSection(event) {
+function showReservTab(event) {
     event.stopPropagation();
     event.preventDefault();
     const $menu = document.querySelector(".dhcp-form");
     $menu.querySelector(".main-section").style.display = "none";
     $menu.querySelector(".reservations-section").style.display = "flex";
+    $menu.querySelector(".adv-tab").style.display = "none";
 }
 
-function goBacktoMainDchpForm(event) {
+function showBasicTab(event) {
     event.stopPropagation();
     event.preventDefault();
     const $menu = document.querySelector(".dhcp-form");
     $menu.querySelector(".main-section").style.display = "flex";
     $menu.querySelector(".reservations-section").style.display = "none";
+    $menu.querySelector(".adv-tab").style.display = "none";
+}
+
+function showAdvTab(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    const $menu = document.querySelector(".dhcp-form");
+    $menu.querySelector(".main-section").style.display = "none";
+    $menu.querySelector(".reservations-section").style.display = "none";
+    $menu.querySelector(".adv-tab").style.display = "flex";
 }
 
 function addDhcpReservationHandler(event) {
@@ -184,7 +210,7 @@ function addDhcpReservationHandler(event) {
     const $menu = document.querySelector(".dhcp-form");
     const $reservationsTable = $menu.querySelector("#reservations-table");
     const networkObjectId = document.querySelector(".dhcp-form #form-dhcp-item-id").innerHTML;
-    const macForReservation = $menu.querySelector("#mac-for-reserve").value;
+    const macForReservation = $menu.querySelector("#mac-for-reserve").value.toUpperCase();
     const ipToReserve = $menu.querySelector("#ip-to-reserve").value;
 
     try {

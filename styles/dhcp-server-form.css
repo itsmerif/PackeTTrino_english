@@ -10,9 +10,9 @@
     border-radius: 5px;
     display: none;
     flex-direction: column;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 15px;
-    width: 500px;
+    min-width: 600px;
     height: 70dvh;
     z-index: 3;
     animation: form-animation 0.25s ease-in-out;
@@ -52,7 +52,6 @@
     flex-direction: column;
     flex-wrap: wrap;
     gap: 10px;
-    width: 100%;
 
     div {
         display: flex;
@@ -60,7 +59,6 @@
 
         label {
             text-align: center;
-            margin: auto;
         }
     }
 
@@ -85,6 +83,22 @@
         color: #333;
     }
 
+    .buttons-wrapper {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+
+        button {
+            width: fit-content;
+            white-space: nowrap;
+        }
+    }
+
+    #btn-save-form {
+        margin-top: auto;
+    }
 }
 
 .dhcp-form .reservations-section {
@@ -93,6 +107,7 @@
     flex-direction: column;
     gap: 20px;
     width: 100%;
+    overflow: auto;
 
     div {
         display: flex;
@@ -134,11 +149,11 @@
     
     table {
 
-        width: 100%;
+        width: 70%;
         border-collapse: collapse;
         border: 1px solid #ddd;
-        box-sizing: border-box;
         transition: all 0.2s ease;
+        overflow: auto;
 
         * {
             box-sizing: border-box;
@@ -172,7 +187,6 @@
 
             display: flex;
             flex-direction: row;
-            align-items: center;
             gap: 10px;
             border: none;
             
@@ -181,7 +195,12 @@
                 border: none;
             }
 
+
         }
+    }
+
+    #go-back {
+        margin-top: auto;
     }
 
 }
