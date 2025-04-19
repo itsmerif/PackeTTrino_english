@@ -17,7 +17,7 @@ async function dhcpd_service(serverObjectId, packet) {
 
     if (!isDhcpServerOn) return;
 
-    if (packet.type === "discover") {
+    if (packet.type === "discover") { //descubrimiento por un cliente
 
         if (!rangeStart || !rangeEnd || !netmaskOffer || !leaseTime) return;
    
@@ -52,7 +52,7 @@ async function dhcpd_service(serverObjectId, packet) {
 
     }
 
-    if (packet.type === "request" && packet.ciaddr === "0.0.0.0") {
+    if (packet.type === "request" && packet.ciaddr === "0.0.0.0") { //solicitud por un cliente sin ip asignada
 
         if (packet.siaddr !== serverObjectIp) return;
 
@@ -83,7 +83,7 @@ async function dhcpd_service(serverObjectId, packet) {
 
     }
 
-    if (packet.type === "request" && packet.ciaddr !== "0.0.0.0") {
+    if (packet.type === "request" && packet.ciaddr !== "0.0.0.0") { //renovación de una ip asignada
 
         if (packet.siaddr !== serverObjectIp) return;
 
@@ -108,13 +108,36 @@ async function dhcpd_service(serverObjectId, packet) {
 
     }
 
-    if (packet.type === "release") {
-
+    if (packet.type === "release") { //liberación de una ip asignada
         if (packet.siaddr !== serverObjectIp) return;
-
         deleteDhcpEntry(serverObjectId, packet.ciaddr);
         return;
-
     }
     
+}
+
+function updateServerLeaseTimes(serverObjectId) {
+
+    const $serverObject = document.getElementById(serverObjectId);
+    const $leasesTable = $serverObject.querySelector(".dhcp-table").querySelector("table");
+    const $leaseTimes = $leasesTable.querySelectorAll(".lease-time");
+
+    $leaseTimes.forEach(leaseTime => {
+
+        let time = parseInt(leaseTime.innerHTML, 10);
+
+        if (time > 0) leaseTime.innerHTML = time - 1;
+
+        if (time === 0) {
+            let row = leaseTime.parentNode;
+            row.remove();
+        }
+
+    });
+
+    if ($leasesTable.querySelectorAll("tr").length === 1) {
+        clearInterval(serverLeaseTimers[serverObjectId]);
+        delete serverLeaseTimers[serverObjectId];
+    }
+
 }

@@ -111,32 +111,6 @@ function updateDhcpEntry(serverObjectId, renewPacket) {
 
 }
 
-function updateServerLeaseTimes(serverObjectId) {
-
-    const $serverObject = document.getElementById(serverObjectId);
-    const $leasesTable = $serverObject.querySelector(".dhcp-table").querySelector("table");
-    const $leaseTimes = $leasesTable.querySelectorAll(".lease-time");
-
-    $leaseTimes.forEach(leaseTime => {
-
-        let time = parseInt(leaseTime.innerHTML, 10);
-
-        if (time > 0) leaseTime.innerHTML = time - 1;
-
-        if (time === 0) {
-            let row = leaseTime.parentNode;
-            row.remove();
-        }
-
-    });
-
-    if ($leasesTable.querySelectorAll("tr").length === 1) {
-        clearInterval(serverLeaseTimers[serverObjectId]);
-        delete serverLeaseTimers[serverObjectId];
-    }
-
-}
-
 function startLeaseTimers() {
 
     const $dhcpServers = Array.from(document.querySelectorAll(".item-dropped")).filter($networkObject => $networkObject.getAttribute("dhcpd") !== null);
