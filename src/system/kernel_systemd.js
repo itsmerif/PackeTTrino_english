@@ -44,19 +44,26 @@ function systemd(networkObjectId, service, option) {
 function listallServices(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const availableServices = ["dhcpd", "apache", "dhclient", "dhcrelay", "resolved", "named"];
+    const availableServices = {
+        "dhcpd": "LSB: DHCP server",
+        "apache": "The Apache HTTP Server",
+        "dhclient": "LSB: DHCP client",
+        "dhcrelay": "",
+        "resolved": "",
+        "named": "",
+    };
 
-    availableServices.forEach(service => {
+    for (let service in availableServices) {
 
         let isServiceAvailable = $networkObject.getAttribute(service) !== null;
 
         if (isServiceAvailable) {
             let isServiceActive = $networkObject.getAttribute(service) === "true";
-            let status = (isServiceActive) ? "<span style='color:#4ade80;'> Activo (running) </span>" : "<span style='color:red;'> Inactivo (dead) </span>";
-            terminalMessage(`${(service + ".service:").padEnd(20, " ")} ${status}`, networkObjectId);
+            let status = (isServiceActive) ? "active running" : "inactive dead";
+            terminalMessage(`${(service + ".service").padEnd(20, " ")} loaded ${status.padEnd(20, " ")} ${availableServices[service]}`, networkObjectId);
         }
 
-    });
+    }
 
 }
 

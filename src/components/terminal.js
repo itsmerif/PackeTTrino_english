@@ -11,7 +11,7 @@ function terminal() {
             <input type="text" class="terminal-input" autofocus>
         </p>
 
-        <div class="terminal-output"></div>
+        <pre class="terminal-output"></pre>
 
         <div class="editor-container" style="display: none;">
 
@@ -93,12 +93,9 @@ function clickTerminal(event) {
 function terminalMessage(message, networkObjectId) {
     const $terminal = document.querySelector(".terminal-component");
     const $output = document.querySelector(".terminal-output");
-    const $messageElement = document.createElement("p");
     if (window.getComputedStyle($terminal).display === "none") return;
     if ($terminal.dataset.id !== networkObjectId) return;
-    $messageElement.className = "terminal-message";
-    $messageElement.innerHTML = message;
-    $output.appendChild($messageElement);
+    $output.innerHTML += `${message}\n`;
 }
 
 function terminalKeyboard(event) {
