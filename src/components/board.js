@@ -94,8 +94,23 @@ function deleteItem(event) {
 
     event.stopPropagation();
     const $networkObject = event.target.closest(".item-dropped") || event.target.closest(".text-annotation");
-    if (!isConnected($networkObject.id)) $networkObject.remove();
-    else boardComponent.render(popupMessage(`<span>Error: </span>No se puede eliminar un dispositivo con conexiones.`));
+
+    if (!isConnected($networkObject.id)) {
+        //eliminamos la informacion del dispositivo guardada en los buffers
+        delete buffer[$networkObject.id];
+        delete browserBuffer[$networkObject.id];
+        delete dhcpOfferBuffer[$networkObject.id];
+        delete tcpBuffer[$networkObject.id];
+        delete traceBuffer[$networkObject.id];
+        //eliminamos los procesos en segundo plano asociados al dispositivo
+        clearInterval(serverLeaseTimers[$networkObject.id]);
+        clearInterval(clientLeaseTimers[$networkObject.id]);
+        delete serverLeaseTimers[$networkObject.id];
+        delete clientLeaseTimers[$networkObject.id];
+        $networkObject.remove();
+    }else {
+        boardComponent.render(popupMessage(`<span>Error: </span>No se puede eliminar un dispositivo con conexiones.`));
+    }
 
 }
 

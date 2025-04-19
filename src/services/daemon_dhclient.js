@@ -276,6 +276,8 @@ function deleteDhcpInfo(networkObjectId) {
     $networkObject.setAttribute("data-dhcp-current-lease-time", "");
     $networkObject.setAttribute("data-dhcp-flag-t1", "false");
     $networkObject.setAttribute("data-dhcp-flag-t2", "false");
+    clearInterval(clientLeaseTimers[networkObjectId]);
+    delete clientLeaseTimers[networkObjectId];
 
     if ($pcForm.style.display === "flex" && $pcForm.querySelector("#form-item-id").innerHTML === networkObjectId) {
         $pcForm.querySelector("#ip").value = "";
@@ -362,7 +364,5 @@ async function dhcpReleaseHandler(networkObjectId, switchObjectId) {
     }
 
     terminalMessage(`DHCPRELEASE of ${networkObjectIp} on enp0s3 to ${networkObjectDhcpServer} port 67`, networkObjectId);
-
     await dhcpReleaseGenerator(networkObjectId, switchObjectId);
-
 }

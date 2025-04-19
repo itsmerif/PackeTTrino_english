@@ -77,8 +77,6 @@ async function dhcpd_service(serverObjectId, packet) {
         }
 
         addDhcpEntry(serverObjectId, packet.yiaddr, packet.chaddr, packet.hostname);
-        if (!serverLeaseTimers[serverObjectId]) serverLeaseTimers[serverObjectId] = setInterval(() => updateServerLeaseTimes(serverObjectId), 1000);
-
         return newPacket;
 
     }

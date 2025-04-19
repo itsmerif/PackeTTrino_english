@@ -79,7 +79,7 @@ function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
     `;
 
     $leasesTable.appendChild($newLease);
-
+    if (!serverLeaseTimers[serverObjectId]) serverLeaseTimers[serverObjectId] = setInterval(() => updateServerLeaseTimes(serverObjectId), 1000);
 }
 
 function updateDhcpEntry(serverObjectId, renewPacket) {
