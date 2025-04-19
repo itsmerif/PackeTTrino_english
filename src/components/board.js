@@ -106,8 +106,10 @@ function dropPackageOverItem(event) {
     const networkObjectId = $networkObject.id;
     const itemType = JSON.parse(package).itemType;
     const itemId = JSON.parse(package).itemId;
+    const packages = ["isc-dhcp-server", "isc-dhcp-client", "isc-dhcp-relay", "bind9", "apache2"];
     
     if (itemType !== "item") return;
+    if (!packages.includes(itemId)) return;
 
     try {
         dpkg(networkObjectId, "install", itemId);

@@ -29,6 +29,7 @@ function DhcpServerObject(x, y) {
     attr("dhcpd", "true");
     attr("data-range-start", "");
     attr("data-range-end", "");
+    attr("data-reserved-macs", "");
     attr("offer-gateway", "");
     attr("offer-netmask", "");
     attr("offer-dns", "");

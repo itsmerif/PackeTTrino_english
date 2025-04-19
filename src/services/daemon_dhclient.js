@@ -39,21 +39,13 @@ async function dhclient_service(networkObjectId, packet) {
     }
 
     if (packet.type === "ack") {
-
         if (packet.chaddr !== networkObjectMac) return;
-
         terminalMessage(`DHCPACK of ${packet.yiaddr} from ${packet.siaddr}`, networkObjectId);
-
         dhcpRequestFlag[networkObjectId] = true;
-
         delete dhcpOfferBuffer[networkObjectId];
-
-        setDhcpInfo(networkObjectId, packet);
-        
-        updateClientLeaseTimer(networkObjectId);
-        
+        setDhcpInfo(networkObjectId, packet);      
+        updateClientLeaseTimer(networkObjectId);      
         terminalMessage(`Bound to ${packet.yiaddr} -- renewal in ${packet.leasetime} seconds.`, networkObjectId);
-
     }
 
 }
@@ -75,13 +67,9 @@ async function dhcpRequestGenerator(networkObjectId, switchId, renewPhase = "T1"
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const networkObjectGateway = $networkObject.getAttribute("data-gateway");
     const networkObjectDns = $networkObject.getAttribute("data-dns-server");
-
     const networkObjectLeaseTime = $networkObject.getAttribute("data-dhcp-lease-time");
     const dhcpServerIp = $networkObject.getAttribute("data-dhcp-server");
-
     const isSameNetwork = getNetwork(networkObjectIp, networkObjectNetmask) === getNetwork(dhcpServerIp, networkObjectNetmask);
-
-    //construimos el paquete
 
     let packet = new dhcpRequest(
         networkObjectMac, //origin mac
@@ -98,7 +86,7 @@ async function dhcpRequestGenerator(networkObjectId, switchId, renewPhase = "T1"
     packet.netmask = networkObjectNetmask;
     packet.dns = networkObjectDns;
 
-    if (renewPhase === "T2") { //en el caso de T2, el paquete se envia directamente por broadcast
+    if (renewPhase === "T2") {
         packet.destination_ip = "255.255.255.255";
         packet.destination_mac = "ff:ff:ff:ff:ff:ff";
         addPacketTraffic(packet);
@@ -147,7 +135,6 @@ async function dhcpReleaseGenerator(networkObjectId, switchId) {
     const isDHCPon = $networkObject.getAttribute("dhclient");
     const dhcpServerIp = $networkObject.getAttribute("data-dhcp-server");
     const isSameNetwork = getNetwork(networkObjectIp, neworkObjectNetmask) === getNetwork(dhcpServerIp, neworkObjectNetmask);
-    const terminalPrint = document.querySelector(".terminal-component").dataset.id === networkObjectId;
 
     let packet = new dhcpRelease(networkObjectIp, dhcpServerIp, networkObjectMac, "");
 
@@ -192,5 +179,190 @@ async function dhcpReleaseGenerator(networkObjectId, switchId) {
     addPacketTraffic(packet);
     deleteDhcpInfo(networkObjectId);
     await switchProcessor(switchId, networkObjectId, packet);
+
+}
+
+function setDhcpInfo(networkObjectId, packet) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const $pcForm = document.querySelector(".pc-form");
+    const newIp = packet.yiaddr;
+    const newGateway = packet.gateway;
+    const newNetmask = packet.netmask;
+    const newServer = packet.siaddr;
+    const newDns = packet.dns;
+    const newLeaseTime = packet.leasetime;
+
+    //actualizamos los atributos del cliente dhcp
+    $networkObject.setAttribute("ip-enp0s3", newIp);
+    $networkObject.setAttribute("data-gateway", newGateway);
+    $networkObject.setAttribute("netmask-enp0s3", newNetmask);
+    $networkObject.setAttribute("data-dhcp-server", newServer);
+    $networkObject.setAttribute("data-dns-server", newDns);
+    $networkObject.setAttribute("data-dhcp-lease-time", newLeaseTime);
+
+    //si tenemos el menu grafico abierto, se actualizan los campos
+    if ($pcForm.style.display === "flex" && $pcForm.querySelector("#form-item-id").innerHTML === networkObjectId) {
+        $pcForm.querySelector("#ip").value = newIp;
+        $pcForm.querySelector("#netmask").value = newNetmask;
+        $pcForm.querySelector("#gateway").value = newGateway;
+        $pcForm.querySelector("#dns-server").value = newDns;
+        $pcForm.querySelector("#renew-btn").style.display = "block";
+        $pcForm.querySelector("#release-btn").style.display = "block";
+        $pcForm.querySelector("#get-btn").style.display = "none";
+    }
+
+}
+
+async function updateClientLeaseTimer(networkObjectId) {
+    const $networkObject = document.getElementById(networkObjectId);
+    $networkObject.setAttribute("data-dhcp-current-lease-time", 0);
+    $networkObject.setAttribute("data-dhcp-flag-t1", "false");
+    $networkObject.setAttribute("data-dhcp-flag-t2", "false");
+    if (clientLeaseTimers[networkObjectId]) return;
+    const clientLeaseTimer = setInterval( async () => { await reduceClientLeaseTime(networkObjectId)}, 1000 );
+    clientLeaseTimers[networkObjectId] = clientLeaseTimer;
+}
+
+async function reduceClientLeaseTime(networkObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const switchId = $networkObject.getAttribute("data-switch-enp0s3");
+    const leaseTime = parseInt($networkObject.getAttribute("data-dhcp-lease-time"));
+    const flagT1 = $networkObject.getAttribute("data-dhcp-flag-t1");
+    const flagT2 = $networkObject.getAttribute("data-dhcp-flag-t2");
+    const T1 = leaseTime * 0.5;
+    const T2 = leaseTime * 0.875;
+
+    $networkObject.setAttribute("data-dhcp-current-lease-time", parseInt($networkObject.getAttribute("data-dhcp-current-lease-time")) + 1 );
+    const currentLeaseTime = parseInt($networkObject.getAttribute("data-dhcp-current-lease-time"));
+    
+    if (currentLeaseTime > T1 && flagT1 === "false") {
+        $networkObject.setAttribute("data-dhcp-flag-t1", "true");
+        let renewAttempt = await dhcpRenewHandler(networkObjectId, switchId);
+        if (renewAttempt) $networkObject.setAttribute("data-dhcp-flag-t1", "false");
+        return;
+    }
+
+    if (currentLeaseTime > T2 && flagT2 === "false") {
+        $networkObject.setAttribute("data-dhcp-flag-t2", "true");
+        let renewAttempt = await dhcpRenewHandler(networkObjectId, switchId, "T2");
+        if (renewAttempt) $networkObject.setAttribute("data-dhcp-flag-t2", "false");
+        return;
+    }
+
+    if (currentLeaseTime >= leaseTime ) {
+        clearInterval(clientLeaseTimers[networkObjectId]);
+        delete clientLeaseTimers[networkObjectId];
+        deleteDhcpInfo(networkObjectId);
+        await dhcpDiscoverGenerator(networkObjectId, switchId);
+        return;
+    }
+
+}
+
+function deleteDhcpInfo(networkObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const $pcForm = document.querySelector(".pc-form");
+
+    $networkObject.setAttribute("ip-enp0s3", "");
+    $networkObject.setAttribute("netmask-enp0s3", "");
+    $networkObject.setAttribute("data-gateway", "");
+    $networkObject.setAttribute("data-dhcp-server", "");
+    $networkObject.setAttribute("data-dns-server", "");
+    $networkObject.setAttribute("data-dhcp-server", "");
+    $networkObject.setAttribute("data-dhcp-lease-time", "");
+    $networkObject.setAttribute("data-dhcp-current-lease-time", "");
+    $networkObject.setAttribute("data-dhcp-flag-t1", "false");
+    $networkObject.setAttribute("data-dhcp-flag-t2", "false");
+
+    if ($pcForm.style.display === "flex" && $pcForm.querySelector("#form-item-id").innerHTML === networkObjectId) {
+        $pcForm.querySelector("#ip").value = "";
+        $pcForm.querySelector("#netmask").value = "";
+        $pcForm.querySelector("#gateway").value = "";
+        $pcForm.querySelector("#dns-server").value = "";
+        $pcForm.querySelector("#renew-btn").style.display = "none";
+        $pcForm.querySelector("#release-btn").style.display = "none";
+        $pcForm.querySelector("#get-btn").style.display = "block";
+    }
+}
+
+async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
+    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
+
+    if (networkObjectIp !== "") {
+        terminalMessage("Error: Este equipo ya tiene una IP asignada.", networkObjectId);
+        return;
+    }
+
+    terminalMessage(`Listening on LPF/enp0s3/${networkObjectMac}`, networkObjectId);
+    terminalMessage(`Sending on   LPF/enp0s3/${networkObjectMac}`, networkObjectId);
+    terminalMessage("Sending on   Socket/fallback", networkObjectId);
+    terminalMessage(`DHCPDISCOVER on enp0s3 to 255.255.255.255 port 67 interval 6`, networkObjectId);
+
+    try {
+
+        dhcpDiscoverFlag[networkObjectId] = false;
+        dhcpRequestFlag[networkObjectId] = false;
+
+        await dhcpDiscoverGenerator(networkObjectId, switchObjectId);
+
+        if (dhcpDiscoverFlag[networkObjectId] === false || dhcpRequestFlag[networkObjectId] === false) {
+            terminalMessage("Error: No se pudo encontrar un servidor DHCP.", networkObjectId);
+            return;
+        }
+
+
+    } catch (error) {
+
+        terminalMessage("Error: " + error, networkObjectId);
+
+    }
+
+}
+
+async function dhcpRenewHandler(networkObjectId, switchObjectId, renewPhase = "T1") {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
+    const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
+    const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
+
+    if (!networkObjectIp || !networkObjectNetmask || !networkObjectDhcpServer) {
+        terminalMessage("Error en la configuración de red.", networkObjectId);
+        return;
+    }
+
+    terminalMessage(`DHCPREQUEST on enp0s3 to ${networkObjectDhcpServer} port 67`, networkObjectId);
+
+    dhcpRequestFlag[networkObjectId] = false;
+
+    try {
+        await dhcpRequestGenerator(networkObjectId, switchObjectId, renewPhase);
+    } catch (error) {
+        terminalMessage("Error: " + error, networkObjectId);
+    }
+    
+}
+
+async function dhcpReleaseHandler(networkObjectId, switchObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
+    const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
+    const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
+
+    if (!networkObjectIp || !networkObjectNetmask || !networkObjectDhcpServer) {
+        terminalMessage("Error en la configuración de red.", networkObjectId);
+        return;
+    }
+
+    terminalMessage(`DHCPRELEASE of ${networkObjectIp} on enp0s3 to ${networkObjectDhcpServer} port 67`, networkObjectId);
+
+    await dhcpReleaseGenerator(networkObjectId, switchObjectId);
 
 }
