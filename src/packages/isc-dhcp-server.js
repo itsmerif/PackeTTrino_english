@@ -1,13 +1,12 @@
 function installDhcpd(networkObjectId) {
-
+    let $networkObject;
     terminalMessage("Instalando DHCP Server...", networkObjectId);
-
-    const $networkObject = document.getElementById(networkObjectId);
+    if (typeof networkObjectId === "string") $networkObject = document.getElementById(networkObjectId);
+    if (networkObjectId instanceof Node) $networkObject = networkObjectId;
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
     const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
     const addOption = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));
-
     append(dhcpTable());
     attr("dhcpd", "true");
     attr("data-range-start", "");
@@ -17,10 +16,9 @@ function installDhcpd(networkObjectId) {
     attr("offer-dns", "");
     attr("offer-lease-time", "");
     attr("data-interval", "false");
+    attr("ip-reservations", `{}`);
     addOption(dhcpOptionButton(), dhcpServerConfig());
-
     terminalMessage("DHCP Server instalado correctamente.", networkObjectId);
-
 }
 
 function uninstallDhcpd(networkObjectId) {

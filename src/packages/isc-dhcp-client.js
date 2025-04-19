@@ -1,22 +1,19 @@
 function installDhclient(networkObjectId) {
-
+    let $networkObject;
     terminalMessage("Instalando DHCP Client...", networkObjectId);
-
-    const $networkObject = document.getElementById(networkObjectId);
+    if (typeof networkObjectId === "string") $networkObject = document.getElementById(networkObjectId);
+    if (networkObjectId instanceof Node) $networkObject = networkObjectId;
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
     const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
     const addOption = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));           
-
     attr("dhclient", "false");   
     attr("data-dhcp-server", "");
     attr("data-dhcp-lease-time", "");
     attr("data-dhcp-current-lease-time", "");
     attr("data-dhcp-flag-t1", "false");
     attr("data-dhcp-flag-t2", "false");
-
     terminalMessage("DHCP Client instalado correctamente.", networkObjectId);
-
 }
 
 function uninstallDhclient(networkObjectId) {

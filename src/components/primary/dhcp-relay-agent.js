@@ -22,18 +22,14 @@ function DhcpRelayObject(x, y) {
     attr("mac-enp0s3", getRandomMac());
     attr("data-gateway", "");
     attr("data-switch-enp0s3", "");
-    attr("firewall-default-policy", "ACCEPT");
-
-    attr("dhcrelay", "true");
-    attr("data-main-server", "");
-    
+    attr("firewall-default-policy", "ACCEPT");    
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showDhcpRelaySpecs(event)");
 
-      
-    itemIndex++;
+    installDhcprelay($networkObject);
 
+    itemIndex++;
     return $networkObject;
 
 }

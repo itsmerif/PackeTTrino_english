@@ -1,21 +1,20 @@
-function DhcpServerObject(x, y) {
+function DnsServerObject(x, y) {
 
     const $networkObject = document.createElement("article");
     const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
 
-    $networkObject.id = `dhcp-server-${itemIndex}`;
+    $networkObject.id = `dns-server-${itemIndex}`;
     [x,y] = checkObjectClip(x, y);
     $networkObject.style.left = `${x}px`;
     $networkObject.style.top = `${y}px`;
-    $networkObject.classList.add("item-dropped", "dhcp-server");
+    $networkObject.classList.add("item-dropped", "dns-server");
 
     append(
-        IconObject("dhcp.svg"),
+        IconObject("dns.svg"),
         arpTable(),
-        dhcpTable(),
         firewallTable(),
-        advancedOptionsObject("terminal", "dhcp", "arp", "firewall", "delete")
+        advancedOptionsObject("terminal", "arp", "firewall", "delete")
     );
 
     attr("ip-enp0s3", "");
@@ -23,27 +22,15 @@ function DhcpServerObject(x, y) {
     attr("mac-enp0s3", getRandomMac());
     attr("data-gateway", "");
     attr("data-switch-enp0s3", "");
-
     attr("firewall-default-policy", "ACCEPT");
-
-    attr("dhcpd", "true");
-    attr("data-range-start", "");
-    attr("data-range-end", "");
-    attr("data-reserved-macs", "");
-    attr("offer-gateway", "");
-    attr("offer-netmask", "");
-    attr("offer-dns", "");
-    attr("offer-lease-time", "");
-    attr("data-interval", "false");
-    
-    attr("ip-reservations", `{}`);
-    
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
-    attr("onclick", "showDhcpSpecs(event)");
-      
+    attr("onclick", "showDnsForm(event)");
+
+    installBind9($networkObject);
+
     itemIndex++;
 
     return $networkObject;
-
+    
 }

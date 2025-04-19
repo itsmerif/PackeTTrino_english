@@ -1,20 +1,17 @@
 function installBind9(networkObjectId) {
-
+    let $networkObject;
     terminalMessage("Instalando Bind...", networkObjectId);
-
-    const $networkObject = document.getElementById(networkObjectId);
+    if (typeof networkObjectId === "string") $networkObject = document.getElementById(networkObjectId);
+    if (networkObjectId instanceof Node) $networkObject = networkObjectId;
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
     const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
     const addOption = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));
-
     append(dnsTable());
     attr("named", "true");
     attr("recursion", "false");
     addOption(dnsOptionButton());
-
     terminalMessage("Bind instalado correctamente.", networkObjectId);
-
 }
 
 function uninstallBind9(networkObjectId) {
