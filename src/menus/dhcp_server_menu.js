@@ -9,8 +9,8 @@ function dhcp_server_menu() {
 
         <div>
             <button class="btn-modern-blue dark" id="btn-basic-tab">Básico</button>
-            <button class="btn-modern-blue dark" id="btn-adv-tab">Avanzado</button>
             <button class="btn-modern-blue dark" id="btn-reservations">Reservas</button>
+            <button class="btn-modern-blue dark" id="btn-adv-tab">Avanzado</button>
         </div>
 
         <div class="main-section">
@@ -58,7 +58,7 @@ function dhcp_server_menu() {
                 <input type="text" id="offer-lease-time" name="offer-lease-time" pattern="^[0-9]+$">
             </div>
 
-            <button class="btn-modern-blue" type="submit" id="btn-save-form">Guardar</button>
+            <button class="btn-modern-blue dark" type="submit" id="btn-save-form">Guardar</button>
 
         </div>
 
