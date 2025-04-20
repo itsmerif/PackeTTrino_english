@@ -1,62 +1,134 @@
-function addRoutingEntry(routerObjectId, destination, netmask, gateway, interface, nexthop) {
+//setters
+
+function setDirectRoutingRule(routerObjectId, gateway, netmask, interface) {
 
     const $networkObject = document.getElementById(routerObjectId);
-    const $table = $networkObject.querySelector(".routing-table").querySelector("table");
-    const $defaultRow = $table.querySelector("#default-route");
+    const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
+    const $rules = $routingTable.querySelectorAll("tr");
+    let found = false;
 
-    if (!destination || !netmask || !gateway || !interface || !nexthop) return;
+    $rules.forEach($rule => {
+        const $fields = $rule.querySelectorAll("td");
+        if ($fields.length === 0) return;
+        if ($fields[3].innerHTML === interface && $fields[4].innerHTML === "0.0.0.0") {
+            $fields[0].innerHTML = getNetwork(gateway, netmask);
+            $fields[1].innerHTML = netmask;
+            $fields[2].innerHTML = gateway;
+            found = true;
+        }
+    });
 
-    destination = destination.trim();
-    netmask = netmask.trim();
-    gateway = gateway.trim();
-    interface = interface.trim();
-    nexthop = nexthop.trim();
+    if (!found) {
 
-    if (destination === "" || netmask === "") return;
-    
-    let $routingRule = getRoutingRule($networkObject.id, destination, netmask);
-
-    if (!$routingRule) {
-        
+        const $defaultRule = $routingTable.querySelector("#default-route");
         let $newRow = document.createElement("tr");
-
         $newRow.innerHTML = `
-        <tr>
-            <td>${destination}</td>
-            <td>${netmask}</td>
-            <td>${gateway}</td>
-            <td>${interface}</td>
-            <td>${nexthop}</td>
-        </tr>`;
-
-        $defaultRow.before($newRow);
-
-    }else {
-
-        let $cells = $routingRule.querySelectorAll("td");
-        $cells[0].innerHTML = destination;
-        $cells[1].innerHTML = netmask;
-        $cells[2].innerHTML = gateway;
-        $cells[3].innerHTML = interface;
-        $cells[4].innerHTML = nexthop;
+            <tr>
+                <td>${getNetwork(gateway, netmask)}</td>
+                <td>${netmask}</td>
+                <td>${gateway}</td>
+                <td>${interface}</td>
+                <td>0.0.0.0</td>
+            </tr>`;
+    
+        $defaultRule.before($newRow);
 
     }
 
 }
 
-function removeRoutingEntry(routerObjectId, destination, netmask) {
+function setRemoteRoutingRule(routerObjectId, destination, netmask, gateway, interface, nexthop) {
 
     const $networkObject = document.getElementById(routerObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
     const $rules = $routingTable.querySelectorAll("tr");
-    
+    let found = false;
+
+    $rules.forEach($rule => {
+        const $fields = $rule.querySelectorAll("td");
+        if ($fields.length === 0) return;
+        if ($fields[0].innerHTML === destination && $fields[1].innerHTML === netmask) {
+            found = true;
+            $fields[2].innerHTML = gateway;
+            $fields[3].innerHTML = interface;
+            $fields[4].innerHTML = nexthop;
+        }    
+    });
+
+    if (!found) {
+
+        const $defaultRule = $routingTable.querySelector("#default-route");
+
+        let $newRow = document.createElement("tr");
+
+        $newRow.innerHTML = `
+            <tr>
+                <td>${destination}</td>
+                <td>${netmask}</td>
+                <td>${gateway}</td>
+                <td>${interface}</td>
+                <td>${nexthop}</td>
+            </tr>
+        `;
+
+        $defaultRule.before($newRow);
+
+    }
+
+}
+
+function setDefaultRoutingRule(routerObjectId, gateway, interface, nexthop) {
+
+    const $networkObject = document.getElementById(routerObjectId);
+    const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
+    const $defaultRule = $routingTable.querySelector("#default-route");
+    const $fields = $defaultRule.querySelectorAll("td");
+
+    $fields[0].innerHTML = "0.0.0.0";
+    $fields[1].innerHTML = "0.0.0.0";
+    $fields[2].innerHTML = gateway
+    $fields[3].innerHTML = interface;
+    $fields[4].innerHTML = nexthop;
+
+}
+
+//removers
+
+function removeDirectRoutingRule(routerObjectId, interface) {
+    const $networkObject = document.getElementById(routerObjectId);
+    const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
+    const $rules = $routingTable.querySelectorAll("tr");
+    $rules.forEach($rule => {
+        const $fields = $rule.querySelectorAll("td");
+        if ($fields.length === 0) return;
+        if ($fields[3].innerHTML === interface && $fields[4].innerHTML === "0.0.0.0") $rule.remove();
+    });
+}
+
+function removeRemoteRoutingRule(routerObjectId, destination, netmask) {
+    const $networkObject = document.getElementById(routerObjectId);
+    const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
+    const $rules = $routingTable.querySelectorAll("tr");
     $rules.forEach($rule => {
         const $fields = $rule.querySelectorAll("td");
         if ($fields.length === 0) return;
         if ($fields[0].innerHTML === destination && $fields[1].innerHTML === netmask) $rule.remove();
     });
-
 }
+
+function resetDefaultRoutingRule(routerObjectId) {
+    const $networkObject = document.getElementById(routerObjectId);
+    const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
+    const $defaultRule = $routingTable.querySelector("#default-route");
+    const $fields = $defaultRule.querySelectorAll("td");   
+    $fields[0].innerHTML = "0.0.0.0";
+    $fields[1].innerHTML = "0.0.0.0";
+    $fields[2].innerHTML = "";
+    $fields[3].innerHTML = "";
+    $fields[4].innerHTML = "";
+}
+
+//mas funciones
 
 function printRoutingTable(networkObjectId) {
 

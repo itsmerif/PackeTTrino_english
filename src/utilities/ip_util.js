@@ -1,123 +1,145 @@
 function command_Ip(networkObjectId, args) {
     
-    if (args[1] === "addr" || args[1] === "a") {
+    let opt_addr = false;
+    let opt_route = false;
+    let opt_flush = false;
+    let opt_add = false;
+    let opt_del = false;
+    let opt_dev = false;
+    let opt_via = false;
+    let val_add;
+    let val_del;
+    let val_via;
+    let val_dev;
 
-        if (args.length === 2) { //ip addr
+    let $OPTS = catchopts(["addr", "route", "add:", "flush", "del:", "via:", "dev:"], args);
+    
+    const optionHandlers = {
+
+        "addr": () => opt_addr = true,
+
+        "route": () => opt_route = true,
+
+        "add": () => {
+            opt_add = true;
+            val_add = $OPTS["add"];
+        },
+
+        "flush": () => opt_flush = true,
+
+        "del": () => {
+            opt_del = true;
+            val_del = $OPTS["del"];
+        },
+
+        "via": () => {
+            opt_via = true;
+            val_via = $OPTS["via"];
+        },
+
+        "dev": () => {
+            opt_dev = true;
+            val_dev = $OPTS["dev"];
+        }
+
+    }
+
+    for (option in $OPTS) {
+        if (optionHandlers[option]) optionHandlers[option]();
+    }
+
+    if (opt_addr === opt_route) {
+        terminalMessage('Error de argumentos: ip [addr|route] [add|flush|del] [ip/netmask] [dev interface] ] [via ip].', networkObjectId);
+        return;
+    }
+
+    if (opt_addr) { //ip addr [add|flush] [ip]/[netmask] dev [interface]
+
+        if (opt_add && opt_flush) {
+            terminalMessage('Error de argumentos: ip [addr|route] [add|flush|del] [ip/netmask] [dev interface] [via ip]', networkObjectId);
+            return;
+        }
+
+        if (!opt_add && !opt_flush) {
             showObjectInfo(networkObjectId);
             return;
         }
 
-        if (args[2] === "add") { //ip addr add [ip]/[netmask] dev [interface]
+        if (opt_add) { //ip addr add [ip]/[netmask] dev [interface]
 
-            if (args.length !== 6) {
-                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip]/[netmask] dev [interface]', networkObjectId);
+            if (!isValidCidrIp(val_add)) {
+                terminalMessage(`Se esperaba un prefijo válido cerca de ${val_add}.`, networkObjectId);
                 return;
             }
 
-            if (!isValidCidrIp(args[3])) {
-                terminalMessage("Error: La IP introducida no es válida.", networkObjectId);
+            if (!getInterfaces(networkObjectId).includes(val_dev)) {
+                terminalMessage(`No se reconoce la interfaz ${val_dev}`, networkObjectId);	
                 return;
             }
 
-            let [ip, netmask] = parseCidr(args[3]);
-
-            if (args[4] !== "dev") {
-                terminalMessage('Error de argumentos. Sintaxis: ip addr [add|del] [ip]/[netmask] dev [interface]', networkObjectId);
-                return;
-            }
-
-            if (!getInterfaces(networkObjectId).includes(args[5])) {
-                terminalMessage(`Error: Interfaz ${args[5]} no existe.`, networkObjectId);
-                return;
-            }
-
-            let interface = args[5];
-            configureInterface(networkObjectId, ip, netmask, interface);
-            terminalMessage("La interfaz se ha configurado correctamente.", networkObjectId);
-            return;
-            
+            let [ip, netmask] = parseCidr(val_add);
+            configureInterface(networkObjectId, ip, netmask, val_dev);
+            setDirectRoutingRule(networkObjectId, ip, netmask, val_dev);
+            terminalMessage(`Se ha añadido la IP ${ip} ${netmask} a la interfaz ${val_dev} con éxito.`, networkObjectId);
         }
 
-        if (args[2] === "del") { //ip addr del [interface]
+        if (opt_flush) { //ip addr flush dev [interface]
 
-            if (args.length !== 4) {
-                terminalMessage('Error de argumentos. Sintaxis: ip addr del [interface]', networkObjectId);
-                return;
-            }
-            
-            if (!getInterfaces(networkObjectId).includes(args[3])) {
-                terminalMessage(`Error: La interfaz ${args[3]} no se reconoce.`, networkObjectId);
+            if (!getInterfaces(networkObjectId).includes(val_dev)) {
+                terminalMessage(`No se reconoce la interfaz ${val_dev}`, networkObjectId);	
                 return;
             }
 
-            deconfigureInterface(networkObjectId, args[3]);
-            terminalMessage("La interfaz se ha desconfigurado correctamente.", networkObjectId);
-            return;
+            deconfigureInterface(networkObjectId, val_dev);
+            removeDirectRoutingRule(networkObjectId, val_dev);
+            terminalMessage(`Se ha ha desconfigurado la IP de la interfaz ${val_dev} con éxito.`, networkObjectId);
         }
 
     }
 
-    if (args[1] === "route" || args[1] === "r") {
+    if (opt_route) { //ip route [add|del] [ip]/[netmask] via [gateway] dev [interface]
 
-        if (args.length === 2) {
-            printRoutingTable(networkObjectId);
+        if (opt_add === opt_del) {
+            terminalMessage('Error de argumentos: ip [addr|route] [add|flush|del] [ip/netmask] [dev interface] [via ip]', networkObjectId);
             return;
         }
 
-        if (args[2] === "add") {
+        if (opt_add) { //ip route add [ip]/[netmask] via [ip] dev [interface]
 
-            if (args.length !== 6) {
-                terminalMessage('Error de argumentos. Sintaxis: ip route add [destination/netmask] via [nexthop]', networkObjectId);
-                return;
-            }
-            
-            if (!isValidCidrIp(args[3]) && args[3] !== "default") {
-                terminalMessage("Error: La red de destino introducida no es válida.", networkObjectId);
+            if (!isValidCidrIp(val_add)) {
+                terminalMessage(`Se esperaba un prefijo válido en vez de ${val_add}.`, networkObjectId);
                 return;
             }
 
-            let [destination, netmask] = (args[3] === "default") ? ["0.0.0.0", "0.0.0.0"] : parseCidr(args[3]);
-
-            if (args[4] !== "via") {
-                terminalMessage('Error de argumentos. Sintaxis: ip route add [destination/netmask] via [nexthop]', networkObjectId);
+            if (!isValidIp(val_via)) {
+                terminalMessage(`Se esperaba una ip válida en vez de ${val_via}.`, networkObjectId);
                 return;
             }
 
-            if (!isValidIp(args[5])) {
-                terminalMessage("Error: La IP de siguiente salto introducida no es válida.", networkObjectId);
+            if (!getInterfaces(networkObjectId).includes(val_dev)) {
+                terminalMessage(`No se reconoce la interfaz ${val_dev}`, networkObjectId);	
                 return;
             }
 
-            let nexthop = args[5];
-            let interface = getReachableInterface(networkObjectId, nexthop);
-
-            if (!interface) {
-                terminalMessage("Error: El Siguiente Salto introducido no es accesible.", networkObjectId);
-                return;
-            }
-
-            let gateway = fromRouterInterface(networkObjectId, interface, "gateway");
-
-            addRoutingEntry(networkObjectId, destination, netmask, gateway, interface, nexthop);
-            terminalMessage("La regla ha sido añadida correctamente.", networkObjectId);
-            return;
+            let [ip, netmask] = parseCidr(val_add);
+            setRemoteRoutingRule(networkObjectId, getNetwork(ip, netmask), netmask, ip, val_dev, val_via);
+            terminalMessage(`Se ha añadido la ruta ${ip}/${netmask} a la interfaz ${val_dev} con éxito.`, networkObjectId);
 
         }
 
-        if (args[2] === "del") {
+        if (opt_del) { //ip route del [ip]/[netmask]
 
-            if (args.length !== 5) {
-                terminalMessage('Error de argumentos. Sintaxis: ip route del [destination] [netmask]', networkObjectId);
+            if (!isValidCidrIp(val_del)) {
+                terminalMessage(`Se esperaba un prefijo válido cerca de ${val_del}.`, networkObjectId);
                 return;
             }
 
-            removeRoutingEntry(networkObjectId, args[3], args[4]);
-            terminalMessage("La regla ha sido eliminada correctamente.", networkObjectId);
-            return;
+            let [ip, netmask] = parseCidr(val_del);
+            removeRemoteRoutingRule(networkObjectId, getNetwork(ip, netmask), netmask);
+            terminalMessage(`Se ha eliminado la ruta ${ip}/${netmask} con éxito.`, networkObjectId);
+
         }
-        
+
     }
-
-    terminalMessage('Error de argumentos. Sintaxis: ip < route | a > [add|del] [destination] [netmask] via [interface] [nexthop]', networkObjectId);
 
 }

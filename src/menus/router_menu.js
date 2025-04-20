@@ -99,8 +99,13 @@ function checkandCloseRouterSpecs(event) {
             return;
         }
 
-        if (ip === "") deconfigureInterface($networkObject.id, interface);
-        else configureInterface($networkObject.id, ip, netmask, interface);
+        if (ip === "") {
+            deconfigureInterface($networkObject.id, interface);
+            removeDirectRoutingRule($networkObject.id, interface);
+        } else {
+            configureInterface($networkObject.id, ip, netmask, interface);
+            setDirectRoutingRule($networkObject.id, ip, netmask, interface);
+        }
 
     }
 
@@ -152,7 +157,6 @@ function addInterface(event) {
     $networkObject.setAttribute("mac-enp0s" + index, getRandomMac());
     $networkObject.setAttribute("data-switch-enp0s" + index, "");
     $networkObject.querySelector("img").draggable = true;
-    addRoutingEntry($networkObject.id, "", "", "", "enp0s" + index, "0.0.0.0");
     $interfacesContainer.innerHTML += `<option value="enp0s${index}">enp0s${index}</option>`;
     
     routerChangesBuffer["enp0s" + index] = {
@@ -170,7 +174,6 @@ function deleteInterface(event) {
 
     const $routerForm = document.querySelector(".router-form");
     const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
-    const $routingTableEntries = $networkObject.querySelector(".routing-table").querySelectorAll("tr");
     const currentInterface = $routerForm.querySelector(".interfaces-container").value;
     const fixedInterfaces = ["enp0s3", "enp0s8", "enp0s9"];
 
@@ -189,13 +192,7 @@ function deleteInterface(event) {
     $networkObject.removeAttribute("mac-" + currentInterface);
     $networkObject.removeAttribute("data-switch-" + currentInterface);
     
-    $routingTableEntries.forEach($entry => {
-        let $cells = $entry.querySelectorAll("td");
-        if ($cells.length > 0) {
-            let interface = $cells[3].innerHTML;
-            if (interface === currentInterface) $entry.remove();
-        }
-    });
+    removeDirectRoutingRule($networkObject.id, currentInterface);
 
     $routerForm.querySelector(".interfaces-container").querySelectorAll("option").forEach($option => {
         if ($option.value === currentInterface) $option.remove();
