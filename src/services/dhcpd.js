@@ -5,7 +5,6 @@ async function dhcpd_service(serverObjectId, packet) {
     const serverObjectIp = $serverObject.getAttribute("ip-enp0s3");
     const serverObjectNetmask = $serverObject.getAttribute("netmask-enp0s3");
     const serverObjectNetwork = getNetwork(serverObjectIp, serverObjectNetmask);
-
     const defaultGateway = $serverObject.getAttribute("data-gateway");
     const rangeStart = $serverObject.getAttribute("data-range-start");
     const rangeEnd = $serverObject.getAttribute("data-range-end");

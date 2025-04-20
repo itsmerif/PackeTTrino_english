@@ -114,27 +114,6 @@ const $forbidden403 = `
     </body>
 </html>`;
 
-async function browserSearch(event) {
-
-    if (event.key === 'Enter') {
-
-        const $networkObject = document.getElementById(document.querySelector(".browser-component").getAttribute("data-id"));
-        let search = event.target.value.trim();
-
-        if (visualToggle) await minimizeBrowser();
-
-        try {
-            await http($networkObject.id, search);
-        } catch (error) {
-            console.log(error);
-            document.querySelector(".browser-content").srcdoc = $forbidden403;
-        }
-
-        if (visualToggle) await maximizeBrowser();
-
-    }
-}
-
 function openBrowser(event) {
     event.stopPropagation();
     event.preventDefault();

@@ -1,3 +1,4 @@
+/**ESTA FUNCION DEVUELVE UNA DIRECCION IP A PARTIR DE UN IP Y UN NETMASK */
 function getNetwork(ip, netmask) {
 
     ip = ip.split('.'); //separamos cada octeto de la ip
@@ -9,13 +10,7 @@ function getNetwork(ip, netmask) {
     return network.join('.'); //juntamos los resultados 
 }
 
-function getBroadcastIp(ip, netmask) {
-    let ipBinary = (ip.split('.').map(octet => parseInt(octet, 10).toargs(2).padStart(8, '0'))).join('');
-    let netmaskCidr = netmaskToCidr(netmask);
-    let broadcast = (ipBinary.slice(0, netmaskCidr).padEnd(32, '1').match(/.{8}/g) || []).map(octet => parseInt(octet, 2).toString(10)).join('.');
-    return broadcast;
-}
-
+/**ESTA FUNCION GENERA UNA DIRECCION MAC ALEATORIA */
 function getRandomMac() {
     //genero los 48 bits aleatorios
     let macString = "";
@@ -33,6 +28,7 @@ function getRandomMac() {
     return mac;
 }
 
+/**ESTA FUNCION TRANSFORMA UNA IP(DECIMAL) A IP(BINARIO) */
 function ipToBinary(ip) {
 
     let blocks = ip.split(".");
@@ -47,6 +43,7 @@ function ipToBinary(ip) {
     return ipBinary
 }
 
+/**ESTA FUNCION TRANSFORMA UNA IP(BINARIO) A IP(DECIMAL) */
 function binaryToIp(binary) {
 
     let blocks = binary.match(/.{8}/g);
@@ -61,6 +58,7 @@ function binaryToIp(binary) {
     return ip
 }
 
+/**ESTA FUNCION TRANSFORMA UNA MASCARA A SU NOTACION CIDR SIN '/' */
 function netmaskToCidr(netmask) {
 
     let octets = netmask.split("."); //separamos por octetos
@@ -75,7 +73,8 @@ function netmaskToCidr(netmask) {
 
 }
 
-function parseCidr(cidr) {  //192.168.0.0/24
+/**ESTA FUNCION DEVUELVE UNA IP Y NETMASK A PARTIR DE UNA DIRECCION IP EN NOTACION CIDR */
+function parseCidr(cidr) { 
     let ip = cidr.split("/")[0]; //192.168.0.0
     let netmask = parseInt(cidr.split("/")[1]); //24
     let dummy = "";
@@ -92,10 +91,12 @@ function parseCidr(cidr) {  //192.168.0.0/24
     return [ip, netmaskBinary];
 }
 
+/**ESTA FUNCION DEVUELVE TRUE SI LA IP ES VALIDA */
 function isValidIp(ip) {
     return /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(ip);
 }
 
+/**ESTA FUNCION DEVUELVE TRUE SI LA DIRECCION IP EN NOTACION CIDR ES VALIDA. TAMBIEN VALIDA SI LA DIRECCION IP ES VALIDA */
 function isValidCidrIp(cidr) {
     let ip = cidr.split("/")[0];
     let netmask = parseInt(cidr.split("/")[1]);
@@ -105,14 +106,17 @@ function isValidCidrIp(cidr) {
     return response;
 }
 
+/**ESTA FUNCION DEVUELVE TRUE SI EL DOMINIO ES VALIDO */
 function isValidDomain(domain) {
     return /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])\.?$/.test(domain);
 }
 
+/**ESTA FUNCION DEVUELVE TRUE SI LA MAC ES VALIDA */
 function isValidMac(mac) {
     return /^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$/.test(mac);
 }
 
+/**ESTA FUNCION LAS MACS ALMACENADAS EN UN SWITCH COMO ARRAY*/
 function getMACTable(switchObjectId) {
 
     const switchOriginObject = document.getElementById(switchObjectId);
@@ -129,6 +133,7 @@ function getMACTable(switchObjectId) {
 
 }
 
+/**ESTA FUNCION DEVUELVE TRUE SI LA TABLA DE DIRECCIONES MACS DE UN SWITCH ESTA VACIA */
 function isMacTableEmpty(switchObjectId) {
 
     let tabla = document.getElementById(switchObjectId).querySelector("table");
@@ -150,29 +155,7 @@ function isMacTableEmpty(switchObjectId) {
 
 }
 
-function getRouterIp(routerObjectId, switchObjectId) {
-
-    const router = document.getElementById(routerObjectId);
-    let ip = "";
-
-    if (router.getAttribute("data-switch-enp0s3") === switchObjectId) {
-
-        ip = router.getAttribute("ip-enp0s3");
-
-    } else if (router.getAttribute("data-switch-enp0s8") === switchObjectId) {
-
-        ip = router.getAttribute("ip-enp0s8");
-
-    } else if (router.getAttribute("data-switch-enp0s9") === switchObjectId) {
-
-        ip = router.getAttribute("ip-enp0s9");
-
-    }
-
-    return ip;
-
-}
-
+/**ESTA FUNCION DEVUELVE TRUE SI UNA DIRECCION MAC ESTA ALMACENADA EN UN SWITCH */
 function isMacInMACTable(switchObjectId, macAddress) {
 
     const macs = getMACTable(switchObjectId);
@@ -191,16 +174,7 @@ function isMacInMACTable(switchObjectId, macAddress) {
 
 }
 
-function getRoutingTable(routerObjectId) {
-
-    const routerObject = document.getElementById(routerObjectId);
-    const table = routerObject.querySelector(".routing-table").querySelector("table");
-    const rows = table.querySelectorAll("tr");
-
-    return Array.from(rows).slice(1);
-
-}
-
+/**ESTA FUNCION DEVUELVE EL DISPOSITIVO (PUERTO) QUE CORRESPONDE CON UNA DIRECCION MAC EN UN SWITCH */
 function getDeviceFromMac(switchObjectId, mac) {
 
     const switchObject = document.getElementById(switchObjectId);
@@ -218,6 +192,7 @@ function getDeviceFromMac(switchObjectId, mac) {
     }
 }
 
+/**ESTA FUNCION DEVUELVE LA TABLA DE DISPOSITIVOS (PUERTOS) ACTIVOS EN UN SWITCH */
 function getDeviceTable(switchObjectId) {
 
     const switchOriginObject = document.getElementById(switchObjectId);
@@ -234,6 +209,7 @@ function getDeviceTable(switchObjectId) {
 
 }
 
+/**ESTA FUNCION ESCAPEA EL HTML DE UN STRING */
 function escapeHtml(str) {
     return str.replace(/[&<>"']/g, match => ({
         '&': '&amp;',
@@ -244,6 +220,7 @@ function escapeHtml(str) {
     }[match]));
 }
 
+/**ESTA FUNCION ACTUA COMO GETOPTS DE LINUX. DEVUELVE UN OBJECTO CON LAS OPCIONES VALIDAS COMO KEY Y EL VALOR */
 function getopts(options, string) {
 
     options = options.replace(/ /g, "");
@@ -309,6 +286,160 @@ function catchopts(options, args) {
     return response;
 }
 
+/**ESTA FUNCION DEVUELVE LAS INTERFACES DE UN DISPOSITIVO COMO ARRAY [INTERFAZ1, INTERFAZ2, ...] */
+function getInterfaces(networkObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let response = [];
+    let index = 3;
+    let networkInterface = $networkObject.getAttribute("ip-enp0s" + index);
+
+    while (networkInterface !== null) {
+        response.push(`enp0s` + index);
+        if (index === 3) index = 8;
+        else index++;
+        networkInterface = $networkObject.getAttribute("ip-enp0s" + index);
+    }
+
+    return response;
+
+}
+
+/**ESTA FUNCION DEVUELVE TRUE SI EL DISPOSITIVO TIENE AL MENOS 1 CONEXION ACTIVA */
+function isConnected(networkObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let index = 3;
+    let switchAttribute = $networkObject.getAttribute("data-switch-enp0s" + index);
+
+    while (switchAttribute !== null) {
+        if (switchAttribute !== "") return true;
+        if (index === 3) index = 8;
+        else index++;
+        switchAttribute = $networkObject.getAttribute("data-switch-enp0s" + index);
+    }
+
+    if (networkObjectId.startsWith("switch-")) return getDeviceTable(networkObjectId).length !== 0;
+
+    return false;
+
+}
+
+/**ESTA FUNCION DEVUELVE LA PRIMERA INTERFAZ LIBRE DEL DISPOSITIVO */
+function getAvailableInterface(networkObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let index = 3;
+    let switchConn = $networkObject.getAttribute("data-switch-enp0s" + index);
+
+    while (switchConn !== null) {
+        if (switchConn === "") return `enp0s${index}`;
+        if (index === 3) index = 8;
+        else index++;
+        switchConn = $networkObject.getAttribute("data-switch-enp0s" + index);
+    }
+
+    return false;
+}
+
+/**ESTA FUNCION DEVUELVE LA INFORMACION DE UNA INTERFAZ COMO ARRAY [IP, NETMASK, MAC] */
+function getInfoFromInterface(networkObjectId, interface) {
+    const $networkObject = document.getElementById(networkObjectId);
+    return [$networkObject.getAttribute("ip-" + interface), $networkObject.getAttribute("netmask-" + interface), $networkObject.getAttribute("mac-" + interface)];
+}
+
+/**ESTA FUNCION DEVUELVE LA INFORMACION DE UNA INTERFAZ QUE ESTE CONECTADA A UN SWITCH EN CONCRETO */
+function getInterfaceSwitchInfo(networkObjectId, switchObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let index = 3;
+    let switchConn = $networkObject.getAttribute("data-switch-enp0s" + index);
+    let response = [];
+
+    while (switchConn !== null) {
+
+        if (switchConn === switchObjectId) {
+            response.push($networkObject.getAttribute("ip-enp0s" + index));
+            response.push($networkObject.getAttribute("netmask-enp0s" + index));
+            response.push($networkObject.getAttribute("mac-enp0s" + index));
+            return response;
+        }
+
+        if (index === 3) index = 8;
+        else index++;
+        switchConn = $networkObject.getAttribute("data-switch-enp0s" + index);
+    }
+
+    return [false, false, false];
+
+}
+
+/**ESTA FUNCION DEVUELVE LAS IPS DISPONIBLES EN UN DISPOSITIVO COMO ARRAY [IP1, IP2, ...] */
+function getAvailableIps(networkObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let index = 3;
+    let networkObjectIp = $networkObject.getAttribute("ip-enp0s" + index);
+    let availableIps = [];
+
+    while (networkObjectIp !== null) {
+        if (networkObjectIp !== "") availableIps.push(networkObjectIp);
+        if (index === 3) index = 8;
+        else index++;
+        networkObjectIp = $networkObject.getAttribute("ip-enp0s" + index);
+    }
+
+    return availableIps;
+
+}
+
+/**ESTA FUNCION DEVUELVE LA INFORMACION DE UNA INTERFAZ COMO ARRAY [INTERFAZ, SWITCH AL QUE ESTÁ CONECTADA, DIRECCIÓN MAC ]*/
+function getInfoFromIp(networkObjectId, ip) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let response = [false,false,false];
+    let index = 3;
+    let interfaceIp = $networkObject.getAttribute("ip-enp0s" + index);
+
+    while (interfaceIp !== null) {
+
+        if (interfaceIp === ip) {
+            response[0] = `enp0s${index}`;
+            response[1] = $networkObject.getAttribute("data-switch-enp0s" + index);
+            response[2] = $networkObject.getAttribute("mac-enp0s" + index);
+        }
+
+        if (index === 3) index = 8;
+        else index++;
+
+        interfaceIp = $networkObject.getAttribute("ip-enp0s" + index);
+
+    }
+
+    return response;
+
+}
+
+/**ESTA FUNCION DEVUELVE UN ARRAY CON LAS DIRECCIONES MAC DE TODAS LAS INTERFAZ DE UN DISPOSITIVO */
+function getMacAddresses(networkObjectId) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let index = 3;
+    let mac = $networkObject.getAttribute("mac-enp0s" + index);
+    let macs = [];
+
+    while (mac !== null) {
+        macs.push(mac);
+        if (index === 3) index = 8;
+        else index++;
+        mac = $networkObject.getAttribute("mac-enp0s" + index);
+    }
+
+    return macs;
+
+}
+
+//FUNCIONES DE SIMULACION DE CONSTRUCCION DE REDES
 function getLastElement(selector, position = -1) {
     const elements = document.querySelectorAll(selector);
     return elements[elements.length + position];
@@ -377,219 +508,5 @@ function setRouterIps($router, ip1, ip2 = "", ip3 = "") {
         cells[2].innerHTML = iface.ip;
         cells[3].innerHTML = iface.interface;
     });
-
-}
-/**ESTA FUNCION DEVUELVA LAS INTERFACES DE UN DISPOSITIVO COMO ARRAY [INTERFAZ1, INTERFAZ2, ...] */
-function getInterfaces(networkObjectId) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    let response = [];
-    let index = 3;
-    let networkInterface = $networkObject.getAttribute("ip-enp0s" + index);
-
-    while (networkInterface !== null) {
-        response.push(`enp0s` + index);
-        if (index === 3) index = 8;
-        else index++;
-        networkInterface = $networkObject.getAttribute("ip-enp0s" + index);
-    }
-
-    return response;
-
-}
-
-function isConnected(networkObjectId) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    let index = 3;
-    let switchAttribute = $networkObject.getAttribute("data-switch-enp0s" + index);
-
-    while (switchAttribute !== null) {
-        if (switchAttribute !== "") return true;
-        if (index === 3) index = 8;
-        else index++;
-        switchAttribute = $networkObject.getAttribute("data-switch-enp0s" + index);
-    }
-
-    if (networkObjectId.startsWith("switch-")) return getDeviceTable(networkObjectId).length !== 0;
-
-    return false;
-
-}
-
-function getAvailableInterface(networkObjectId) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    let index = 3;
-    let switchConn = $networkObject.getAttribute("data-switch-enp0s" + index);
-
-    while (switchConn !== null) {
-        if (switchConn === "") return `enp0s${index}`;
-        if (index === 3) index = 8;
-        else index++;
-        switchConn = $networkObject.getAttribute("data-switch-enp0s" + index);
-    }
-
-    return false;
-}
-
-/**ESTA FUNCION DEVUELVE LA INFORMACION DE UNA INTERFAZ COMO ARRAY [IP, NETMASK, MAC] */
-function getInfoFromInterface(networkObjectId, interface) {
-    const $networkObject = document.getElementById(networkObjectId);
-    return [$networkObject.getAttribute("ip-" + interface), $networkObject.getAttribute("netmask-" + interface), $networkObject.getAttribute("mac-" + interface)];
-}
-
-/**ESTA FUNCION DEVUELVE LA INFORMACION DE UNA INTERFAZ QUE ESTE CONECTADA A UN SWITCH EN CONCRETO */
-function getInterfaceSwitchInfo(networkObjectId, switchObjectId) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    let index = 3;
-    let switchConn = $networkObject.getAttribute("data-switch-enp0s" + index);
-    let response = [];
-
-    while (switchConn !== null) {
-
-        if (switchConn === switchObjectId) {
-            response.push($networkObject.getAttribute("ip-enp0s" + index));
-            response.push($networkObject.getAttribute("netmask-enp0s" + index));
-            response.push($networkObject.getAttribute("mac-enp0s" + index));
-            return response;
-        }
-
-        if (index === 3) index = 8;
-        else index++;
-        switchConn = $networkObject.getAttribute("data-switch-enp0s" + index);
-    }
-
-    return [false, false, false];
-
-}
-
-/**ESTA FUNCION DEVUELVE LAS IPS DISPONIBLES EN UN DISPOSITIVO COMO ARRAY [IP1, IP2, ...] */
-function getAvailableIps(networkObjectId) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    let index = 3;
-    let networkObjectIp = $networkObject.getAttribute("ip-enp0s" + index);
-    let availableIps = [];
-
-    while (networkObjectIp !== null) {
-        if (networkObjectIp !== "") availableIps.push(networkObjectIp);
-        if (index === 3) index = 8;
-        else index++;
-        networkObjectIp = $networkObject.getAttribute("ip-enp0s" + index);
-    }
-
-    return availableIps;
-
-}
-
-function getReachableInterface(networkObjectId, ip) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    let index = 3;
-    let networkObjectIp = $networkObject.getAttribute("ip-enp0s" + index);
-    let networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s" + index);
-
-    while (networkObjectIp !== null && networkObjectNetmask !== null) {
-        if (networkObjectIp !== "" && networkObjectNetmask !== "" && getNetwork(networkObjectIp, networkObjectNetmask) === getNetwork(ip, networkObjectNetmask)) return `enp0s${index}`;
-        if (index === 3) index = 8;
-        else index++;
-        networkObjectIp = $networkObject.getAttribute("ip-enp0s" + index);
-    }
-
-    return false;
-}
-
-function restoreNetworkConfiguration(networkObjectId) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    let index = 3;
-    let ip = $networkObject.getAttribute("ip-enp0s" + index);
-    let netmask = $networkObject.getAttribute("netmask-enp0s" + index);
-
-    while (ip !== null && netmask !== null) {
-        $networkObject.setAttribute("ip-enp0s" + index, "");
-        $networkObject.setAttribute("netmask-enp0s" + index, "");
-        if (index === 3) index = 8;
-        else index++;
-        ip = $networkObject.getAttribute("ip-enp0s" + index);
-        netmask = $networkObject.getAttribute("netmask-enp0s" + index);
-    }
-
-}
-
-function showObjectInfo(networkObjectId) {
-    const $networkObject = document.getElementById(networkObjectId);
-    const interfaces = getInterfaces(networkObjectId);
-    terminalMessage("1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000", networkObjectId);
-    terminalMessage("    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00", networkObjectId);
-    terminalMessage("    inet 127.0.0.1/8 scope host lo", networkObjectId);
-    interfaces.forEach((interface, i) => {
-        const ip = $networkObject.getAttribute("ip-" + interface);
-        const netmask = $networkObject.getAttribute("netmask-" + interface);
-        const mac = $networkObject.getAttribute("mac-" + interface);
-        terminalMessage(`${i + 1}: ${interface}: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000`, networkObjectId);
-        terminalMessage(`    link/ether ${mac} brd ff:ff:ff:ff:ff:ff`, networkObjectId);
-        if (ip) terminalMessage(`    inet ${ip}/${netmaskToCidr(netmask)} brd 192.168.1.255 scope global dynamic ${interface}`, networkObjectId);
-    });
-}
-
-function configureInterface(networkObjectId, ip, netmask, interface) {
-    const $networkObject = document.getElementById(networkObjectId);
-    $networkObject.setAttribute("ip-" + interface, ip); 
-    $networkObject.setAttribute("netmask-" + interface, netmask);
-}
-
-function deconfigureInterface(networkObjectId, interface) {
-    const $networkObject = document.getElementById(networkObjectId);
-    $networkObject.setAttribute("ip-" + interface, "");
-    $networkObject.setAttribute("netmask-" + interface, "");
-}
-
-/**ESTA FUNCION DEVUELVE LA INFORMACION DE UNA INTERFAZ COMO ARRAY [INTERFAZ, SWITCH AL QUE ESTÁ CONECTADA, DIRECCIÓN MAC ]*/
-
-function getInfoFromIp(networkObjectId, ip) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    let response = [false,false,false];
-    let index = 3;
-    let interfaceIp = $networkObject.getAttribute("ip-enp0s" + index);
-
-    while (interfaceIp !== null) {
-
-        if (interfaceIp === ip) {
-            response[0] = `enp0s${index}`;
-            response[1] = $networkObject.getAttribute("data-switch-enp0s" + index);
-            response[2] = $networkObject.getAttribute("mac-enp0s" + index);
-        }
-
-        if (index === 3) index = 8;
-        else index++;
-
-        interfaceIp = $networkObject.getAttribute("ip-enp0s" + index);
-
-    }
-
-    return response;
-
-}
-
-/**ESTA FUNCION DEVUELVE UN ARRAY CON LAS DIRECCIONES MAC DE TODAS LAS INTERFAZ DE UN DISPOSITIVO */
-function getMacAddresses(networkObjectId) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    let index = 3;
-    let mac = $networkObject.getAttribute("mac-enp0s" + index);
-    let macs = [];
-
-    while (mac !== null) {
-        macs.push(mac);
-        if (index === 3) index = 8;
-        else index++;
-        mac = $networkObject.getAttribute("mac-enp0s" + index);
-    }
-
-    return macs;
 
 }
