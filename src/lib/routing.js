@@ -57,7 +57,7 @@ function setRemoteRoutingRule(routerObjectId, destination, netmask, gateway, int
         if ($fields.length === 0) return;
         if ($fields[0].innerHTML === destination && $fields[1].innerHTML === netmask) {
             found = true;
-            $fields[2].innerHTML = gateway;
+            $fields[2].innerHTML = (gateway === "0.0.0.0") ? getInfoFromInterface(routerObjectId, interface)[0] : gateway;
             $fields[3].innerHTML = interface;
             $fields[4].innerHTML = nexthop;
         }    
@@ -76,7 +76,7 @@ function setRemoteRoutingRule(routerObjectId, destination, netmask, gateway, int
         $newRow.innerHTML = `
             <td>${destination}</td>
             <td>${netmask}</td>
-            <td>${gateway}</td>
+            <td>${(gateway === "0.0.0.0") ? getInfoFromInterface(routerObjectId, interface)[0] : gateway}</td>
             <td>${interface}</td>
             <td>${nexthop}</td>
         `;

@@ -4,7 +4,7 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
 
     if (!firewallProcessorRouter(routerObjectId, packet)) return;
 
-    const [routerObjectIp, routerObjectNetmask, routerObjectMac] = getInterfaceInfo(routerObjectId, switchId);
+    const [routerObjectIp, routerObjectNetmask, routerObjectMac] = getInterfaceSwitchInfo(routerObjectId, switchId);
     const availableIps = getAvailableIps(routerObjectId);
     const activeServices = getactiveServices(routerObjectId);
 

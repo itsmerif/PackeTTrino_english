@@ -433,7 +433,14 @@ function getAvailableInterface(networkObjectId) {
     return false;
 }
 
-function getInterfaceInfo(networkObjectId, switchObjectId) {
+/**ESTA FUNCION DEVUELVE LA INFORMACION DE UNA INTERFAZ COMO ARRAY [IP, NETMASK, MAC] */
+function getInfoFromInterface(networkObjectId, interface) {
+    const $networkObject = document.getElementById(networkObjectId);
+    return [$networkObject.getAttribute("ip-" + interface), $networkObject.getAttribute("netmask-" + interface), $networkObject.getAttribute("mac-" + interface)];
+}
+
+/**ESTA FUNCION DEVUELVE LA INFORMACION DE UNA INTERFAZ QUE ESTE CONECTADA A UN SWITCH EN CONCRETO */
+function getInterfaceSwitchInfo(networkObjectId, switchObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
     let index = 3;
