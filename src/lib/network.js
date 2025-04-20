@@ -458,6 +458,7 @@ function getInterfaceInfo(networkObjectId, switchObjectId) {
 
 }
 
+/**ESTA FUNCION DEVUELVE LAS IPS DISPONIBLES EN UN DISPOSITIVO COMO ARRAY [IP1, IP2, ...] */
 function getAvailableIps(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);

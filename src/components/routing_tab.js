@@ -12,13 +12,6 @@ function routingTable() {
                 <th>Interfaz</th>
                 <th>Siguiente Salto</th>
             </tr>
-            <tr id="default-route">
-                <td>0.0.0.0</td>
-                <td>0.0.0.0</td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
         </table>
         <button onclick="closeObjectModalTable(event, '.routing-table')">Cerrar</button>
     `;

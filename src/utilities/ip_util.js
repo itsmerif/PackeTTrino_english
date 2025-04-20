@@ -80,8 +80,8 @@ function command_Ip(networkObjectId, args) {
             let [ip, netmask] = parseCidr(val_add);
             configureInterface(networkObjectId, ip, netmask, val_dev);
             setDirectRoutingRule(networkObjectId, ip, netmask, val_dev);
-            terminalMessage(`Se ha añadido la IP ${ip} ${netmask} a la interfaz ${val_dev} con éxito.`, networkObjectId);
-        }
+            terminalMessage(`Se ha añadido la IP ${val_add} a la interfaz ${val_dev} con éxito.`, networkObjectId);
+        }        
 
         if (opt_flush) { //ip addr flush dev [interface]
 
@@ -99,16 +99,24 @@ function command_Ip(networkObjectId, args) {
 
     if (opt_route) { //ip route [add|del] [ip]/[netmask] via [gateway] dev [interface]
 
-        if (opt_add === opt_del) {
+        if (opt_add && opt_del) {
             terminalMessage('Error de argumentos: ip [addr|route] [add|flush|del] [ip/netmask] [dev interface] [via ip]', networkObjectId);
+            return;
+        }
+
+        if (!opt_add && !opt_del) {
+            printRouting(networkObjectId);
             return;
         }
 
         if (opt_add) { //ip route add [ip]/[netmask] via [ip] dev [interface]
 
             if (!isValidCidrIp(val_add)) {
-                terminalMessage(`Se esperaba un prefijo válido en vez de ${val_add}.`, networkObjectId);
-                return;
+                if (val_add === "default") val_add = "0.0.0.0/0";
+                else {
+                    terminalMessage(`Se esperaba un prefijo válido en vez de ${val_add}.`, networkObjectId);
+                    return;
+                }
             }
 
             if (!isValidIp(val_via)) {
@@ -123,7 +131,7 @@ function command_Ip(networkObjectId, args) {
 
             let [ip, netmask] = parseCidr(val_add);
             setRemoteRoutingRule(networkObjectId, getNetwork(ip, netmask), netmask, ip, val_dev, val_via);
-            terminalMessage(`Se ha añadido la ruta ${ip}/${netmask} a la interfaz ${val_dev} con éxito.`, networkObjectId);
+            terminalMessage(`Se ha añadido la ruta ${val_add} a la interfaz ${val_dev} con éxito.`, networkObjectId);
 
         }
 
@@ -136,7 +144,7 @@ function command_Ip(networkObjectId, args) {
 
             let [ip, netmask] = parseCidr(val_del);
             removeRemoteRoutingRule(networkObjectId, getNetwork(ip, netmask), netmask);
-            terminalMessage(`Se ha eliminado la ruta ${ip}/${netmask} con éxito.`, networkObjectId);
+            terminalMessage(`Se ha eliminado la ruta ${val_del} con éxito.`, networkObjectId);
 
         }
 
