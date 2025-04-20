@@ -15,6 +15,7 @@ function PcObject(x, y) {
         arpTable(),
         cacheDnsTable(),
         firewallTable(),
+        routingTable(),
         advancedOptionsObject("terminal", "arp", "cacheDns", "browser", "delete")
     );
 
