@@ -1,28 +1,4 @@
-function isDHCPinNetwork(switchObjectId) {
-
-    const switchObject = document.getElementById(switchObjectId);
-    const macTable = switchObject.querySelector("table");
-    const rows = macTable.querySelectorAll("tr");
-
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
-        const cells = row.querySelectorAll("td");
-        const networkObjectId = cells[0].innerHTML; //dispositivo conectado
-
-        if (networkObjectId.startsWith("dhcp-relay-server-")) { //devolvemos el id identificandolo como agente de retransmision
-            return [networkObjectId, "relay"];
-        }
-
-        if (networkObjectId.startsWith("dhcp-server-")) { //devolvemos el id identificandolo como servidor
-            return [networkObjectId, "server"];
-        }
-
-    }
-
-    return false;
-
-}
-
+/**ESTA FUNCION DEVUELVE UNA IP ALEATORIA VÁLIDA DENTRO DEL RANGO DE IPS DE SERVICIO DE UN SERVIDOR DHCP PARA UNA OFERTA */
 function getRandomIPfromDhcp(serverObjectId) {
 
     const $serverObject = document.getElementById(serverObjectId);
@@ -49,22 +25,30 @@ function getRandomIPfromDhcp(serverObjectId) {
 
 }
 
+/**ESTA FUNCION DEVUELVE TRUE SI LA IP ES VÁLIDA PARA OFERTA DE UN SERVIDOR DHCP */
 function checkIpinDhcp(serverObjectId, newip) {
 
-    const serverObject = document.getElementById(serverObjectId);
-    const dhcpTable = serverObject.querySelector(".dhcp-table").querySelector("table");
-    const rows = dhcpTable.querySelectorAll("tr");
+    const $serverObject = document.getElementById(serverObjectId);
+    const $leasesTable = $serverObject.querySelector(".dhcp-table").querySelector("table");
+    const $reservations = JSON.parse($serverObject.getAttribute("ip-reservations"));
+    const $leases = $leasesTable.querySelectorAll("tr");
+    let response = true;
 
-    for (let i = 1; i < rows.length; i++) {
-        let row = rows[i];
-        let cells = row.querySelectorAll("td");
-        let ip = cells[0]
-        if (newip === ip) return false;
+    $leases.forEach(lease => {
+        let $fields = lease.querySelectorAll("td");
+        if ($fields.length < 1) return;
+        if ($fields[0].innerHTML === newip) response = false;
+    });
+
+    for (let reservation in $reservations) {
+        if ($reservations[reservation] === newip) response = false;
     }
 
-    return true
+    return response;
+
 }
 
+/**ESTA FUNCION AÑADE UNA NUEVA ENTRADA DE ALQUILER A LA BASE DE DATOS DE UN SERVIDOR DHCP */
 function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
 
     const $serverObject = document.getElementById(serverObjectId);
@@ -83,6 +67,28 @@ function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
     if (!serverLeaseTimers[serverObjectId]) serverLeaseTimers[serverObjectId] = setInterval(() => updateServerLeaseTimes(serverObjectId), 1000);
 }
 
+/**ESTA FUNCION ELIMINA UNA ENTRADA DE ALQUILER DE UN SERVIDOR DHCP */
+function deleteDhcpEntry(serverObjectId, targetip) {
+    const serverObject = document.getElementById(serverObjectId);
+    const table = serverObject.querySelector(".dhcp-table").querySelector("table");
+    const rows = table.querySelectorAll("tr");
+
+    for (let i = 1; i < rows.length; i++) {
+        let row = rows[i];
+        let cells = row.querySelectorAll("td");
+        let ip = cells[0].innerHTML;
+        if (ip === targetip) {
+            row.remove();
+            if (table.querySelectorAll("tr").length === 1) { // Solo queda la cabecera
+                clearInterval(window.leaseTimer);
+                serverObject.setAttribute("data-interval", "false");
+            }
+            return;
+        }
+    }
+}
+
+/**ESTA FUNCION ACTUALIZA EL TIEMPO DE ALQUILER DE LOS ALQUILERES DE UN SERVIDOR DHCP */
 function updateDhcpEntry(serverObjectId, renewPacket) {
 
     const $serverObject = document.getElementById(serverObjectId);
@@ -112,6 +118,7 @@ function updateDhcpEntry(serverObjectId, renewPacket) {
 
 }
 
+/**ESTA FUNCION INICIA DE NUEVO LA ACTUALIZACION DE LOS TIEMPOS DE ALQUILER DE LOS ALQUILERES DE UN SERVIDOR DHCP */
 function startLeaseTimers() {
 
     const $dhcpServers = Array.from(document.querySelectorAll(".item-dropped")).filter($networkObject => $networkObject.getAttribute("dhcpd") !== null);
@@ -136,58 +143,7 @@ function startLeaseTimers() {
 
 }
 
-function deleteDhcpEntry(serverObjectId, targetip) {
-    const serverObject = document.getElementById(serverObjectId);
-    const table = serverObject.querySelector(".dhcp-table").querySelector("table");
-    const rows = table.querySelectorAll("tr");
-
-    for (let i = 1; i < rows.length; i++) {
-        let row = rows[i];
-        let cells = row.querySelectorAll("td");
-        let ip = cells[0].innerHTML;
-        if (ip === targetip) {
-            row.remove();
-            if (table.querySelectorAll("tr").length === 1) { // Solo queda la cabecera
-                clearInterval(window.leaseTimer);
-                serverObject.setAttribute("data-interval", "false");
-            }
-            return;
-        }
-    }
-}
-
-function deleteAllDhcpLeases(serverObjectId) {
-
-    const serverObject = document.getElementById(serverObjectId);
-    const table = serverObject.querySelector(".dhcp-table").querySelector("table");
-    const rows = table.querySelectorAll("tr");
-
-    for (let i = 1; i < rows.length; i++) {
-        let row = rows[i];
-        row.remove();
-    }
-
-    if (table.querySelectorAll("tr").length === 1) {
-        clearInterval(window.leaseTimer);
-        serverObject.setAttribute("data-interval", "false");
-    }
-}
-
-function getReservedIp(serverObjectId, mac) {
-
-    const $serverObject = document.getElementById(serverObjectId);
-    const reservations = JSON.parse($serverObject.getAttribute("ip-reservations"));
-    let filteredMac = mac.trim().toUpperCase();
-
-    for (let reservation in reservations) {
-        if (reservation === filteredMac) return reservations[reservation];
-    }
-
-    return false;
-}
-
-/**ESTA FUNCION DEVUELVE LAS RESERVAS DE DHCP DE UN DISPOSITIVO COMO ARRAY DE TRs*/
-
+/**ESTA FUNCION AÑADE UNA NUEVA RESERVA DE ALQUILER A LA BASE DE DATOS DE UN SERVIDOR DHCP */
 function addDhcpReservation(networkObjectId, mac, ip) {
     const $networkObject = document.getElementById(networkObjectId);
     const reservations = JSON.parse($networkObject.getAttribute("ip-reservations"));
@@ -197,9 +153,19 @@ function addDhcpReservation(networkObjectId, mac, ip) {
     $networkObject.setAttribute("ip-reservations", JSON.stringify(reservations));
 }
 
+/**ESTA FUNCION ELIMINA UNA RESERVA DE ALQUILER DE LA BASE DE DATOS DE UN SERVIDOR DHCP */
 function removeDhcpReservation(networkObjectId, mac) {
     const $networkObject = document.getElementById(networkObjectId);
     const reservations = JSON.parse($networkObject.getAttribute("ip-reservations"));
     delete reservations[mac];
     $networkObject.setAttribute("ip-reservations", JSON.stringify(reservations));
+}
+
+/**ESTA FUNCION DEVUELVE LA IP RESERVADA DE UN DISPOSITIVO PARA UNA DIRECCION MAC */
+function getReservedIp(serverObjectId, mac) {
+    const $serverObject = document.getElementById(serverObjectId);
+    const reservations = JSON.parse($serverObject.getAttribute("ip-reservations"));
+    let filteredMac = mac.trim().toUpperCase();
+    if (reservations[filteredMac]) return reservations[filteredMac];
+    return false;
 }
