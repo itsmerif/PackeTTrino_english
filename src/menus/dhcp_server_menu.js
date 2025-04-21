@@ -8,7 +8,7 @@ function dhcp_server_menu() {
         <p id="form-dhcp-item-id"></p>
 
         <div>
-            <button class="btn-modern-blue dark" id="btn-basic-tab">Básico</button>
+            <button class="btn-modern-blue dark active" id="btn-basic-tab">Básico</button>
             <button class="btn-modern-blue dark" id="btn-reservations">Reservas</button>
             <button class="btn-modern-blue dark" id="btn-adv-tab">Avanzado</button>
         </div>
@@ -62,10 +62,6 @@ function dhcp_server_menu() {
 
         </div>
 
-        <div class="advanced-section" style="display: none;">
-
-        </div>  
-
         <div class="reservations-section" style="display: none;">
 
             <div>
@@ -95,6 +91,9 @@ function dhcp_server_menu() {
 
         </div>
 
+        <div class="advanced-section" style="display: none;">
+
+        </div> 
     `;
 
     $menu.addEventListener("submit", saveDhcpSpecs);
@@ -181,21 +180,25 @@ function saveDhcpSpecs(event) {
     $menu.style.display = "none";
 }
 
-function showReservTab(event) {
-    event.stopPropagation();
-    event.preventDefault();
-    const $menu = document.querySelector(".dhcp-form");
-    $menu.querySelector(".main-section").style.display = "none";
-    $menu.querySelector(".reservations-section").style.display = "flex";
-    $menu.querySelector(".advanced-section").style.display = "none";
-}
-
 function showBasicTab(event) {
     event.stopPropagation();
     event.preventDefault();
     const $menu = document.querySelector(".dhcp-form");
+    $menu.querySelectorAll(".active").forEach($button => $button.classList.remove("active"));
+    $menu.querySelector("#btn-basic-tab").classList.add("active");
     $menu.querySelector(".main-section").style.display = "flex";
     $menu.querySelector(".reservations-section").style.display = "none";
+    $menu.querySelector(".advanced-section").style.display = "none";
+}
+
+function showReservTab(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    const $menu = document.querySelector(".dhcp-form");
+    $menu.querySelectorAll(".active").forEach($button => $button.classList.remove("active"));
+    $menu.querySelector("#btn-reservations").classList.add("active");
+    $menu.querySelector(".main-section").style.display = "none";
+    $menu.querySelector(".reservations-section").style.display = "flex";
     $menu.querySelector(".advanced-section").style.display = "none";
 }
 
@@ -203,6 +206,8 @@ function showAdvTab(event) {
     event.stopPropagation();
     event.preventDefault();
     const $menu = document.querySelector(".dhcp-form");
+    $menu.querySelectorAll(".active").forEach($button => $button.classList.remove("active"));
+    $menu.querySelector("#btn-adv-tab").classList.add("active");
     $menu.querySelector(".main-section").style.display = "none";
     $menu.querySelector(".reservations-section").style.display = "none";
     $menu.querySelector(".advanced-section").style.display = "flex";

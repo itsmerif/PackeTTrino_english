@@ -117,6 +117,11 @@
         }
     }
 
+    &.active {
+        background-color: #fff;
+        color: #4361ee;
+        box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+    }
 }
 
 .btn-modern-yellow {
