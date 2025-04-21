@@ -33,7 +33,7 @@ function getNodes() {
                 nodesIp[$router.id].push(ip);
                 nodesNetmask[$router.id].push(netmask);
             }
-            
+
         });
 
     }
@@ -117,8 +117,8 @@ function findShortestPath(startNetwork, endNetwork) {
     }
 
     //return pathNodes;
-    
-    
+
+
     // Convertir el camino de nodos a IPs
     const pathIPs = mapPathToIPs(pathNodes);
 
@@ -231,27 +231,22 @@ function getNextHop(startNetwork) {
 }
 
 function getRoutes(routerId) {
+
     const $router = document.getElementById(routerId); //obtengo el router
     const validNetworks = [];
     const routingTable = $router.querySelector('.routing-table').querySelector('table');
-    const routingRules = routingTable.querySelectorAll('tr');
+    const $directRoutingRules = routingTable.querySelectorAll(".direct-route");
     let matrix = [];
 
-    for (let i = 1; i < 4; i++) {
-
-        const cells = routingRules[i].querySelectorAll('td');
-
-        const destination = cells[0].innerText;
-
-        if (destination !== '') {
-            let netmask = cells[1].innerText;
-            let interface = cells[3].innerText;
-            let gateway = cells[2].innerText;
-            validNetworks.push([destination, netmask, gateway, interface]); //guardamos las redes a las que el router está conectado de forma directa
-            matrix.push(getNextHop(destination));
-        }
-
-    }
+    $directRoutingRules.forEach($routingRule => {
+        const $fields = $routingRule.querySelectorAll('td');
+        const destination = $fields[0].innerText;
+        const netmask = $fields[1].innerText;
+        const interface = $fields[3].innerText;
+        const gateway = $fields[2].innerText;
+        validNetworks.push([destination, netmask, gateway, interface]); //guardamos las redes a las que el router está conectado de forma directa
+        matrix.push(getNextHop(destination));
+    });
 
     matrix = matrix.reduce((a, b) => a.concat(b), []); //juntamos las matrices de todas las redes
 
@@ -283,7 +278,7 @@ function getRoutes(routerId) {
     }
 
     return groupByDefaultRules(removeDuplicateRows(matrix));
-    
+
 }
 
 function removeDuplicateRows(matrix) {
@@ -315,7 +310,7 @@ function autoInputRules($routerObjectId) {
         let nexthop = matrix[i][2];
         let gateway = matrix[i][3];
         let interface = matrix[i][4];
-        addRoutingEntry($routerObjectId, destination, netmask, gateway, interface, nexthop);
+        setRemoteRoutingRule($routerObjectId, destination, netmask, gateway, interface, nexthop);
     }
 
 }
@@ -327,7 +322,7 @@ function groupByDefaultRules(matrix) {
     let nextHopDefault;
 
     if (defaultNetwork === "") { //agrupamos por mayor numero de reglas para cada siguiente salto
-        
+
         for (let i = 0; i < matrix.length; i++) {
             let nextHop = matrix[i][2];
             hopCounter[nextHop] = {

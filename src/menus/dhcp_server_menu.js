@@ -11,6 +11,7 @@ function dhcp_server_menu() {
             <button class="btn-modern-blue dark active" id="btn-basic-tab">Básico</button>
             <button class="btn-modern-blue dark" id="btn-reservations">Reservas</button>
             <button class="btn-modern-blue dark" id="btn-adv-tab">Avanzado</button>
+            <button class="btn-modern-blue dark" id="btn-pools">Pools</button>
         </div>
 
         <div class="main-section">
@@ -91,9 +92,8 @@ function dhcp_server_menu() {
 
         </div>
 
-        <div class="advanced-section" style="display: none;">
-
-        </div> 
+        <div class="advanced-section" style="display: none;"></div> 
+        <div class="pools-section" style="display: none;"></div>
     `;
 
     $menu.addEventListener("submit", saveDhcpSpecs);

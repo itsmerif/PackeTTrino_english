@@ -230,24 +230,9 @@ function fromRouterInterface(routerObjectId, interface, attribute) {
 }
 
 function removeRemoteRules($routerObjectId) {
-
     const $networkObject = document.getElementById($routerObjectId);
-    const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
-    const $rules = $routingTable.querySelectorAll("tr");
-
-    $rules.forEach($rule => {
-        const $cells = $rule.querySelectorAll("td");
-        if ($cells.length > 1 && $cells[4].innerHTML !== "0.0.0.0" && $cells[0].innerHTML !== "0.0.0.0" ) $rule.remove();
-    });
-
-    const $defaultRow = $routingTable.querySelector("#default-route");
-    let cells = $defaultRow.querySelectorAll("td");
-    cells[0].innerHTML = "0.0.0.0";
-    cells[1].innerHTML = "0.0.0.0";
-    cells[2].innerHTML = "";
-    cells[3].innerHTML = "";
-    cells[4].innerHTML = "";
-
+    const $remoteRoutingRules = $networkObject.querySelectorAll(".remote-route");
+    $remoteRoutingRules.forEach($rule => $rule.remove());
 }
 
 function getRoutingRules(routerObjectid, targetinterface) {
