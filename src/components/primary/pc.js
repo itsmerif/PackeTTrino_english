@@ -19,6 +19,29 @@ function PcObject(x, y) {
         advancedOptionsObject("terminal", "arp", "cacheDns", "browser", "delete")
     );
 
+    let filesystem = {
+
+        "/": {
+
+            "etc": {
+                "hosts": "{'127.0.0.1': ['localhost']}" ,
+                "resolv.conf": "",
+                "network": {
+                    "interfaces": ""
+                }
+            },
+
+            "var": {
+                "www": {
+                    "html": {
+                        "index.html": ""
+                    }
+                }
+            }
+        }
+
+    };
+
     attr("ip-enp0s3", "");
     attr("netmask-enp0s3", "");
     attr("mac-enp0s3", getRandomMac());
@@ -31,6 +54,7 @@ function PcObject(x, y) {
     attr("onclick", "showPcForm('" + $networkObject.id + "')");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("ondragstart", "BoardItemDragStart(event)");
+    attr("filesystem", JSON.stringify(filesystem));
 
     installDhclient($networkObject);
     installApache2($networkObject);

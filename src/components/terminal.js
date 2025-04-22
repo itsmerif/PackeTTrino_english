@@ -71,6 +71,11 @@ function sendCommand(event) {
             "traceroute": () => command_traceroute(dataId, args),
             "systemctl": () => command_systemctl(dataId, args),
             "apt": () => command_apt(dataId, args),
+            "mkdir": () => command_mkdir(dataId, args),
+            "touch": () => command_touch(dataId, args),
+            "rm": () => command_rm(dataId, args),
+            "mv": () => command_mv(dataId, args),
+            "ls": () => command_ls(dataId, args),
             "exit": () => closeTerminal(event)
         }
 
