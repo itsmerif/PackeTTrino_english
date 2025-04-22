@@ -9,7 +9,7 @@ class FileSystem {
         this.group = "root ";
     }
 
-    save () {
+    compile () {
         document.getElementById(this.itemId).setAttribute("filesystem", JSON.stringify(this.structure));
     }
 
@@ -44,18 +44,58 @@ class FileSystem {
     }
 
     touch (fileName, directoryPath) {
+
         const fileSystem = this.structure;
         let currentDirectory = fileSystem["/"];
 
         for (let i = 0; i < directoryPath.length; i++) {
             if (!currentDirectory[directoryPath[i]]) throw new Error(`El directorio ${directoryPath[i]} no existe`);
-            if (!currentDirectory[directoryPath[i]] instanceof Object) throw new Error(`El directorio ${directoryPath[i]} no es un directorio`);
+            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`El directorio ${directoryPath[i]} no es un directorio`);
             currentDirectory = currentDirectory[directoryPath[i]];
         }
 
-        if (currentDirectory[fileName]) throw new Error(`El archivo ${fileName} ya existe`);
+        if (Object.hasOwn(currentDirectory, fileName)) throw new Error(`El archivo ${fileName} ya existe`);
         currentDirectory[fileName] = "";
-        this.save();
+        this.compile();
+
     }
 
+
+    rm (fileName, directoryPath) {
+
+        const fileSystem = this.structure;
+        let currentDirectory = fileSystem["/"];
+
+        for (let i = 0; i < directoryPath.length; i++) {
+            if (!currentDirectory[directoryPath[i]]) throw new Error(`El directorio ${directoryPath[i]} no existe`);
+            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`El directorio ${directoryPath[i]} no es un directorio`);
+            currentDirectory = currentDirectory[directoryPath[i]];
+        }
+
+        if (!Object.hasOwn(currentDirectory, fileName)) throw new Error(`El archivo ${fileName} no existe`);
+        delete currentDirectory[fileName];
+        this.compile();
+
+    }
+
+    mkdir(folderName, directoryPath) {
+
+        const fileSystem = this.structure;
+        let currentDirectory = fileSystem["/"];
+
+        for (let i = 0; i < directoryPath.length; i++) {
+            if (!Object.hasOwn(currentDirectory, directoryPath[i])) {
+                currentDirectory[directoryPath[i]] = {};
+            }else if (!(currentDirectory[directoryPath[i]] instanceof Object)) {
+                throw new Error(`El directorio ${directoryPath[i]} no es un directorio`);
+            }
+            currentDirectory = currentDirectory[directoryPath[i]];
+        }
+
+        if (Object.hasOwn(currentDirectory, folderName)) throw new Error(`El directorio ${folderName} ya existe`);
+        currentDirectory[folderName] = {};
+        this.compile();
+
+    }
 }
+

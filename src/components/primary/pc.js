@@ -55,10 +55,8 @@ function PcObject(x, y) {
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("filesystem", JSON.stringify(filesystem));
-
     installDhclient($networkObject);
     installApache2($networkObject);
-
     itemIndex++;
     return $networkObject;
 
