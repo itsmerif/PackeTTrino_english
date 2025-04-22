@@ -5,6 +5,7 @@ let visualSpeed = 300;
 let terminalBuffer = [];
 let currentCommandIndex = 0;
 let ignoreArpTraffic = false;
+let $PWD = [];
 
 //flags de control de paquetes
 let arpFlag = {};

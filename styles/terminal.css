@@ -36,6 +36,7 @@
     height: fit-content;
     word-wrap: break-word;
     padding: 0px;
+    margin-left: 10px;
 }
 
 .terminal-output {

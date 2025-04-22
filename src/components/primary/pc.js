@@ -20,9 +20,10 @@ function PcObject(x, y) {
     );
 
     let filesystem = {
-
         "/": {
-
+            "bin" : {},
+            "boot" : {},
+            "dev" : {},
             "etc": {
                 "hosts": "{'127.0.0.1': ['localhost']}" ,
                 "resolv.conf": "",
@@ -30,16 +31,9 @@ function PcObject(x, y) {
                     "interfaces": ""
                 }
             },
-
-            "var": {
-                "www": {
-                    "html": {
-                        "index.html": ""
-                    }
-                }
-            }
+            "home" : {},
+            "var": {}
         }
-
     };
 
     attr("ip-enp0s3", "");

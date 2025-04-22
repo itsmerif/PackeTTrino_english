@@ -1,8 +1,8 @@
 class FileSystem {
 
-    constructor(itemId) {
-        this.itemId = itemId;
-        this.structure = JSON.parse(document.getElementById(itemId).getAttribute("filesystem"));
+    constructor($item) {
+        this.item = $item;
+        this.structure = JSON.parse((this.item).getAttribute("filesystem"));
         this.dirpermissions = "drwx ";
         this.filepermissions = "-rwx ";
         this.owner = "root ";
@@ -10,26 +10,32 @@ class FileSystem {
     }
 
     compile () {
-        document.getElementById(this.itemId).setAttribute("filesystem", JSON.stringify(this.structure));
+        (this.item).setAttribute("filesystem", JSON.stringify(this.structure));
+    }
+
+    getPWD() {
+        let currentDirectory = (this.structure)["/"];
+        for (let i = 0; i < $PWD.length; i++) currentDirectory = currentDirectory[$PWD[i]];
+        return currentDirectory;
     }
 
     ls (...options) {
         
-        const networkObjectId = this.itemId;
-        const rootDirectory = this.structure["/"];
+        const currentDirectory = this.getPWD();
         const dirpermissions = (options.includes("-l")) ? this.dirpermissions : "";
         const filepermissions = (options.includes("-l"))  ? this.filepermissions : "";
         const owner = (options.includes("-l")) ? this.owner : "";
         const group = (options.includes("-l")) ? this.group : "";
         const isRecursive = options.includes("-R");
         let output = [];
-        recursiveSearch(rootDirectory, networkObjectId, "/");
-
-        function recursiveSearch(objt, networkObjectId, currentPath) {
+        
+        recursiveSearch(currentDirectory, "/");
+ 
+        function recursiveSearch(objt, currentPath) {
             for (const key in objt) {
                 if (objt[key] instanceof Object) {
                     output.push(dirpermissions + owner + group + (currentPath + "/" + key).slice(1));
-                    if (isRecursive) recursiveSearch(objt[key], networkObjectId, currentPath + "/" + key);
+                    if (isRecursive) recursiveSearch(objt[key], currentPath + "/" + key);
                 } else {
                     output.push(filepermissions + owner + group + (currentPath + "/" + key).slice(1));
                 }
@@ -39,7 +45,7 @@ class FileSystem {
         if (!options.includes("-l")) output = output.join(" ");
         else output = output.join("\n");
 
-        terminalMessage(output, networkObjectId);
+        terminalMessage(output, (this.item).id);
         
     }
 
@@ -60,7 +66,6 @@ class FileSystem {
 
     }
 
-
     rm (fileName, directoryPath) {
 
         const fileSystem = this.structure;
@@ -78,10 +83,9 @@ class FileSystem {
 
     }
 
-    mkdir(folderName, directoryPath) {
+    mkdir (folderName, directoryPath) { // ["var", "www", "html"]
 
-        const fileSystem = this.structure;
-        let currentDirectory = fileSystem["/"];
+        let currentDirectory = (this.structure)["/"];
 
         for (let i = 0; i < directoryPath.length; i++) {
             if (!Object.hasOwn(currentDirectory, directoryPath[i])) {
@@ -97,5 +101,21 @@ class FileSystem {
         this.compile();
 
     }
+
+
+    cd (directoryPath) {
+
+        let currentDirectory = this.structure["/"];
+
+        for (let i = 0; i < directoryPath.length; i++) {
+            if (!Object.hasOwn(currentDirectory, directoryPath[i])) throw new Error(`El directorio ${directoryPath[i]} no existe`);
+            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`${directoryPath[i]} no es un directorio`);
+            currentDirectory = currentDirectory[directoryPath[i]];
+        }
+
+        directoryPath.map(dir => $PWD.push(dir));
+
+    }
+
 }
 
