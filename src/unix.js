@@ -29,7 +29,7 @@ function sendCommand(event) {
             "touch": () => command_touch(dataId, args),
             "rm": () => command_rm(dataId, args),
             "mv": () => command_mv(dataId, args),
-            "ls": () => command_ls(dataId, args),
+            "ls": () => command_ls(dataId, args.slice(1)),
             "cd": () => command_cd(dataId, args[1]),
             "exit": () => closeTerminal(event)
         }

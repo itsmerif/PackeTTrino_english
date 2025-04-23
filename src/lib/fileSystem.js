@@ -1,3 +1,17 @@
+function pathBuilder(pathInput) {
+
+    let path;
+    
+    if (pathInput.startsWith("/")) {
+        path = pathInput.split("/").slice(1);
+    } else {
+        path = [...$PWD];
+        pathInput.split("/").map(dir => path.push(dir)); 
+    }
+
+    return path;
+}
+
 class FileSystem {
 
     constructor($item) {
@@ -83,7 +97,7 @@ class FileSystem {
 
     }
 
-    mkdir (folderName, directoryPath) { // ["var", "www", "html"]
+    mkdir (folderName, directoryPath) { 
 
         let currentDirectory = (this.structure)["/"];
 
@@ -102,20 +116,21 @@ class FileSystem {
 
     }
 
-
     cd (directoryPath) {
 
         let currentDirectory = this.structure["/"];
+        let provisionalPWD = [];
 
-        for (let i = 0; i < directoryPath.length; i++) {
-            if (!Object.hasOwn(currentDirectory, directoryPath[i])) throw new Error(`El directorio ${directoryPath[i]} no existe`);
-            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`${directoryPath[i]} no es un directorio`);
-            currentDirectory = currentDirectory[directoryPath[i]];
-        }
+        directoryPath.forEach(dir => {
+            if (!dir) return;
+            if (!Object.hasOwn(currentDirectory, dir)) throw new Error(`El directorio ${dir} no existe`);
+            if (!(currentDirectory[dir] instanceof Object)) throw new Error(`${dir} no es un directorio`);
+            currentDirectory = currentDirectory[dir];
+            provisionalPWD.push(dir);
+        });
 
-        directoryPath.map(dir => $PWD.push(dir));
+        $PWD = [...provisionalPWD];
 
     }
 
 }
-

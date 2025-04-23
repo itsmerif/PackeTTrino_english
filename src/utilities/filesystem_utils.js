@@ -21,14 +21,14 @@ function command_mkdir(networkObjectId, pathInput) {
 
 }
 
-function command_touch(dataId, args) {
+function command_touch(networkObjectId, args) {
 
     if (args.length !== 2) {
-        terminalMessage("Error de argumentos. Sintaxis: touch &lt;archivo&gt;", dataId);
+        terminalMessage("Error de argumentos. Sintaxis: touch &lt;archivo&gt;", networkObjectId);
         return;
     }
 
-    const $networkObject = document.getElementById(dataId);
+    const $networkObject = document.getElementById(networkObjectId);
     let fileSystem = new FileSystem($networkObject);
     let directoryPath = args[1].split("/").slice(1);
     let fileName = directoryPath.pop();
@@ -36,26 +36,25 @@ function command_touch(dataId, args) {
     try {
         fileSystem.touch(fileName, directoryPath);
     }catch(e) {
-        terminalMessage(e.message, dataId);
+        terminalMessage(e.message, networkObjectId);
     }
 
 }
 
-function command_ls(dataId, args) {
-    const $networkObject = document.getElementById(dataId);
+function command_ls(networkObjectId, args) {
+    const $networkObject = document.getElementById(networkObjectId);
     let fileSystem = new FileSystem($networkObject);
-    args.shift();
     fileSystem.ls(...args);
 }
 
-function command_rm(dataId, arg) {
+function command_rm(networkObjectId, arg) {
 
     if (arg.length !== 2) {
-        terminalMessage("Error de argumentos. Sintaxis: rm &lt;archivo&gt;", dataId);
+        terminalMessage("Error de argumentos. Sintaxis: rm &lt;archivo&gt;", networkObjectId);
         return;
     }
 
-    const $networkObject = document.getElementById(dataId);
+    const $networkObject = document.getElementById(networkObjectId);
     let directoryPath = arg[1].split("/").slice(1);
     let fileName = directoryPath.pop();
     let fileSystem = new FileSystem($networkObject);
@@ -63,28 +62,19 @@ function command_rm(dataId, arg) {
     try {
         fileSystem.rm(fileName, directoryPath);
     }catch(e) {
-        terminalMessage(e.message, dataId);
+        terminalMessage(e.message, networkObjectId);
     }
 }
 
 function command_cd(networkObjectId, pathInput) {
     
     const $networkObject = document.getElementById(networkObjectId);
-
-    let directoryPath;
-
-    if (pathInput.startsWith("/")) {
-        directoryPath = pathInput.split("/").slice(1);
-    } else {
-        directoryPath = $PWD;
-        pathInput.split("/").map(dir => directoryPath.push(dir));
-    }
-
+    let directoryPath = pathBuilder(pathInput);       
     let fileSystem = new FileSystem($networkObject);
 
     try {
         fileSystem.cd(directoryPath);
-        document.querySelector(".terminal-component").querySelector("#terminal-prompt").innerHTML = "root@debian:" + pathInput + "#";
+        document.querySelector(".terminal-component").querySelector("#terminal-prompt").innerHTML = `root@debian:/${directoryPath.join("/")}#`;
     }catch(e) {
         terminalMessage(e.message, networkObjectId);
     }

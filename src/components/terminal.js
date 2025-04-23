@@ -7,7 +7,7 @@ function terminal() {
 
     $terminal.innerHTML = `
         <p>
-            <span id="terminal-prompt">root@debian:/# </span>
+            <span id="terminal-prompt">root@debian:/#</span>
             <input type="text" class="terminal-input" autofocus>
         </p>
 
@@ -122,12 +122,12 @@ async function maximizeTerminal() {
 
 function showTerminal(event) {
     event.stopPropagation();
-    const networkObject = event.target.closest(".item-dropped");
-    const terminal = document.querySelector(".terminal-component");
-    terminal.setAttribute("data-id", networkObject.id);
-    terminal.style.display = "block";
-    const modal = networkObject.querySelector(".advanced-options-modal");
-    modal.style.display = "none";
+    const $networkObject = event.target.closest(".item-dropped");
+    const $terminal = document.querySelector(".terminal-component");
+    const $advOptsModal = $networkObject.querySelector(".advanced-options-modal");
+    $terminal.setAttribute("data-id", $networkObject.id);
+    $terminal.style.display = "block";
+    $advOptsModal.style.display = "none";
 }
 
 function closeTerminal(event) {
@@ -138,6 +138,8 @@ function closeTerminal(event) {
     currentCommandIndex = 0;
     document.querySelector(".terminal-output").innerHTML = "";
     $terminal.querySelector("input").value = "";
+    $terminal.querySelector("#terminal-prompt").innerHTML = "root@debian:/#";
+    $PWD = [];
     $terminal.style.top = "40%";
     $terminal.style.left = "50%";
     $terminal.style.transform = "translate(-50%, -50%)";

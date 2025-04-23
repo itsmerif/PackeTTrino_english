@@ -8,14 +8,14 @@ function router_menu() {
         <p id="form-router-item-id"></p>
         <div class="interfaces-wrapper">
             <select class="interfaces-container"></select>
-            <button class="btn-modern-blue dark" id="del-iface">Eliminar</button>
+            <button class="btn-modern-red" id="del-iface">Eliminar</button>
             <button class="btn-modern-blue dark" id="add-iface">Añadir</button>
         </div>
         <label for="router-ip">Dirección IP (ipv4):</label>
         <input type="text" id="router-ip" name="router-ip">
         <label for="router-netmask">Máscara de Red:</label>
         <input type="text" name="router-netmask" id="router-netmask">
-        <button class="btn-modern-blue dark" style="padding: 10px;" type="submit">Guardar</button>
+        <button class="btn-modern-blue dark" style="padding: 10px;">Guardar</button>
     `;
 
     $menu.addEventListener("submit", checkandCloseRouterSpecs);
