@@ -101,7 +101,7 @@ async function ping(dataId, destination) {
     const switchObjectId = $networkObject.getAttribute("data-switch-enp0s3");
 
     if (!isValidIp(destination)) {
-        destination = await domainNameResolution(dataId, destination[1]);
+        destination = await domainNameResolution(dataId, destination);
         if (!destination) return 1;
     }
 
