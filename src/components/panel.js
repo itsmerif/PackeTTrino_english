@@ -3,6 +3,7 @@ async function itemPanel() {
     const $panel = document.createElement("section");
     const $itemsContainer = document.createElement("div");
     $panel.id = "item-panel";
+    $panel.classList.add("hidden");
     $panel.innerHTML = `<input type="file" id="fileInput" accept=".html" style="display: none;">`;
     $itemsContainer.classList.add("item-panel-elements");
     $itemsContainer.appendChild(dynamicRoutingButton());
@@ -21,7 +22,7 @@ async function itemPanel() {
     //agregamos los items del panel
     panelItems.forEach(panelItem => {
         const $itemElement = document.createElement("article");
-        $itemElement.classList.add("item", panelItem.name);
+        $itemElement.classList.add("item", "hidden", panelItem.name);
         $itemElement.draggable = panelItem.draggable;
         $itemElement.ondragstart = dragStart;
         $itemElement.innerHTML = `

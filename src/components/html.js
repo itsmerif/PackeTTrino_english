@@ -26,10 +26,29 @@ function closeTraffic() {
     $traffic.style.display = "none";
 }
 
-function hideLoadingScreen() {
+function startApp() {
+
     const loadingScreen = document.getElementById('loading-screen');
+
     loadingScreen.style.opacity = '0';
+
     setTimeout(() => {
         loadingScreen.style.display = 'none';
     }, 500);
+
+    document.querySelector("#item-panel").classList.remove("hidden");
+
+    const $items = document.querySelector("#item-panel").querySelectorAll(".item");
+    let itemsLength = $items.length;
+    console.log(itemsLength);
+
+    let time = 0;
+
+    document.querySelector("#item-panel").querySelectorAll(".item").forEach((item) => {
+        setTimeout( () => {
+            item.classList.remove("hidden");
+        }, time);
+        time += 30;
+    });
+
 }

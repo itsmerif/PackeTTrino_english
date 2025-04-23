@@ -22,4 +22,4 @@ bodyComponent.render(
 
 //htmlComponent.event("keydown", documentKeyboardHandler);
 
-setTimeout(hideLoadingScreen, 0);
+setTimeout(startApp, 1000);
