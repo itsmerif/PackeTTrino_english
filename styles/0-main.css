@@ -54,15 +54,12 @@ body {
 }
 
 #root {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    box-sizing: border-box;
-    position: relative;
+    width: 100dvw;
+    height: 100dvh;
     overflow: hidden;
+    padding:0px;
+    margin: 0px;
+    font-family: var(--inter);
 }
 
 img {

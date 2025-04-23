@@ -1,6 +1,6 @@
 .board {
     width: 100dvw;
-    height: 90vh;
+    height: 100dvh;
     background-image: 
         linear-gradient(to right, #A0E7E5 1px, transparent 1px),
         linear-gradient(to bottom, #A0E7E5 1px, transparent 1px);
