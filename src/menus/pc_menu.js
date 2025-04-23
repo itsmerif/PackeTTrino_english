@@ -93,12 +93,7 @@ function showPcForm(id) {
 
     if (activeServices.includes("apache")) {
 
-        if ($networkObject.getAttribute("apache") === "true") {
-            $menu.querySelector("#web-server").checked = true;
-            $textInputs.forEach(input => input.disabled = true);
-            $buttons.forEach(button => (button.id !== "save-btn") ? button.style.display = "none" : button.style.display = "block");
-        }
-
+        if ($networkObject.getAttribute("apache") === "true") $menu.querySelector("#web-server").checked = true;
         $menu.querySelector("#web-server-mode").classList.remove("hidden");
         
     }
@@ -126,6 +121,7 @@ async function submitPcForm(event) {
             $networkObject.setAttribute("netmask-enp0s3", newNetmask);
             $networkObject.setAttribute("data-gateway", newGateway);
             $networkObject.setAttribute("data-dns-server", newDnsServer);
+            restorePcForm();
             document.querySelector(".pc-form").style.display = "none";
         },
 
@@ -145,6 +141,7 @@ async function submitPcForm(event) {
         },
 
         "close-btn": () => {
+            restorePcForm();
             document.querySelector(".pc-form").style.display = "none";
         }
     }
@@ -170,4 +167,19 @@ function dhcpHandler(event) {
         if (hasIp) $buttons.forEach(button => (button.id === "renew-btn" || button.id === "release-btn") ? button.style.display = "block" : button.style.display = "none");
         else $buttons.forEach(button => (button.id === "get-btn") ? button.style.display = "block" : button.style.display = "none");
     }
+}
+
+function restorePcForm() {
+
+    const $menu = document.querySelector(".pc-form");
+
+    $menu.querySelector(".modes-wrapper").querySelectorAll(".form-item").forEach(item => {
+        item.classList.add("hidden");
+        item.querySelectorAll(".btn-toggle").forEach(btn => btn.checked = false);
+    });
+
+    $menu.querySelector(".button-container").querySelectorAll("button").forEach( button => { 
+        if (button.id !== "close-btn" && button.id !== "save-btn") button.style.display = "none";
+    });
+
 }
