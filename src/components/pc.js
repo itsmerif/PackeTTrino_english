@@ -45,7 +45,7 @@ function PcObject(x, y) {
     attr("firewall-default-policy", "ACCEPT");
     attr("data-dns-server", "");
     attr("resolved", "true");
-    attr("ondblclick", "showPcForm('" + $networkObject.id + "')");
+    attr("onclick", "showPcForm('" + $networkObject.id + "')");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("ondragstart", "BoardItemDragStart(event)");
     //attr("onmousedown", "startBoardItemMove(event)");

@@ -1,17 +1,3 @@
-function pathBuilder(pathInput) {
-
-    let path;
-    
-    if (pathInput.startsWith("/")) {
-        path = pathInput.split("/").slice(1);
-    } else {
-        path = [...$PWD];
-        pathInput.split("/").map(dir => path.push(dir)); 
-    }
-
-    return path;
-}
-
 class FileSystem {
 
     constructor($item) {
@@ -65,8 +51,7 @@ class FileSystem {
 
     touch (fileName, directoryPath) {
 
-        const fileSystem = this.structure;
-        let currentDirectory = fileSystem["/"];
+        let currentDirectory = this.structure["/"];
 
         for (let i = 0; i < directoryPath.length; i++) {
             if (!currentDirectory[directoryPath[i]]) throw new Error(`El directorio ${directoryPath[i]} no existe`);
