@@ -1,10 +1,3 @@
-function clearAllRoutingTables() {
-    const $routerElements = document.querySelectorAll('.router');
-    for (let i = 0; i < $routerElements.length - 1; i++) {
-        routingTableRestore($routerElements[i].id);
-    }
-}
-
 function getNodes() {
 
     nodes = {};

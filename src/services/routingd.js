@@ -1,5 +1,4 @@
-//setters
-
+/**ESTA FUNCION INSERTA UN REGLA DE CONEXION DIRECTA A LA TABLA DE ENRUTAMIENTO DE UN EQUIPO */
 function setDirectRoutingRule(routerObjectId, gateway, netmask, interface) {
 
     const $networkObject = document.getElementById(routerObjectId);
@@ -45,6 +44,7 @@ function setDirectRoutingRule(routerObjectId, gateway, netmask, interface) {
 
 }
 
+/**ESTA FUNCION INSERTA UN REGLA REMOTA A LA TABLA DE ENRUTAMIENTO DE UN EQUIPO */
 function setRemoteRoutingRule(routerObjectId, destination, netmask, gateway, interface, nexthop) {
 
     const $networkObject = document.getElementById(routerObjectId);
@@ -88,8 +88,7 @@ function setRemoteRoutingRule(routerObjectId, destination, netmask, gateway, int
 
 }
 
-//removers
-
+/**ESTA FUNCION ELIMINA UNA REGLA DE CONEXION DIRECTA DE LA TABLA DE ENRUTAMIENTO DE UN EQUIPO */
 function removeDirectRoutingRule(routerObjectId, interface) {
     const $networkObject = document.getElementById(routerObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
@@ -101,6 +100,7 @@ function removeDirectRoutingRule(routerObjectId, interface) {
     });
 }
 
+/**ESTA FUNCION ELIMINA UNA REGLA REMOTA DE LA TABLA DE ENRUTAMIENTO DE UN EQUIPO */
 function removeRemoteRoutingRule(routerObjectId, destination, netmask) {
     const $networkObject = document.getElementById(routerObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
@@ -112,8 +112,7 @@ function removeRemoteRoutingRule(routerObjectId, destination, netmask) {
     });
 }
 
-//mas funciones
-
+/**ESTA FUNCION IMPRIME EL ENRUTAMIENTO DE UN EQUIPO POR LA TERMINAL*/
 function printRouting(networkObjectId) {                     
 
     const $networkObject = document.getElementById(networkObjectId);
@@ -149,6 +148,7 @@ function printRouting(networkObjectId) {
 
 }
 
+/**ESTA FUNCION RESTAURA LA TABLA DE ENRUTAMIENTO DE UN EQUIPO (DEPRECADA)*/
 function routingTableRestore(routerObjectid) {
 
     const $routerObject = document.getElementById(routerObjectid);
@@ -193,6 +193,14 @@ function routingTableRestore(routerObjectid) {
 
 }
 
+/**ESTA FUNCION ELIMINA TODAS LAS REGLAS REMOTAS DE LA TABLA DE ENRUTAMIENTO DE UN EQUIPO */
+function removeRemoteRules($routerObjectId) {
+    const $networkObject = document.getElementById($routerObjectId);
+    const $remoteRoutingRules = $networkObject.querySelectorAll(".remote-route");
+    $remoteRoutingRules.forEach($rule => $rule.remove());
+}
+
+/**ESTA FUNCION DEVUELVE UN NODO TIPO ROW DE LA TABLA DE ENRUTAMIENTO DE UN EQUIPO A PARTIR DEL DESTINO Y MASCARA*/
 function getRoutingRule(routerObjectId, destination, netmask) {
     const $networkObject = document.getElementById(routerObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
@@ -208,33 +216,7 @@ function getRoutingRule(routerObjectId, destination, netmask) {
     return response;
 }
 
-function fromRouterInterface(routerObjectId, interface, attribute) {
-
-    const $routerObject = document.getElementById(routerObjectId);
-    const routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
-    const rows = routingTable.querySelectorAll("tr");
-    let response = "";
-
-    for (let i = 1; i < rows.length; i++) {
-        let row = rows[i];
-        let cells = row.querySelectorAll("td");
-        if (cells[3].innerHTML === interface) {
-            if (attribute === "destination") response = cells[0].innerHTML;
-            if (attribute === "netmask") response = cells[1].innerHTML;
-            if (attribute === "gateway") response = cells[2].innerHTML;
-            if (attribute === "nexthop") response = cells[4].innerHTML;
-        }
-    }
-
-    return response;
-}
-
-function removeRemoteRules($routerObjectId) {
-    const $networkObject = document.getElementById($routerObjectId);
-    const $remoteRoutingRules = $networkObject.querySelectorAll(".remote-route");
-    $remoteRoutingRules.forEach($rule => $rule.remove());
-}
-
+/**ESTA FUNCION DEVUELVE TODAS LAS REGLAS DE ENRUTAMIENTO DE UN EQUIPO COMO ARRAY A PARTIR DE UNA INTERFAZ*/
 function getRoutingRules(routerObjectid, targetinterface) {
 
     const $routerObject = document.getElementById(routerObjectid);
