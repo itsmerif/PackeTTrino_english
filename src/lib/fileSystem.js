@@ -67,8 +67,7 @@ class FileSystem {
 
     rm (fileName, directoryPath) {
 
-        const fileSystem = this.structure;
-        let currentDirectory = fileSystem["/"];
+        let currentDirectory = this.structure["/"];
 
         for (let i = 0; i < directoryPath.length; i++) {
             if (!currentDirectory[directoryPath[i]]) throw new Error(`El directorio ${directoryPath[i]} no existe`);
