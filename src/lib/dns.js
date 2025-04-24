@@ -107,13 +107,11 @@ function generateDnsOuput(packet, networkObjectId) {
     //header
 
     terminalMessage(`<p>QUERY: 1, ANSWER: ${answerBoolean}, AUTHORITY: ${authority}, ADDITIONAL: 0</p>`, networkObjectId);
-    terminalMessage("<p></p>", networkObjectId);
 
     //seccion de query
 
     terminalMessage(`<p>QUESTION SECTION: </p>`, networkObjectId);
     terminalMessage(`<p>${query.padEnd(15, " ")}` + " IN " + `${answer_type} </p>`, networkObjectId);
-    terminalMessage("<p></p>", networkObjectId);
 
     //seccion de respuesta
 
@@ -126,7 +124,6 @@ function generateDnsOuput(packet, networkObjectId) {
                 terminalMessage(`<p>${query.padEnd(15, " ")} 86400 IN ${answer_type} ${answer[i]}</p>`, networkObjectId);
             }
         }
-        terminalMessage("<p></p>", networkObjectId);
     }
 
     //seccion de autoridad
@@ -134,7 +131,6 @@ function generateDnsOuput(packet, networkObjectId) {
     if (authority !== "0") {
         terminalMessage(`AUTHORITY SECTION:`, networkObjectId);
         terminalMessage(`<p>${authority_domain.padEnd(15, " ")}` + " 86400 IN " + `${answer_type}` + " " + `${authority} </p>`, networkObjectId);
-        terminalMessage("<p></p>", networkObjectId);
     }
 
     //seccion de tiempo
