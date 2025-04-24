@@ -105,7 +105,7 @@ async function routing(routerObjectId, packet) {
     const $routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
     const $rows = $routingTable.querySelectorAll("tr");
 
-    for (let i = 1; i <= $rows.length; i++) {
+    for (let i = 1; i < $rows.length; i++) {
 
         let $row = $rows[i];
         let $cells = $row.querySelectorAll("td");
