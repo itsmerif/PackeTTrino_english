@@ -1,3 +1,4 @@
+/**ESTA CLASE DEFINE UN TOKEN DE COMPONENTE A PARTIR DE UN NODO. TIENE MÉTODOS COMO RENDER, EVENT, ETC.*/
 class componentToken {
 
     constructor(element) {
@@ -19,6 +20,7 @@ class componentToken {
 
 }
 
+/**ESTA FUNCION RECIBE LA POSICIÓN DE UN OBJETO Y DEVUELVE NUEVAS POSICIONES SI EL OBJETO QUEDA CLIPEADO FUERA DE LA MESA DE TRABAJO */
 function checkObjectClip(x, y) { 
 
     const $board = document.querySelector(".board");
@@ -61,6 +63,7 @@ function checkObjectClip(x, y) {
     return [newX, newY];
 }
 
+/**ESTA FUNCION MUESTRA LAS OPCIONES AVANZADAS DE UN OBJETO */
 function showAdvancedOptions(event) {
 
     event.preventDefault();
@@ -107,6 +110,7 @@ function showAdvancedOptions(event) {
     $modal.style.display = "flex";
 }
 
+/**ESTA FUNCION MUESTRA UN MODAL DE UN OBJETO, RECALCULANDO LAS POSICIONES DEL MODAL EN FUNCION DE LA POSICION DEL OBJETO */
 function showObjectModalTable(event, selector) {
     
     event.preventDefault();
@@ -166,6 +170,7 @@ function showObjectModalTable(event, selector) {
 
 }
 
+/**ESTA FUNCION OCULTA UN MODAL DE UN OBJETO */
 function closeObjectModalTable(event, selector) {
     event.stopPropagation();
     const $networkObject = event.target.closest(".item-dropped");
@@ -173,6 +178,7 @@ function closeObjectModalTable(event, selector) {
     $Table.style.display = "none";
 }
 
+/**ESTA FUNCION CREA UN INDICADOR DE PAQUETE SOBRE UN OBJETO */
 function createPacketIndicator(id) {
 
     const $networkObject = document.getElementById(id)
@@ -194,7 +200,6 @@ function createPacketIndicator(id) {
     //agregamos el indicator al tablero
     $board.appendChild($indicator);
 }
-
 
 /**ESTA FUNCION DEVUELVE LOS ELEMENTOS SVGS QUE FORMAN LAS CONEXIONES DE UN OBJETO CON UN SWITCH*/
 function getConns(networkObjectId) {
@@ -220,7 +225,7 @@ function getConns(networkObjectId) {
     return [finalLines, finalCircles];
 }
 
-/**ESTA FUNCION PERMITE A LOS MODALES MOVERSE  */
+/**ESTA FUNCION PERMITE A LOS MODALES SER ARRASTRADOS  */
 function dragModal(event) {
 
     event.preventDefault();
@@ -254,5 +259,27 @@ function dragModal(event) {
 
     document.addEventListener('mousemove', moveModal);
     document.addEventListener('mouseup', stopDraggingModal);
+
+}
+
+/**ESTA FUNCION PERMITE ARRASTAR LOS OBJETOS EN EL TABLERO DE FORMA SUAVE */
+function startBoardItemMove(event) {
+
+    const $networkObject = event.target.closest(".item-dropped");
+
+    document.addEventListener("mousemove", boardItemMove);
+    document.addEventListener("mouseup", boardItemMoveStop);
+    
+    function boardItemMove(event) {
+        const [x, y] = checkObjectClip(event.clientX, event.clientY);
+        $networkObject.style.left = `${x}px`;
+        $networkObject.style.top = `${y}px`;
+        event.stopPropagation();
+    }
+
+    function boardItemMoveStop() {
+        document.removeEventListener("mousemove", boardItemMove);
+        document.removeEventListener("mouseup", boardItemMoveStop);
+    }
 
 }
