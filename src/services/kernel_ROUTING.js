@@ -244,7 +244,7 @@ async function hostRouting(networkObjectId, packet) {
     const $networkObject = document.getElementById(networkObjectId);
     const destinationIp = packet.destination_ip;
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
-    const $routingRules = $routingTable.querySelectorAll("tr");
+    const $routingRules = $routingTable.querySelectorAll("tr"); 
 
     for (let i = 1; i < $routingRules.length; i++) {
 
