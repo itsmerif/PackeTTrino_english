@@ -166,8 +166,10 @@ function saveDhcpSpecs(event) {
     const newOfferDns = $menu.querySelector("#offer-dns").value;
     const newOfferLeaseTime = $menu.querySelector("#offer-lease-time").value;
 
-    $networkObject.setAttribute("ip-enp0s3", newIp);
-    $networkObject.setAttribute("netmask-enp0s3", newNetmask);
+    configureInterface($networkObject.id, newIp, newNetmask, "enp0s3");
+    setDirectRoutingRule($networkObject.id, newIp, newNetmask, "enp0s3");
+    setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, "enp0s3", newOfferGateway);
+
     $networkObject.setAttribute("data-gateway", newGateway);
     $networkObject.setAttribute("data-range-start", newRangeStart);
     $networkObject.setAttribute("data-range-end", newRangeEnd);
