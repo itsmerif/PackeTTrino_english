@@ -29,7 +29,7 @@ async function http(networkObjectId, arg) {
         if (!destinationIp) throw new Error("Error: No se pudo resolver el dominio.");
     }
 
-    await tcp(networkObjectId, destinationIp, 80);
+    await tcpSynPacketGenerator(networkObjectId, destinationIp, 80);
     if (tcpSyncFlag === false) throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
 
     await httpRequestPacketGenerator(networkObjectId, destinationIp);
