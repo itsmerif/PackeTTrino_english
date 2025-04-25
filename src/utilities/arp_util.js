@@ -1,6 +1,6 @@
 function command_arp(networkObjectId, args) {
 
-    if (args[1] === "-s" || args[1] === "--show") {
+    if (args[1] === "-a") {
         let arpTable = getcurrentARPTable(networkObjectId);
         terminalMessage(arpTable, networkObjectId);
         return;
