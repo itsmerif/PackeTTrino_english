@@ -39,9 +39,6 @@ function startApp() {
     document.querySelector("#item-panel").classList.remove("hidden");
 
     const $items = document.querySelector("#item-panel").querySelectorAll(".item");
-    let itemsLength = $items.length;
-    console.log(itemsLength);
-
     let time = 0;
 
     document.querySelector("#item-panel").querySelectorAll(".item").forEach((item) => {

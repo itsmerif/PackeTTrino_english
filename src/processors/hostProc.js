@@ -23,24 +23,10 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "arp" && packet.type === "reply") {
-
         if (packet.destination_ip !== networkObjectIp) return;
-
         arpFlag[networkObjectId] = true;
-
         addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
-
-        let bufferPacket = buffer[networkObjectId];
-        
-        if (bufferPacket) {
-            bufferPacket.destination_mac = isIpInARPTable(networkObjectId, packet.origin_ip);
-            delete buffer[networkObjectId];
-            addPacketTraffic(bufferPacket);
-            await switchProcessor(switchId, networkObjectId, bufferPacket);
-        }
-
-        return;
-
+        buffer[networkObjectId] = packet;
     }
 
     if (packet.protocol === "icmp" && packet.type === "request") {

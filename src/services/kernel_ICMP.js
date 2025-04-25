@@ -90,55 +90,10 @@ async function traceroute(dataId, destination, numeric = false) {
 }
 
 async function icmpRequestPacketGenerator(networkObjectId, switchId, originIp, destinationIp) {
-
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectNetmask =  $networkObject.getAttribute("netmask-enp0s3");
-    const isSameNetwork = getNetwork(originIp, networkObjectNetmask) === getNetwork(destinationIp, networkObjectNetmask);
-    const isRouter = networkObjectId.startsWith("router-");
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3"); 
     let packet = new IcmpEchoRequest(originIp, destinationIp, networkObjectMac, "");
-    let destination_mac;
-
-    if (!isSameNetwork) { 
-        
-        if (!isRouter) {
-
-            const defaultGateway = $networkObject.getAttribute("data-gateway");
-            if (!defaultGateway) throw new Error("Error: Puerta de Enlace Predeterminada No Configurada");          
-            const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
-    
-            if (!defaultGatewayMac) {
-                buffer[networkObjectId] = packet;
-                await arpResolve(networkObjectId, defaultGateway);
-                return;
-            }
-    
-            packet.destination_mac = defaultGatewayMac;
-            addPacketTraffic(packet);
-            await switchProcessor(switchId, networkObjectId, packet);
-            return;
-
-        } else {
-
-            await routing(networkObjectId, packet);
-            return;
-
-        }
-
-    }
-
-    destination_mac = isIpInARPTable(networkObjectId, destinationIp);
-
-    if (!destination_mac) {
-        buffer[networkObjectId] = packet;
-        await arpResolve(networkObjectId, destinationIp);
-        return;
-    }
-
-    packet.destination_mac = destination_mac;
-    addPacketTraffic(packet);
-    await switchProcessor(switchId, networkObjectId, packet);
-
+    await hostRouting(networkObjectId, packet, switchId);
 }
 
 async function customPacketGenerator(networkObjectId, packet) {
