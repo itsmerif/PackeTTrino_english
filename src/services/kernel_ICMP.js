@@ -3,7 +3,6 @@ async function ping(dataId, destination) {
     const $networkObject = document.getElementById(dataId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
-    const switchObjectId = $networkObject.getAttribute("data-switch-enp0s3");
 
     if (!isValidIp(destination)) {
         destination = await domainNameResolution(dataId, destination);
@@ -20,8 +19,9 @@ async function ping(dataId, destination) {
     icmpFlag[dataId] = false;
 
     try {
-        await icmpRequestPacketGenerator(dataId, switchObjectId, networkObjectIp, destination);
+        await icmpRequestPacketGenerator(dataId, networkObjectIp, destination);
     } catch (error) {
+        console.log(error);
         return 3;
     }
 
@@ -89,11 +89,11 @@ async function traceroute(dataId, destination, numeric = false) {
 
 }
 
-async function icmpRequestPacketGenerator(networkObjectId, switchId, originIp, destinationIp) {
+async function icmpRequestPacketGenerator(networkObjectId, originIp, destinationIp) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3"); 
     let packet = new IcmpEchoRequest(originIp, destinationIp, networkObjectMac, "");
-    await hostRouting(networkObjectId, packet, switchId);
+    await hostRouting(networkObjectId, packet);
 }
 
 async function customPacketGenerator(networkObjectId, packet) {

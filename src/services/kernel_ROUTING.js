@@ -35,7 +35,7 @@ function setDirectRoutingRule(routerObjectId, gateway, netmask, interface) {
             <td>${gateway}</td>
             <td>${interface}</td>
             <td>0.0.0.0</td>
-        `;    
+        `;
 
         if ($defaultRule) $defaultRule.before($newRow)
         else $routingTable.appendChild($newRow);
@@ -60,7 +60,7 @@ function setRemoteRoutingRule(routerObjectId, destination, netmask, gateway, int
             $fields[2].innerHTML = (gateway === "0.0.0.0") ? getInfoFromInterface(routerObjectId, interface)[0] : gateway;
             $fields[3].innerHTML = interface;
             $fields[4].innerHTML = nexthop;
-        }    
+        }
     });
 
     if (!found) {
@@ -113,7 +113,7 @@ function removeRemoteRoutingRule(routerObjectId, destination, netmask) {
 }
 
 /**ESTA FUNCION IMPRIME EL ENRUTAMIENTO DE UN EQUIPO POR LA TERMINAL*/
-function printRouting(networkObjectId) {                     
+function printRouting(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
@@ -126,7 +126,7 @@ function printRouting(networkObjectId) {
         let defaultGateway = $defaultfields[0].innerHTML;
         let defaultInterface = $defaultfields[3].innerHTML;
         terminalMessage(`default via ${defaultGateway} dev ${defaultInterface}`, networkObjectId);
-    }           
+    }
 
     $remoteRoutingRules.forEach($rule => {
         let $fields = $rule.querySelectorAll("td");
@@ -239,44 +239,44 @@ function getRoutingRules(routerObjectid, targetinterface) {
 
 /**ESTA FUNCION ENRRUTA LOS PAQUETES DE UN DISPOSITIVO FINAL, FILTRANDO EN POSTROUTING */
 
-async function hostRouting(networkObjectId, packet, switchId) {
+async function hostRouting(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectNetmask =  $networkObject.getAttribute("netmask-enp0s3");
-    const originIp = packet.origin_ip;
     const destinationIp = packet.destination_ip;
-    const isSameNetwork = getNetwork(originIp, networkObjectNetmask) === getNetwork(destinationIp, networkObjectNetmask);
-    const isRouter = networkObjectId.startsWith("router-");
-    let destination_mac;
+    const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
+    const $routingRules = $routingTable.querySelectorAll("tr");
 
-    if (!isSameNetwork) { 
-        
-        if (!isRouter) {
+    for (let i = 1; i < $routingRules.length; i++) {
 
-            const defaultGateway = $networkObject.getAttribute("data-gateway");
-            if (!defaultGateway) throw new Error("Error: Puerta de Enlace Predeterminada No Configurada");   
-            const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway) || await arpResolve(networkObjectId, defaultGateway);
-            if (!defaultGatewayMac) return;    
-            packet.destination_mac = defaultGatewayMac;
+        let $rule = $routingRules[i];
+        let $cells = $rule.querySelectorAll("td");
+        let ruleNetwork = $cells[0].innerHTML;
+        let ruleNetmask = $cells[1].innerHTML;
+        let ruleInterface = $cells[3].innerHTML;
+        let rulenexthop = $cells[4].innerHTML;
 
-        } else {
+        if (ruleNetwork === getNetwork(destinationIp, ruleNetmask)) {
 
-            await routing(networkObjectId, packet);
+            const nextSwitch = $networkObject.getAttribute("data-switch-" + ruleInterface);
+            packet.origin_mac = $networkObject.getAttribute("mac-" + ruleInterface);
+            packet.destination_mac = "";
+            let nexthopMac;
+            
+            if (rulenexthop === "0.0.0.0") {
+                nexthopMac = isIpInARPTable(networkObjectId, packet.destination_ip) || await arpResolve(networkObjectId, packet.destination_ip);
+            } else {
+                nexthopMac = isIpInARPTable(networkObjectId, rulenexthop) || await arpResolve(networkObjectId, rulenexthop);
+            }
+
+            if (!nexthopMac) return;
+            packet.destination_mac = nexthopMac;
+            if (!firewallProcessorHost(networkObjectId, packet)) return;
+            addPacketTraffic(packet);
+            await switchProcessor(nextSwitch, networkObjectId, packet);
             return;
 
         }
 
-    } else {
-
-        destination_mac = isIpInARPTable(networkObjectId, destinationIp) || await arpResolve(networkObjectId, destinationIp);
-        if (!destination_mac) return;
-        packet.destination_mac = destination_mac;
-
     }
-
-
-    if (!firewallProcessorHost(networkObjectId, packet)) return;
-    addPacketTraffic(packet);
-    await switchProcessor(switchId, networkObjectId, packet);
 
 }

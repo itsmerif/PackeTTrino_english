@@ -119,7 +119,7 @@ async function submitPcForm(event) {
         "save-btn": () => {
             configureInterface($networkObject.id, newIp, newNetmask, "enp0s3");
             $networkObject.setAttribute("data-gateway", newGateway);
-            setDirectRoutingRule($networkObject.id, newGateway, newNetmask, "enp0s3");
+            setDirectRoutingRule($networkObject.id, newIp, newNetmask, "enp0s3");
             setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, "enp0s3", newGateway);
             $networkObject.setAttribute("data-dns-server", newDnsServer);
             restorePcForm();
