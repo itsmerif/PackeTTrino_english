@@ -1,15 +1,18 @@
+/**ESTA FUNCION CONFIGURA UNA INTERFAZ DE UN EQUIPO */
 function configureInterface(networkObjectId, ip, netmask, interface) {
     const $networkObject = document.getElementById(networkObjectId);
     $networkObject.setAttribute("ip-" + interface, ip); 
     $networkObject.setAttribute("netmask-" + interface, netmask);
 }
 
+/**ESTA FUNCION DESCONFIGURA UNA INTERFAZ DE UN EQUIPO */
 function deconfigureInterface(networkObjectId, interface) {
     const $networkObject = document.getElementById(networkObjectId);
     $networkObject.setAttribute("ip-" + interface, "");
     $networkObject.setAttribute("netmask-" + interface, "");
 }
 
+/**ESTA FUNCION MUESTRA POR TERMINAL LA INFORMACION DE LAS INTERFACES DE UN EQUIPO */
 function showObjectInfo(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
     const interfaces = getInterfaces(networkObjectId);

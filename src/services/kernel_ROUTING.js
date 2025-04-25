@@ -124,7 +124,7 @@ function printRouting(networkObjectId) {
     if ($defaultRoutingRule) {
         let $defaultfields = $defaultRoutingRule.querySelectorAll("td");
         let defaultGateway = $defaultfields[0].innerHTML;
-        let defaultInterface = $defaultfields[1].innerHTML;
+        let defaultInterface = $defaultfields[3].innerHTML;
         terminalMessage(`default via ${defaultGateway} dev ${defaultInterface}`, networkObjectId);
     }           
 

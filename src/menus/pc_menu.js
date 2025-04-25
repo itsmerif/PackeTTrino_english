@@ -117,9 +117,10 @@ async function submitPcForm(event) {
     const buttonFunctions = {
 
         "save-btn": () => {
-            $networkObject.setAttribute("ip-enp0s3", newIp);
-            $networkObject.setAttribute("netmask-enp0s3", newNetmask);
+            configureInterface($networkObject.id, newIp, newNetmask, "enp0s3");
             $networkObject.setAttribute("data-gateway", newGateway);
+            setDirectRoutingRule($networkObject.id, newGateway, newNetmask, "enp0s3");
+            setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, "enp0s3", newGateway);
             $networkObject.setAttribute("data-dns-server", newDnsServer);
             restorePcForm();
             document.querySelector(".pc-form").style.display = "none";
