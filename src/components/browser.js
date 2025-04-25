@@ -55,64 +55,22 @@ function browser() {
 //constantes de navegador
 
 const $homepage = `
-<html>
-    <head>
-        <title>Amin Search</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <style>
-        body {
-            margin: 0;
-            display: grid;
-            place-items: center;
-            height: 70vh;
-        }
-    </style>
-    <body>
-        <img src="./assets/browser/aminsearch.png" alt="logo">
-    </body>
-</html>`;
+    <title>Amin Search</title><meta charset=UTF-8><meta content="width=device-width,initial-scale=1"name=viewport>
+    <style>body{margin:0;display:grid;place-items:center;height:70vh}</style><img alt=logo src=./assets/browser/aminsearch.png>
+`;
 
 const $error404 = `
-<html>
-    <head>
-        <title>Amin Search</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <style>
-        body {
-            margin: 0;
-            display: grid;
-            place-items: center;
-            height: 70vh;
-        }
-    </style>
-    <body>
-        <div class="container">
-            <div class="error-code">404</div>
-            <h1>¡Página no encontrada!</h1>
-            <p>La página que estás buscando no existe o ha sido movida a otra ubicación.</p>
-        </div>
-    </body>
-</html>`;
+    <title>Amin Search</title><meta charset=UTF-8><meta content="width=device-width,initial-scale=1"name=viewport>
+    <style>body{margin:0;display:grid;place-items:center;height:70vh}</style><div class=container><div class=error-code>404</div>
+    <h1>¡Página no encontrada!</h1><p>La página que estás buscando no existe o ha sido movida a otra ubicación.</div>
+`;
 
 const $forbidden403 = `
-<!DOCTYPE html>
-<html style="height:100%">
-    <head>
-    <title> 403 Forbidden
-    </title><style>@media (prefers-color-scheme:dark){body{background-color:#000!important}}</style></head>
-    <body style="color: #444; margin:0;font: normal 14px/20px Arial, Helvetica, sans-serif; height:100%; background-color: #fff;">
-        <div style="height:auto; min-height:100%; ">     <div style="text-align: center; width:800px; margin-left: -400px; position:absolute; top: 30%; left:50%;">
-                <h1 style="margin:0; font-size:150px; line-height:150px; font-weight:bold;">403</h1>
-        <h2 style="margin-top:20px;font-size: 30px;">Forbidden
-        </h2>
-        <p>Access to this resource on the server is denied!</p>
-        </div></div>
-    </body>
-</html>`;
+    <!doctypehtml><html style=height:100%><title>403 Forbidden</title><style>@media (prefers-color-scheme:dark){body{background-color:#000!important}}</style>
+    <body style="color:#444;margin:0;font:normal 14px/20px Arial,Helvetica,sans-serif;height:100%;background-color:#fff"><div style=height:auto;min-height:100%>
+    <div style=text-align:center;width:800px;margin-left:-400px;position:absolute;top:30%;left:50%><h1 style=margin:0;font-size:150px;line-height:150px;font-weight:700>
+    403</h1><h2 style=margin-top:20px;font-size:30px>Forbidden</h2><p>Access to this resource on the server is denied!</div></div>
+`;
 
 function openBrowser(event) {
     event.stopPropagation();

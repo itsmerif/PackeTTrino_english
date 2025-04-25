@@ -3,7 +3,7 @@ async function browserSearch(event) {
     if (event.key === 'Enter') {
 
         const $networkObject = document.getElementById(document.querySelector(".browser-component").getAttribute("data-id"));
-        let search = event.target.value.trim();
+        const search = event.target.value.trim();
 
         if (visualToggle) await minimizeBrowser();
 
@@ -11,7 +11,7 @@ async function browserSearch(event) {
             await http($networkObject.id, search);
         } catch (error) {
             console.log(error);
-            document.querySelector(".browser-content").srcdoc = $forbidden403;
+            document.querySelector(".browser-content").srcdoc = $error404;
         }
 
         if (visualToggle) await maximizeBrowser();
