@@ -238,7 +238,6 @@ function getRoutingRules(routerObjectid, targetinterface) {
 }
 
 /**ESTA FUNCION ENRRUTA LOS PAQUETES DE UN DISPOSITIVO FINAL, FILTRANDO EN POSTROUTING */
-
 async function hostRouting(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);

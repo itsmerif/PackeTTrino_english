@@ -9,16 +9,11 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const activeServices = getactiveServices(networkObjectId);
     
-    //kernel
-
     if (packet.protocol === "arp" && packet.type === "request") {
-
         if (packet.destination_ip !== networkObjectIp) return;
-
         addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
         let newPacket = new ArpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
-        addPacketTraffic(newPacket);
-        await switchProcessor(switchId, networkObjectId, newPacket);
+        await hostRouting(networkObjectId, newPacket)
         return;
     }
 
@@ -29,13 +24,10 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
         buffer[networkObjectId] = packet;
     }
 
-    if (packet.protocol === "icmp" && packet.type === "request") {
-        
-        if (packet.destination_ip !== networkObjectIp) return;
-
+    if (packet.protocol === "icmp" && packet.type === "request") {      
+        if (packet.destination_ip !== networkObjectIp) return
         let newPacket = new IcmpEchoReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
-        addPacketTraffic(newPacket);
-        await switchProcessor(switchId, networkObjectId, newPacket);
+        await hostRouting(networkObjectId, newPacket);
         return;
     }
 
@@ -66,14 +58,11 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "tcp" && packet.type === "syn") {
-
-        if (packet.destination_ip !== networkObjectIp) return;
-        
+        if (packet.destination_ip !== networkObjectIp) return;      
         let newPacket = new synAck(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac, packet.sport);
         newPacket.ack_number = packet.sequence_number + 1; //el ack debe ser el siguiente número de secuencia
         tcpBuffer[networkObjectId] = newPacket.sequence_number;
-        addPacketTraffic(newPacket);
-        await switchProcessor(switchId, networkObjectId, newPacket);
+        await hostRouting(networkObjectId, newPacket);
         return;
     }
 
@@ -83,8 +72,7 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
         let newPacket = new Ack(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac, packet.sport);
         newPacket.ack_number = packet.sequence_number + 1; //el ack debe ser el siguiente número de secuencia
         newPacket.sequence_number = packet.ack_number - 1; //el paquete debe tener la secuencia correcta
-        addPacketTraffic(newPacket);
-        await switchProcessor(switchId, networkObjectId, newPacket);
+        await hostRouting(networkObjectId, newPacket);
         return;
     }
 
@@ -102,50 +90,27 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "dns" && packet.type === "reply") {
-
-        if (packet.destination_ip !== networkObjectIp) return;
-        
+        if (packet.destination_ip !== networkObjectIp) return;      
         dnsRequestFlag[networkObjectId] = true;
         buffer[networkObjectId] = packet;
         return;
-
     }
-
-    //daemons o servicios
 
     if (packet.protocol === "dhcp") {
 
         if (activeServices.includes("dhclient")) {
-
             let replyPacket = await dhclient_service(networkObjectId, packet);
-
-            if (replyPacket) {
-                addPacketTraffic(replyPacket);
-                await switchProcessor(switchId, networkObjectId, replyPacket);
-            }
-
+            if (replyPacket) await hostRouting(networkObjectId, replyPacket);
         }
 
         if (activeServices.includes("dhcpd")) {
-
             let replyPacket = await dhcpd_service(networkObjectId, packet);
-
-            if (replyPacket) {
-                addPacketTraffic(replyPacket);
-                await switchProcessor(switchId, networkObjectId, replyPacket);
-            }
-
+            if (replyPacket) await hostRouting(networkObjectId, replyPacket);
         }
 
         if (activeServices.includes("dhcrelay"))  {
-
             let replyPacket = await dhcrelay_service(networkObjectId, packet);
-            
-            if (replyPacket) {
-                addPacketTraffic(replyPacket);
-                await switchProcessor(switchId, networkObjectId, replyPacket);
-            }
-
+            if (replyPacket) await hostRouting(networkObjectId, replyPacket);
         }
 
     }
@@ -153,14 +118,12 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     if (packet.protocol === "dns" && packet.type === "request" && activeServices.includes("named") ) {
         let replyPacket = await named_service(networkObjectId, packet);
         if (!replyPacket) return;
-        addPacketTraffic(replyPacket);
-        await switchProcessor(switchId, networkObjectId, replyPacket);
+        await hostRouting(networkObjectId, replyPacket);
     }
 
     if (packet.protocol === "http" && packet.type === "request" && activeServices.includes("apache")) {
         let replyPacket = await apache_service(networkObjectId, packet);
         if (!replyPacket) return;
-        addPacketTraffic(replyPacket);
-        await switchProcessor(switchId, networkObjectId, replyPacket);
+        await hostRouting(networkObjectId, replyPacket);
     }
 }
