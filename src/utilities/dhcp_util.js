@@ -1,7 +1,7 @@
+/**UTILIDAD DHCP DE UN EQUIPO CLIENTE */
 async function command_Dhcp(dataId, args) {
 
     const $networkObject = document.getElementById(dataId);
-    const switchObjectId = $networkObject.getAttribute("data-switch-enp0s3");
     const isDchpOn = $networkObject.getAttribute("dhclient");
     const option = args[1];
 
@@ -21,9 +21,9 @@ async function command_Dhcp(dataId, args) {
     }
 
     const dhcpFunctions = {
-        "-discover": async () => await dhcpDiscoverHandler(dataId, switchObjectId),
-        "-renew": async () => await dhcpRenewHandler(dataId, switchObjectId),
-        "-release": async () => await dhcpReleaseHandler(dataId, switchObjectId),
+        "-discover": async () => await dhcpDiscoverHandler(dataId),
+        "-renew": async () => await dhcpRenewHandler(dataId),
+        "-release": async () => await dhcpReleaseHandler(dataId),
     }
 
     if (option in dhcpFunctions) {
@@ -35,7 +35,8 @@ async function command_Dhcp(dataId, args) {
 
 }
 
-async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
+/**ESTA FUNCION GESTIONA LA UTILIDAD DHCP DISCOVER DE UN EQUIPO CLIENTE */
+async function dhcpDiscoverHandler(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
@@ -56,7 +57,7 @@ async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
         dhcpDiscoverFlag[networkObjectId] = false;
         dhcpRequestFlag[networkObjectId] = false;
 
-        await dhcpDiscoverGenerator(networkObjectId, switchObjectId);
+        await dhcpDiscoverGenerator(networkObjectId);
 
         if (dhcpDiscoverFlag[networkObjectId] === false || dhcpRequestFlag[networkObjectId] === false) {
             terminalMessage("Error: No se pudo encontrar un servidor DHCP.", networkObjectId);
@@ -72,7 +73,8 @@ async function dhcpDiscoverHandler(networkObjectId, switchObjectId) {
 
 }
 
-async function dhcpRenewHandler(networkObjectId, switchObjectId, renewPhase = "T1") {
+/**ESTA FUNCION GESTIONA LA UTILIDAD DHCP RENEW DE UN EQUIPO CLIENTE */
+async function dhcpRenewHandler(networkObjectId, renewPhase = "T1") {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
@@ -89,14 +91,15 @@ async function dhcpRenewHandler(networkObjectId, switchObjectId, renewPhase = "T
     dhcpRequestFlag[networkObjectId] = false;
 
     try {
-        await dhcpRequestGenerator(networkObjectId, switchObjectId, renewPhase);
+        await dhcpRequestGenerator(networkObjectId,renewPhase);
     } catch (error) {
         terminalMessage("Error: " + error, networkObjectId);
     }
     
 }
 
-async function dhcpReleaseHandler(networkObjectId, switchObjectId) {
+/**ESTA FUNCION GESTIONA LA UTILIDAD DHCP RELEASE DE UN EQUIPO CLIENTE */
+async function dhcpReleaseHandler(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
@@ -109,5 +112,5 @@ async function dhcpReleaseHandler(networkObjectId, switchObjectId) {
     }
 
     terminalMessage(`DHCPRELEASE of ${networkObjectIp} on enp0s3 to ${networkObjectDhcpServer} port 67`, networkObjectId);
-    await dhcpReleaseGenerator(networkObjectId, switchObjectId);
+    await dhcpReleaseGenerator(networkObjectId);
 }

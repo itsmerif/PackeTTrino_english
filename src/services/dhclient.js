@@ -1,3 +1,4 @@
+/**ESTA FUNCION GESTIONA EL SERVICIO DHCP DESDE UN EQUIPO CLIENTE, DEVOLVIENDO UNA RESPUESTA SI ES NECESARIO */
 async function dhclient_service(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
@@ -50,16 +51,18 @@ async function dhclient_service(networkObjectId, packet) {
 
 }
 
-async function dhcpDiscoverGenerator(networkObjectId, switchId) {
+/**ESTA FUNCION GENERA UN PAQUETE DHCP DISCOVER DESDE UN EQUIPO CLIENTE */
+async function dhcpDiscoverGenerator(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
+    const switchId = $networkObject.getAttribute("data-switch-enp0s3");
     let packet = new dhcpDiscover(networkObjectMac);
-    addPacketTraffic(packet);
-    await switchProcessor(switchId, networkObjectId, packet);
-    return;
+    addPacketTraffic(packet); 
+    await switchProcessor(switchId, networkObjectId, packet); // <--- pasa directamente a la red sin ser enrrutado ya que es un broadcast a nivel local
 }
 
-async function dhcpRequestGenerator(networkObjectId, switchId, renewPhase = "T1") {
+/**ESTA FUNCION GENERA UN PAQUETE DHCP REQUEST (RENOVACION) DESDE UN EQUIPO CLIENTE */
+async function dhcpRequestGenerator(networkObjectId, renewPhase = "T1") {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
@@ -69,7 +72,6 @@ async function dhcpRequestGenerator(networkObjectId, switchId, renewPhase = "T1"
     const networkObjectDns = $networkObject.getAttribute("data-dns-server");
     const networkObjectLeaseTime = $networkObject.getAttribute("data-dhcp-lease-time");
     const dhcpServerIp = $networkObject.getAttribute("data-dhcp-server");
-    const isSameNetwork = getNetwork(networkObjectIp, networkObjectNetmask) === getNetwork(dhcpServerIp, networkObjectNetmask);
 
     let packet = new dhcpRequest(
         networkObjectMac, //origin mac
@@ -89,52 +91,20 @@ async function dhcpRequestGenerator(networkObjectId, switchId, renewPhase = "T1"
     if (renewPhase === "T2") {
         packet.destination_ip = "255.255.255.255";
         packet.destination_mac = "ff:ff:ff:ff:ff:ff";
-        addPacketTraffic(packet);
-        await switchProcessor(switchId, networkObjectId, packet);
-        return;
     }
 
-    if (!isSameNetwork) {
-
-        const defaultGateway = $networkObject.getAttribute("data-gateway");
-        const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
-
-        if (!defaultGatewayMac) {
-            buffer[networkObjectId] = packet;
-            await arpResolve(networkObjectId, defaultGateway);
-            return;
-        }
-
-        packet.destination_mac = defaultGatewayMac;
-        addPacketTraffic(packet);
-        await switchProcessor(switchId, networkObjectId, packet);
-        return;
-
-    }
-
-    const destination_mac = isIpInARPTable(networkObjectId, dhcpServerIp);
-
-    if (!destination_mac) {
-        buffer[networkObjectId] = packet;
-        await arpResolve(networkObjectId, dhcpServerIp);
-        return;
-    }
-
-    packet.destination_mac = destination_mac;
-    addPacketTraffic(packet);
-    await switchProcessor(switchId, networkObjectId, packet);
+    await hostRouting(networkObjectId, packet);
 
 }
 
-async function dhcpReleaseGenerator(networkObjectId, switchId) {
+/**ESTA FUNCION GENERA UN PAQUETE DHCP RELEASE DESDE UN EQUIPO CLIENTE */
+async function dhcpReleaseGenerator(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const neworkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const isDHCPon = $networkObject.getAttribute("dhclient");
     const dhcpServerIp = $networkObject.getAttribute("data-dhcp-server");
-    const isSameNetwork = getNetwork(networkObjectIp, neworkObjectNetmask) === getNetwork(dhcpServerIp, neworkObjectNetmask);
 
     let packet = new dhcpRelease(networkObjectIp, dhcpServerIp, networkObjectMac, "");
 
@@ -143,45 +113,11 @@ async function dhcpReleaseGenerator(networkObjectId, switchId) {
         return;
     }
 
-    if (!isSameNetwork) {
-
-        const defaultGateway = $networkObject.getAttribute("data-gateway");
-
-        if (!defaultGateway) throw new Error("Error: Puerta de Enlace Predeterminada No Configurada");
-
-        const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
-
-        if (!defaultGatewayMac) {
-            buffer[networkObjectId] = packet;
-            await arpResolve(networkObjectId, defaultGateway);
-            deleteDhcpInfo(networkObjectId);
-            return;
-        }
-
-        packet.destination_mac = defaultGatewayMac;
-        addPacketTraffic(packet);
-        deleteDhcpInfo(networkObjectId);
-        await switchProcessor(switchId, networkObjectId, packet);
-        return;
-
-    }
-
-    const serverObjectMac = isIpInARPTable(networkObjectId, dhcpServerIp);
-
-    if (!serverObjectMac) {
-        buffer[networkObjectId] = packet;
-        await arpResolve(networkObjectId, dhcpServerIp);
-        deleteDhcpInfo(networkObjectId);
-        return;
-    }
-
-    packet.destination_mac = serverObjectMac;
-    addPacketTraffic(packet);
-    deleteDhcpInfo(networkObjectId);
-    await switchProcessor(switchId, networkObjectId, packet);
+    await hostRouting(networkObjectId, packet);
 
 }
 
+/**ESTA FUNCION ACTUALIZA LA INFORMACION DE RED DE UN EQUIPO EN DHCP*/
 function setDhcpInfo(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
@@ -214,6 +150,7 @@ function setDhcpInfo(networkObjectId, packet) {
 
 }
 
+/**ESTA FUNCION INICIA/REINICIA EL TIEMPO DE ALQUILER DHCP DE UN EQUIPO*/
 async function updateClientLeaseTimer(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
     $networkObject.setAttribute("data-dhcp-current-lease-time", 0);
@@ -224,6 +161,7 @@ async function updateClientLeaseTimer(networkObjectId) {
     clientLeaseTimers[networkObjectId] = clientLeaseTimer;
 }
 
+/**ESTA FUNCION REDUCE EL TIEMPO DE ALQUILER DHCP DE UN EQUIPO*/
 async function reduceClientLeaseTime(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
@@ -261,6 +199,7 @@ async function reduceClientLeaseTime(networkObjectId) {
 
 }
 
+/**ESTA FUNCION ELIMINA LA INFORMACION DE RED DE UN EQUIPO EN DHCP*/
 function deleteDhcpInfo(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
