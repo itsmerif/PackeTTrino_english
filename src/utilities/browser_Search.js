@@ -21,8 +21,6 @@ async function browserSearch(event) {
 
 async function http(networkObjectId, arg) {
 
-    const $networkObject = document.getElementById(networkObjectId);
-    const switchId = $networkObject.getAttribute("data-switch-enp0s3");
     delete browserBuffer[networkObjectId];
     let destinationIp = arg;
 
@@ -34,7 +32,7 @@ async function http(networkObjectId, arg) {
     await tcp(networkObjectId, destinationIp, 80);
     if (tcpSyncFlag === false) throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
 
-    await httpRequestPacketGenerator(networkObjectId, switchId, destinationIp);
+    await httpRequestPacketGenerator(networkObjectId, destinationIp);
     let htmlReply = browserBuffer[networkObjectId];
 
     if (!htmlReply) throw new Error("Error: No se ha recibido respuesta del servidor web.");
