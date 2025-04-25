@@ -130,7 +130,15 @@ function command_Ip(networkObjectId, args) {
             }
 
             let [ip, netmask] = parseCidr(val_add);
-            setRemoteRoutingRule(networkObjectId, getNetwork(ip, netmask), netmask, ip, val_dev, val_via);
+
+            setRemoteRoutingRule(networkObjectId,
+                ip, //red de destino
+                netmask, //mascara de red
+                getInfoFromInterface(networkObjectId, val_dev)[0], //gateway
+                val_dev, //interfaz
+                val_via //siguiente salto
+            );
+
             terminalMessage(`Se ha añadido la ruta ${val_add} a la interfaz ${val_dev} con éxito.`, networkObjectId);
 
         }
