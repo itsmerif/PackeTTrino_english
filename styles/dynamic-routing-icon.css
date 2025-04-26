@@ -1,82 +1,82 @@
-
 .dynrouting {
     position: relative;
     display: block;
     overflow: hidden;
     cursor: pointer;
-    border-radius: 50%;
-}
 
-.dynrouting img {
-    position: relative;
-    z-index: 1;
-    display: block;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-}
+    img {
+        position: relative;
+        z-index: 1;
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
 
-.dynrouting::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image:
-        radial-gradient(circle, transparent 10%, rgba(0, 255, 0, 0.2) 10.5%, transparent 11%,
-            transparent 20%, rgba(0, 255, 0, 0.2) 20.5%, transparent 21%,
-            transparent 30%, rgba(0, 255, 0, 0.2) 30.5%, transparent 31%,
-            transparent 40%, rgba(0, 255, 0, 0.2) 40.5%, transparent 41%,
-            transparent 50%, rgba(0, 255, 0, 0.2) 50.5%, transparent 51%,
-            transparent 60%, rgba(0, 255, 0, 0.2) 60.5%, transparent 61%,
-            transparent 70%, rgba(0, 255, 0, 0.2) 70.5%, transparent 71%,
-            transparent 80%, rgba(0, 255, 0, 0.2) 80.5%, transparent 81%,
-            transparent 90%, rgba(0, 255, 0, 0.2) 90.5%, transparent 91%),
-        repeating-conic-gradient(transparent 0deg, transparent 29deg, rgba(0, 255, 0, 0.2) 30deg, rgba(0, 255, 0, 0.2) 31deg, transparent 32deg);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 2;
-    border-radius: 50%;
-    background-color: rgba(0, 30, 0, 0.7);
-}
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image:
+            radial-gradient(circle, transparent 10%, rgba(0, 255, 0, 0.2) 10.5%, transparent 11%,
+                transparent 20%, rgba(0, 255, 0, 0.2) 20.5%, transparent 21%,
+                transparent 30%, rgba(0, 255, 0, 0.2) 30.5%, transparent 31%,
+                transparent 40%, rgba(0, 255, 0, 0.2) 40.5%, transparent 41%,
+                transparent 50%, rgba(0, 255, 0, 0.2) 50.5%, transparent 51%,
+                transparent 60%, rgba(0, 255, 0, 0.2) 60.5%, transparent 61%,
+                transparent 70%, rgba(0, 255, 0, 0.2) 70.5%, transparent 71%,
+                transparent 80%, rgba(0, 255, 0, 0.2) 80.5%, transparent 81%,
+                transparent 90%, rgba(0, 255, 0, 0.2) 90.5%, transparent 91%),
+            repeating-conic-gradient(transparent 0deg, transparent 29deg, rgba(0, 255, 0, 0.2) 30deg, rgba(0, 255, 0, 0.2) 31deg, transparent 32deg);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 2;
+        background-color: rgba(0, 30, 0, 0.7);
+    }
 
-.dynrouting:hover::before {
-    opacity: 1;
-}
+    &:hover {
 
-.dynrouting .radar-line {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 50%;
-    height: 2px;
-    background: linear-gradient(90deg, rgba(0, 255, 0, 0.8), transparent);
-    transform-origin: left center;
-    transform: translate(0, -50%);
-    opacity: 0;
-    z-index: 3;
-    box-shadow: 0 0 8px 2px rgba(0, 255, 0, 0.8);
-}
+        &::before {
+            opacity: 1;
+        }
 
-.dynrouting:hover .radar-line {
-    opacity: 1;
-    animation: radar-sweep 3s linear infinite;
-}
+        .radar-line {
+            opacity: 1;
+            animation: radar-sweep 3s linear infinite;
+        }
 
-.dynrouting .pulse {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: radial-gradient(circle, rgba(0, 255, 0, 0.8) 0%, transparent 70%);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
-    opacity: 0;
-}
+        .pulse {
+            animation: radar-pulse 3s linear infinite;
+        }
+    }
 
-.dynrouting:hover .pulse {
-    animation: radar-pulse 3s linear infinite;
+    .radar-line {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 50%;
+        height: 2px;
+        background: linear-gradient(90deg, rgba(0, 255, 0, 0.8), transparent);
+        transform-origin: left center;
+        transform: translate(0, -50%);
+        opacity: 0;
+        z-index: 3;
+        box-shadow: 0 0 8px 2px rgba(0, 255, 0, 0.8);
+    }
+
+    .pulse {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: radial-gradient(circle, rgba(0, 255, 0, 0.8) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+        opacity: 0;
+    }
+    
 }
