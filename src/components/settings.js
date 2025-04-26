@@ -48,26 +48,6 @@ function generalOptionsHandler(event) {
     const isVisible = $generalOptions.style.display === "flex";
     $generalOptions.querySelector("#visual-toggle").checked = visualToggle;
     $generalOptions.querySelector("#ignore-arp-traffic").checked = ignoreArpTraffic;
+    $generalOptions.querySelector("#dark-mode").checked = darkMode;
     (isVisible) ? $generalOptions.style.display = "none" : $generalOptions.style.display = "flex";
-}
-
-function activateDarkMode(event) {
-
-    event.preventDefault();
-    const $checkbox = event.target;
-
-    if ($checkbox.checked) {
-        darkMode = true;
-        document.querySelector(".board").classList.add("dark-mode");
-        document.querySelector("#item-panel").classList.add("dark-mode");
-        document.querySelectorAll(".modal").forEach(modal => modal.classList.add("modal-dark-mode"));
-        document.querySelector("#svg-board").querySelectorAll("line").forEach(line => line.setAttribute("stroke", "white"));
-        return;
-    }
-
-    darkMode = false;
-    document.querySelector(".board").classList.remove("dark-mode");
-    document.querySelector("#item-panel").classList.remove("dark-mode");
-    document.querySelectorAll(".modal").forEach(modal => modal.classList.remove("modal-dark-mode"));
-    document.querySelector("#svg-board").querySelectorAll("line").forEach(line => line.setAttribute("stroke", "black"));
 }
