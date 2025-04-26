@@ -23,3 +23,32 @@ bodyComponent.render(
 //htmlComponent.event("keydown", documentKeyboardHandler);
 
 setTimeout(startApp, 1000);
+
+function startApp() {
+
+    const loadingScreen = document.getElementById('loading-screen');
+
+    loadingScreen.style.opacity = '0';
+
+    setTimeout(() => {
+        loadingScreen.style.display = 'none';
+    }, 500);
+
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector(".settings-modal").querySelector("#dark-mode").checked = true;
+        activateDarkMode();
+    }
+    
+    document.querySelector("#item-panel").classList.remove("hidden");
+
+    const $items = document.querySelector("#item-panel").querySelectorAll(".item");
+    let time = 0;
+
+    $items.forEach((item) => {
+        setTimeout( () => {
+            item.classList.remove("hidden");
+        }, time);
+        time += 30;
+    });
+
+}

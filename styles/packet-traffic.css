@@ -1,4 +1,5 @@
 .packet-traffic {
+    
     position: absolute;
     top:20%;
     left: 50%;
@@ -15,103 +16,156 @@
     text-align: center;
     z-index: 2;
     border: 1px solid #ddd;
-    min-width: 220px;
+    min-width: 1000px;
     min-height: 300px;
     max-height: 500px;
     overflow: auto;
     box-sizing: border-box;
-}
+    
+    p {
+        font-size: 20px;
+        margin: 0 0 15px 0;
+        color: #333;
+        font-weight: 500;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #ddd;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
 
-.packet-traffic p {
-    font-size: 20px;
-    margin: 0 0 15px 0;
-    color: #333;
-    font-weight: 500;
-}
+        * {
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            padding: 8px;
+            transition: background-color 0.2s ease;
+        }
 
-.packet-traffic table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #ddd;
-    box-sizing: border-box;
-    transition: all 0.2s ease;
-}
+        th {
+            background-color: rgb(223, 191, 12);
+            color: #333;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f9f5d7;
+        }
 
-.packet-traffic table * {
-    box-sizing: border-box;
-    border: 1px solid #ddd;
-    padding: 8px;
-    transition: background-color 0.2s ease;
-}
+    }
+    
+      
+    button {
 
-.packet-traffic table th {
-    background-color: rgb(223, 191, 12);
-    color: #333;
-    font-weight: 600;
-}
+        width: 50%;
+        margin: auto;
+        margin-top: 12px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: rgb(223, 191, 12);
+        color: #333;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
 
-.packet-traffic table tr:hover {
-    background-color: #f9f5d7;
-}
+        &:hover {
+            background-color: rgb(203, 171, 0);
+            box-shadow: 0 2px 8px #ddd;
+        }
 
-.packet-traffic button {
-    width: 50%;
-    margin: auto;
-    margin-top: 12px;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    background-color: rgb(223, 191, 12);
-    color: #333;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+    }
 
-.packet-traffic button:hover {
-    background-color: rgb(203, 171, 0);
-    box-shadow: 0 2px 8px #ddd;
+    a {
+
+        border: none;
+        text-decoration: underline;
+        color: blue;
+
+        &:hover {
+            cursor: pointer;
+        }
+
+    }
+
+    &.dark-mode {
+
+        background-color: var(--dark-mode-black);
+
+        table {
+
+            border-radius: 10%;
+
+            th {
+                background-color: var(--darkblue);
+                color: #fff;
+            }
+
+            tr {
+                color: var(--dark-mode-white);
+
+                &:hover {
+                    background-color: var(--dark-mode-white);
+                    color: var(--dark-mode-black);
+                }
+
+            }
+
+        }
+
+        button {
+
+            background-color: var(--darkblue);
+            color: var(--dark-mode-white);
+    
+            &:hover {
+                background-color: var(--dark-mode-white);
+                color: var(--darkblue);
+                box-shadow: 0 2px 8px #ddd;
+            }
+
+        }
+
+        a {
+            color: var(--dark-mode-red);
+        }
+
+    }
+    
 }
 
 .filter-traffic{
+
     display: flex;
     margin: 10px;
     gap: 10px;
     box-sizing: border-box;
-}
 
-.filter-traffic input, .filter-traffic select{
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    background-color: fff;
-    color: #333;
-    font-weight: 500;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
+    input, select {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: fff;
+        color: #333;
+        font-weight: 500;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
 
-.filter-traffic button{
-    width: fit-content;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    background-color: beige;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    color: #333;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin: auto;
-}
+    button {
+        width: fit-content;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: beige;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        color: #333;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin: auto;
+    }
 
-.packet-traffic a {
-    border: none;
-    text-decoration: underline;
-    color: blue;
-}
-
-.packet-traffic a:hover {
-    cursor: pointer;
 }
 
 .packet-fields-modal {
@@ -132,43 +186,90 @@
     padding: 15px;
     max-height: 80vh;
     overflow-y: auto;
-    animation: fadeInPacketTrafficInfo 0.1s ease-in-out;
-}
+    
+    table {
 
-.packet-fields-modal table {
-    width: 100%;
-    border-collapse: collapse;
-    text-transform: uppercase;
-    text-align: center;
-}
+        width: 100%;
+        border-collapse: collapse;
+        text-transform: uppercase;
+        text-align: center;
 
-.packet-fields-modal table th,
-.packet-fields-modal table td {
-    border: 1px solid #000;
-    margin: 0;
-    padding: 8px;
-    min-width: 200px;
-    max-width: 300px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
+        th, td {
+            border: 1px solid #000;
+            margin: 0;
+            padding: 8px;
+            min-width: 200px;
+            max-width: 300px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
 
-.packet-fields-modal .btn-close {
-    width: 20%;
-    margin: auto;
-    margin-top: 12px;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    background-color: rgb(223, 191, 12);
-    color: #333;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+    }
 
-.packet-fields-modal .btn-close:hover {
-    background-color: rgb(203, 171, 0) !important;
+    .btn-close {
+        width: 10%;
+        margin: auto;
+        margin-top: 12px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: rgb(223, 191, 12);
+        color: #333;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+        &:hover {
+            background-color: rgb(203, 171, 0);
+        }
+    }
+
+    &.dark-mode {
+
+        background-color: var(--dark-mode-black);
+        box-shadow: 0px 0px 10px var(--dark-mode-white);
+
+        table {
+
+            width: 100%;
+            border-collapse: collapse;
+            text-transform: uppercase;
+            text-align: center;
+            
+            * {
+                border: 1px solid var(--dark-mode-white);
+                background-color: var(--dark-mode-black);
+                color: var(--dark-mode-white);
+            }
+
+            th {
+                background-color: var(--darkblue);
+                color: var(--dark-mode-white);
+                
+                &:hover {
+                    background-color: var(--dark-mode-white);
+                    color: var(--darkblue);
+                }
+            }
+
+            td:hover {
+                background-color: var(--dark-mode-white);
+                color: var(--dark-mode-black);
+            }
+    
+        }
+
+        .btn-close {
+            background-color: var(--darkblue);
+            color: var(--dark-mode-white);
+            &:hover {
+                background-color: var(--dark-mode-white);
+                color: var(--darkblue);
+                box-shadow: 0 2px 8px #ddd;
+            }
+        }
+
+    }
 }

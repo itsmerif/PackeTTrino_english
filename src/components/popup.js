@@ -8,6 +8,8 @@ function popupMessage(message, imgsrc = "") {
     
     $popup.classList.add("popup-content", "message");
     
+    if (darkMode) $popup.classList.add("dark-mode");
+    
     let imgFragment = (imgsrc !== "") ? `<img src="${imgsrc}" alt="icon">` : "";
 
     $popup.innerHTML = `

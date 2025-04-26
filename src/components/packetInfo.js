@@ -122,11 +122,13 @@ function packetInfo(event) {
                     ${$packetPrint[0].map(field => `<td>${field}</td>`).join("")}
                 </tr>
             </table>
+            
             <button class="btn-close" onclick="closePacketFieldsModal()">Cerrar</button>
 
         </div>
     `;
 
+    if (darkMode) $packetInfo.querySelector(".packet-fields-modal").classList.add("dark-mode");
     return $packetInfo;
 
 }

@@ -1,33 +1,3 @@
-/**ESTA FUNCIONA INICIA LA APLICACION */
-function startApp() {
-
-    const loadingScreen = document.getElementById('loading-screen');
-
-    loadingScreen.style.opacity = '0';
-
-    setTimeout(() => {
-        loadingScreen.style.display = 'none';
-    }, 500);
-
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.querySelector(".settings-modal").querySelector("#dark-mode").checked = true;
-        activateDarkMode();
-    }
-    
-    document.querySelector("#item-panel").classList.remove("hidden");
-
-    const $items = document.querySelector("#item-panel").querySelectorAll(".item");
-    let time = 0;
-
-    $items.forEach((item) => {
-        setTimeout( () => {
-            item.classList.remove("hidden");
-        }, time);
-        time += 30;
-    });
-
-}
-
 /**ESTA FUNCION OCULTA TODOS LOS MODALES DE OPCIONES AVANZADAS */
 function closeAllAdvOptsModals() {
     const modals = document.querySelectorAll(".advanced-options-modal");
@@ -66,6 +36,8 @@ function activateDarkMode() {
         document.querySelectorAll(".modal").forEach(modal => modal.classList.add("modal-dark-mode"));
         document.querySelector("#svg-board").querySelectorAll("line").forEach(line => line.setAttribute("stroke", "white"));
         document.querySelector(".board").querySelectorAll(".modal-table").forEach(modal => modal.classList.add("dark-mode"));
+        document.querySelector(".packet-traffic").classList.add("dark-mode");
+        changePanelIcons("dark");
         return;
     }
 
@@ -75,4 +47,30 @@ function activateDarkMode() {
     document.querySelectorAll(".modal").forEach(modal => modal.classList.remove("modal-dark-mode"));
     document.querySelector("#svg-board").querySelectorAll("line").forEach(line => line.setAttribute("stroke", "black"));
     document.querySelector(".board").querySelectorAll(".modal-table").forEach(modal => modal.classList.remove("dark-mode"));
+    document.querySelector(".packet-traffic").classList.remove("dark-mode");
+    changePanelIcons("light");
+
+    function changePanelIcons(theme) {
+
+        const $panel = document.querySelector("#item-panel");
+
+        const $items = $panel.querySelectorAll(".item");
+    
+        if (theme === "dark") {
+            $items.forEach(item => {
+                const fullname = (item.querySelector("img").src).split("/")[(item.querySelector("img").src).split("/").length - 1];
+                item.querySelector("img").src = `./assets/panel/dark/${fullname}`;
+            });
+        }
+    
+        if (theme === "light") {
+            $items.forEach(item => {
+                const fullname = (item.querySelector("img").src).split("/")[(item.querySelector("img").src).split("/").length - 1];
+                item.querySelector("img").src = `./assets/panel/${fullname}`;
+            });
+        }
+        
+    }
+    
 }
+

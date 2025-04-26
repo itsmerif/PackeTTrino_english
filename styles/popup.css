@@ -14,30 +14,48 @@
     gap: 10px;
     z-index: 1000;
     animation: fadeInPopup 0.3s ease-out;
-}
 
-.popup-content p {
-    font-size: 1rem;
-    font-weight: 500;
-}
+    p {
+        font-size: 1rem;
+        font-weight: 500;
+    }
 
-.popup-content span {
-    color: red;
-}
+    span {
+        color: red;
+    }
 
-.popup-content img {
-    width: 50px;
-    height: 50px;
-}
+    img {
+        width: 50px;
+        height: 50px;
+    }
 
-.popup-content > div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: row;
-    gap: 10px;
-}
+    > div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+        gap: 10px;
+    }
 
-.popup-content em {
-    color: green;
+    em {
+        color: green;
+    }
+
+    &.dark-mode {
+
+        background-color: var(--dark-mode-black);
+        box-shadow: 0px 0px 10px var(--dark-mode-white);
+        color: var(--dark-mode-white);
+
+
+        p {
+            color: white;
+        }
+
+        em {
+            color: greenyellow;
+        }
+
+    }
+
 }

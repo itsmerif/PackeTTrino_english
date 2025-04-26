@@ -6,6 +6,8 @@ function confirmPopup(message, callback)  {
 
     $popup.classList.add("popup-content", "confirm");
 
+    if (darkMode) $popup.classList.add("dark-mode");
+
     $popup.innerHTML = `
         <p>${message}</p>
         <button class="btn-modern-blue dark no-animation" id="btn-accept" style="padding: 5px;" >Aceptar</button>
