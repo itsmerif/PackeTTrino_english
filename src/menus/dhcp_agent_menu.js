@@ -68,17 +68,22 @@ function showDhcpRelaySpecs(event) {
 
 function saveDhcpRelaySpecs(event) {
     event.preventDefault();
-    //obtenemos los valores del formulario  
+
+    const $networkObject = document.getElementById(document.getElementById("form-dhcp-relay-item-id").innerHTML);
     const newIp = document.querySelector(".dhcp-relay-form #ip-relay").value;
     const newNetmask = document.querySelector(".dhcp-relay-form #netmask-relay").value;
     const newGateway = document.querySelector(".dhcp-relay-form #gateway-relay").value;
     const newMainServer = document.querySelector(".dhcp-relay-form #main-server").value;
+
     //guardamos los nuevos atributos en el server
-    const networkObject = document.getElementById(document.getElementById("form-dhcp-relay-item-id").innerHTML);
-    networkObject.setAttribute("ip-enp0s3", newIp);
-    networkObject.setAttribute("netmask-enp0s3", newNetmask);
-    networkObject.setAttribute("data-gateway", newGateway);
-    networkObject.setAttribute("data-main-server", newMainServer);
+    configureInterface($networkObject.id, newIp, newNetmask, "enp0s3");
+    setDirectRoutingRule($networkObject.id, newIp, newNetmask, "enp0s3");
+    $networkObject.setAttribute("data-gateway", newGateway);
+    setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, "enp0s3", newGateway);
+
+    //configuramos la informacion DHCP del equipo
+    $networkObject.setAttribute("data-main-server", newMainServer);
+
     //ocultamos el formulario
     document.querySelector(".dhcp-relay-form").style.display = "none";  
 }

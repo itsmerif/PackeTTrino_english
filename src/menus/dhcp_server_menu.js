@@ -168,7 +168,7 @@ function saveDhcpSpecs(event) {
 
     configureInterface($networkObject.id, newIp, newNetmask, "enp0s3");
     setDirectRoutingRule($networkObject.id, newIp, newNetmask, "enp0s3");
-    setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, "enp0s3", newOfferGateway);
+    setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, "enp0s3", newGateway);
 
     $networkObject.setAttribute("data-gateway", newGateway);
     $networkObject.setAttribute("data-range-start", newRangeStart);

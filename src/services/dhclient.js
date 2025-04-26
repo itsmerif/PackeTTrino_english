@@ -51,7 +51,7 @@ async function dhclient_service(networkObjectId, packet) {
 
 }
 
-/**ESTA FUNCION GENERA UN PAQUETE DHCP DISCOVER DESDE UN EQUIPO CLIENTE */
+/**ESTA FUNCION GENERA UN PAQUETE DHCP DISCOVER DESDE UN EQUIPO CLIENTE, Y LO ENVIA A LA RED */
 async function dhcpDiscoverGenerator(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
@@ -61,7 +61,7 @@ async function dhcpDiscoverGenerator(networkObjectId) {
     await switchProcessor(switchId, networkObjectId, packet); // <--- pasa directamente a la red sin ser enrrutado ya que es un broadcast a nivel local
 }
 
-/**ESTA FUNCION GENERA UN PAQUETE DHCP REQUEST (RENOVACION) DESDE UN EQUIPO CLIENTE */
+/**ESTA FUNCION GENERA UN PAQUETE DHCP REQUEST (RENOVACION) DESDE UN EQUIPO CLIENTE, Y LO ENVIA A ENRRUTAR */
 async function dhcpRequestGenerator(networkObjectId, renewPhase = "T1") {
 
     const $networkObject = document.getElementById(networkObjectId);
@@ -97,7 +97,7 @@ async function dhcpRequestGenerator(networkObjectId, renewPhase = "T1") {
 
 }
 
-/**ESTA FUNCION GENERA UN PAQUETE DHCP RELEASE DESDE UN EQUIPO CLIENTE */
+/**ESTA FUNCION GENERA UN PAQUETE DHCP RELEASE DESDE UN EQUIPO CLIENTE, Y LO ENVIA A ENRRUTAR */
 async function dhcpReleaseGenerator(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
