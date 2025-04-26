@@ -4,7 +4,7 @@ function CableObject(x1, y1, x2, y2, start, end, interface = "enp0s3") {
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
-
+    const cableColor = (darkMode) ? "white" : "black";
 
     const x1Value = parseInt(x1.replace("px", ""));
     const y1Value = parseInt(y1.replace("px", ""));
@@ -19,7 +19,7 @@ function CableObject(x1, y1, x2, y2, start, end, interface = "enp0s3") {
     line.setAttribute("y1", y1Value);
     line.setAttribute("x2", x2Value);
     line.setAttribute("y2", y2Value);
-    line.setAttribute("stroke", "black");
+    line.setAttribute("stroke", cableColor);
     line.setAttribute("stroke-width", "5");
 
     circle.setAttribute("onclick", "deleteCable(event)");

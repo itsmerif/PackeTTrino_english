@@ -4,7 +4,7 @@ function GeneralOptions() {
     const btnStyle = "btn-modern-blue";
     const inputStyle = "btn-toggle";
 
-    $generalOptions.classList.add("settings-modal");
+    $generalOptions.classList.add("settings-modal", "modal");
 
     $generalOptions.innerHTML = `
 
@@ -21,6 +21,11 @@ function GeneralOptions() {
         </div>
 
         <div class="options-group">
+            <label for="dark-mode"> Modo Oscuro </label>
+            <input type="checkbox" class=${inputStyle} id="dark-mode" name="dark-mode">
+        </div>
+
+        <div class="options-group">
             <label for="template-option"> Template Option (Visual) </label>
             <input type="checkbox" class=${inputStyle} id="template-option" name="template-option">
         </div>
@@ -30,6 +35,7 @@ function GeneralOptions() {
 
     $generalOptions.querySelector("#ignore-arp-traffic").addEventListener("change", function () { ignoreArpTraffic = this.checked; });
     $generalOptions.querySelector("#visual-toggle").addEventListener("change", function () { visualToggle = this.checked; });
+    $generalOptions.querySelector("#dark-mode").addEventListener("change", activateDarkMode);
     $generalOptions.querySelector(`.${btnStyle}`).addEventListener("click", generalOptionsHandler);
 
     return $generalOptions;
@@ -43,4 +49,25 @@ function generalOptionsHandler(event) {
     $generalOptions.querySelector("#visual-toggle").checked = visualToggle;
     $generalOptions.querySelector("#ignore-arp-traffic").checked = ignoreArpTraffic;
     (isVisible) ? $generalOptions.style.display = "none" : $generalOptions.style.display = "flex";
+}
+
+function activateDarkMode(event) {
+
+    event.preventDefault();
+    const $checkbox = event.target;
+
+    if ($checkbox.checked) {
+        darkMode = true;
+        document.querySelector(".board").classList.add("dark-mode");
+        document.querySelector("#item-panel").classList.add("dark-mode");
+        document.querySelectorAll(".modal").forEach(modal => modal.classList.add("modal-dark-mode"));
+        document.querySelector("#svg-board").querySelectorAll("line").forEach(line => line.setAttribute("stroke", "white"));
+        return;
+    }
+
+    darkMode = false;
+    document.querySelector(".board").classList.remove("dark-mode");
+    document.querySelector("#item-panel").classList.remove("dark-mode");
+    document.querySelectorAll(".modal").forEach(modal => modal.classList.remove("modal-dark-mode"));
+    document.querySelector("#svg-board").querySelectorAll("line").forEach(line => line.setAttribute("stroke", "black"));
 }

@@ -1,5 +1,6 @@
 //variables de control global
 let itemIndex = 0;
+let darkMode = false;
 let visualToggle = false;
 let visualSpeed = 300;
 let terminalBuffer = [];

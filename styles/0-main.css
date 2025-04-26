@@ -34,8 +34,9 @@
 :root {
     --inter: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     --darkblue: #2A6BAC;
+    --dark-mode-white: #e0e0e0;
+    --dark-mode-black: #0d1117;
 }
-
 
 body {
     margin: 0px;
@@ -66,57 +67,6 @@ img {
     object-fit: contain;
 }
 
-.ping-form {
-    position: fixed;
-    top: 10%;
-    right: 5%;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    padding: 24px;
-    background-color: #ffffff;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-    border-radius: 12px;
-    gap: 16px;
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    z-index: 2;
-}
-
-.ping-form label {
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 4px;
-}
-
-.ping-form input,
-select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    transition: border-color 0.2s ease;
-}
-
-.ping-form input[type="submit"] {
-    background-color: #6366f1;
-    color: #ffffff;
-    border: none;
-    cursor: pointer;
-    width: fit-content;
-}
-
-.ping-form input[type="submit"]:hover {
-    background-color: #4f46e5;
-}
-
-.ping-form input:focus {
-    outline: none;
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -126,4 +76,20 @@ select {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
     display: none;
+}
+
+.modal-dark-mode {
+
+    background-color: var(--dark-mode-black) !important;
+    box-shadow: 0px 0px 10px rgb(255, 255, 255) !important;
+
+    label {
+        color: var(--dark-mode-white) !important;
+    }
+
+    input[type="checkbox"] {
+        box-shadow: 0px 0px 10px var(--dark-mode-white) !important;
+    }
+
+
 }

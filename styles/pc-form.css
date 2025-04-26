@@ -1,4 +1,5 @@
 .pc-form {
+
     position: absolute;
     top: 40%;
     left: 50%;
@@ -18,80 +19,88 @@
     min-width: 300px;
     overflow: hidden;
     font-family: var(--inter);
-}
 
-.pc-form::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 8%;
-    background-color: var(--darkblue);
-    border-radius: 5px 5px 0px 0px;
-    box-sizing: border-box;
-    z-index: -1;
-}
 
-.pc-form input[type="text"] {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    text-align: center;
-    font-family: var(--inter);
-}
-
-.pc-form .modes-wrapper .form-item {
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 8%;
+        background-color: var(--darkblue);
+        border-radius: 5px 5px 0px 0px;
+        box-sizing: border-box;
+        z-index: -1;
+    }
 
     input[type="text"] {
-        width: 20px;
+
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        text-align: center;
+        font-family: var(--inter);
+
+        &:focus {
+            outline: none;
+            border-color: #666;
+        }
+
+    }
+
+    .modes-wrapper {
+
+        .form-item {
+
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+        
+            input[type="text"] {
+                width: 20px;
+            }
+        
+            label {
+                flex-grow: 0;
+                width: 200px;
+                text-align: left;
+            }
+        
+            &.hidden {
+                display: none;
+            }
+
+        }
+
     }
 
     label {
-        flex-grow: 0;
-        width: 200px;
-        text-align: left;
+        font-weight: 500;
+        color: #333;
     }
 
-    &.hidden {
-        display: none;
+    p {
+        text-transform: uppercase;
+        font-weight: bolder;
+        align-self: center;
+        color: #fff;
     }
-}
 
-.pc-form input[type="text"]:focus {
-    outline: none;
-    border-color: #666;
-}
+    .button-container {
 
-.pc-form label {
-    font-weight: 500;
-    color: #333;
-}
+        align-self: center;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
 
-.pc-form p {
-    text-transform: uppercase;
-    font-weight: bolder;
-    align-self: center;
-    color: #fff;	
-}
+    }
 
-.pc-form .button-container {
-    align-self: center;
-}
+    #close-btn {
+        align-self: center;
+    }
 
-.pc-form .button-container {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-}
-
-.pc-form #close-btn {
-    align-self: center;
 }

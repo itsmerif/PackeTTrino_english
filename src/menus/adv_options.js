@@ -2,7 +2,7 @@ function advancedOptionsObject(...options) {
 
     const $advancedOptions = document.createElement("div");
     const append = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));
-    $advancedOptions.classList.add("advanced-options-modal");
+    $advancedOptions.classList.add("advanced-options-modal", "modal");
     $advancedOptions.setAttribute("onclick", "event.stopPropagation()");
 
     const availableButtons = {
