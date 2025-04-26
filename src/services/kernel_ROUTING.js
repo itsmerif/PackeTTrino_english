@@ -216,7 +216,7 @@ function getRoutingRule(routerObjectId, destination, netmask) {
     return response;
 }
 
-/**ESTA FUNCION DEVUELVE TODAS LAS REGLAS DE ENRUTAMIENTO DE UN EQUIPO COMO ARRAY A PARTIR DE UNA INTERFAZ*/
+/**ESTA FUNCION DEVUELVE TODAS LAS REGLAS DE ENRUTAMIENTO DE UN EQUIPO COMO ARRAY DE STRINGS A PARTIR DE UNA INTERFAZ*/
 function getRoutingRules(routerObjectid, targetinterface) {
 
     const $routerObject = document.getElementById(routerObjectid);
@@ -244,6 +244,13 @@ async function hostRouting(networkObjectId, packet) {
     const destinationIp = packet.destination_ip;
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
     const $routingRules = $routingTable.querySelectorAll("tr"); 
+
+    if (packet.destination_ip === "255.255.255.255" || packet.destination_mac === "ff:ff:ff:ff:ff:ff") { // <--- como es broadcast se envia directamente
+        const switchId = $networkObject.getAttribute(`data-switch-${getInterfaces($networkObject.id)[0]}`);
+        addPacketTraffic(packet);
+        await switchProcessor(switchId, networkObjectId, packet);
+        return;
+    }
 
     for (let i = 1; i < $routingRules.length; i++) {
 
