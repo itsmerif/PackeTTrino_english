@@ -107,6 +107,9 @@ function showAdvancedOptions(event) {
         $modal.style.right = "30%";
     }
 
+    if (darkMode) $modal.classList.add("modal-dark-mode")
+    else $modal.classList.remove("modal-dark-mode");
+
     $modal.style.display = "flex";
 }
 
@@ -166,6 +169,10 @@ function showObjectModalTable(event, selector) {
     }
 
     $advancedOptionsModal.style.display = "none";
+
+    if (darkMode) $Table.classList.add("dark-mode")
+    else $Table.classList.remove("dark-mode");
+
     $Table.style.display = "flex";
 
 }

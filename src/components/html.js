@@ -65,6 +65,7 @@ function activateDarkMode() {
         document.querySelector("#item-panel").classList.add("dark-mode");
         document.querySelectorAll(".modal").forEach(modal => modal.classList.add("modal-dark-mode"));
         document.querySelector("#svg-board").querySelectorAll("line").forEach(line => line.setAttribute("stroke", "white"));
+        document.querySelector(".board").querySelectorAll(".modal-table").forEach(modal => modal.classList.add("dark-mode"));
         return;
     }
 
@@ -73,4 +74,5 @@ function activateDarkMode() {
     document.querySelector("#item-panel").classList.remove("dark-mode");
     document.querySelectorAll(".modal").forEach(modal => modal.classList.remove("modal-dark-mode"));
     document.querySelector("#svg-board").querySelectorAll("line").forEach(line => line.setAttribute("stroke", "black"));
+    document.querySelector(".board").querySelectorAll(".modal-table").forEach(modal => modal.classList.remove("dark-mode"));
 }

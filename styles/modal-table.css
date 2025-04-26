@@ -1,4 +1,5 @@
 .modal-table {
+
     position: absolute;
     transform: translate(-50%, -50%);
     display: none;
@@ -15,55 +16,107 @@
     animation: fadeIn 0.3s ease forwards;
     border: 1px solid #ddd;
     min-width: 220px;
-}
 
-.modal-table p {
-    font-size: 20px;
-    margin: 0 0 15px 0;
-    color: #333;
-    font-weight: 500;
-}
+    p {
+        font-size: 20px;
+        margin: 0 0 15px 0;
+        color: #333;
+        font-weight: 500;
+    }
 
-.modal-table table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #ddd;
-    box-sizing: border-box;
-    transition: all 0.2s ease;
-}
+    table {
 
-.modal-table table * {
-    box-sizing: border-box;
-    border: 1px solid #ddd;
-    padding: 8px;
-    transition: background-color 0.2s ease;
-}
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #ddd;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
 
-.modal-table table th {
-    background-color: rgb(223, 191, 12);
-    color: #333;
-    font-weight: 600;
-}
+        * {
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            padding: 8px;
+            transition: background-color 0.2s ease;
+        }
 
-.modal-table table tr:hover {
-    background-color: #f9f5d7;
-}
+        th {
+            background-color: rgb(223, 191, 12);
+            color: #333;
+            font-weight: 600;
+        }
 
-.modal-table button {
-    width: 50%;
-    margin: auto;
-    margin-top: 12px;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    background-color: rgb(223, 191, 12);
-    color: #333;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+        tr:hover {
+            background-color: #f9f5d7;
+        }
 
-.modal-table button:hover {
-    background-color: rgb(203, 171, 0);
-    box-shadow: 0 2px 8px #ddd;
+    }
+
+    button {
+        width: 50%;
+        margin: auto;
+        margin-top: 12px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: rgb(223, 191, 12);
+        color: #333;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: rgb(203, 171, 0);
+            box-shadow: 0 2px 8px #ddd;
+        }
+    }
+
+    &.dark-mode {
+
+        background-color: var(--dark-mode-black);
+
+        table {
+
+            border-radius: 10%;
+
+            th {
+                background-color: var(--darkblue);
+                color: #fff;
+            }
+
+            tr {
+                color: var(--dark-mode-white);
+
+                &:hover {
+                    background-color: var(--dark-mode-white);
+                    color: var(--dark-mode-black);
+                }
+
+            }
+
+        }
+
+        button {
+
+            width: 50%;
+            margin: auto;
+            margin-top: 12px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--darkblue);
+            color: var(--dark-mode-white);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+    
+            &:hover {
+                background-color: var(--dark-mode-white);
+                color: var(--darkblue);
+                box-shadow: 0 2px 8px #ddd;
+            }
+
+        }
+
+    }
+
 }
