@@ -33,36 +33,21 @@ async function dhcrelay_service(agentObjectId, packet) {
     if (packet.destination_ip = "255.255.255.255") { /** PAQUETE VIENE DE UN CLIENTE DHCP **/
         
         if (packet.type === "discover") {
-
             packet.chaddr = packet.origin_mac;
             packet.destination_ip = mainServer;
             packet.origin_mac = agentObjectMac;
             packet.giaddr = agentObjectIp;
             packet.destination_mac = "";
             packet.origin_ip = agentObjectIp;
-
-            let defaultGatewayMac = isIpInARPTable(agentObjectId, defaultGateway);
-
-            if (!defaultGatewayMac) {
-                buffer[agentObjectId] = packet;
-                await arpResolve(agentObjectId, defaultGateway);
-                return;
-            }
-
-            packet.destination_mac = defaultGatewayMac;
-
             return packet;
-
         }
 
-        if (packet.type === "request") {
-            
+        if (packet.type === "request") {           
             if (packet.giaddr !== agentObjectIp) return;
             packet.origin_ip = agentObjectIp;
             packet.destination_ip = mainServer;
             packet.origin_mac = agentObjectMac;
             packet.destination_mac = isIpInARPTable(agentObjectId, defaultGateway);
-
             return packet;
         }
 
