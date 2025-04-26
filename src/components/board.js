@@ -10,7 +10,7 @@ function itemBoard() {
     $board.classList.add("board");
     $board.setAttribute("ondragover", "dragOverBoard(event)");
     $board.setAttribute("ondrop", "dropItemOverBoard(event)");
-    $board.setAttribute("onclick", "closeAllModals()");
+    $board.setAttribute("onclick", "closeAllAdvOptsModals()");
 
     $board.innerHTML = `
         <svg ondragover="dragOverBoard(event)" id="svg-board" rope-start="startId" rope-end="endId"

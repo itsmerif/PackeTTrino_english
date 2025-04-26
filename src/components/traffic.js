@@ -79,6 +79,7 @@ function showPacketTraffic() {
     $packetTraffic.style.display = "flex";
 }
 
+/**ESTA FUNCION LIMPIA EL BUFFER GENERAL DE PAQUETES Y LA TABLA DE TRAFICO */
 function cleanPacketTraffic() {
 
     trafficBuffer = [];
@@ -93,6 +94,7 @@ function cleanPacketTraffic() {
 
 }
 
+/**ESTA FUNCION FILTRA LA TABLA DE TRAFICO USANDO UNA BUSQUEDA */
 function filterPacketTraffic() {
 
     const $packetTraffic = document.querySelector(".packet-traffic");
@@ -130,11 +132,13 @@ function filterPacketTraffic() {
 
 }
 
+/**ESTA FUNCION GENERA UN MODAL CON INFORMACION DETALLADA DE CADA PAQUETE DE LA TABLA DE TRAFICO */
 function showPacketFields(event) {
     //document.querySelector(".modal-overlay").style.display = "block";
     bodyComponent.render(packetInfo(event));
 }
 
+/**ESTA FUNCION ELIMINA EL MODAL DE INFORMACION DETALLADA DE PAQUETES */
 function closePacketFieldsModal() {
     const modalComponent = document.querySelector(".packet-fields-modal-container");
     document.querySelector(".modal-overlay").style.display = "none";
@@ -142,6 +146,7 @@ function closePacketFieldsModal() {
     modalComponent.remove();
 }
 
+/**ESTA FUNCION AGREGA LOS DISPOSITIVOS ACTUALES A LA TABLA DE TRAFICO PARA FILTRARLOS */
 function insertDevicesToTraffic() {
     const $packetTraffic = document.querySelector(".packet-traffic");
     const $packetTrafficSelect = $packetTraffic.querySelector("#filter-by-device");
@@ -153,12 +158,14 @@ function insertDevicesToTraffic() {
     });
 }
 
+/**ESTA FUNCION REESTABLECE EL SELECTOS DE DISPOSITIVOS DE LA TABLA DE TRAFICO */
 function removeDevicesFromTraffic() {
     const $packetTraffic = document.querySelector(".packet-traffic");
     const $packetTrafficSelect = $packetTraffic.querySelector("#filter-by-device");
     $packetTrafficSelect.innerHTML = `<option value="all">Todos</option>`;
 }
 
+/**ESTA FUNCION FILTRA LA TABLA DE TRAFICO POR DISPOSITIVO */
 function filterPacketTrafficbyDevice() {
     const $packetTraffic = document.querySelector(".packet-traffic");
     const $packetTrafficTable = $packetTraffic.querySelector("table");
@@ -178,4 +185,10 @@ function filterPacketTrafficbyDevice() {
         }
     });
 
+}
+
+/**ESTA FUNCION OCULTA EL PANEL DE TRAFICO DE PAQUETES */
+function closeTraffic() {
+    const $traffic = document.querySelector(".packet-traffic");
+    $traffic.style.display = "none";
 }

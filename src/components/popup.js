@@ -2,7 +2,7 @@ function popupMessage(message, imgsrc = "") {
 
     if (document.querySelectorAll(".popup-content").length > 0) return;
 
-    closeAllModals();
+    closeAllAdvOptsModals();
 
     let $popup = document.createElement("div");
     
