@@ -1,7 +1,5 @@
-.routing-table {
+.modal-table {
     position: absolute;
-    top: 50%;
-    left: 50%;
     transform: translate(-50%, -50%);
     display: none;
     flex-direction: column;
@@ -16,17 +14,17 @@
     opacity: 0;
     animation: fadeIn 0.3s ease forwards;
     border: 1px solid #ddd;
-    min-width: 600px;
+    min-width: 220px;
 }
 
-.routing-table p {
+.modal-table p {
     font-size: 20px;
     margin: 0 0 15px 0;
     color: #333;
     font-weight: 500;
 }
 
-.routing-table table {
+.modal-table table {
     width: 100%;
     border-collapse: collapse;
     border: 1px solid #ddd;
@@ -34,24 +32,24 @@
     transition: all 0.2s ease;
 }
 
-.routing-table table * {
+.modal-table table * {
     box-sizing: border-box;
     border: 1px solid #ddd;
     padding: 8px;
     transition: background-color 0.2s ease;
 }
 
-.routing-table table th {
+.modal-table table th {
     background-color: rgb(223, 191, 12);
     color: #333;
     font-weight: 600;
 }
 
-.routing-table table tr:hover {
+.modal-table table tr:hover {
     background-color: #f9f5d7;
 }
 
-.routing-table button {
+.modal-table button {
     width: 50%;
     margin: auto;
     margin-top: 12px;
@@ -65,7 +63,7 @@
     transition: all 0.2s ease;
 }
 
-.routing-table button:hover {
+.modal-table button:hover {
     background-color: rgb(203, 171, 0);
     box-shadow: 0 2px 8px #ddd;
 }

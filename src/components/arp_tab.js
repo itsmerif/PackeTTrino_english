@@ -2,7 +2,7 @@ function arpTable() {
 
     const $arpTable = document.createElement("article");
 
-    $arpTable.classList.add("arp-table");
+    $arpTable.classList.add("modal-table", "arp-table");
 
     $arpTable.innerHTML = `
         <table>

@@ -2,7 +2,7 @@ function macTable() {
 
     const $macTable = document.createElement("article");
 
-    $macTable.classList.add("mac-table");
+    $macTable.classList.add("modal-table","mac-table");
 
     $macTable.innerHTML = `
         <table>

@@ -2,7 +2,7 @@ function cacheDnsTable() {
 
     const $cacheDnsTable = document.createElement("article");
 
-    $cacheDnsTable.classList.add("cache-dns-table");
+    $cacheDnsTable.classList.add("modal-table","cache-dns-table");
 
     $cacheDnsTable.innerHTML = `
         <table>

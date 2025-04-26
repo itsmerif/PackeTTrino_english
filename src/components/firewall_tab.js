@@ -2,7 +2,7 @@ function firewallTable() {
 
     const $firewallTable = document.createElement("article");
 
-    $firewallTable.classList.add("firewall-table");
+    $firewallTable.classList.add("modal-table","firewall-table");
 
     $firewallTable.innerHTML = `
         <table>

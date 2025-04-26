@@ -2,7 +2,7 @@ function dhcpTable() {
 
     const $dhcpTable = document.createElement("article");
 
-    $dhcpTable.classList.add("dhcp-table");
+    $dhcpTable.classList.add("modal-table","dhcp-table");
 
     $dhcpTable.innerHTML = `
         <table>

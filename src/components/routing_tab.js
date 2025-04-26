@@ -1,7 +1,7 @@
 function routingTable() {
     const $routingTable = document.createElement("article");
 
-    $routingTable.classList.add("routing-table");
+    $routingTable.classList.add("modal-table","routing-table");
 
     $routingTable.innerHTML = `
         <table>

@@ -2,7 +2,7 @@ function dnsTable() {
     
     const $dnsTable = document.createElement("article");
 
-    $dnsTable.classList.add("dns-table");
+    $dnsTable.classList.add("modal-table","dns-table");
     $dnsTable.innerHTML = `
                 <table>
                     <tr>
