@@ -6,6 +6,12 @@ let visualSpeed = 300;
 let terminalBuffer = [];
 let currentCommandIndex = 0;
 let ignoreArpTraffic = false;
+let pcs = {};
+let routers = {};
+let switches = {};
+let servers = {};
+
+//variables de la terminal
 let $PWD = [];
 
 //flags de control de paquetes

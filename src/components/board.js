@@ -1,8 +1,4 @@
-let pcs = {};
-let routers = {};
-let switches = {};
-let servers = {};
-
+/**ESTA FUNCION GENERA UN ELEMENTO NODO TABLERO */
 function itemBoard() {
 
     const $board = document.createElement("section");
@@ -21,10 +17,12 @@ function itemBoard() {
     return $board
 }
 
+/**ESTA FUNCION GESTIONA EL DRAG OVER DE EL ELEMENTO  */
 function dragOverBoard(event) {
     event.preventDefault();
 }
 
+/**ESTA FUNCION GESTIONA EL DRAG START DE UN ELEMENTO QUE ESTÉ SOBRE EL ELEMENTO TABLERO */
 function BoardItemDragStart(event) {
 
     const $networkObject = event.target.closest(".item-dropped");
@@ -49,6 +47,7 @@ function BoardItemDragStart(event) {
     }));
 }
 
+/**ESTA FUNCION GESTIONA EL DROP DE UN ELEMENTO SOBRE EL ELEMENTO TABLERO */
 function dropItemOverBoard(event) {
 
     const item = event.dataTransfer.getData("json");
@@ -90,6 +89,7 @@ function dropItemOverBoard(event) {
 
 }
 
+/**ESTA FUNCION ELIMINA UN ELEMENTO DE RED DEL TABLERO */
 function deleteItem(event) {
 
     event.stopPropagation();
@@ -114,6 +114,7 @@ function deleteItem(event) {
 
 }
 
+/**ESTA FUNCION GESTIONA EL DROP DE UN PAQUETE SOBRE UN ELEMENTO DE RED EN EL TABLERO */
 function dropPackageOverItem(event) {
 
     const package = event.dataTransfer.getData("json");
@@ -135,6 +136,7 @@ function dropPackageOverItem(event) {
 
 }
 
+/**ESTA FUNCION GESTIONA EL DROP DE UN SWITCH SOBRE UN ELEMENTO DE RED EN EL TABLERO */
 function dropSwitchOverItem(event) {
     
     const switchInfo = event.dataTransfer.getData("json");

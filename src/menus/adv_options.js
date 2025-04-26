@@ -3,6 +3,7 @@ function advancedOptionsObject(...options) {
     const $advancedOptions = document.createElement("div");
     const append = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));
     $advancedOptions.classList.add("advanced-options-modal", "modal");
+    if (darkMode) $advancedOptions.classList.add("modal-dark-mode");
     $advancedOptions.setAttribute("onclick", "event.stopPropagation()");
 
     const availableButtons = {
