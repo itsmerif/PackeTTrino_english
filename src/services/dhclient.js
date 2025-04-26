@@ -87,10 +87,11 @@ async function dhcpRequestGenerator(networkObjectId, renewPhase = "T1") {
     packet.gateway = networkObjectGateway;
     packet.netmask = networkObjectNetmask;
     packet.dns = networkObjectDns;
+    packet.destination_mac = ""; // <-- se inicializa vacía, a rellenar por el enrutamiento
 
     if (renewPhase === "T2") {
         packet.destination_ip = "255.255.255.255";
-        packet.destination_mac = "ff:ff:ff:ff:ff:ff";
+        packet.destination_mac = "ff:ff:ff:ff:ff:ff"; // <-- en el segundo intento se hacer por broadcast
     }
 
     await hostRouting(networkObjectId, packet);
@@ -114,25 +115,29 @@ async function dhcpReleaseGenerator(networkObjectId) {
     }
 
     await hostRouting(networkObjectId, packet);
+    deleteDhcpInfo(networkObjectId);
 
 }
 
-/**ESTA FUNCION ACTUALIZA LA INFORMACION DE RED DE UN EQUIPO EN DHCP*/
-function setDhcpInfo(networkObjectId, packet) {
+/**ESTA FUNCION ACTUALIZA LA INFORMACION DE RED DE UNA INTERFAZ (POR DEFECTO ENP0S3) DE UN EQUIPO EN DHCP */
+function setDhcpInfo(networkObjectId, packet, interface = "enp0s3") {
 
     const $networkObject = document.getElementById(networkObjectId);
     const $pcForm = document.querySelector(".pc-form");
     const newIp = packet.yiaddr;
-    const newGateway = packet.gateway;
     const newNetmask = packet.netmask;
+    const newGateway = packet.gateway;
     const newServer = packet.siaddr;
     const newDns = packet.dns;
     const newLeaseTime = packet.leasetime;
 
-    //actualizamos los atributos del cliente dhcp
-    $networkObject.setAttribute("ip-enp0s3", newIp);
+    //configuramos la interfaz y la tabla de enrutamiento
+    configureInterface(networkObjectId, newIp, newNetmask, interface);
+    setDirectRoutingRule(networkObjectId, newIp, newNetmask, interface);
     $networkObject.setAttribute("data-gateway", newGateway);
-    $networkObject.setAttribute("netmask-enp0s3", newNetmask);
+    setRemoteRoutingRule(networkObjectId, "0.0.0.0", "0.0.0.0", newIp, interface, newGateway);
+
+    //configuramos la informacion DHCP del equipo
     $networkObject.setAttribute("data-dhcp-server", newServer);
     $networkObject.setAttribute("data-dns-server", newDns);
     $networkObject.setAttribute("data-dhcp-lease-time", newLeaseTime);
@@ -148,6 +153,41 @@ function setDhcpInfo(networkObjectId, packet) {
         $pcForm.querySelector("#get-btn").style.display = "none";
     }
 
+}
+
+/**ESTA FUNCION ELIMINA LA INFORMACION DE RED DE UNA INTERFAZ (POR DEFECTO ENP0S3) DE UN EQUIPO EN DHCP */
+function deleteDhcpInfo(networkObjectId, interface = "enp0s3") {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const $pcForm = document.querySelector(".pc-form");
+
+    //deconfiguramos la interfaz y eliminamos la entrada de la tabla de enrutamiento
+    deconfigureInterface($networkObject.id, interface);
+    $networkObject.setAttribute("data-gateway", "");
+    removeDirectRoutingRule($networkObject.id, interface);
+    removeRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0");
+
+    //eliminamos la informacion DHCP del equipo
+    $networkObject.setAttribute("data-dhcp-server", "");
+    $networkObject.setAttribute("data-dns-server", "");
+    $networkObject.setAttribute("data-dhcp-server", "");
+    $networkObject.setAttribute("data-dhcp-lease-time", "");
+    $networkObject.setAttribute("data-dhcp-current-lease-time", "");
+    $networkObject.setAttribute("data-dhcp-flag-t1", "false");
+    $networkObject.setAttribute("data-dhcp-flag-t2", "false");
+    clearInterval(clientLeaseTimers[networkObjectId]);
+    delete clientLeaseTimers[networkObjectId];
+
+    //si tenemos el menu grafico abierto, se actualizan los campos    
+    if ($pcForm.style.display === "flex" && $pcForm.querySelector("#form-item-id").innerHTML === networkObjectId) {
+        $pcForm.querySelector("#ip").value = "";
+        $pcForm.querySelector("#netmask").value = "";
+        $pcForm.querySelector("#gateway").value = "";
+        $pcForm.querySelector("#dns-server").value = "";
+        $pcForm.querySelector("#renew-btn").style.display = "none";
+        $pcForm.querySelector("#release-btn").style.display = "none";
+        $pcForm.querySelector("#get-btn").style.display = "block";
+    }
 }
 
 /**ESTA FUNCION INICIA/REINICIA EL TIEMPO DE ALQUILER DHCP DE UN EQUIPO*/
@@ -197,34 +237,4 @@ async function reduceClientLeaseTime(networkObjectId) {
         return;
     }
 
-}
-
-/**ESTA FUNCION ELIMINA LA INFORMACION DE RED DE UN EQUIPO EN DHCP*/
-function deleteDhcpInfo(networkObjectId) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    const $pcForm = document.querySelector(".pc-form");
-
-    $networkObject.setAttribute("ip-enp0s3", "");
-    $networkObject.setAttribute("netmask-enp0s3", "");
-    $networkObject.setAttribute("data-gateway", "");
-    $networkObject.setAttribute("data-dhcp-server", "");
-    $networkObject.setAttribute("data-dns-server", "");
-    $networkObject.setAttribute("data-dhcp-server", "");
-    $networkObject.setAttribute("data-dhcp-lease-time", "");
-    $networkObject.setAttribute("data-dhcp-current-lease-time", "");
-    $networkObject.setAttribute("data-dhcp-flag-t1", "false");
-    $networkObject.setAttribute("data-dhcp-flag-t2", "false");
-    clearInterval(clientLeaseTimers[networkObjectId]);
-    delete clientLeaseTimers[networkObjectId];
-
-    if ($pcForm.style.display === "flex" && $pcForm.querySelector("#form-item-id").innerHTML === networkObjectId) {
-        $pcForm.querySelector("#ip").value = "";
-        $pcForm.querySelector("#netmask").value = "";
-        $pcForm.querySelector("#gateway").value = "";
-        $pcForm.querySelector("#dns-server").value = "";
-        $pcForm.querySelector("#renew-btn").style.display = "none";
-        $pcForm.querySelector("#release-btn").style.display = "none";
-        $pcForm.querySelector("#get-btn").style.display = "block";
-    }
 }
