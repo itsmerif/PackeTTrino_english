@@ -1,4 +1,5 @@
 .dynrouting {
+
     position: relative;
     display: block;
     overflow: hidden;
@@ -19,7 +20,7 @@
         left: 50%;
         right: 50%;
         bottom: 50%;
-        width: 100%;
+        width: 82%;
         height: 82%;
         transform: translate(-50%, -50%);
         border-radius: 9px;

@@ -33,16 +33,10 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
         }
 
         if (packet.protocol === "arp" && packet.type === "reply") {
-            if (!availableIps.includes(packet.destination_ip)) return;
+            if (packet.destination_ip !== routerObjectIp) return;
             arpFlag[routerObjectId] = true;
             addARPEntry(routerObjectId, packet.origin_ip, packet.origin_mac);
-            let bufferPacket = buffer[routerObjectId];
-
-            if (bufferPacket) {
-                bufferPacket.destination_mac = isIpInARPTable(routerObjectId, packet.origin_ip);
-                delete buffer[routerObjectId];
-                replyPacket = bufferPacket;
-            }
+            buffer[routerObjectId] = packet;
         }
 
         if (packet.protocol === "icmp" && packet.type === "reply") {
@@ -59,10 +53,17 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
         if (packet.protocol === "dhcp") {
 
             if (activeServices.includes("dhcpd")) {
+
                 replyPacket = await dhcpd_service(routerObjectId, packet);
+
                 if (!replyPacket) return;
-                if (replyPacket.destination_ip !== "255.255.255.255") await routing(routerObjectId, replyPacket);
-                else switchProcessor(switchId, routerObjectId, replyPacket);
+
+                if (replyPacket.destination_ip !== "255.255.255.255") {
+                    await routing(routerObjectId, replyPacket);
+                } else {
+                    switchProcessor(switchId, routerObjectId, replyPacket);
+                }
+
                 return;
             }
 
@@ -72,10 +73,8 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
 
                 if (!replyPacket) return;
 
-                if (replyPacket.type === "discover") await routing(routerObjectId, replyPacket);
+                if (replyPacket.type === "discover" || replyPacket.type === "request") await routing(routerObjectId, replyPacket);
                 
-                if (replyPacket.type === "request") await routing(routerObjectId, replyPacket);
-
                 if (replyPacket.type === "offer" || replyPacket.type === "ack") {
                     let switchOut = getInfoFromIp(routerObjectId, replyPacket.giaddr)[1];
                     if (!switchOut) return;
@@ -99,7 +98,7 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
 
 async function routing(routerObjectId, packet) {
 
-    if (packet.destination_ip === "255.255.255.255" || packet.destination_mac === "ff:ff:ff:ff:ff:ff") return; //no enrutamos broadcast
+    if (packet.destination_ip === "255.255.255.255" || packet.destination_mac === "ff:ff:ff:ff:ff:ff") return; // <-- no enrutamos broadcast
 
     const $routerObject = document.getElementById(routerObjectId);
     const $routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
@@ -119,19 +118,17 @@ async function routing(routerObjectId, packet) {
             const nextSwitch = $routerObject.getAttribute("data-switch-" + ruleInterface);
             packet.origin_mac = $routerObject.getAttribute("mac-" + ruleInterface);
             packet.destination_mac = "";
-            let nexthopMac = (rulenexthop === "0.0.0.0") ? isIpInARPTable(routerObjectId, packet.destination_ip) : isIpInARPTable(routerObjectId, rulenexthop);
+            let nexthopMac;
 
-            if (!nexthopMac) {
-
-                buffer[routerObjectId] = packet;
-
-                if (rulenexthop === "0.0.0.0") await arpResolve(routerObjectId, packet.destination_ip, ruleInterface);
-                else await arpResolve(routerObjectId, rulenexthop, ruleInterface);
-
-                return;
+            if (rulenexthop === "0.0.0.0") {
+                nexthopMac = isIpInARPTable(routerObjectId, packet.destination_ip) || await arpResolve(routerObjectId, packet.destination_ip, ruleInterface);
+            }else {
+                nexthopMac = isIpInARPTable(routerObjectId, rulenexthop) || await arpResolve(routerObjectId, rulenexthop, ruleInterface);
             }
 
+            if (!nexthopMac) return;
             packet.destination_mac = nexthopMac;
+            if (!firewallProcessorRouter(routerObjectId, packet)) return;
             addPacketTraffic(packet);
             await switchProcessor(nextSwitch, routerObjectId, packet);
             return;
