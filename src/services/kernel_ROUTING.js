@@ -275,8 +275,14 @@ async function hostRouting(networkObjectId, packet) {
             }
 
             if (!nexthopMac) return;
+
             packet.destination_mac = nexthopMac;
-            if (!firewallProcessorHost(networkObjectId, packet)) return;
+
+            if (!firewallProcessorHost(networkObjectId, packet, "OUTPUT")) {
+                if (visualToggle) igniteFire(networkObjectId);
+                return;
+            }
+
             addPacketTraffic(packet);
             await switchProcessor(nextSwitch, networkObjectId, packet);
             return;

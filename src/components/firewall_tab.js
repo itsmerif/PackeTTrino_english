@@ -12,7 +12,8 @@ function firewallTable() {
                 <th>Protocolo</th>
                 <th>Ip de Origen</th>
                 <th>Ip de Destino</th>
-                <th>Puerto</th>
+                <th>Puerto de Origen</th>
+                <th>Puerto de Destino</th>
                 <th>Acción</th>
             </tr>
         </table>

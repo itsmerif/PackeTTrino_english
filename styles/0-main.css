@@ -3,17 +3,17 @@
 @import url('board.css');
 @import url('browser.css');
 @import url('dhcp-relay-form.css');
-@import url('dhcp-server-form.css');    
-@import url('dns-server-form.css');      
+@import url('dhcp-server-form.css');
+@import url('dns-server-form.css');
 @import url('general-settings.css');
-@import url('packet-traffic.css');    
+@import url('packet-traffic.css');
 @import url('panel.css');
 @import url('pc-form.css');
 @import url('popup.css');
 @import url('router-form.css');
 @import url('terminal.css');
 @import url('file-editor.css');
-@import url('annotation.css');      
+@import url('annotation.css');
 @import url('0-animations.css');
 @import url('0-buttons.css');
 @import url('0-cursors.css');
@@ -44,7 +44,8 @@ body {
     font-family: var(--inter);
 }
 
-*::before, *::after {
+*::before,
+*::after {
     box-sizing: inherit;
     font-family: inherit;
 }
@@ -53,7 +54,7 @@ body {
     width: 100dvw;
     height: 100dvh;
     overflow: hidden;
-    padding:0px;
+    padding: 0px;
     margin: 0px;
     font-family: var(--inter);
 }

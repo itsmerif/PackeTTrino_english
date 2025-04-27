@@ -2,7 +2,10 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
 
     if (visualToggle) await visualize(switchId, networkObjectId, packet);
 
-    if (!firewallProcessorHost(networkObjectId, packet)) return;
+    if (!firewallProcessorHost(networkObjectId, packet, "INPUT")) {
+        if (visualToggle) igniteFire(networkObjectId);
+        return;
+    }
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");

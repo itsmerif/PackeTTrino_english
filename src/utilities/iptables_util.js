@@ -1,22 +1,34 @@
 function command_Iptables(networkObjectId, args) {
 
-    if (args[1] === "-D") {
-        deleteFirewallRule(networkObjectId, args[2]);
-        terminalMessage("Se ha eliminado la regla correctamente.", networkObjectId);
+    if (args[1] === "-S") {
+        let defaultPolicies = getFirewallDefaultPolicy(networkObjectId);
+        let firewallRules = getFirewallTable(networkObjectId);
+        terminalMessage(`-P INPUT ${defaultPolicies["INPUT"]}`, networkObjectId);
+        terminalMessage(`-P OUTPUT ${defaultPolicies["OUTPUT"]}`, networkObjectId);
+        terminalMessage(`-P FORWARD ${defaultPolicies["FORWARD"]}`, networkObjectId);
+        firewallRules.forEach(rule => terminalMessage(rule, networkObjectId));
         return;
     }
 
-    if (args[1] === "-S") {
-        let defaultPolicy = getFirewallDefaultPolicy(networkObjectId);
-        let firewallTable = getFirewallTable(networkObjectId);
-        terminalMessage(`Firewall Default Policy: ${defaultPolicy}`, networkObjectId);
-        terminalMessage(`${firewallTable}`, networkObjectId);
+    if (args[1] === "-P") { // iptables -P [INPUT|OUTPUT|FORWARD] [ACCEPT|DROP|REJECT]
+
+        try {
+            setFirewallDefaultPolicy(networkObjectId, args[2], args[3]);
+        } catch (error) {
+            terminalMessage(error.message, networkObjectId);
+        }
+
         return;
     }
 
     if (args[1] === "-F") {
         clearFirewall(networkObjectId, args[2]);
-        terminalMessage("Se han eliminado las reglas correctamente.", networkObjectId);
+        return;
+    }
+
+    if (args[1] === "-D") {
+        deleteFirewallRule(networkObjectId, args[2]);
+        terminalMessage("Se ha eliminado la regla correctamente.", networkObjectId);
         return;
     }
 
@@ -33,9 +45,7 @@ function command_Iptables(networkObjectId, args) {
         "-j": () => rule.j = $OPTS["-j"]
     }
 
-    for (option in $OPTS) {
-        if (optionHandlers[option]) optionHandlers[option]();
-    }
+    for (option in $OPTS) if (optionHandlers[option]) optionHandlers[option]();
 
     try {
         isValidFirewallRule(rule);

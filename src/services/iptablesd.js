@@ -1,24 +1,16 @@
-function firewallProcessorHost(networkObjectId, packet) {
+function firewallProcessorHost(networkObjectId, packet, targetChain) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const defaultPolicy = $networkObject.getAttribute("firewall-default-policy");
-    const firewallTable = $networkObject.querySelector(".firewall-table").querySelector("table");
-    const rules = firewallTable.querySelectorAll("tr");
-    const networkObjectIP = $networkObject.getAttribute("ip-enp0s3");
-
-    //definimos variables de regla objetivo
-
-    let targetChain;
-
-    if (packet.destination_ip === networkObjectIP) {
-        targetChain = "INPUT";
-    }
+    const defaultPolicies = JSON.parse($networkObject.getAttribute("firewall-default-policy"));
+    const defaultPolicy = defaultPolicies[targetChain];
+    const $firewallTable = $networkObject.querySelector(".firewall-table").querySelector("table");
+    const $rules = $firewallTable.querySelectorAll("tr");
 
     let i = 1;
 
-    while (i < rules.length) {
+    while (i < $rules.length) {
 
-        const rule = rules[i];
+        const rule = $rules[i];
         const cells = rule.querySelectorAll("td");
         const ruleChain = cells[1].innerHTML;
         const ruleProtocol = cells[2].innerHTML;

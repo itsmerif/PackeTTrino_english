@@ -47,6 +47,38 @@
         outline: none;
     }
     
+    .fire-container {
+
+        position: absolute;
+        top: -50%;
+        left: 45%;
+        transform: translate(-50%, -50%);
+        position: relative;
+        width: 90px;
+        height: 50px;
+
+        .fire-img {
+            width: 100%;
+            height: 100%;
+            transform-origin: center bottom;
+            animation: flicker 3s infinite alternate, glow 1s infinite alternate, sway 1s ease-in-out infinite;
+        }
+        
+        
+        .heat-haze {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(255, 140, 0, 0.1), transparent 70%);
+            filter: blur(5px);
+            animation: haze 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+    }
+    
 }
 
 circle:hover {
