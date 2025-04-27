@@ -19,6 +19,7 @@ function PcObject(x, y) {
         advancedOptionsObject("terminal", "arp", "cacheDns", "browser", "delete")
     );
 
+    /*
     let filesystem = {
         "/": {
             "bin" : {},
@@ -34,25 +35,34 @@ function PcObject(x, y) {
             "home" : {},
             "var": {}
         }
-    };
+    };*/
 
+    //añadimos los atributos básicos
     attr("ip-enp0s3", "");
     attr("netmask-enp0s3", "");
     attr("mac-enp0s3", getRandomMac());
     attr("data-switch-enp0s3", "");
     attr("data-gateway", "");
     attr("data-etc-hosts", `{ "127.0.0.1": ["localhost"] }`);
-    attr("firewall-default-policy", "ACCEPT");
     attr("data-dns-server", "");
+
+    //añadimos el resolver
     attr("resolved", "true");
+
+    //instalamos paquetes
+    installDhclient($networkObject);
+    installApache2($networkObject);
+    installIptables($networkObject)
+
+    //añadimos eventos
     attr("onclick", "showPcForm('" + $networkObject.id + "')");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("ondragstart", "BoardItemDragStart(event)");
     //attr("onmousedown", "startBoardItemMove(event)");
     //$networkObject.querySelector("img").draggable = false;
-    attr("filesystem", JSON.stringify(filesystem));
-    installDhclient($networkObject);
-    installApache2($networkObject);
+    //attr("filesystem", JSON.stringify(filesystem));
+
+    //devolvemos el objeto
     itemIndex++;
     return $networkObject;
 

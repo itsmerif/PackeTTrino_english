@@ -22,13 +22,13 @@ function DhcpRelayObject(x, y) {
     attr("netmask-enp0s3", "");
     attr("mac-enp0s3", getRandomMac());
     attr("data-gateway", "");
-    attr("data-switch-enp0s3", "");
-    attr("firewall-default-policy", "ACCEPT");    
+    attr("data-switch-enp0s3", "");    
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showDhcpRelaySpecs(event)");
 
     installDhcprelay($networkObject);
+    installIptables($networkObject);
 
     itemIndex++;
     return $networkObject;

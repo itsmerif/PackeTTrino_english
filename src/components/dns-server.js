@@ -23,12 +23,12 @@ function DnsServerObject(x, y) {
     attr("mac-enp0s3", getRandomMac());
     attr("data-gateway", "");
     attr("data-switch-enp0s3", "");
-    attr("firewall-default-policy", "ACCEPT");
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showDnsForm(event)");
 
     installBind9($networkObject);
+    installIptables($networkObject);
 
     itemIndex++;
 

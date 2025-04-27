@@ -30,11 +30,12 @@ function RouterObject(x, y) {
     attr("netmask-enp0s9", "");
     attr("mac-enp0s9", getRandomMac());
     attr("data-switch-enp0s9", "");
-    attr("firewall-default-policy", "ACCEPT");
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showRouterSpecs(event)");
-             
+
+    installIptables($networkObject);
+    
     itemIndex++;
 
     return $networkObject;

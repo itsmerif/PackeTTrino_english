@@ -70,16 +70,8 @@ function dropItemOverBoard(event) {
     }
 
     if (itemType === "item" && boardItemRender[itemId]) {
-
         let $newItem = boardItemRender[itemId]();
-        
-        if (!itemId.startsWith("switch")) {
-            $newItem.setAttribute("ondrop", `
-                dropPackageOverItem(event);
-                dropSwitchOverItem(event);
-            `)
-        }
-
+        if (!itemId.startsWith("switch")) $newItem.setAttribute("ondrop", `dropPackageOverItem(event); dropSwitchOverItem(event);`);
         boardComponent.render($newItem);
     }
 
