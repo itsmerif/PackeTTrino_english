@@ -49,10 +49,6 @@
             border-color: #666;
         }
 
-        &:disabled {
-            color: var(--dark-mode-white);
-        }
-
     }
 
     .modes-wrapper {
