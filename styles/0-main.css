@@ -82,9 +82,14 @@ img {
         color: var(--dark-mode-white) !important;
     }
 
+    input {
+        &:disabled {
+            color: var(--dark-mode-white) !important;
+        }
+    }
+
     input[type="checkbox"] {
         box-shadow: 0px 0px 10px var(--dark-mode-white) !important;
     }
-
 
 }

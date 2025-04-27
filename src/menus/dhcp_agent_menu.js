@@ -5,18 +5,25 @@ function dhcp_agent_menu() {
 
     $menu.innerHTML = `
         <p id="form-dhcp-relay-item-id"></p>
-        <label for="ip-relay">Dirección IP (ipv4):</label>
-        <input type="text" id="ip-relay" name="ip-relay"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-        <label for="netmask-relay">Máscara de Red:</label>
-        <input type="text" id="netmask-relay" name="netmask-relay"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-        <label for="gateway-relay">Puerta de enlace:</label>
-        <input type="text" id="gateway-relay" name="gateway-relay"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-        <label for="main-server">Servidor DHCP Principal:</label>
-        <input type="text" id="main-server" name="main-server"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+
+        <section class="basic-section">
+        
+            <label for="ip-relay">Dirección IP (ipv4):</label>
+            <input type="text" id="ip-relay" name="ip-relay" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+
+            <label for="netmask-relay">Máscara de Red:</label>
+            <input type="text" id="netmask-relay" name="netmask-relay" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+
+            <label for="gateway-relay">Puerta de enlace:</label>
+            <input type="text" id="gateway-relay" name="gateway-relay" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+        
+        </section>
+
+        <section class="dhcp-relay-section">
+            <label for="main-server">Servidor DHCP Principal:</label>
+            <input type="text" id="main-server" name="main-server" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+        </section>
+
         <button class="btn-modern-blue" type="submit">Guardar</button>   
     `;
 
@@ -29,61 +36,50 @@ function dhcp_agent_menu() {
 function showDhcpRelaySpecs(event) {
 
     event.stopPropagation();
+
     const networkObject = event.target.closest(".item-dropped");
     const itemId = networkObject.id; //obtenemos el id del elemento
     const $form = document.querySelector(".dhcp-relay-form");
-    const isNotDhcpRelay = !itemId.startsWith("dhcp-relay-server-");
+    const isDhcpRelay = itemId.startsWith("dhcp-relay-server-");
 
     if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
         icmpTryoutProcess(networkObject.id);
         return;
     }
 
-    //obtenemos los atributos del servidor
-
-    const ip = networkObject.getAttribute("ip-enp0s3");
-    const netmask = networkObject.getAttribute("netmask-enp0s3");
-    const gateway = networkObject.getAttribute("data-gateway");
-    const mainServer = networkObject.getAttribute("data-main-server");
-
-    //mostramos el formulario
-
-    $form.querySelector("#ip-relay").value = ip;
-    $form.querySelector("#netmask-relay").value = netmask;
-    $form.querySelector("#gateway-relay").value = gateway;
-    $form.querySelector("#main-server").value = mainServer;
-    document.getElementById("form-dhcp-relay-item-id").innerHTML = networkObject.id;
-
-    //si no es un servidor dhcp, bloqueamos la red basica
-
-    $form.querySelector("#ip-relay").disabled = isNotDhcpRelay;
-    $form.querySelector("#netmask-relay").disabled = isNotDhcpRelay;
-    $form.querySelector("#gateway-relay").disabled = isNotDhcpRelay;
-
-    //ocultamos y mostramos
-
+    $form.querySelector("#ip-relay").value = networkObject.getAttribute("ip-enp0s3");
+    $form.querySelector("#netmask-relay").value = networkObject.getAttribute("netmask-enp0s3");
+    $form.querySelector("#gateway-relay").value = networkObject.getAttribute("data-gateway");;
+    $form.querySelector("#main-server").value = networkObject.getAttribute("data-main-server");;
+    $form.querySelector("#form-dhcp-relay-item-id").innerHTML = networkObject.id;
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
+
+    if (!isDhcpRelay) $form.querySelector(".basic-section").classList.add("hidden");
+
     $form.style.display = "flex";
 }
 
 function saveDhcpRelaySpecs(event) {
+
     event.preventDefault();
 
     const $networkObject = document.getElementById(document.getElementById("form-dhcp-relay-item-id").innerHTML);
+    const $form = document.querySelector(".dhcp-relay-form");
     const newIp = document.querySelector(".dhcp-relay-form #ip-relay").value;
     const newNetmask = document.querySelector(".dhcp-relay-form #netmask-relay").value;
     const newGateway = document.querySelector(".dhcp-relay-form #gateway-relay").value;
     const newMainServer = document.querySelector(".dhcp-relay-form #main-server").value;
+    const isDhcpRelay = $networkObject.id.startsWith("dhcp-relay-server-");
 
-    //guardamos los nuevos atributos en el server
-    configureInterface($networkObject.id, newIp, newNetmask, "enp0s3");
-    setDirectRoutingRule($networkObject.id, newIp, newNetmask, "enp0s3");
-    $networkObject.setAttribute("data-gateway", newGateway);
-    setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, "enp0s3", newGateway);
+    if (isDhcpRelay) {
+        //guardamos los nuevos atributos en el server
+        configureInterface($networkObject.id, newIp, newNetmask, "enp0s3");
+        setDirectRoutingRule($networkObject.id, newIp, newNetmask, "enp0s3");
+        $networkObject.setAttribute("data-gateway", newGateway);
+        setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, "enp0s3", newGateway);
+    }
 
-    //configuramos la informacion DHCP del equipo
     $networkObject.setAttribute("data-main-server", newMainServer);
-
-    //ocultamos el formulario
-    document.querySelector(".dhcp-relay-form").style.display = "none";  
+    $form.querySelector(".basic-section").classList.remove("hidden");
+    $form.style.display = "none";  
 }
