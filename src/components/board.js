@@ -73,10 +73,10 @@ function dropItemOverBoard(event) {
 
         let $newItem = boardItemRender[itemId]();
 
-        $newItem.addEventListener("drop", (event) => {
+        $newItem.setAttribute("ondrop", `
             dropPackageOverItem(event);
             dropSwitchOverItem(event);
-        });
+        `);
 
         boardComponent.render($newItem);
     }
