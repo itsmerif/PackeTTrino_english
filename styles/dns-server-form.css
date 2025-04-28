@@ -18,59 +18,78 @@
     min-width: 300px;
     overflow: hidden;
     font-family: var(--inter);
-}
 
-.dns-form::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 10%;
-    background-color: var(--darkblue);
-    border-radius: 5px 5px 0px 0px;
-    box-sizing: border-box;
-    z-index: -1;
-}
-
-.dns-form input[type="text"] {
-    width: 90%;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    text-align: center;
-}
-
-.dns-form .form-item {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-
-    input[type="text"] {
-        width: 20px;    
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50px;
+        background-color: var(--darkblue);
+        border-radius: 5px 5px 0px 0px;
+        box-sizing: border-box;
+        z-index: -1;
     }
+
+    p {
+        text-transform: uppercase;
+        font-weight: bolder;
+        align-self: center;
+        color: #ffff
+    }
+
+    section {
+
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+
+        .form-item {
+            
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+
+            input:focus {
+                outline: none;
+                border-color: #666;
+            }
+            
+            label {
+                font-weight: 500;
+                color: #333;
+                white-space: nowrap;
+                margin: auto;
+            }
+
+            input[type="text"] {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+                text-align: center;
+                flex: 1;
+            }
+
+        }
+
+        &.hidden {
+            display: none;
+        }
+
+    }
+    
+    .dns-server-section {
+        align-self: center;
+    }
+
+    button {
+        align-self: center;
+    }
+    
 }
 
-.dns-form input:focus {
-    outline: none;
-    border-color: #666;
-}
-
-.dns-form label {
-    font-weight: 500;
-    color: #333;
-}
-
-.dns-form p {
-    text-transform: uppercase;
-    font-weight: bolder;
-    align-self: center;
-    color: #ffff
-}
-
-.dns-form button {
-    align-self: center;
-}
 

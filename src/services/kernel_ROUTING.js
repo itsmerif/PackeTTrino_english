@@ -123,10 +123,10 @@ function printRouting(networkObjectId) {
 
     if ($defaultRoutingRule) {
         let $defaultfields = $defaultRoutingRule.querySelectorAll("td");
-        let defaultGateway = $defaultfields[2].innerHTML;
         let defaultInterface = $defaultfields[3].innerHTML;
-        terminalMessage(`default via ${defaultGateway} dev ${defaultInterface}`, networkObjectId);
-    }+
+        let nextHop = $defaultfields[4].innerHTML;
+        terminalMessage(`default via ${nextHop} dev ${defaultInterface}`, networkObjectId);
+    };
 
     $remoteRoutingRules.forEach($rule => {
         let $fields = $rule.querySelectorAll("td");
