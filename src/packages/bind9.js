@@ -10,7 +10,7 @@ function installBind9(networkObjectId) {
     append(dnsTable());
     attr("named", "true");
     attr("recursion", "false");
-    addOption(dnsOptionButton());
+    addOption(dnsRecordsOptionButton(), dnsServerConfig());
     terminalMessage("Bind instalado correctamente.", networkObjectId);
 }
 
@@ -29,7 +29,8 @@ function uninstallBind9(networkObjectId) {
 
     remove($dnsTable);
     rattr("named","recursion");
-    remOption("dns-option");   
+    remOption("dns-option");
+    remOption("dns-server-config");
 
     terminalMessage("Bind desinstalado correctamente.", networkObjectId);
 

@@ -17,7 +17,7 @@ function installDhcpd(networkObjectId) {
     attr("offer-lease-time", "");
     attr("data-interval", "false");
     attr("ip-reservations", `{}`);
-    addOption(dhcpOptionButton(), dhcpServerConfig());
+    addOption(leasesTableOptionButton(), dhcpServerConfig());
     terminalMessage("DHCP Server instalado correctamente.", networkObjectId);
 }
 

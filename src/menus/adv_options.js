@@ -11,10 +11,10 @@ function advancedOptionsObject(...options) {
         "cacheDns": () => cacheDnsOptionButton(),
         "browser": () => browserOptionButton(),
         "delete": () => deleteOptionButton(),
-        "firewall": () => firewallOptionButton(),
-        "routing": () => routingOptionButton(),
-        "dhcp": () => dhcpOptionButton(),
-        "dns": () => dnsOptionButton(),
+        "firewall": () => firewallTableOptionButton(),
+        "routing": () => routingTableOptionButton(),
+        "dhcp": () => leasesTableOptionButton(),
+        "dns": () => dnsRecordsOptionButton(),
     }
 
     options.forEach(option => availableButtons[option] && append(availableButtons[option]()));
@@ -63,7 +63,7 @@ function deleteOptionButton() {
     return $button;
 }
 
-function firewallOptionButton() {
+function firewallTableOptionButton() {
     const $button = document.createElement("button");
     $button.id = "firewall-option";
     $button.innerHTML = "Ver Tabla Firewall";
@@ -71,7 +71,7 @@ function firewallOptionButton() {
     return $button;
 }
 
-function routingOptionButton() {
+function routingTableOptionButton() {
     const $button = document.createElement("button");
     $button.id = "routing-option";
     $button.innerHTML = "Ver Tabla de Enrutamiento";
@@ -79,7 +79,7 @@ function routingOptionButton() {
     return $button;
 }
 
-function dhcpOptionButton() {
+function leasesTableOptionButton() {
     const $button = document.createElement("button");
     $button.id = "dhcp-option";
     $button.innerHTML = "Ver Tabla de Alquileres";
@@ -87,15 +87,13 @@ function dhcpOptionButton() {
     return $button;
 }
 
-function dnsOptionButton() {
+function dnsRecordsOptionButton() {
     const $button = document.createElement("button");
     $button.id = "dns-option";
     $button.innerHTML = "Ver Tabla de Registros DNS";
     $button.setAttribute("onclick", "showObjectModalTable(event, '.dns-table')");
     return $button;
 }
-
-//funciones para acceder a configuraciones instaladas
 
 function dhcpServerConfig() {
     const $button = document.createElement("button");
@@ -110,5 +108,13 @@ function dhcpRelayConfig() {
     $button.id = "dhcp-relay-config";
     $button.innerHTML = "Configurar Relay DHCP";
     $button.setAttribute("onclick", "showDhcpRelaySpecs(event)");
+    return $button;
+}
+
+function dnsServerConfig() {
+    const $button = document.createElement("button");
+    $button.id = "dns-server-config";
+    $button.innerHTML = "Configurar Servidor DNS";
+    $button.setAttribute("onclick", "showDnsForm(event)");
     return $button;
 }
