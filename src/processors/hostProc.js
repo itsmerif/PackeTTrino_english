@@ -2,7 +2,7 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
 
     if (visualToggle) await visualize(switchId, networkObjectId, packet);
 
-    if (!firewallProcessorHost(networkObjectId, packet, "INPUT")) {
+    if (!firewallProcessor(networkObjectId, packet)) {
         if (visualToggle) igniteFire(networkObjectId);
         return;
     }

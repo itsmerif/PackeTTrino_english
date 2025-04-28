@@ -1,105 +1,49 @@
-function firewallProcessorHost(networkObjectId, packet, targetChain) {
+function firewallProcessor(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const defaultPolicies = JSON.parse($networkObject.getAttribute("firewall-default-policy"));
-    const defaultPolicy = defaultPolicies[targetChain];
+    const networkObjectIPs = getAvailableIps(networkObjectId);
     const $firewallTable = $networkObject.querySelector(".firewall-table").querySelector("table");
     const $rules = $firewallTable.querySelectorAll("tr");
-
-    let i = 1;
-
-    while (i < $rules.length) {
-
-        const rule = $rules[i];
-        const cells = rule.querySelectorAll("td");
-        const ruleChain = cells[1].innerHTML;
-        const ruleProtocol = cells[2].innerHTML;
-        const ruleOrigin = cells[3].innerHTML;
-        const ruleDestination = cells[4].innerHTML;
-        const rulePort = cells[5].innerHTML;
-        const ruleAction = cells[6].innerHTML;
-
-        if (ruleChain === targetChain
-            && (ruleProtocol === packet.transport_protocol || ruleProtocol === packet.protocol)
-            && (ruleOrigin === "*" || ruleOrigin === packet.origin_ip)
-            && (ruleDestination === "*" || ruleDestination === packet.destination_ip)
-            && (rulePort === "*" || rulePort === packet.port)
-        ) {
-
-            if (ruleAction === "ACCEPT") {
-                return true;
-            }
-
-            if (ruleAction === "DROP") {
-                return false;
-            }
-        }
-
-        i++;
-
-    }
-
-    // si no hay regla que coincida, se aplica la política por defecto
-    return defaultPolicy === "ACCEPT";
-}
-
-function firewallProcessorRouter(networkObjectId, packet) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    const defaultPolicy = $networkObject.getAttribute("firewall-default-policy");
-    const firewallTable = $networkObject.querySelector(".firewall-table").querySelector("table");
-    const rules = firewallTable.querySelectorAll("tr");
-
-    const networkObjectIPs = [
-        $networkObject.getAttribute("ip-enp0s3"),
-        $networkObject.getAttribute("ip-enp0s8"),
-        $networkObject.getAttribute("ip-enp0s9")
-    ];
-
-    //definimos variables de regla objetivo
 
     let targetChain;
 
     if (networkObjectIPs.includes(packet.destination_ip)) {
         targetChain = "INPUT";
+    } else if (networkObjectIPs.includes(packet.origin_ip)) {
+        targetChain = "OUTPUT";
     } else {
         targetChain = "FORWARD";
     }
 
-    let i = 1;
+    const defaultPolicy = defaultPolicies[targetChain];
+    let response = false;
+    let found = false;
 
-    while (i < rules.length) {
+    $rules.forEach($rule => {
 
-        const rule = rules[i];
-        const cells = rule.querySelectorAll("td");
-        const ruleChain = cells[1].innerHTML;
-        const ruleProtocol = cells[2].innerHTML;
-        const ruleOrigin = cells[3].innerHTML;
-        const ruleDestination = cells[4].innerHTML;
-        const rulePort = cells[5].innerHTML;
-        const ruleAction = cells[6].innerHTML;
+        const $fields = $rule.querySelectorAll("td");
+        if ($fields.length < 1) return;
+        const ruleChain = $fields[1].innerHTML;
+        const ruleProtocol = $fields[2].innerHTML;
+        const ruleOriginIp = $fields[3].innerHTML;
+        const ruleDestinationIp = $fields[4].innerHTML;
+        const ruleOriginPort = $fields[5].innerHTML;
+        const ruleDestinationPort = $fields[6].innerHTML;
+        const ruleAction = $fields[7].innerHTML;
+        if (ruleChain !== targetChain) return;
+        if (ruleProtocol !== "*" && ruleProtocol !== packet.transport_protocol && ruleProtocol !== packet.protocol) return;
+        if (ruleOriginIp !== "*" && ruleOriginIp !== packet.origin_ip) return;
+        if (ruleDestinationIp !== "*" && ruleDestinationIp !== packet.destination_ip) return;
+        if (ruleOriginPort !== "*" && ruleOriginPort !== packet.port) return;
+        if (ruleDestinationPort !== "*" && ruleDestinationPort !== packet.port) return;
+        found = true;
+        if (ruleAction === "ACCEPT") response = true;
+        if (ruleAction === "DROP") response = false;
 
-        if (ruleChain === targetChain
-            && (ruleProtocol === packet.transport_protocol || ruleProtocol === packet.protocol)
-            && (ruleOrigin === "*" || ruleOrigin === packet.origin_ip)
-            && (ruleDestination === "*" || ruleDestination === packet.destination_ip)
-            && (rulePort === "*" || rulePort === packet.port)
-        ) {
+    });
 
-            if (ruleAction === "ACCEPT") {
-                return true;
-            }
-
-            if (ruleAction === "DROP") {
-                return false;
-            }
-        }
-
-        i++;
-
-    }
-
-    // si no hay regla que coincida, se aplica la política por defecto
-
-    return defaultPolicy === "ACCEPT";
+    if (!found) response = defaultPolicy === "ACCEPT";
+    
+    return response;
 }

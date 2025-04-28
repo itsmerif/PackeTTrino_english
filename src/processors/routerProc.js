@@ -2,7 +2,10 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
 
     if (visualToggle) await visualize(switchId, routerObjectId, packet);
 
-    if (!firewallProcessorRouter(routerObjectId, packet)) return;
+    if (!firewallProcessor(routerObjectId, packet)) {
+        if (visualToggle) igniteFire(routerObjectId);
+        return;
+    }
 
     const [routerObjectIp, routerObjectNetmask, routerObjectMac] = getInterfaceSwitchInfo(routerObjectId, switchId);
     const availableIps = getAvailableIps(routerObjectId);
@@ -127,8 +130,14 @@ async function routing(routerObjectId, packet) {
             }
 
             if (!nexthopMac) return;
+
             packet.destination_mac = nexthopMac;
-            if (!firewallProcessorRouter(routerObjectId, packet)) return;
+
+            if (!firewallProcessor(routerObjectId, packet)) {
+                if (visualToggle) igniteFire(routerObjectId);
+                return;
+            }
+
             addPacketTraffic(packet);
             await switchProcessor(nextSwitch, routerObjectId, packet);
             return;
