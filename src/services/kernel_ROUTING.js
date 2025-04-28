@@ -1,6 +1,8 @@
 /**ESTA FUNCION INSERTA UN REGLA DE CONEXION DIRECTA A LA TABLA DE ENRUTAMIENTO DE UN EQUIPO */
 function setDirectRoutingRule(routerObjectId, gateway, netmask, interface) {
 
+    if (!netmask || !gateway || !interface) return;
+
     const $networkObject = document.getElementById(routerObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
     const $rules = $routingTable.querySelectorAll("tr");
@@ -46,6 +48,8 @@ function setDirectRoutingRule(routerObjectId, gateway, netmask, interface) {
 
 /**ESTA FUNCION INSERTA UN REGLA REMOTA A LA TABLA DE ENRUTAMIENTO DE UN EQUIPO */
 function setRemoteRoutingRule(routerObjectId, destination, netmask, gateway, interface, nexthop) {
+
+    if (!destination || !netmask || !gateway || !interface || !nexthop) return;
 
     const $networkObject = document.getElementById(routerObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
