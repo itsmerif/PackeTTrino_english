@@ -61,28 +61,55 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     }
 
     if (packet.protocol === "tcp" && packet.type === "syn") {
-        if (packet.destination_ip !== networkObjectIp) return;      
-        let newPacket = new synAck(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac, packet.sport);
-        newPacket.ack_number = packet.sequence_number + 1; //el ack debe ser el siguiente número de secuencia
+
+        if (packet.destination_ip !== networkObjectIp) return;  
+
+        let newPacket = new synAck(
+            networkObjectIp, //ip del origen
+            packet.origin_ip, //ip del destino
+            networkObjectMac, //mac del origen
+            packet.origin_mac, //mac del destino
+            packet.dport, //puerto del origen
+            packet.sport //puerto del destino
+        );
+
+        newPacket.ack_number = packet.sequence_number + 1; // <--- el ack debe ser el siguiente número de secuencia
+
         tcpBuffer[networkObjectId] = newPacket.sequence_number;
+
         await hostRouting(networkObjectId, newPacket);
         return;
+
     }
 
     if (packet.protocol === "tcp" && packet.type === "syn-ack") {
-        if (packet.destination_ip !== networkObjectIp) return; //comprobamos si el paquete es para mi respecto a ip
-        if (packet.ack_number !== tcpBuffer[networkObjectId] + 1) return; //comprobamos si el paquete es para mi respecto a la secuencia TCP
-        let newPacket = new Ack(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac, packet.sport);
-        newPacket.ack_number = packet.sequence_number + 1; //el ack debe ser el siguiente número de secuencia
-        newPacket.sequence_number = packet.ack_number - 1; //el paquete debe tener la secuencia correcta
+
+        if (packet.destination_ip !== networkObjectIp) return; 
+
+        if (packet.ack_number !== tcpBuffer[networkObjectId] + 1) return;
+
+        let newPacket = new Ack(
+            networkObjectIp, //ip del origen
+            packet.origin_ip, //ip del destino
+            networkObjectMac, //mac del origen
+            packet.origin_mac, //mac del destino
+            packet.dport, //puerto del origen
+            packet.sport //puerto del destino
+        );
+
+        newPacket.ack_number = packet.sequence_number + 1; // <--- el ack debe ser el siguiente número de secuencia
+        newPacket.sequence_number = packet.ack_number - 1; //<--- el paquete debe tener la secuencia correcta
+
+        tcpSyncFlag[networkObjectId] = true;
+
         await hostRouting(networkObjectId, newPacket);
+        
         return;
     }
 
     if (packet.protocol === "tcp" && packet.type === "syn-ack-reply") {
         if (packet.destination_ip !== networkObjectIp) return;
         if (packet.ack_number !== tcpBuffer[networkObjectId] + 1) return;
-        tcpSyncFlag[networkObjectId] = true;
         return;
     }
 

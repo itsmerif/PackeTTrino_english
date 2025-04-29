@@ -26,7 +26,8 @@ function packetInfo(event) {
     const layer7Fields = [
         "method", "header", "body",
         "ciaddr", "giaddr", "siaddr", "yiaddr", "chaddr",
-        "query", "answer", "answer_type", "answer"
+        "query", "answer", "answer_type", "answer",
+        "sport", "dport"
     ];
 
     const layers = [layer1Fields, layer2Fields, layer3Fields, layer4Fields, layer5Fields, layer6Fields, layer7Fields]

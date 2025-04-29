@@ -58,7 +58,8 @@ class dhcpDiscover extends packet {
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "discover";
-        this.port = "67";
+        this.sport = "68";
+        this.dport = "67";
         this.giaddr = "0.0.0.0";
         this.ciaddr = "0.0.0.0";
         this.chaddr = origin_mac;
@@ -72,7 +73,8 @@ class dhcpOffer extends packet {
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "offer";
-        this.port = "68";
+        this.sport = "67";
+        this.dport = "68";
         this.yiaddr = offer_ip;
         this.siaddr = server_ip;
         this.ciaddr = "0.0.0.0";
@@ -93,7 +95,8 @@ class dhcpRequest extends packet {
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "request";
-        this.port = "67";
+        this.sport = "68";
+        this.dport = "67";
         this.yiaddr = "0.0.0.0";
         this.siaddr = server_ip;
         this.ciaddr = "0.0.0.0";
@@ -115,7 +118,8 @@ class dhcpAck extends packet {
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "ack";
-        this.port = "68";
+        this.sport = "67";
+        this.dport = "68";
         this.ciaddr = "0.0.0.0";
         this.yiaddr = assigned_ip;
         this.siaddr = server_ip;
@@ -136,7 +140,8 @@ class dhcpRelease extends packet {
         this.protocol = "dhcp";
         this.ttl = 64;
         this.type = "release";
-        this.port = "68";
+        this.sport = "68";
+        this.dport = "67";
         this.ciaddr = origin_ip;
         this.yiaddr = "";
         this.siaddr = destination_ip;
@@ -152,7 +157,8 @@ class dnsRequest extends packet {
         this.protocol = "dns";
         this.ttl = 64;
         this.type = "request";
-        this.port = "53";
+        this.sport = "";
+        this.dport = "53";
         this.query = query;
         this.answer_type = "";
         this.answer = "";
@@ -168,7 +174,8 @@ class dnsReply extends packet {
         this.protocol = "dns";
         this.ttl = 64;
         this.type = "reply";
-        this.port = "53";
+        this.sport = "53";
+        this.dport = "";
         this.query = query;
         this.answer_type = "";
         this.answer = answer;
@@ -176,66 +183,68 @@ class dnsReply extends packet {
 }
 
 class syn extends packet {
-    constructor(origin_ip, destination_ip, origin_mac, destination_mac, port) {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, sport, dport) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
         this.transport_protocol = "tcp";
         this.protocol = "tcp";
         this.ttl = 64;
         this.type = "syn";
-        this.sport = 5000;
-        this.dport = port;
+        this.sport = sport;
+        this.dport = dport;
         this.sequence_number = Math.floor(Math.random()*100000);
         this.ack_number = 0;
     }
 }
 
 class synAck extends packet {
-    constructor(origin_ip, destination_ip, origin_mac, destination_mac, port) {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, sport, dport) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
         this.transport_protocol = "tcp";
         this.protocol = "tcp";
         this.ttl = 64;
         this.type = "syn-ack";
-        this.sport = port;
-        this.dport = 5000;
+        this.sport = sport;
+        this.dport = dport;
         this.sequence_number = Math.floor(Math.random()*100000);
         this.ack_number = 0;
     }
 }
 
 class Ack extends packet {
-    constructor(origin_ip, destination_ip, origin_mac, destination_mac, port) {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, sport, dport) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
         this.transport_protocol = "tcp";
         this.protocol = "tcp";
         this.ttl = 64;
         this.type = "syn-ack-reply";
-        this.sport = 5000;
-        this.dport = port;
+        this.sport = sport;
+        this.dport = dport;
         this.sequence_number = "";
         this.ack_number = "";
     }
 }
 
 class httpRequest extends packet {
-    constructor(origin_ip, destination_ip, origin_mac, destination_mac, port, method) {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, sport, dport, method) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
         this.transport_protocol = "tcp";
         this.protocol = "http";
         this.ttl = 64;
         this.type = "request";
-        this.sport = port;
-        this.dport = 80;
+        this.sport = sport;
+        this.dport = dport;
         this.method = method;
     }
 }
 
 class httpReply extends packet {
-    constructor(origin_ip, destination_ip, origin_mac, destination_mac) {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, sport, dport) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
         this.transport_protocol = "tcp";
         this.protocol = "http";
         this.ttl = 64;
+        this.sport = sport;
+        this.dport = dport;
         this.type = "reply";
         this.header = "content-type: text/html";
         this.body = "";

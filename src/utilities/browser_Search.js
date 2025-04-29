@@ -29,10 +29,14 @@ async function http(networkObjectId, arg) {
         if (!destinationIp) throw new Error("Error: No se pudo resolver el dominio.");
     }
 
-    await tcpSynPacketGenerator(networkObjectId, destinationIp, 80);
+    const source_port = Math.floor(Math.random() * (65535 - 49152 + 1)) + 49152; // <--- puerto efímero aleatorio para el origen
+
+    await tcpSynPacketGenerator(networkObjectId, destinationIp, source_port, 80);
+
     if (tcpSyncFlag[networkObjectId] === false) throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
 
-    await httpRequestPacketGenerator(networkObjectId, destinationIp);
+    await httpRequestPacketGenerator(networkObjectId, destinationIp, source_port, 80);
+    
     let htmlReply = browserBuffer[networkObjectId];
 
     if (!htmlReply) throw new Error("Error: No se ha recibido respuesta del servidor web.");

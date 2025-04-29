@@ -9,9 +9,16 @@ async function apache_service(networkObjectId, packet) {
 
     if (!isApacheOn) return;
 
-    let newPacket = new httpReply(networkObjectIp, packet.origin_ip, networkObjectMac, packet.origin_mac);
+    let newPacket = new httpReply(
+        networkObjectIp, //ip del origen
+        packet.origin_ip, //ip del destino
+        networkObjectMac, //mac del origen
+        packet.origin_mac, //mac del destino
+        packet.dport, //puerto del origen
+        packet.sport //puerto del destino
+    );
+
     newPacket.body = $networkObject.getAttribute("web-content");
-    
-    return newPacket;
-    
+
+    return newPacket;  
 }
