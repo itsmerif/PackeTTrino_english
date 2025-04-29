@@ -30,7 +30,7 @@ async function http(networkObjectId, arg) {
     }
 
     await tcpSynPacketGenerator(networkObjectId, destinationIp, 80);
-    if (tcpSyncFlag === false) throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
+    if (tcpSyncFlag[networkObjectId] === false) throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
 
     await httpRequestPacketGenerator(networkObjectId, destinationIp);
     let htmlReply = browserBuffer[networkObjectId];

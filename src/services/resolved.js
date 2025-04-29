@@ -14,7 +14,7 @@ async function dig(networkObjectId, domain, query_type, dnsServer) {
 
     } catch (error) {
 
-        console.log(error.message);
+        terminalMessage(networkObjectId, error.message);
         
     }
 
@@ -64,14 +64,11 @@ async function domainNameResolution(networkObjectId, domain) {
 async function getDomainFromServer(networkObjectId, domain, verbose = false, dnsServer = "", query_type = "A", deleteAfterUse, genCache = true) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const switchId = $networkObject.getAttribute("data-switch-enp0s3");
     const isResolvedOn = $networkObject.getAttribute("resolved") === "true";
 
     if (!domain.endsWith(".")) domain = domain + ".";
-
     dnsRequestFlag[networkObjectId] = false;
-
-    await dnsRequestPacketGenerator(networkObjectId, switchId, domain, dnsServer, query_type);
+    await dnsRequestPacketGenerator(networkObjectId, domain, dnsServer, query_type);
 
     if (dnsRequestFlag[networkObjectId] === false) {
         if (verbose) terminalMessage(`communications error to ${dnsServer}#53: timed out`, networkObjectId);
@@ -90,50 +87,13 @@ async function getDomainFromServer(networkObjectId, domain, verbose = false, dns
 
 }
 
-async function dnsRequestPacketGenerator(networkObjectId, switchId, domain, dnsServer = "", query_type = "A") {
-
+async function dnsRequestPacketGenerator(networkObjectId, domain, dnsServer = "", query_type = "A") {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     dnsServer = (dnsServer === "") ? $networkObject.getAttribute("data-dns-server") : dnsServer;
     if (!dnsServer) throw new Error("Error: No se ha definido el servidor DNS");
-
     let packet = new dnsRequest(networkObjectIp, dnsServer, networkObjectMac, "", domain);
     packet.answer_type = query_type;
-    const isSameNetwork = getNetwork(networkObjectIp, networkObjectNetmask) === getNetwork(dnsServer, networkObjectNetmask);
-
-    if (!isSameNetwork) {
-
-        const defaultGateway = $networkObject.getAttribute("data-gateway");
-
-        if (!defaultGateway) throw new Error("Error: Puerta de Enlace Predeterminada No Configurada");
-        
-        const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
-
-        if (!defaultGatewayMac) { 
-            buffer[networkObjectId] = packet;
-            await arpResolve(networkObjectId, defaultGateway);
-            return;
-        }
-
-        packet.destination_mac = defaultGatewayMac;
-        addPacketTraffic(packet);
-        await switchProcessor(switchId, networkObjectId, packet);
-        return;
-
-    }
-
-    const destination_mac = isIpInARPTable(networkObjectId, dnsServer);
-
-    if (!destination_mac) {
-        buffer[networkObjectId] = packet;
-        await arpResolve(networkObjectId, dnsServer);
-        return;
-    }
-
-    packet.destination_mac = destination_mac;
-    addPacketTraffic(packet);
-    await switchProcessor(switchId, networkObjectId, packet);
-
+    await hostRouting(networkObjectId, packet);
 }
