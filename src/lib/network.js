@@ -374,6 +374,15 @@ function getInterfaceSwitchInfo(networkObjectId, switchObjectId) {
 
 }
 
+/**ESTA FUNCION DEVUELVE LA INTERFAZ DE UN DISPOSITIVO QUE ESTÁ CONECTADA A UN SWITCH */
+function switchToInterface(networkObjectId, switchId) {
+    const $networkObject = document.getElementById(networkObjectId);
+    const interfaces = getInterfaces(networkObjectId);
+    let response = false;
+    interfaces.forEach(interface => { if ($networkObject.getAttribute(`data-switch-${interface}`) === switchId) response = interface; });
+    return response;
+}
+
 /**ESTA FUNCION DEVUELVE LAS IPS DISPONIBLES EN UN DISPOSITIVO COMO ARRAY [IP1, IP2, ...] */
 function getAvailableIps(networkObjectId) {
 

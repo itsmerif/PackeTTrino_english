@@ -15,7 +15,13 @@ function installIptables($networkObject) {
         "FORWARD": "ACCEPT"
     }
 
+    let firewallRules = {
+        "FILTER": [],
+        "NAT": []
+    }
+
     attr("firewall-default-policy", JSON.stringify(defaultPolicies));
+    attr("firewall-rules", JSON.stringify(firewallRules));
 
     terminalMessage("Apache instalado correctamente.", networkObjectId);
     

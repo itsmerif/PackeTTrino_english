@@ -14,7 +14,6 @@ function PcObject(x, y) {
         IconObject("pc.svg"),
         arpTable(),
         cacheDnsTable(),
-        firewallTable(),
         routingTable(),
         advancedOptionsObject("terminal", "arp", "cacheDns", "browser", "delete")
     );
@@ -52,7 +51,7 @@ function PcObject(x, y) {
     //instalamos paquetes
     installDhclient($networkObject);
     installApache2($networkObject);
-    installIptables($networkObject)
+    installIptables($networkObject);
 
     //añadimos eventos
     attr("onclick", "showPcForm('" + $networkObject.id + "')");

@@ -13,7 +13,6 @@ function DhcpServerObject(x, y) {
     append(
         IconObject("dhcp.svg"),
         arpTable(),
-        firewallTable(),
         routingTable(),
         advancedOptionsObject("terminal", "arp", "firewall", "delete")
     );

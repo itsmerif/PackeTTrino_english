@@ -33,8 +33,10 @@ function command_Iptables(networkObjectId, args) {
     let rule = new iptablesRule();
 
     let $OPTS = catchopts([
+        "-t:", //tabla
         "-A:", //cadena
         "-p:", //protocol
+        "-i:", //interfaz
         "-s:", //ip de origen
         "-d:", //ip de destino
         "--sport:", //puerto de origen
@@ -43,8 +45,10 @@ function command_Iptables(networkObjectId, args) {
     args);
 
     let optionHandlers = {
-        "-A": () => rule.chain = $OPTS["-A"],
+        "-t": () => rule.t = $OPTS["-t"],
+        "-A": () => rule.A = $OPTS["-A"],
         "-p": () => rule.p = $OPTS["-p"],
+        "-i": () => rule.i = $OPTS["-i"],
         "-s": () => rule.s = $OPTS["-s"],
         "-d": () => rule.d = $OPTS["-d"],
         "--sport": () => rule.sport = $OPTS["--sport"],
@@ -55,7 +59,7 @@ function command_Iptables(networkObjectId, args) {
     for (option in $OPTS) if (optionHandlers[option]) optionHandlers[option]();
 
     try {
-        isValidFirewallRule(rule);
+        isValidFirewallRule(rule, networkObjectId);
         addFirewallRule(networkObjectId, rule);
     } catch (error) {
         terminalMessage(error.message, networkObjectId);

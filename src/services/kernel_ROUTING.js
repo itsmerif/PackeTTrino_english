@@ -282,7 +282,7 @@ async function hostRouting(networkObjectId, packet) {
 
             packet.destination_mac = nexthopMac;
 
-            if (!firewallProcessor(networkObjectId, packet)) {
+            if (!firewallProcessorFilter(networkObjectId, packet)) {
                 if (visualToggle) igniteFire(networkObjectId);
                 return;
             }

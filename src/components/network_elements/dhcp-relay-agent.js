@@ -13,7 +13,6 @@ function DhcpRelayObject(x, y) {
     append(
         IconObject("dhcprelay.svg"),
         arpTable(),
-        firewallTable(),
         routingTable(),
         advancedOptionsObject("terminal", "arp", "firewall", "delete")
     );

@@ -14,8 +14,7 @@ function RouterObject(x, y) {
         IconObject("router.svg"),
         arpTable(),
         routingTable(),
-        firewallTable(),
-        advancedOptionsObject("terminal", "routing", "arp", "firewall", "delete")
+        advancedOptionsObject("terminal", "routing", "arp", "delete")
     );
 
     attr("ip-enp0s3", "");

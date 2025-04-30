@@ -13,7 +13,6 @@ function DnsServerObject(x, y) {
     append(
         IconObject("dns.svg"),
         arpTable(),
-        firewallTable(),
         routingTable(),
         advancedOptionsObject("terminal", "arp", "firewall", "delete")
     );
