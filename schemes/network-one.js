@@ -1,76 +1,47 @@
+function createRandomNetwork() {
+    // Definir límites del tablero
+    const minX = 0;
+    const maxX = 1800;
+    const minY = 0;
+    const maxY = 900;
+    
+    // Número de nodos
+    const numNodes = 4 + Math.floor(Math.random() * 3); // 4-6 nodos
+    
+    // Array para almacenar nodos
+    const nodes = [];
+    
+    // Crear nodos con posiciones aleatorias pero distribuidas
+    for (let i = 0; i < numNodes; i++) {
+        // Dividir el espacio en secciones para mejor distribución
+        const sectionWidth = (maxX - minX) / Math.ceil(Math.sqrt(numNodes));
+        const sectionHeight = (maxY - minY) / Math.ceil(Math.sqrt(numNodes));
+        
+        // Calcular sección para este nodo
+        const sectionX = i % Math.ceil(Math.sqrt(numNodes));
+        const sectionY = Math.floor(i / Math.ceil(Math.sqrt(numNodes)));
+        
+        // Calcular posición dentro de la sección con algo de variación
+        const x = minX + sectionX * sectionWidth + Math.random() * (sectionWidth * 0.8);
+        const y = minY + sectionY * sectionHeight + Math.random() * (sectionHeight * 0.8);
+        
+        nodes.push(SwitchObject(x, y));
+    }
+    
+    // Renderizar todos los nodos
+    boardComponent.render(...nodes);
+
+}
+
 function createBasicNetwork() {
-    RouterObject(500, 400);
-    setRouterIps(getLastElement(".router.item-dropped"), "192.168.1.1/24", "193.168.1.1/24", "172.16.1.1/24");
-    SwitchObject(300, 550);
-    createConn(getLastElement(".router.item-dropped"), getLastElement(".switch.item-dropped"));
-    PcObject(200, 700);
-    DhcpRelayObject(100, 600);
-    createConn(getLastElement(".dhcp-relay.item-dropped"), getLastElement(".switch.item-dropped"));
-    createConn(getLastElement(".pc.item-dropped"), getLastElement(".switch.item-dropped"));
-    SwitchObject(300, 300);
-    createConn(getLastElement(".router.item-dropped"), getLastElement(".switch.item-dropped"));
-    DhcpServerObject(100, 300);
-    createConn(getLastElement(".dhcp-server"), getLastElement(".switch.item-dropped"));
-    SwitchObject(700, 300);
-    createConn(getLastElement(".router.item-dropped"), getLastElement(".switch.item-dropped"));
-    RouterObject(600, 150);
-    setRouterIps(getLastElement(".router.item-dropped"), "172.16.1.2/24", "194.168.1.1/24");
-    createConn(getLastElement(".router.item-dropped"), getLastElement(".switch.item-dropped"));
-    SwitchObject(900, 150);
-    PcObject(1100, 125);
-    createConn(getLastElement(".pc.item-dropped"), getLastElement(".switch.item-dropped"));
-    createConn(getLastElement(".router.item-dropped"), getLastElement(".switch.item-dropped"));
-    RouterObject(1000, 300);
-    setRouterIps(getLastElement(".router.item-dropped"), "192.168.1.1/24", "193.168.1.1/24", "172.16.1.1/24");
-    createConn(getLastElement(".router.item-dropped"), getLastElement(".switch.item-dropped", -2));
-    RouterObject(700, 500);
-    setRouterIps(getLastElement(".router.item-dropped"), "192.168.1.1/24", "193.168.1.1/24", "172.16.1.1/24");
-    createConn(getLastElement(".router.item-dropped"), getLastElement(".switch.item-dropped", -2));
-    SwitchObject(600, 600);
-    PcObject(550, 725);
-    createConn(getLastElement(".pc.item-dropped"), getLastElement(".switch.item-dropped"));
-    createConn(getLastElement(".router.item-dropped"), getLastElement(".switch.item-dropped"));
-    SwitchObject(1200, 225);
-    createConn(getLastElement(".router.item-dropped", -2), getLastElement(".switch.item-dropped"));
-    SwitchObject(1000, 500);
-    createConn(getLastElement(".router.item-dropped", -2), getLastElement(".switch.item-dropped"));
-    RouterObject(1400, 225);
-    setRouterIps(getLastElement(".router.item-dropped"), "192.168.1.1/24", "193.168.1.1/24", "172.16.1.1/24");
-    createConn(getLastElement(".router.item-dropped"), getLastElement(".switch.item-dropped", -2));
-    SwitchObject(1600, 225);
-    PcObject(1750, 180);
-    createConn(getLastElement(".router.item-dropped"), getLastElement(".switch.item-dropped"));
-    createConn(getLastElement(".pc.item-dropped"), getLastElement(".switch.item-dropped"));
-    RouterObject(1200, 550);
-    setRouterIps(getLastElement(".router.item-dropped"), "192.168.1.1/24", "193.168.1.1/24", "172.16.1.1/24");
-    createConn(getLastElement(".router.item-dropped"), getLastElement(".switch.item-dropped", -2));
-    SwitchObject(1400, 450);
-    SwitchObject(1400, 650);
-    DnsServerObject(1600, 450);
-    DnsServerObject(1600, 650);
-    createConn(getLastElement(".router.item-dropped"), getLastElement(".switch.item-dropped"));
-    createConn(getLastElement(".router.item-dropped"), getLastElement(".switch.item-dropped", -2));
-    createConn(getLastElement(".dns-server.item-dropped"), getLastElement(".switch.item-dropped"));
-    createConn(getLastElement(".dns-server.item-dropped", -2), getLastElement(".switch.item-dropped", -2));
-    //anotaciones de texto
-    TextObject(150, 475);
-    getLastElement(".text-annotation").querySelector("input").value = "192.168.1.0/24";
-    TextObject(200, 225);
-    getLastElement(".text-annotation").querySelector("input").value = "193.168.1.0/24";
-    TextObject(450, 275);
-    getLastElement(".text-annotation").querySelector("input").value = "172.16.1.0/16";
-    TextObject(800, 75);
-    getLastElement(".text-annotation").querySelector("input").value = "194.168.1.0/24";
-    TextObject(450, 500);
-    getLastElement(".text-annotation").querySelector("input").value = "10.0.0.0/8";
-    TextObject(1175, 150);
-    getLastElement(".text-annotation").querySelector("input").value = "194.168.1.0/24";
-    TextObject(1500, 150);
-    getLastElement(".text-annotation").querySelector("input").value = "12.0.0.0/8";
-    TextObject(800, 500);
-    getLastElement(".text-annotation").querySelector("input").value = "13.0.0.0/8";
-    TextObject(1300, 350);
-    getLastElement(".text-annotation").querySelector("input").value = "1.0.0.0/8";
-    TextObject(1300, 700);
-    getLastElement(".text-annotation").querySelector("input").value = "8.0.0.0/8";
+    const $router1 = RouterObject(500, 400);
+    const $router2 = RouterObject(600, 400);
+    const $router3 = RouterObject(700, 400);
+    const $router4 = RouterObject(800, 400);
+    const $switch1 = SwitchObject(300, 550);
+    const $switch2 = SwitchObject(300, 650);
+    const $switch3 = SwitchObject(300, 750);
+    const $switch4 = SwitchObject(800, 400);
+    boardComponent.render($router1, $switch4);
+    createConn($router1, $switch4);
 }

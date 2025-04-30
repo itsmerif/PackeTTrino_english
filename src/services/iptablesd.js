@@ -23,22 +23,33 @@ function firewallProcessor(networkObjectId, packet) {
     $rules.forEach($rule => {
 
         const $fields = $rule.querySelectorAll("td");
+
         if ($fields.length < 1) return;
+        
         const ruleChain = $fields[1].innerHTML;
         const ruleProtocol = $fields[2].innerHTML;
         const ruleOriginIp = $fields[3].innerHTML;
         const ruleDestinationIp = $fields[4].innerHTML;
-        const ruleOriginPort = $fields[5].innerHTML;
-        const ruleDestinationPort = $fields[6].innerHTML;
+        const ruleOriginPort = parseInt($fields[5].innerHTML) || "*";
+        const ruleDestinationPort = parseInt($fields[6].innerHTML) || "*";
         const ruleAction = $fields[7].innerHTML;
+
         if (ruleChain !== targetChain) return;
+
         if (ruleProtocol !== "*" && ruleProtocol !== packet.transport_protocol && ruleProtocol !== packet.protocol) return;
+
         if (ruleOriginIp !== "*" && ruleOriginIp !== packet.origin_ip) return;
+
         if (ruleDestinationIp !== "*" && ruleDestinationIp !== packet.destination_ip) return;
-        if (ruleOriginPort !== "*" && ruleOriginPort !== packet.port) return;
-        if (ruleDestinationPort !== "*" && ruleDestinationPort !== packet.port) return;
+
+        if (ruleOriginPort !== "*" && ruleOriginPort !== packet.sport) return;
+
+        if (ruleDestinationPort !== "*" && ruleDestinationPort !== packet.dport) return;
+
         found = true;
+
         if (ruleAction === "ACCEPT") response = true;
+
         if (ruleAction === "DROP") response = false;
 
     });

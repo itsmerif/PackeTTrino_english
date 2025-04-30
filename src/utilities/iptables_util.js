@@ -3,14 +3,12 @@ function command_Iptables(networkObjectId, args) {
     if (args[1] === "-S") {
         let defaultPolicies = getFirewallDefaultPolicy(networkObjectId);
         let firewallRules = getFirewallTable(networkObjectId);
-        terminalMessage(`-P INPUT ${defaultPolicies["INPUT"]}`, networkObjectId);
-        terminalMessage(`-P OUTPUT ${defaultPolicies["OUTPUT"]}`, networkObjectId);
-        terminalMessage(`-P FORWARD ${defaultPolicies["FORWARD"]}`, networkObjectId);
+        for (let policy in defaultPolicies) terminalMessage(`-P ${policy} ${defaultPolicies[policy]}`, networkObjectId);
         firewallRules.forEach(rule => terminalMessage(rule, networkObjectId));
         return;
     }
 
-    if (args[1] === "-P") { // iptables -P [INPUT|OUTPUT|FORWARD] [ACCEPT|DROP|REJECT]
+    if (args[1] === "-P") { 
 
         try {
             setFirewallDefaultPolicy(networkObjectId, args[2], args[3]);
@@ -33,7 +31,16 @@ function command_Iptables(networkObjectId, args) {
     }
 
     let rule = new iptablesRule();
-    let $OPTS = catchopts(["-A:", "-p:", "-s:", "-d:", "--sport:", "--dport:", "-j:"], args);
+
+    let $OPTS = catchopts([
+        "-A:", //cadena
+        "-p:", //protocol
+        "-s:", //ip de origen
+        "-d:", //ip de destino
+        "--sport:", //puerto de origen
+        "--dport:", //puerto de destino
+        "-j:"], //accion
+    args);
 
     let optionHandlers = {
         "-A": () => rule.chain = $OPTS["-A"],
@@ -50,7 +57,6 @@ function command_Iptables(networkObjectId, args) {
     try {
         isValidFirewallRule(rule);
         addFirewallRule(networkObjectId, rule);
-        terminalMessage("Se ha añadido la regla correctamente.", networkObjectId);
     } catch (error) {
         terminalMessage(error.message, networkObjectId);
     }
