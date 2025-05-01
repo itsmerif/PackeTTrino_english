@@ -1,23 +1,27 @@
 async function packetProcessor_router(switchId, routerObjectId, packet) {
 
     if (visualToggle) await visualize(switchId, routerObjectId, packet);
-
-    if (!firewallProcessor(routerObjectId, packet)) {
-        if (visualToggle) igniteFire(routerObjectId);
-        return;
-    }
-
+    
     const [routerObjectIp, routerObjectNetmask, routerObjectMac] = getInterfaceSwitchInfo(routerObjectId, switchId);
+    const interface = switchToInterface(routerObjectId, switchId);
     const availableIps = getAvailableIps(routerObjectId);
     const activeServices = getactiveServices(routerObjectId);
 
-    if (!routerObjectIp || !routerObjectNetmask || !routerObjectMac) return;
+    if (!routerObjectIp || !routerObjectNetmask || !routerObjectMac) return; 
 
     if (packet.ttl) {
+
         packet.ttl--;
+
         if (packet.ttl < 1) {
             packet = new IcmpTimeExceeded(routerObjectIp, packet.origin_ip, routerObjectMac, routerObjectMac);
         }
+
+    }
+
+    if (!firewallProcessorFilter(routerObjectId, packet, interface)) {
+        if (visualToggle) igniteFire(routerObjectId);
+        return;
     }
 
     if (availableIps.includes(packet.destination_ip) || packet.destination_ip === "255.255.255.255") {
@@ -133,7 +137,7 @@ async function routing(routerObjectId, packet) {
 
             packet.destination_mac = nexthopMac;
 
-            if (!firewallProcessor(routerObjectId, packet)) {
+            if (!firewallProcessorFilter(routerObjectId, packet, ruleInterface)) {
                 if (visualToggle) igniteFire(routerObjectId);
                 return;
             }

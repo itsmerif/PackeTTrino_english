@@ -24,11 +24,6 @@ function GeneralOptions() {
             <label for="dark-mode"> Modo Oscuro </label>
             <input type="checkbox" class=${inputStyle} id="dark-mode" name="dark-mode">
         </div>
-
-        <div class="options-group">
-            <label for="template-option"> Template Option (Visual) </label>
-            <input type="checkbox" class=${inputStyle} id="template-option" name="template-option">
-        </div>
         
         <button class=${btnStyle}>Cerrar</button>
     `;
