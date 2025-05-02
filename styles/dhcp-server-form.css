@@ -38,7 +38,8 @@
         align-self: center;
     }
 
-    section {       
+    section {
+
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -46,6 +47,7 @@
         &.hidden {
             display: none;
         }
+        
     }
 
     #form-dhcp-item-id {

@@ -14,7 +14,7 @@ function sendCommand(event) {
             "ping": () => command_ping(dataId, args),
             "dhcp": () => command_Dhcp(dataId, args),
             "iptables": () => command_Iptables(dataId, args),
-            "ip": () => command_Ip(dataId, args, originIP),
+            "ip": () => command_Ip(dataId, args),
             "dns": () => command_dns(dataId, args),
             "dig": () => command_dig(dataId, args),
             "arp": () => command_arp(dataId, args),

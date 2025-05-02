@@ -47,6 +47,7 @@
     span {
         width: fit-content;
         padding: 0px;
+        white-space: nowrap;
     }
 
     .terminal-output {

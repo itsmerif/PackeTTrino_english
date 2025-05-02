@@ -1,4 +1,5 @@
 .router-form {
+
     position: absolute;
     top: 40%;
     left: 50%;
@@ -10,32 +11,59 @@
     border-radius: 5px;
     display: none;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 25px;
-    z-index: 1000;
+    flex-wrap: nowrap;
+    gap: 15px;
+    min-width: 600px;
+    z-index: 3;
     animation: form-animation 0.25s ease-in-out;
     font-family: var(--inter);
-    min-width: 400px;
-}
+    overflow: auto;
 
-.router-form .interfaces-wrapper {
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    width: fit-content;
-    width: 100%;
-    gap: 25px;
-
-    button {
-        padding: 5px;
-        font-size: 14px;
-        width: fit-content;
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50px;
+        background-color: var(--darkblue);
+        border-radius: 5px 5px 0px 0px;
+        box-sizing: border-box;
+        z-index: -1;
     }
 
-    .interfaces-container {
+    section {
+
+        margin-top: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+
+        .form-item {
+
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+                
+            label {
+                flex-grow: 0;
+                width: 200px;
+                text-align: left;
+                white-space: nowrap;
+            }
+        
+        }
+
+        &.hidden {
+            display: none;
+        }
+
+    }
+
+    input {
+
         width: 100%;
         padding: 8px 12px;
         border: 1px solid #ddd;
@@ -43,52 +71,106 @@
         font-size: 14px;
         text-align: center;
         font-family: var(--inter);
+
+        &:focus {
+            outline: none;
+            border-color: #666;
+        }
+
     }
 
-}
+    label {
+        font-weight: 500;
+        color: #333;
+    }
 
-.router-form::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 12%;
-    background-color: var(--darkblue);
-    border-radius: 5px 5px 0px 0px;
-    box-sizing: border-box;
-    z-index: -1;
-}
+    p {
+        text-transform: uppercase;
+        font-weight: bolder;
+        align-self: center;
+        color: #fff;
+    }
 
-.router-form input{
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    text-align: center;
-    font-family: var(--inter);
-}
+    button {
+        align-self: center;
+        margin: auto;
+    }
+  
+    .interfaces-wrapper {
 
-.router-form input:focus {
-    outline: none;
-    border-color: #666;
-}
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
 
-.router-form label {
-    font-weight: 500;
-    color: #333;
-}
+        button {
+            padding: 5px;
+            font-size: 14px;
+            width: fit-content;
+        }
 
-.router-form p {
-    text-transform: uppercase;
-    font-weight: bolder;
-    align-self: center;
-    color: #fff;
-}
+        .interfaces-container {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+            font-family: var(--inter);
+        }
 
-.router-form button {
-    width: 30%;
-    align-self: center;
-    padding: 5px;
+    }
+
+    table {
+
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #ddd;
+        transition: all 0.2s ease;
+        overflow: auto;
+
+        * {
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            padding: 8px;
+            transition: background-color 0.2s ease;
+            text-align: center;
+        }
+
+        td,
+        th {
+            width: 150px;
+        }
+
+        th {
+            background-color: rgb(223, 191, 12);
+            color: #333;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f9f5d7;
+        }
+
+        td {
+            padding: 0px;
+            margin: 0px;
+            height: 40px;
+        }
+
+        .ip-field {
+
+            display: flex;
+            flex-direction: row;
+            gap: 4px;
+            border: none;
+
+            p {
+                font-weight: normal;
+                border: none;
+            }
+
+
+        }
+    }
 }
