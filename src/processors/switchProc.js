@@ -15,7 +15,7 @@ async function switchProcessor(switchId, networkObjectId, packet) {
                 if (!device.startsWith("router-")) {
                     await packetProcessor_Host(switchId, device, duplicatePacket);
                 }else {
-                    await packetProcessor_router(switchId, device, duplicatePacket);
+                    await generalProcessorRouter(switchId, device, duplicatePacket);
                 }
             }
         }));
@@ -29,7 +29,7 @@ async function switchProcessor(switchId, networkObjectId, packet) {
     if (!device.startsWith("router-")) {
         await packetProcessor_Host(switchId, device, duplicatePacket);
     }else {
-        await packetProcessor_router(switchId, device, duplicatePacket);
+        await generalProcessorRouter(switchId, device, duplicatePacket);
     }
 
     return;

@@ -47,12 +47,14 @@ function firewallProcessorNat(networkObjectId, packet, interface = "enp0s3", tar
     const $networkObject = document.getElementById(networkObjectId);
     const firewallRules = JSON.parse($networkObject.getAttribute("firewall-rules"));
     const firewallRulesNat = firewallRules["NAT"];
+    let natFilteredPacket = structuredClone(packet);
     let targetAction;
 
     if (targetChain === "PREROUTING") targetAction = "DNAT";
     if (targetChain === "POSTROUTING") targetAction = "SNAT";
 
     firewallRulesNat.forEach(rule => {
+
         if (rule.A !== targetChain) return;
         if (rule.j !== targetAction) return;
         if (rule.p !== "*" && rule.p !== packet.transport_protocol && rule.p !== packet.protocol) return;
@@ -61,9 +63,20 @@ function firewallProcessorNat(networkObjectId, packet, interface = "enp0s3", tar
         if (rule.i !== "*" && rule.i !== interface) return;
         if (rule.sport !== "*" && rule.sport !== packet.sport) return;
         if (rule.dport !== "*" && rule.dport !== packet.dport) return;
-        if (targetAction === "DNAT") packet.destination_ip = rule.to__destination;
-        if (targetAction === "SNAT") packet.origin_ip = rule.to__source;
+
+        //cambiamos el destino u origen del paquete según sea necesario
+        if (targetAction === "DNAT") natFilteredPacket.destination_ip = rule.to__destination;
+        if (targetAction === "SNAT") natFilteredPacket.origin_ip = rule.to__source;
+
     });
 
-    return packet;
+    //si el paquete resultante es distinto al original, generamos y guardamos una conexion entre el origen y el destino
+
+    if (packet.destination_ip !== natFilteredPacket.destination_ip || packet.origin_ip !== natFilteredPacket.origin_ip) {
+        if (!connTrack[networkObjectId]) connTrack[networkObjectId] = {};
+        connTrack[networkObjectId][packet.destination_ip] = packet.origin_ip;
+    }
+    
+    return natFilteredPacket;
+
 }
