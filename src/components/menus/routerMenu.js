@@ -52,7 +52,10 @@ function router_menu() {
                 <input type="text" id="nexthop" name="nexthop" placeholder="0.0.0.0">
             </div>
 
-            <button class="btn-modern-blue dark" style="padding: 10px;" id="btn-add-rule">Añadir Regla</button>
+            <div class="form-item">
+                <button class="btn-modern-blue dark" style="padding: 10px;" id="btn-add-rule">Añadir Regla</button>
+                <button class="btn-modern-red dark" style="padding: 10px;" id="btn-del-rule">Eliminar Regla</button>
+            </div>
 
             <table id="routing-rules-table"></table>
 
@@ -67,6 +70,7 @@ function router_menu() {
     $menu.querySelector("#add-iface").addEventListener("click", addInterface);
     $menu.querySelector(".nav-panel").querySelectorAll("button").forEach(button => button.addEventListener("click", showTab));
     $menu.querySelector("#btn-add-rule").addEventListener("click", addRoutingRuleGraphicHandler);
+    $menu.querySelector("#btn-del-rule").addEventListener("click", removeRoutingRuleGraphicHandler);
 
     return $menu;
 
@@ -291,6 +295,31 @@ function addRoutingRuleGraphicHandler(event) {
 
 }
 
+function removeRoutingRuleGraphicHandler(event) {
+
+    event.stopPropagation();
+    event.preventDefault();
+
+    const $menu = document.querySelector(".router-form");
+    const networkObjectId = document.querySelector(".router-form #form-router-item-id").innerHTML;
+    const $networkObject = document.getElementById(networkObjectId);
+    const $routingSection = $menu.querySelector("#routing-rules-section");
+
+    //<-- obtengo los parametros de la regla
+    
+    const destination = $routingSection.querySelector("#destination-ip").value;
+
+    //<-- intento eliminar la regla
+
+    try {
+        removeRoutingRuleGraphic(networkObjectId, destination);
+        $menu.querySelector("#routing-rules-table").innerHTML = $networkObject.querySelector(".routing-table").querySelector("table").innerHTML;
+    }catch (error) {
+        bodyComponent.render(popupMessage(error.message));
+    }
+
+}
+
 function addRoutingRuleGraphic(networkObjectId, destination, gatewayInterface, nexthop) {
 
     //<-- validamos la ip de destino
@@ -317,6 +346,22 @@ function addRoutingRuleGraphic(networkObjectId, destination, gatewayInterface, n
         gatewayIp, //ip de salida
         gatewayInterface, //interfaz
         nexthop //ip del siguiente salto
+    );
+
+}
+
+
+function removeRoutingRuleGraphic(networkObjectId, destination) {
+
+    //<-- validamos la ip de destino
+
+    if (!isValidCidrIp(destination)) throw new Error(`Error: se esperaba un prefijo válido en vez de "${destination}".`);
+    const [destinationIP, destinationNetmask] = parseCidr(destination);
+    if (getNetwork(destinationIP, destinationNetmask) !== destinationIP) throw new Error(`Error: la ip de destino "${destination}" NO es una red.`);
+
+    removeRemoteRoutingRule(networkObjectId,
+        destinationIP, //red de destino
+        destinationNetmask //mascara de red
     );
 
 }

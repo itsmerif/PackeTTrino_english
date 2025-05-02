@@ -112,6 +112,7 @@ function removeRemoteRoutingRule(routerObjectId, destination, netmask) {
     $rules.forEach($rule => {
         const $fields = $rule.querySelectorAll("td");
         if ($fields.length === 0) return;
+        if ($fields[4].innerHTML === "0.0.0.0") return;
         if ($fields[0].innerHTML === destination && $fields[1].innerHTML === netmask) $rule.remove();
     });
 }
