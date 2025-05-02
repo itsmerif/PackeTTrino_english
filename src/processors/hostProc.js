@@ -6,7 +6,7 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     const interface = switchToInterface(networkObjectId, switchId);
     const networkObjectMac = $networkObject.getAttribute(`mac-${interface}`);
     const networkObjectIp = $networkObject.getAttribute(`ip-${interface}`);
-    const activeServices = getactiveServices(networkObjectId);
+    const activeServices = getActiveServices(networkObjectId);
 
     if (!networkObjectIp || !networkObjectMac) return;
 

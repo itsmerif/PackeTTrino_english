@@ -67,7 +67,7 @@ function listallServices(networkObjectId) {
 
 }
 
-function getactiveServices(networkObjectId) {
+function getActiveServices(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
     let availableServices = ["dhcpd", "apache", "dhclient", "dhcrelay", "resolved", "named"];

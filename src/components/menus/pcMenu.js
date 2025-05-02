@@ -71,7 +71,7 @@ function showPcForm(id) {
     const netmask = $networkObject.getAttribute("netmask-enp0s3");
     const gateway = $networkObject.getAttribute("data-gateway");
     const dnsServer = $networkObject.getAttribute("data-dns-server");
-    const activeServices = getactiveServices(id);
+    const activeServices = getActiveServices(id);
 
     $menu.querySelector("#ip").value = ip;
     $menu.querySelector("#netmask").value = netmask;

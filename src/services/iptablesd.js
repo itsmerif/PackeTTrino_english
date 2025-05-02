@@ -42,7 +42,7 @@ function firewallProcessorFilter(networkObjectId, packet, targetChain, inputInte
 }
 
 /**ESTA FUNCION REALIZA NAT DE UN PAQUETE SI ES NECESARIO */
-function firewallProcessorNat(networkObjectId, packet, interface = "enp0s3", targetChain)  {
+function firewallProcessorNat(networkObjectId, packet, inputInterface, outputInterface, targetChain)  {
 
     const $networkObject = document.getElementById(networkObjectId);
     const firewallRules = JSON.parse($networkObject.getAttribute("firewall-rules"));
@@ -56,12 +56,21 @@ function firewallProcessorNat(networkObjectId, packet, interface = "enp0s3", tar
     firewallRulesNat.forEach(rule => {
 
         if (rule.A !== targetChain) return;
+
         if (rule.j !== targetAction) return;
+
         if (rule.p !== "*" && rule.p !== packet.transport_protocol && rule.p !== packet.protocol) return;
+
         if (rule.s !== "*" && rule.s !== packet.origin_ip) return;
+
         if (rule.d !== "*" && rule.d !== packet.destination_ip) return;
-        if (rule.i !== "*" && rule.i !== interface) return;
+
+        if (inputInterface !== "" && rule.i !== "*" && rule.i !== inputInterface) return;
+
+        if (outputInterface !== "" && rule.o !== "*" && rule.o !== outputInterface) return;
+
         if (rule.sport !== "*" && rule.sport !== packet.sport) return;
+
         if (rule.dport !== "*" && rule.dport !== packet.dport) return;
 
         //cambiamos el destino u origen del paquete según sea necesario
