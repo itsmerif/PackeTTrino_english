@@ -19,13 +19,24 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
 
     }
 
-    if (!firewallProcessorFilter(routerObjectId, packet, interface)) {
-        if (visualToggle) igniteFire(routerObjectId);
-        return;
-    }
-
     if (availableIps.includes(packet.destination_ip) || packet.destination_ip === "255.255.255.255") {
 
+        //filtramos el paquete por la tabla filter
+
+        if (!firewallProcessorFilter(routerObjectId, packet, "INPUT", interface, "")) {
+            if (visualToggle) igniteFire(routerObjectId);
+            return;
+        }
+
+        //miramos si existe una conexion entre el origen y el destino, y deshacemos el SNAT
+
+        if (Object.hasOwn(connTrack, routerObjectId) && connTrack[routerObjectId][packet.origin_ip]) {
+            packet.destination_ip = connTrack[routerObjectId][packet.origin_ip];
+            delete connTrack[routerObjectId][packet.origin_ip];
+            await routing(routerObjectId, packet);
+            return;
+        }
+    
         let replyPacket;
 
         if (packet.protocol === "arp" && packet.type === "request") {
@@ -81,8 +92,8 @@ async function packetProcessor_router(switchId, routerObjectId, packet) {
                 if (!replyPacket) return;
 
                 if (replyPacket.type === "discover" || replyPacket.type === "request") await routing(routerObjectId, replyPacket);
-                
-                if (replyPacket.type === "offer" || replyPacket.type === "ack") {
+
+                if (replyPacket.type === "offer" || replyPacket.type === "ack") { //como debe ir por broadcast se lanza directamente a la red
                     let switchOut = getInfoFromIp(routerObjectId, replyPacket.giaddr)[1];
                     if (!switchOut) return;
                     await switchProcessor(switchOut, routerObjectId, replyPacket);
@@ -108,6 +119,7 @@ async function routing(routerObjectId, packet) {
     if (packet.destination_ip === "255.255.255.255" || packet.destination_mac === "ff:ff:ff:ff:ff:ff") return; // <-- no enrutamos broadcast
 
     const $routerObject = document.getElementById(routerObjectId);
+    const availableIps = getAvailableIps(routerObjectId);
     const $routingTable = $routerObject.querySelector(".routing-table").querySelector("table");
     const $rows = $routingTable.querySelectorAll("tr");
 
@@ -137,10 +149,31 @@ async function routing(routerObjectId, packet) {
 
             packet.destination_mac = nexthopMac;
 
-            if (!firewallProcessorFilter(routerObjectId, packet, ruleInterface)) {
-                if (visualToggle) igniteFire(routerObjectId);
-                return;
+            //filtramos el paquete por la tabla filter
+
+            if (availableIps.includes(packet.origin_ip)) {
+
+                if (!firewallProcessorFilter(routerObjectId, packet, "OUTPUT", "", ruleInterface)) {
+                    if (visualToggle) igniteFire(routerObjectId);
+                    return;
+                }
+
+            } else {
+
+                if (!firewallProcessorFilter(routerObjectId, packet, "FORWARD", "", ruleInterface)) {
+                    if (visualToggle) igniteFire(routerObjectId);
+                    return;
+                }
+
             }
+
+            //guardamos la conexion en el connTrack y hacemos NAT
+
+            if (!connTrack[routerObjectId]) connTrack[routerObjectId] = {};
+            connTrack[routerObjectId][packet.destination_ip] = packet.origin_ip;
+            packet = firewallProcessorNat(routerObjectId, packet, ruleInterface, "POSTROUTING");
+
+            //enviamos el paquete
 
             addPacketTraffic(packet);
             await switchProcessor(nextSwitch, routerObjectId, packet);

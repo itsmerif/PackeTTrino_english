@@ -46,3 +46,7 @@ let routerChangesBuffer = {}; //este buffer guarda informacion por INTERFAZ, NO 
 //variables de procesos en segundo plano
 let serverLeaseTimers = {};
 let clientLeaseTimers = {};
+
+//variables de gestion de SNAT Y DNAT
+
+let connTrack = {};

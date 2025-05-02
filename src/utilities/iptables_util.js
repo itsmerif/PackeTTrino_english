@@ -36,12 +36,15 @@ function command_Iptables(networkObjectId, args) {
         "-t:", //tabla
         "-A:", //cadena
         "-p:", //protocol
-        "-i:", //interfaz
+        "-i:", //interfaz de entrada
+        "-o:", //interfaz de salida
         "-s:", //ip de origen
         "-d:", //ip de destino
         "--sport:", //puerto de origen
         "--dport:", //puerto de destino
-        "-j:"], //accion
+        "-j:", //salto
+        "--to-destination:", //salto a ip destino
+        "--to-source:"], //salto a ip origen
     args);
 
     let optionHandlers = {
@@ -49,13 +52,16 @@ function command_Iptables(networkObjectId, args) {
         "-A": () => rule.A = $OPTS["-A"],
         "-p": () => rule.p = $OPTS["-p"],
         "-i": () => rule.i = $OPTS["-i"],
+        "-o": () => rule.o = $OPTS["-o"],
         "-s": () => rule.s = $OPTS["-s"],
         "-d": () => rule.d = $OPTS["-d"],
         "--sport": () => rule.sport = $OPTS["--sport"],
         "--dport": () => rule.dport = $OPTS["--dport"],
-        "-j": () => rule.j = $OPTS["-j"]
+        "-j": () => rule.j = $OPTS["-j"],
+        "--to-destination": () => rule.to__destination = $OPTS["--to-destination"],
+        "--to-source": () => rule.to__source = $OPTS["--to-source"]
     }
-
+   
     for (option in $OPTS) if (optionHandlers[option]) optionHandlers[option]();
 
     try {

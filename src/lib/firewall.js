@@ -6,10 +6,13 @@ class iptablesRule {
         this.p = "*"; //protocolo
         this.s = "*"; //ip de origen
         this.d = "*"; //ip de destino
-        this.i = "*"; //interfaz
+        this.i = "*"; //interfaz de entrada
+        this.o = "*"; //interfaz de salida
         this.sport = "*"; //puerto de origen
         this.dport = "*"; //puerto de destino
         this.j = ""; //acción
+        this.to__destination = ""; //destino
+        this.to__source = ""; //origen
     }
 }
 
@@ -39,7 +42,7 @@ function getFirewallTable(networkObjectId) {
     for (let table in firewallRules) {
         const rules = firewallRules[table]; //array of rule objects
         rules.forEach(rule => { //rule object
-            let ruleString = "iptables ";
+            let ruleString = "";
             for (let key in rule) if (rule[key] !== "*") ruleString += `-${key} ${rule[key]} `;
             response.push(ruleString);
         });
@@ -51,28 +54,49 @@ function getFirewallTable(networkObjectId) {
 function isValidFirewallRule(rule, networkObjectId) {
 
     const validTables = ["filter", "nat"];
-    const validChains = ["INPUT", "OUTPUT", "FORWARD"];
+    const validFilterChains = ["INPUT", "OUTPUT", "FORWARD"];
     const validProtocols = ["tcp", "udp", "icmp"];
-    const validActions = ["ACCEPT", "DROP", "REJECT"];
+    const validFilterActions = ["ACCEPT", "DROP", "REJECT"];
+    const validNATActions = ["DNAT", "SNAT", "MASQUERADE"];
     const validInterfaces = getInterfaces(networkObjectId);
 
-    if (!validTables.includes(rule.t)) throw new Error(`Error: tabla ${rule.table} no reconocida`);
+    if (!validTables.includes(rule.t)) throw new Error(`Error: tabla ${rule.t} no reconocida`);
 
-    if (!validChains.includes(rule.A)) throw new Error(`Error: cadena ${rule.chain} no reconocida`);
+    if (rule.t === "filter") {
+
+        if (!validFilterChains.includes(rule.A)) throw new Error(`Error: cadena ${rule.A} no permitida.`);
+
+        if (!validFilterActions.includes(rule.j)) throw new Error(`Error: acción ${rule.j} no permitida.`);
+
+    }
+
+    if (rule.t === "nat") {
+
+        if (!validNATActions.includes(rule.j)) throw new Error(`Error: acción ${rule.j} no permitida.`);
+
+        if (rule.j === "DNAT") {
+            if (rule.A !== "PREROUTING") throw new Error(`Error: cadena ${rule.A} no permitida con DNAT.`);
+            if (!isValidIp(rule.to__destination)) throw new Error(`Error: destino ${rule.to__destination} no permitido para DNAT.`);
+        }
+
+        if (rule.j === "SNAT") {
+            if (rule.A !== "POSTROUTING") throw new Error(`Error: cadena ${rule.A} no permitida con SNAT.`);
+            if (!isValidIp(rule.to__source)) throw new Error(`Error: origen ${rule.to__source} no permitido para SNAT.`);
+        }
+
+    }
 
     if (rule.p !== "*" && !validProtocols.includes(rule.p)) throw new Error(`Error: protocolo ${rule.p} no reconocido`); 
 
     if (rule.i !== "*" && !validInterfaces.includes(rule.i)) throw new Error(`Error: interfaz ${rule.i} no reconocida`);
 
-    if ( rule.s !== "*" && !isValidIp(rule.s)) throw new Error("Error: ip de origen no válida"); 
+    if (rule.s !== "*" && !isValidIp(rule.s)) throw new Error("Error: ip de origen no válida"); 
 
-    if ( rule.d !== "*" && !isValidIp(rule.d)) throw new Error("Error: ip de destino no válida"); 
+    if (rule.d !== "*" && !isValidIp(rule.d)) throw new Error("Error: ip de destino no válida"); 
 
-    if ( rule.sport !== "*" && !rule.sport.match(/^\d+$/)) throw new Error("Error: puerto de origen no válido");
+    if (rule.sport !== "*" && !rule.sport.match(/^\d+$/)) throw new Error("Error: puerto de origen no válido");
 
-    if ( rule.dport !== "*" && !rule.dport.match(/^\d+$/)) throw new Error("Error: puerto de destino no válido"); 
-
-    if (!validActions.includes(rule.j)) throw new Error(`Error: acción ${rule.j} no reconocida`);
+    if (rule.dport !== "*" && !rule.dport.match(/^\d+$/)) throw new Error("Error: puerto de destino no válido"); 
 
 }
 

@@ -2,16 +2,19 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
 
     if (visualToggle) await visualize(switchId, networkObjectId, packet);
 
-    if (!firewallProcessorFilter(networkObjectId, packet)) {
+    const $networkObject = document.getElementById(networkObjectId);
+    const interface = switchToInterface(networkObjectId, switchId);
+    const networkObjectMac = $networkObject.getAttribute(`mac-${interface}`);
+    const networkObjectIp = $networkObject.getAttribute(`ip-${interface}`);
+    const activeServices = getactiveServices(networkObjectId);
+
+    if (!networkObjectIp || !networkObjectMac) return;
+
+    if (!firewallProcessorFilter(networkObjectId, packet, "INPUT", interface, "")) {
         if (visualToggle) igniteFire(networkObjectId);
         return;
     }
 
-    const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
-    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const activeServices = getactiveServices(networkObjectId);
-    
     if (packet.protocol === "arp" && packet.type === "request") {
         if (packet.destination_ip !== networkObjectIp) return;
         addARPEntry(networkObjectId, packet.origin_ip, packet.origin_mac);
@@ -156,4 +159,59 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
         if (!replyPacket) return;
         await hostRouting(networkObjectId, replyPacket);
     }
+}
+
+async function hostRouting(networkObjectId, packet) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const destinationIp = packet.destination_ip;
+    const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
+    const $routingRules = $routingTable.querySelectorAll("tr"); 
+
+    if (packet.destination_ip === "255.255.255.255" || packet.destination_mac === "ff:ff:ff:ff:ff:ff") { // <--- como es broadcast se envia directamente
+        const switchId = $networkObject.getAttribute(`data-switch-${getInterfaces($networkObject.id)[0]}`);
+        addPacketTraffic(packet);
+        await switchProcessor(switchId, networkObjectId, packet);
+        return;
+    }
+
+    for (let i = 1; i < $routingRules.length; i++) {
+
+        let $rule = $routingRules[i];
+        let $cells = $rule.querySelectorAll("td");
+        let ruleNetwork = $cells[0].innerHTML;
+        let ruleNetmask = $cells[1].innerHTML;
+        let ruleInterface = $cells[3].innerHTML;
+        let rulenexthop = $cells[4].innerHTML;
+
+        if (ruleNetwork === getNetwork(destinationIp, ruleNetmask)) {
+
+            const nextSwitch = $networkObject.getAttribute("data-switch-" + ruleInterface);
+            packet.origin_mac = $networkObject.getAttribute("mac-" + ruleInterface);
+            packet.destination_mac = "";
+            let nexthopMac;
+            
+            if (rulenexthop === "0.0.0.0") {
+                nexthopMac = isIpInARPTable(networkObjectId, packet.destination_ip) || await arpResolve(networkObjectId, packet.destination_ip);
+            } else {
+                nexthopMac = isIpInARPTable(networkObjectId, rulenexthop) || await arpResolve(networkObjectId, rulenexthop);
+            }
+
+            if (!nexthopMac) return;
+
+            packet.destination_mac = nexthopMac;
+
+            if (!firewallProcessorFilter(networkObjectId, packet, "OUTPUT", "", ruleInterface)) {
+                if (visualToggle) igniteFire(networkObjectId);
+                return;
+            }
+
+            addPacketTraffic(packet);
+            await switchProcessor(nextSwitch, networkObjectId, packet);
+            return;
+
+        }
+
+    }
+
 }

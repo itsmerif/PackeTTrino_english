@@ -1,59 +1,69 @@
-/**ESTA FUNCION COMPRUEBA SI UN PAQUETE SUPERA EL CORTAFUEGOS (TABLA FILTER) */
-function firewallProcessorFilter(networkObjectId, packet, interface = "enp0s3")  {
+/**ESTA FUNCION COMPRUEBA SI UN PAQUETE SUPERA UN CORTAFUEGOS (TABLA FILTER) */
+function firewallProcessorFilter(networkObjectId, packet, targetChain, inputInterface, outputInterface)  {
 
     const $networkObject = document.getElementById(networkObjectId);
     const defaultPolicies = JSON.parse($networkObject.getAttribute("firewall-default-policy"));
     const firewallRules = JSON.parse($networkObject.getAttribute("firewall-rules"));
     const firewallRulesFilter = firewallRules["FILTER"];
-    const networkObjectIPs = getAvailableIps(networkObjectId);
-    let targetChain;
     let response = false;
     let found = false;
-
-    if (networkObjectIPs.includes(packet.destination_ip)) {
-        targetChain = "INPUT";
-    } else if (networkObjectIPs.includes(packet.origin_ip)) {
-        targetChain = "OUTPUT";
-    } else {
-        targetChain = "FORWARD";
-    }
 
     const defaultPolicy = defaultPolicies[targetChain];
 
     firewallRulesFilter.forEach(rule => {
 
-        let ruleChain = rule.A;
-        let ruleProtocol = rule.p;
-        let ruleOriginIp = rule.s;
-        let ruleDestinationIp = rule.d;
-        let ruleInterface = rule.i;
-        let ruleOriginPort = rule.sport;
-        let ruleDestinationPort = rule.dport;
-        let ruleAction = rule.j;
+        if (rule.A !== targetChain) return;
 
-        if (ruleChain !== targetChain) return;
+        if (rule.p !== "*" && rule.p !== packet.transport_protocol && rule.p !== packet.protocol) return;
 
-        if (ruleProtocol !== "*" && ruleProtocol !== packet.transport_protocol && ruleProtocol !== packet.protocol) return;
+        if (rule.s !== "*" && rule.s !== packet.origin_ip) return;
 
-        if (ruleOriginIp !== "*" && ruleOriginIp !== packet.origin_ip) return;
+        if (rule.d !== "*" && rule.d !== packet.destination_ip) return;
 
-        if (ruleDestinationIp !== "*" && ruleDestinationIp !== packet.destination_ip) return;
+        if (inputInterface !== "" && rule.i !== "*" && rule.i !== inputInterface) return;
 
-        if (ruleInterface !== "*" && ruleInterface !== interface) return;
+        if (outputInterface !== "" && rule.o !== "*" && rule.o !== outputInterface) return;
 
-        if (ruleOriginPort !== "*" && ruleOriginPort !== packet.sport) return;
+        if (rule.sport !== "*" && rule.sport !== packet.sport) return;
 
-        if (ruleDestinationPort !== "*" && ruleDestinationPort !== packet.dport) return;
+        if (rule.dport !== "*" && rule.dport !== packet.dport) return;
 
         found = true;
 
-        if (ruleAction === "ACCEPT") response = true;
+        if (rule.j === "ACCEPT") response = true;
 
-        if (ruleAction === "DROP") response = false;
+        if (rule.j === "DROP") response = false;
     });
 
     if (!found) response = defaultPolicy === "ACCEPT";
     
     return response;
 
+}
+
+/**ESTA FUNCION REALIZA NAT DE UN PAQUETE SI ES NECESARIO */
+function firewallProcessorNat(networkObjectId, packet, interface = "enp0s3", targetChain)  {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const firewallRules = JSON.parse($networkObject.getAttribute("firewall-rules"));
+    const firewallRulesNat = firewallRules["NAT"];
+    let targetAction;
+
+    if (targetChain === "PREROUTING") targetAction = "DNAT";
+    if (targetChain === "POSTROUTING") targetAction = "SNAT";
+
+    firewallRulesNat.forEach(rule => {
+        if (rule.A !== targetChain) return;
+        if (rule.j !== targetAction) return;
+        if (rule.p !== "*" && rule.p !== packet.transport_protocol && rule.p !== packet.protocol) return;
+        if (rule.s !== "*" && rule.s !== packet.origin_ip) return;
+        if (rule.d !== "*" && rule.d !== packet.destination_ip) return;
+        if (rule.i !== "*" && rule.i !== interface) return;
+        if (rule.sport !== "*" && rule.sport !== packet.sport) return;
+        if (rule.dport !== "*" && rule.dport !== packet.dport) return;
+        if (targetAction === "DNAT") packet.destination_ip = rule.to__destination;
+        if (targetAction === "SNAT") packet.origin_ip = rule.to__source;
+    });
+
+    return packet;
 }
