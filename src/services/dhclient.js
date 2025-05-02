@@ -57,7 +57,7 @@ async function dhcpDiscoverGenerator(networkObjectId) {
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const switchId = $networkObject.getAttribute("data-switch-enp0s3");
     let packet = new dhcpDiscover(networkObjectMac);
-    addPacketTraffic(packet); 
+    addPacketTraffic(packet);
     await switchProcessor(switchId, networkObjectId, packet); // <--- pasa directamente a la red sin ser enrrutado ya que es un broadcast a nivel local
 }
 

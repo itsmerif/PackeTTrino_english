@@ -46,10 +46,6 @@
             font-weight: 600;
         }
 
-        td {
-            text-transform: uppercase;
-        }
-
         tr:hover {
             background-color: #f9f5d7;
         }

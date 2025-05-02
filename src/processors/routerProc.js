@@ -77,7 +77,8 @@ async function generalProcessorRouter(switchId, routerObjectId, packet) {
                 if (replyPacket.destination_ip !== "255.255.255.255") {
                     await routing(routerObjectId, replyPacket);
                 } else {
-                    switchProcessor(switchId, routerObjectId, replyPacket); // <-- como es broadcast se envia directamente a la red
+                    addPacketTraffic(replyPacket);
+                    await switchProcessor(switchId, routerObjectId, replyPacket); // <-- como es broadcast se envia directamente a la red
                 }
 
                 return;
@@ -94,6 +95,7 @@ async function generalProcessorRouter(switchId, routerObjectId, packet) {
                 if (replyPacket.type === "offer" || replyPacket.type === "ack") { 
                     let switchOut = getInfoFromIp(routerObjectId, replyPacket.giaddr)[1];
                     if (!switchOut) return;
+                    addPacketTraffic(replyPacket);
                     await switchProcessor(switchOut, routerObjectId, replyPacket); // <-- como debe ir por broadcast se lanza directamente a la red
                 }
 
