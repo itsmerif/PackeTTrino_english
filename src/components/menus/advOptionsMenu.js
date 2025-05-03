@@ -99,7 +99,7 @@ function dhcpServerConfig() {
     const $button = document.createElement("button");
     $button.id = "dhcp-server-config";
     $button.innerHTML = "Configurar Servidor DHCP";
-    $button.setAttribute("onclick", "showDhcpSpecs(event)");
+    $button.setAttribute("onclick", "showDhcpMenu(event)");
     return $button;
 }
 

@@ -24,7 +24,7 @@ function DhcpServerObject(x, y) {
     attr("data-switch-enp0s3", "");    
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
-    attr("onclick", "showDhcpSpecs(event)");
+    attr("onclick", "showDhcpMenu(event)");
 
     installDhcpd($networkObject);
     installIptables($networkObject);

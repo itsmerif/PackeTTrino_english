@@ -1,18 +1,18 @@
 function dhcp_server_menu() {
 
     const $menu = document.createElement("form");
-    $menu.classList.add("dhcp-form", "modal");
+    $menu.classList.add("dhcp-form", "modal", "draggable-modal");
 
     $menu.innerHTML = `
     
-        <p id="form-dhcp-item-id"></p>
+        <div class="window-frame"> <p id="form-dhcp-item-id"> </p> </div>
 
-        <div>
+        <div class="nav-panel">
             <button class="btn-modern-blue dark active" id="btn-basic-tab">Básico</button>
             <button class="btn-modern-blue dark" id="btn-reservations">Reservas</button>
         </div>
 
-        <div class="main-section">
+        <section class="main-section">
 
             <section class="basic-section">
 
@@ -33,39 +33,46 @@ function dhcp_server_menu() {
 
             </section>
 
-            <p> Opciones de Servicio DHCP </p>
+            <section class="dhcp-options-section">
 
-            <div>
-                <label for="range-start">Rango de IPs:</label>
-                <input type="text" id="range-start" name="range-start" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-                <input type="text" id="range-end" name="range-end" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                <p> Opciones de Servicio DHCP </p>
+
+                <div>
+                    <label for="range-start">Rango de IPs:</label>
+                    <input type="text" id="range-start" name="range-start" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                    <input type="text" id="range-end" name="range-end" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                </div>
+
+                <div>
+                    <label for="offer-netmask">Máscara de Red:</label>	
+                    <input type="text" id="offer-netmask" name="offer-netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                </div>
+
+                <div>
+                    <label for="offer-gateway">Puerta de Enlace:</label>
+                    <input type="text" id="offer-gateway" name="offer-gateway" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                </div>
+
+                <div>
+                    <label for="offer-dns">Servidor DNS:</label>
+                    <input type="text" id="offer-dns" name="offer-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                </div>
+
+                <div>
+                    <label for="offer-lease-time">Tiempo de Alquiler:</label>
+                    <input type="text" id="offer-lease-time" name="offer-lease-time" pattern="^[0-9]+$">
+                </div>
+
+            </section>
+            
+            <div class="button-wrapper">
+                <button class="btn-modern-blue dark" type="submit" id="btn-save-form">Guardar</button>
+                <button class="btn-modern-red dark" id="btn-close">Cerrar</button>
             </div>
 
-            <div>
-                <label for="offer-netmask">Máscara de Red:</label>	
-                <input type="text" id="offer-netmask" name="offer-netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-            </div>
+        </section>
 
-            <div>
-                <label for="offer-gateway">Puerta de Enlace:</label>
-                <input type="text" id="offer-gateway" name="offer-gateway" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-            </div>
-
-            <div>
-                <label for="offer-dns">Servidor DNS:</label>
-                <input type="text" id="offer-dns" name="offer-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-            </div>
-
-            <div>
-                <label for="offer-lease-time">Tiempo de Alquiler:</label>
-                <input type="text" id="offer-lease-time" name="offer-lease-time" pattern="^[0-9]+$">
-            </div>
-
-            <button class="btn-modern-blue dark" type="submit" id="btn-save-form">Guardar</button>
-
-        </div>
-
-        <div class="reservations-section" style="display: none;">
+        <section class="reservations-section" style="display: none;">
 
             <div>
                 <label for="mac-for-reserve">Dirección MAC:</label>
@@ -90,20 +97,22 @@ function dhcp_server_menu() {
                 </table>
             </div>
 
-        </div>
+        </section>
 
     `;
 
-    $menu.addEventListener("submit", saveDhcpSpecs);
+    $menu.addEventListener("submit", saveDhcpMenu);
     $menu.querySelector("#btn-basic-tab").addEventListener("click", showBasicTab);
     $menu.querySelector("#btn-reservations").addEventListener("click", showReservTab);
     $menu.querySelector("#add-reservation").addEventListener("click", addDhcpReservationHandler);
+    $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
+    $menu.querySelector("#btn-close").addEventListener("click", closeDhcpMenu);
 
     return $menu;
     
 }
 
-function showDhcpSpecs(event) {
+function showDhcpMenu(event) {
 
     event.stopPropagation();
     
@@ -136,7 +145,7 @@ function showDhcpSpecs(event) {
 
 }
 
-function saveDhcpSpecs(event) {
+function saveDhcpMenu(event) {
 
     event.preventDefault();
     const $networkObject = document.getElementById(document.getElementById("form-dhcp-item-id").innerHTML);
@@ -157,6 +166,13 @@ function saveDhcpSpecs(event) {
     $networkObject.setAttribute("offer-dns", $menu.querySelector("#offer-dns").value);
     $networkObject.setAttribute("offer-lease-time", $menu.querySelector("#offer-lease-time").value);
 
+    bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
+}
+
+function closeDhcpMenu(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    const $menu = document.querySelector(".dhcp-form");
     restoreDhcpReservationTable();
     $menu.querySelector(".basic-section").classList.remove("hidden");
     $menu.style.display = "none";

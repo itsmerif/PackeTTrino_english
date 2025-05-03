@@ -31,7 +31,7 @@ function dhcp_agent_menu() {
                 <input type="text" id="main-server" name="main-server" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
             </div>
         </section>
-
+        
         <button class="btn-modern-blue" type="submit">Guardar</button>
         <button class="btn-modern-red"  id="btn-close">Cerrar</button>
     `;
