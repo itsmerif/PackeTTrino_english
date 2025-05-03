@@ -107,7 +107,7 @@ function dhcpRelayConfig() {
     const $button = document.createElement("button");
     $button.id = "dhcp-relay-config";
     $button.innerHTML = "Configurar Relay DHCP";
-    $button.setAttribute("onclick", "showDhcpRelaySpecs(event)");
+    $button.setAttribute("onclick", "showDhcpRelayMenu(event)");
     return $button;
 }
 

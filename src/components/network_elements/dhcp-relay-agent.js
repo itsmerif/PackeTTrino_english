@@ -24,7 +24,7 @@ function DhcpRelayObject(x, y) {
     attr("data-switch-enp0s3", "");    
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
-    attr("onclick", "showDhcpRelaySpecs(event)");
+    attr("onclick", "showDhcpRelayMenu(event)");
 
     installDhcprelay($networkObject);
     installIptables($networkObject);

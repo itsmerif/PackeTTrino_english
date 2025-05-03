@@ -152,17 +152,17 @@ async function savePcMenu(event) {
 
         "get-btn": async () => {
             if (visualToggle) document.querySelector(".pc-form").style.display = "none";
-            await command_Dhcp($networkObject.id, ["dhcp", "-discover"]);
+            await dhcpDiscoverHandler($networkObject.id);
         },
 
         "renew-btn": async () => {
             if (visualToggle) document.querySelector(".pc-form").style.display = "none";
-            await command_Dhcp($networkObject.id, ["dhcp", "-renew"]);
+            await dhcpRenewHandler($networkObject.id);
         },
 
         "release-btn": async () => {
             if (visualToggle) document.querySelector(".pc-form").style.display = "none";
-            await command_Dhcp($networkObject.id, ["dhcp", "-release"]);
+            await dhcpReleaseHandler($networkObject.id);
         },
 
         "close-btn": () => {
