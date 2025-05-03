@@ -2,11 +2,11 @@ function router_menu() {
 
     const $menu = document.createElement("form");
     
-    $menu.classList.add("router-form", "modal");
+    $menu.classList.add("router-form", "modal", "draggable-modal");
 
     $menu.innerHTML = `
 
-        <p id="form-router-item-id"></p>
+        <div class="window-frame"> <p id="form-router-item-id"> </p></div>
 
         <div class="nav-panel">
             <button class="btn-modern-blue dark active" id="btn-basic-tab" data-tab="basic-section">Básico</button>
@@ -31,7 +31,10 @@ function router_menu() {
                 <input type="text" name="router-netmask" id="router-netmask">
             </div>
             
-            <button class="btn-modern-blue dark" style="padding: 10px;">Guardar</button>
+            <div class="form-item">
+                <button class="btn-modern-blue dark" style="padding: 10px;">Guardar</button>
+                <button class="btn-modern-red dark" style="padding: 10px;" id="btn-close-form">Cerrar</button>
+            </div>
 
         </section>
 
@@ -63,20 +66,22 @@ function router_menu() {
 
     `;
 
-    $menu.addEventListener("submit", checkandCloseRouterSpecs);
-    $menu.querySelector(".interfaces-container").addEventListener("change", selectInterface);
+    $menu.addEventListener("submit", saveRouterMenu);
+    $menu.querySelector(".interfaces-container").addEventListener("change", selectGraphicInterface);
     $menu.querySelectorAll("input").forEach(input => input.addEventListener("change", registerNetworkChanges));
-    $menu.querySelector("#del-iface").addEventListener("click", deleteInterface);
-    $menu.querySelector("#add-iface").addEventListener("click", addInterface);
+    $menu.querySelector("#del-iface").addEventListener("click", deleteGraphicInterface);
+    $menu.querySelector("#add-iface").addEventListener("click", addGraphicInterface);
     $menu.querySelector(".nav-panel").querySelectorAll("button").forEach(button => button.addEventListener("click", showTab));
     $menu.querySelector("#btn-add-rule").addEventListener("click", addRoutingRuleGraphicHandler);
     $menu.querySelector("#btn-del-rule").addEventListener("click", removeRoutingRuleGraphicHandler);
+    $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
+    $menu.querySelector("#btn-close-form").addEventListener("click", closeRouterMenu);
 
     return $menu;
 
 }
 
-function showRouterSpecs(event) {
+function showRouterMenu(event) {
 
     event.stopPropagation();
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none"; //<-- ocultamos el modal de opciones avanzadas
@@ -123,16 +128,16 @@ function showRouterSpecs(event) {
     //<--- seccion de reglas de enrutamiento
 
     $menu.querySelector("#routing-rules-table").innerHTML = $networkObject.querySelector(".routing-table").querySelector("table").innerHTML;
-
+    
     document.getElementById("form-router-item-id").innerHTML = $networkObject.id; // <-- se guarda el id del equipo en el formulario
     $menu.style.display = "flex";
 }
 
-function checkandCloseRouterSpecs(event) {
+function saveRouterMenu(event) {
 
     event.preventDefault();
 
-    const $form = document.querySelector(".router-form");
+    const $menu = document.querySelector(".router-form");
     const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
 
     for (let interface in routerChangesBuffer){
@@ -159,14 +164,22 @@ function checkandCloseRouterSpecs(event) {
         }
 
     }
-
-    $form.querySelector(".interfaces-container").innerHTML = "";
-    routerChangesBuffer = {};
-    $form.style.display = "none";
+    
+    $menu.querySelector("#routing-rules-table").innerHTML = $networkObject.querySelector(".routing-table").querySelector("table").innerHTML;
+    bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
 
 }
 
-function selectInterface(event)  {
+function closeRouterMenu(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    const $form = document.querySelector(".router-form");
+    $form.querySelector(".interfaces-container").innerHTML = "";
+    routerChangesBuffer = {};
+    $form.style.display = "none";
+}
+
+function selectGraphicInterface(event)  {
     const $select = event.target;
     const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
     const $form = document.querySelector(".router-form");
@@ -186,7 +199,7 @@ function registerNetworkChanges()  {
     }
 }
 
-function addInterface(event) {
+function addGraphicInterface(event) {
 
     event.preventDefault();
 
@@ -219,7 +232,7 @@ function addInterface(event) {
   
 }
 
-function deleteInterface(event) {
+function deleteGraphicInterface(event) {
 
     event.preventDefault();
 
@@ -349,7 +362,6 @@ function addRoutingRuleGraphic(networkObjectId, destination, gatewayInterface, n
     );
 
 }
-
 
 function removeRoutingRuleGraphic(networkObjectId, destination) {
 

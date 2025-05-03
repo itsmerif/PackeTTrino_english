@@ -31,7 +31,7 @@ function RouterObject(x, y) {
     attr("data-switch-enp0s9", "");
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
-    attr("onclick", "showRouterSpecs(event)");
+    attr("onclick", "showRouterMenu(event)");
 
     installIptables($networkObject);
     

@@ -97,3 +97,7 @@ img {
         color: var(--dark-mode-white) !important;
     }
 }
+
+.draggable-modal {
+    animation: none !important;
+}
