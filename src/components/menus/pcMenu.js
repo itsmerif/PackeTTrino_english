@@ -62,7 +62,7 @@ function pc_menu() {
 
     `;
 
-    $menu.addEventListener("submit", submitPcForm);
+    $menu.addEventListener("submit", savePcMenu);
     $menu.querySelector("#dhcp").addEventListener("change", dhcpHandler);
     $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
 
@@ -70,7 +70,7 @@ function pc_menu() {
 
 }
 
-function showPcForm(id) {
+function showPcMenu(id) {
 
     if (icmpTryoutToggle) { //esto controla si está usando la utilidad de ping visual
         icmpTryoutProcess(id);
@@ -126,7 +126,7 @@ function showPcForm(id) {
     document.querySelector(".pc-form").style.display = "flex"; //<-- mostramos el formulario
 }
 
-async function submitPcForm(event) {
+async function savePcMenu(event) {
 
     event.preventDefault();
 
@@ -208,7 +208,7 @@ function dhcpHandler(event) {
         }
 
     }
-    
+
 }
 
 function restorePcForm() {

@@ -54,7 +54,7 @@ function PcObject(x, y) {
     installIptables($networkObject);
 
     //añadimos eventos
-    attr("onclick", "showPcForm('" + $networkObject.id + "')");
+    attr("onclick", "showPcMenu('" + $networkObject.id + "')");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("ondragstart", "BoardItemDragStart(event)");
     //attr("onmousedown", "startBoardItemMove(event)");
