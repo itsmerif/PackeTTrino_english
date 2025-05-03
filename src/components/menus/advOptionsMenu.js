@@ -115,6 +115,6 @@ function dnsServerConfig() {
     const $button = document.createElement("button");
     $button.id = "dns-server-config";
     $button.innerHTML = "Configurar Servidor DNS";
-    $button.setAttribute("onclick", "showDnsForm(event)");
+    $button.setAttribute("onclick", "showDnsServerMenu(event)");
     return $button;
 }

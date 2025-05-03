@@ -2,11 +2,11 @@ function dns_server_menu() {
 
     const $menu = document.createElement("form");
     
-    $menu.classList.add("dns-form", "modal");
+    $menu.classList.add("dns-form", "modal", "draggable-modal");
 
     $menu.innerHTML = `
 
-        <p id="form-dns-item-id"></p>
+        <div class="window-frame"> <p id="form-dns-item-id"> </p> </div>
 
         <section class="basic-section">
 
@@ -46,16 +46,22 @@ function dns_server_menu() {
 
         </section>
 
-        <button class="btn-modern-blue dark" type="submit">Guardar</button>
+        <section class="button-wrapper">
+            <button class="btn-modern-blue dark" type="submit">Guardar</button>
+            <button class="btn-modern-red dark" id="btn-close">Cerrar</button>
+        </section>
+
     `;
 
-    $menu.addEventListener("submit", saveDnsSpecs);
+    $menu.addEventListener("submit", saveDnsServerMenu);
+    $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
+    $menu.querySelector("#btn-close").addEventListener("click", closeDnsMenu);
     
     return $menu;
 
 }
 
-function showDnsForm(event) {
+function showDnsServerMenu(event) {
 
     event.stopPropagation();
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
@@ -67,29 +73,46 @@ function showDnsForm(event) {
         return;
     }
 
-    const $form = document.querySelector(".dns-form");
+    const $menu = document.querySelector(".dns-form");
     const isRecursive = $serverObject.getAttribute("recursion");
-    $form.querySelector("#ip-dns").value = $serverObject.getAttribute("ip-enp0s3");
-    $form.querySelector("#netmask-dns").value = $serverObject.getAttribute("netmask-enp0s3");
-    $form.querySelector("#gateway-dns").value = $serverObject.getAttribute("data-gateway");
-    $form.querySelector("#dns-recursive").checked = isRecursive === "true";
-    if (!$serverObject.id.startsWith("dns-server-")) $form.querySelector(".basic-section").classList.add("hidden");
+    $menu.querySelector("#ip-dns").value = $serverObject.getAttribute("ip-enp0s3");
+    $menu.querySelector("#netmask-dns").value = $serverObject.getAttribute("netmask-enp0s3");
+    $menu.querySelector("#gateway-dns").value = $serverObject.getAttribute("data-gateway");
+    $menu.querySelector("#dns-recursive").checked = isRecursive === "true";
+    if (!$serverObject.id.startsWith("dns-server-")) $menu.querySelector(".basic-section").classList.add("hidden");
     document.getElementById("form-dns-item-id").innerHTML = $serverObject.id;
-    $form.style.display = "flex";
+    $menu.style.display = "flex";
 }
 
-function saveDnsSpecs(event) {
+function saveDnsServerMenu(event) {
+
     event.preventDefault();
     event.stopPropagation();
 
-    const $form = document.querySelector(".dns-form");
-    const $serverObject = document.getElementById($form.querySelector("#form-dns-item-id").innerHTML);
-    const isRecursive = $form.querySelector("#dns-recursive").checked;
+    const $menu = document.querySelector(".dns-form");
+    const $serverObject = document.getElementById($menu.querySelector("#form-dns-item-id").innerHTML);
+    const isRecursive = $menu.querySelector("#dns-recursive").checked;
 
     if ($serverObject.id.startsWith("dns-server")) {
-        const ip = $form.querySelector("#ip-dns").value;
-        const netmask = $form.querySelector("#netmask-dns").value;
-        const gateway = $form.querySelector("#gateway-dns").value;
+        const ip = $menu.querySelector("#ip-dns").value;
+        const netmask = $menu.querySelector("#netmask-dns").value;
+        const gateway = $menu.querySelector("#gateway-dns").value;
+
+        if (!isValidIp(ip)) {
+            bodyComponent.render(popupMessage(`<span>Error: </span>La IP "${ip}" no es válida.`));
+            return;
+        }
+
+        if (!isValidIp(netmask)) {
+            bodyComponent.render(popupMessage(`<span>Error: </span>La máscara de red "${netmask}" no es válida.`));
+            return;
+        }
+
+        if (!isValidIp(gateway)) {
+            bodyComponent.render(popupMessage(`<span>Error: </span>El puerta de enlace "${gateway}" no es válida.`));
+            return;
+        }
+
         configureInterface($serverObject.id, ip, netmask, "enp0s3");
         setDirectRoutingRule($serverObject.id, ip, netmask, "enp0s3");
         $serverObject.setAttribute("data-gateway", gateway);
@@ -97,6 +120,16 @@ function saveDnsSpecs(event) {
     }
 
     $serverObject.setAttribute("recursion", isRecursive);
-    $form.querySelector(".basic-section").classList.remove("hidden");
-    $form.style.display = "none";
+
+    bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
+
+}
+
+function closeDnsMenu(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    const $menu = document.querySelector(".dns-form");
+    $menu.querySelector(".basic-section").classList.remove("hidden");
+    $menu.reset();
+    $menu.style.display = "none";
 }
