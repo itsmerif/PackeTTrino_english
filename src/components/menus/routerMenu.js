@@ -71,7 +71,7 @@ function router_menu() {
     $menu.querySelectorAll("input").forEach(input => input.addEventListener("change", registerNetworkChanges));
     $menu.querySelector("#del-iface").addEventListener("click", deleteGraphicInterface);
     $menu.querySelector("#add-iface").addEventListener("click", addGraphicInterface);
-    $menu.querySelector(".nav-panel").querySelectorAll("button").forEach(button => button.addEventListener("click", showTab));
+    $menu.querySelector(".nav-panel").querySelectorAll("button").forEach(button => button.addEventListener("click", showRouterGraphicTab));
     $menu.querySelector("#btn-add-rule").addEventListener("click", addRoutingRuleGraphicHandler);
     $menu.querySelector("#btn-del-rule").addEventListener("click", removeRoutingRuleGraphicHandler);
     $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
@@ -267,7 +267,7 @@ function deleteGraphicInterface(event) {
     bodyComponent.render(popupMessage(`Interfaz ${currentInterface} eliminada con éxito.`));
 }
 
-function showTab(event) {
+function showRouterGraphicTab(event) {
     event.stopPropagation();
     event.preventDefault();
     const $menu = document.querySelector(".router-form");
