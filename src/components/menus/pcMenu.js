@@ -2,29 +2,41 @@ function pc_menu() {
 
     const $menu = document.createElement("form");
 
-    $menu.classList.add("pc-form", "modal");
+    $menu.classList.add("pc-form", "modal", "draggable-modal");
 
     $menu.innerHTML = `
 
-        <p id="form-item-id"></p>
+        <div class="window-frame"> <p id="form-item-id"></p> </div>
 
-        <label for="ip">Dirección IP (ipv4):</label>
-        <input type="text" id="ip" name="ip"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+        <section class="basic-section">
 
-        <label for="netmask">Máscara de Red:</label>
-        <input type="text" id="netmask" name="netmask"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+            <div class="form-item">
+                <label for="ip">Dirección IP (ipv4):</label>
+                <input type="text" id="ip" name="ip"
+                pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+            </div>
 
-        <label for="gateway">Puerta de enlace:</label>
-        <input type="text" id="gateway" name="gateway"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+            <div class="form-item">
+                <label for="netmask">Máscara de Red:</label>
+                <input type="text" id="netmask" name="netmask"
+                pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+            </div>
+            
+            <div class="form-item">
+                <label for="gateway">Puerta de enlace:</label>
+                <input type="text" id="gateway" name="gateway"
+                pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+            </div>
+        
+            <div class="form-item">
+                <label for="dns-server">Servidor DNS:</label>
+                <input type="text" id="dns-server" name="dns-server"
+                pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+            </div>
 
-        <label for="dns-server">Servidor DNS:</label>
-        <input type="text" id="dns-server" name="dns-server"
-        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+        </section>
 
-        <div class="modes-wrapper">
+        <section class="modes-wrapper">
 
             <div class="form-item hidden" id="dhcp-mode">
                 <label for="dhcp"> Modo DHCP: </label>
@@ -36,21 +48,23 @@ function pc_menu() {
                 <input class="btn-toggle" type="checkbox" id="web-server" name="web-server">
             </div>
 
-        </div>
+        </section>
 
-        <div class="button-container">
-        <button class="btn-modern-blue" type="submit" id="save-btn">Guardar</button>
-        <button class="btn-modern-blue" type="submit" id="get-btn" style="display: none;">Obtener IP</button>
-        <button class="btn-modern-blue" type="submit" id="renew-btn" style="display: none;">Renovar IP</button>
-        <button class="btn-modern-blue" type="submit" id="release-btn" style="display: none;">Liberar IP</button>
-        </div>
+        <section class="button-container">
 
-        <button class="btn-modern-red" type="submit" id="close-btn">Cerrar</button>
+            <button class="btn-modern-blue" type="submit" id="save-btn">Guardar</button>
+            <button class="btn-modern-blue" type="submit" id="get-btn" style="display: none;">Obtener IP</button>
+            <button class="btn-modern-blue" type="submit" id="renew-btn" style="display: none;">Renovar IP</button>
+            <button class="btn-modern-blue" type="submit" id="release-btn" style="display: none;">Liberar IP</button>
+            <button class="btn-modern-red"  type="submit" id="close-btn">Cerrar</button>
+
+        </section>
 
     `;
 
     $menu.addEventListener("submit", submitPcForm);
     $menu.querySelector("#dhcp").addEventListener("change", dhcpHandler);
+    $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
 
     return $menu;
 
@@ -66,39 +80,50 @@ function showPcForm(id) {
     const $networkObject = document.getElementById(id);
     const $menu = document.querySelector(".pc-form");
     const $textInputs = $menu.querySelectorAll("input[type='text']");
-    const $buttons = $menu.querySelector(".button-container").querySelectorAll("button");
+    const $buttonSection = $menu.querySelector(".button-container"); //<-- seccion de botones
+    $buttonSection.querySelectorAll("button").forEach(button => button.style.display = "none"); //<-- ocultamos todos los botones al inicio
+
+    //<-- configuracion basica de red
     const ip = $networkObject.getAttribute("ip-enp0s3");
     const netmask = $networkObject.getAttribute("netmask-enp0s3");
     const gateway = $networkObject.getAttribute("data-gateway");
     const dnsServer = $networkObject.getAttribute("data-dns-server");
     const activeServices = getActiveServices(id);
-
     $menu.querySelector("#ip").value = ip;
     $menu.querySelector("#netmask").value = netmask;
     $menu.querySelector("#gateway").value = gateway;
     $menu.querySelector("#dns-server").value = dnsServer;
     $menu.querySelector("#form-item-id").innerHTML = id;
 
-    if (activeServices.includes("dhclient")) {
+    if (activeServices.includes("dhclient")) { //<-- comprueba si existe el servicio dhcp cliente
 
-        if ($networkObject.getAttribute("dhclient") === "true") {
+        if ($networkObject.getAttribute("dhclient") === "true") { //<-- comprobamos si el servicio esta activo
+
             $menu.querySelector("#dhcp").checked = true;
             $textInputs.forEach(input => input.disabled = true);
-            if (!ip) $buttons.forEach(button => (button.id === "get-btn") ? button.style.display = "block" : button.style.display = "none");
-            else $buttons.forEach(button => (button.id === "renew-btn" || button.id === "release-btn") ? button.style.display = "block" : button.style.display = "none");
+
+            if (!ip) { 
+                $buttonSection.querySelector("#get-btn").style.display = "block";
+            }else {
+                $buttonSection.querySelector("#renew-btn").style.display = "block";
+                $buttonSection.querySelector("#release-btn").style.display = "block";
+            }
         }
 
         $menu.querySelector("#dhcp-mode").classList.remove("hidden");
     }
 
-    if (activeServices.includes("apache")) {
+    if (activeServices.includes("apache")) { //<-- comprobamos si existe el servicio web server
 
         if ($networkObject.getAttribute("apache") === "true") $menu.querySelector("#web-server").checked = true;
+
         $menu.querySelector("#web-server-mode").classList.remove("hidden");
         
     }
-
-    document.querySelector(".pc-form").style.display = "flex";
+    
+    $buttonSection.querySelector("#save-btn").style.display = "block"; //<-- mostramos el boton de guardar
+    $buttonSection.querySelector("#close-btn").style.display = "block"; //<-- mostramos el boton de cerrar
+    document.querySelector(".pc-form").style.display = "flex"; //<-- mostramos el formulario
 }
 
 async function submitPcForm(event) {
@@ -118,12 +143,11 @@ async function submitPcForm(event) {
 
         "save-btn": () => {
             configureInterface($networkObject.id, newIp, newNetmask, "enp0s3");
-            $networkObject.setAttribute("data-gateway", newGateway);
             setDirectRoutingRule($networkObject.id, newIp, newNetmask, "enp0s3");
+            $networkObject.setAttribute("data-gateway", newGateway);
             setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, "enp0s3", newGateway);
             $networkObject.setAttribute("data-dns-server", newDnsServer);
-            restorePcForm();
-            document.querySelector(".pc-form").style.display = "none";
+            bodyComponent.render(popupMessage("Los cambios se han aplicado correctamente."));
         },
 
         "get-btn": async () => {
@@ -156,18 +180,35 @@ async function submitPcForm(event) {
 function dhcpHandler(event) {
 
     const $dhcpToggle = event.target;
-    const $buttons = document.querySelectorAll(".pc-form .button-container button");
+    const $buttonSection = document.querySelector(".pc-form .button-container");
     const $textInputs = document.querySelector(".pc-form").querySelectorAll("input[type='text']");
     const hasIp = document.querySelector(".pc-form #ip").value !== "";
 
     if (!$dhcpToggle.checked) {
+
         $textInputs.forEach(input => input.disabled = false);
-        $buttons.forEach(button => (button.id !== "save-btn") ? button.style.display = "none" : button.style.display = "block");
+
+        $buttonSection.querySelector("#get-btn").style.display = "none";
+        $buttonSection.querySelector("#renew-btn").style.display = "none";
+        $buttonSection.querySelector("#release-btn").style.display = "none";
+
     } else {
+
         $textInputs.forEach(input => input.disabled = true);
-        if (hasIp) $buttons.forEach(button => (button.id === "renew-btn" || button.id === "release-btn") ? button.style.display = "block" : button.style.display = "none");
-        else $buttons.forEach(button => (button.id === "get-btn") ? button.style.display = "block" : button.style.display = "none");
+
+        if (hasIp) {
+
+            $buttonSection.querySelector("#renew-btn").style.display = "block";
+            $buttonSection.querySelector("#release-btn").style.display = "block";
+
+        } else {
+
+            $buttonSection.querySelector("#get-btn").style.display = "block";
+
+        }
+
     }
+    
 }
 
 function restorePcForm() {
