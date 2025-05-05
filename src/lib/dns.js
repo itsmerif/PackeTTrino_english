@@ -6,6 +6,7 @@ class dnsRecord {
     }
 }
 
+/**ESTA FUNCIONA DEVUELVE LA IP DE UN NOMBRE DE DOMINIO QUE ESTÉ ALMACENADO EN /ETC/HOSTS, O DEVUELVE FALSO SI NO EXISTE */
 function isDomainInEtcHosts(dataId, domain) {
     const $networkObject = document.getElementById(dataId);
     const etcHostFile = $networkObject.getAttribute("data-etc-hosts");
@@ -18,6 +19,7 @@ function isDomainInEtcHosts(dataId, domain) {
     return false;
 }
 
+/**ESTA FUNCION DEVUELVE FALSO O VERDADERO SI EL REGISTRO SOA YA EXISTE EN EL SERVIDOR*/
 function isSOA(dataId, targetDomain) {
 
     const $networkObject = document.getElementById(dataId);
@@ -46,6 +48,7 @@ function isSOA(dataId, targetDomain) {
 
 }
 
+/**ESTA FUNCION AÑADE UN REGISTRO DNS A LA BASE DE DATOS DE UN SERVIDOR DNS*/
 function addDnsEntry(serverObjectId, newrecord) {
 
     const $serverObject = document.getElementById(serverObjectId);
@@ -62,6 +65,7 @@ function addDnsEntry(serverObjectId, newrecord) {
 
 }
 
+/**ESTA FUNCION ELIMINA UN REGISTRO DNS DE UN SERVIDOR*/
 function delDnsEntry(dataId, targetDomain) {
     const $serverObject = document.getElementById(dataId);
     const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
@@ -87,6 +91,7 @@ function delDnsEntry(dataId, targetDomain) {
 
 }
 
+/**ESTA FUNCION GENERA UNA RESPUESTA DNS DE UN PAQUETE EN LA CONSOLA*/
 function generateDnsOuput(packet, networkObjectId) {
 
     //campos del paquete
@@ -140,7 +145,8 @@ function generateDnsOuput(packet, networkObjectId) {
     terminalMessage("<p>MSG SIZE  rcvd: 87</p>", networkObjectId);
 }
 
-function isDomainInCachePc(networkObjectId, targetDomain) {
+/**ESTA FUNCION DEVUELVE [TIPO, VALOR, SERVIDOR QUE DIO LA RESPUESTA] DE UN DOMINIO EN CACHE DNS*/
+function isDomainInCacheDns(networkObjectId, targetDomain) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const dnsTable = $networkObject.querySelector(".cache-dns-table").querySelector("table");
@@ -165,7 +171,7 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
             if (type === "A" || type === "PTR") return [type, value, server];
 
             if (type === "CNAME") {
-                let [translationType, translation] = isDomainInCachePc(networkObjectId, value);
+                let [translationType, translation] = isDomainInCacheDns(networkObjectId, value);
                 return [translationType, translation, server];
             }
 
@@ -179,32 +185,30 @@ function isDomainInCachePc(networkObjectId, targetDomain) {
 
 }
 
+/**ESTA FUNCIÓN AÑADE UN REGISTRO A LA CACHE DNS*/
 function addDnsCacheEntry(networkObjectId, query, answer_type, answer, server) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const dnsTable = $networkObject.querySelector(".cache-dns-table").querySelector("table");
     const newRow = document.createElement("tr");
-    if (!query.endsWith(".")) query = query + "."; //los nombres se guardan como FQDN
 
-    if (typeof answer !== 'string') {
-        let i = 0;
-        while (i < answer.length && !isValidIp(answer[i])) {
-            i++;
-        }
-        answer = answer[i];
-    }
+    if (!query.endsWith(".")) query = query + "."; //<-- los nombres se guardan como FQDN
+
+    if (typeof answer !== 'string') answer = answer[0]; //<-- si tenemos un array de ips, nos quedamos con la primera ip
 
     newRow.innerHTML = `
-        <tr>
-            <td>${query}</td>
-            <td>${answer_type}</td>
-            <td>${answer}</td>
-        </tr>`;
-    newRow.setAttribute("data-server", server);
+        <td>${query}</td>
+        <td>${answer_type}</td>
+        <td>${answer}</td>
+    `;
+
+    newRow.setAttribute("data-server", server); //<-- se añade el servidor al que se hizo la consulta
+    
     dnsTable.appendChild(newRow);
 
 }
 
+/**ESTA FUNCION VALIDA UN REGISTRO SOA Y LO AÑADE A UN SERVIDOR*/
 function dns_SOA(dataId, args) {
 
     if (args.length !== 6) {
@@ -242,6 +246,7 @@ function dns_SOA(dataId, args) {
 
 }
 
+/**ESTA FUNCION VALIDA UN REGISTRO NS Y LO AÑADE A UN SERVIDOR*/
 function dns_NS(dataId, args) {
 
     if (args.length !== 6) {
@@ -274,6 +279,7 @@ function dns_NS(dataId, args) {
 
 }
 
+/**ESTA FUNCION VALIDA UN REGISTRO A Y LO AÑADE A UN SERVIDOR*/
 function dns_A(dataId, args) {
 
     if (args.length !== 6) {
@@ -300,6 +306,7 @@ function dns_A(dataId, args) {
     addDnsEntry(dataId, record);
 }
 
+/**ESTA FUNCION VALIDA UN REGISTRO CNAME Y LO AÑADE A UN SERVIDOR*/
 function dns_CNAME(dataId, args) {
 
     if (args.length !== 6) {
@@ -312,6 +319,7 @@ function dns_CNAME(dataId, args) {
 
 }
 
+/**ESTA FUNCION PROCESA UN PAQUETE DE SOLICITUD DE REGISTRO SOA*/
 function dns_SOA_Request_Proc(serverObjectId, packet) {
 
     const $serverObject = document.getElementById(serverObjectId);
@@ -342,6 +350,7 @@ function dns_SOA_Request_Proc(serverObjectId, packet) {
     return response;
 }
 
+/**ESTA FUNCION PROCESA UN PAQUETE DE SOLICITUD DE REGISTRO A*/
 function dns_A_Request_Proc(serverObjectId, packet) {
 
     const $serverObject = document.getElementById(serverObjectId);

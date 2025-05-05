@@ -165,7 +165,7 @@ function saveDnsServerMenu(event) {
             return;
         }
 
-        if (!isValidIp(gateway)) {
+        if (gateway !== "" && !isValidIp(gateway)) {
             bodyComponent.render(popupMessage(`<span>Error: </span>El puerta de enlace "${gateway}" no es válida.`));
             return;
         }

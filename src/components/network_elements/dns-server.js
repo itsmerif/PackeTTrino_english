@@ -14,7 +14,7 @@ function DnsServerObject(x, y) {
         IconObject("dns.svg"),
         arpTable(),
         routingTable(),
-        advancedOptionsObject("terminal", "arp", "firewall", "delete")
+        advancedOptionsObject("terminal", "delete")
     );
 
     attr("ip-enp0s3", "");
