@@ -4,11 +4,11 @@ function GeneralOptions() {
     const btnStyle = "btn-modern-blue";
     const inputStyle = "btn-toggle";
 
-    $generalOptions.classList.add("settings-modal", "modal");
+    $generalOptions.classList.add("settings-modal", "modal", "draggable-modal");
 
     $generalOptions.innerHTML = `
 
-        <h1> Opciones Avanzadas </h1>
+        <div class="window-frame"> <h1> Opciones Generales </h1> </div>
 
         <div class="options-group">
             <label for="visual-toggle"> Modo Visual</label>
@@ -32,6 +32,7 @@ function GeneralOptions() {
     $generalOptions.querySelector("#visual-toggle").addEventListener("change", function () { visualToggle = this.checked; });
     $generalOptions.querySelector("#dark-mode").addEventListener("change", activateDarkMode);
     $generalOptions.querySelector(`.${btnStyle}`).addEventListener("click", generalOptionsHandler);
+    $generalOptions.querySelector(".window-frame").addEventListener("mousedown", dragModal);
 
     return $generalOptions;
 
