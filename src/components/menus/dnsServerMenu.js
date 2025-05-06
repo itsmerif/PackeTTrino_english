@@ -106,6 +106,7 @@ function dns_server_menu() {
 
 }
 
+/**ESTA FUNCION CREA MUESTRA EL MENU DE CONFIGURACION DE UN SERVIDOR DNS, RELLENANDO LOS CAMPOS CORRESPONDIENTES*/
 function showDnsServerMenu(event) {
 
     event.stopPropagation();
@@ -113,7 +114,7 @@ function showDnsServerMenu(event) {
 
     const $serverObject = event.target.closest(".item-dropped");
 
-    if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
+    if (icmpTryoutToggle) { //<-- comprobamos si estamos en modo icmptryout
         icmpTryoutProcess($serverObject.id);
         return;
     }
@@ -121,9 +122,10 @@ function showDnsServerMenu(event) {
     const $menu = document.querySelector(".dns-form");
     const isDnsServer = $serverObject.id.startsWith("dns-server-");
     const isRecursive = $serverObject.getAttribute("recursion");
+    const isCache = $serverObject.getAttribute("resolved");
+    const isSecondary = $serverObject.getAttribute("dns-slave");
     
     //<-- seccion basica de red (solo para servidores dns nativos)
-
     if (isDnsServer) {
         $menu.querySelector("#ip-dns").value = $serverObject.getAttribute("ip-enp0s3");
         $menu.querySelector("#netmask-dns").value = $serverObject.getAttribute("netmask-enp0s3");
@@ -133,6 +135,8 @@ function showDnsServerMenu(event) {
 
     //<-- seccion de dns
     $menu.querySelector("#dns-recursive").checked = isRecursive === "true";
+    $menu.querySelector("#dns-cache").checked = isCache === "true";
+    $menu.querySelector("#dns-secondary").checked = isSecondary === "true";
 
     //<-- seccion de registros
     $menu.querySelector("#records-table").innerHTML = $serverObject.querySelector(".dns-table").querySelector("table").innerHTML;
@@ -140,7 +144,7 @@ function showDnsServerMenu(event) {
     document.getElementById("form-dns-item-id").innerHTML = $serverObject.id;
     $menu.style.display = "flex";
 }
-
+/**ESTA FUNCION ACTUALIZA LA INFORMACION DE UN SERVIDOR DNS*/
 function saveDnsServerMenu(event) {
 
     event.preventDefault();
@@ -149,18 +153,21 @@ function saveDnsServerMenu(event) {
     const $menu = document.querySelector(".dns-form");
     const $serverObject = document.getElementById($menu.querySelector("#form-dns-item-id").innerHTML);
     const isRecursive = $menu.querySelector("#dns-recursive").checked;
+    const isCache = $menu.querySelector("#dns-cache").checked;
+    const isSecondary = $menu.querySelector("#dns-secondary").checked;
 
-    if ($serverObject.id.startsWith("dns-server")) {
+    if ($serverObject.id.startsWith("dns-server")) { //<-- solo para servidores dns nativos
+
         const ip = $menu.querySelector("#ip-dns").value;
         const netmask = $menu.querySelector("#netmask-dns").value;
         const gateway = $menu.querySelector("#gateway-dns").value;
 
-        if (!isValidIp(ip)) {
+        if (ip !== "" && !isValidIp(ip)) {
             bodyComponent.render(popupMessage(`<span>Error: </span>La IP "${ip}" no es válida.`));
             return;
         }
 
-        if (!isValidIp(netmask)) {
+        if (netmask !== "" && !isValidIp(netmask)) {
             bodyComponent.render(popupMessage(`<span>Error: </span>La máscara de red "${netmask}" no es válida.`));
             return;
         }
@@ -177,11 +184,14 @@ function saveDnsServerMenu(event) {
     }
 
     $serverObject.setAttribute("recursion", isRecursive);
+    $serverObject.setAttribute("resolved", isCache);
+    $serverObject.setAttribute("dns-slave", isSecondary);
 
     bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
 
 }
 
+/**ESTA FUNCION CIERRA EL MENU DE CONFIGURACION DE UN SERVIDOR DNS*/
 function closeDnsMenu(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -191,6 +201,7 @@ function closeDnsMenu(event) {
     $menu.style.display = "none";
 }
 
+/**ESTA FUNCION MUESTRA LA SECCION DE REGISTROS DE UN SERVIDOR DNS*/
 function showDnsGraphicTab(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -205,19 +216,43 @@ function showDnsGraphicTab(event) {
     $targetSection.classList.remove("hidden");
 }
 
+/**ESTA FUNCION GESTIONA EL AÑADIR UN REGISTRO*/
 function addDnsRecordHandler(event) {
+
     event.stopPropagation();
     event.preventDefault();
+
     const $menu = document.querySelector(".dns-form");
     const serverObjectId = document.getElementById("form-dns-item-id").innerHTML;
     const $serverObject = document.getElementById(serverObjectId);
+    
     const domain = $menu.querySelector("#domain").value;
-    const type = $menu.querySelector("#type").value;
+    const recordType = $menu.querySelector("#type").value;
     const value = $menu.querySelector("#value").value;
-    command_dns(serverObjectId, ["dns", "add", "-t", type, domain, value]);
-    $menu.querySelector("#records-table").innerHTML = $serverObject.querySelector(".dns-table").querySelector("table").innerHTML;
+
+    const dnsRecordTypes = { //<-- mapeo de los tipos de registros a las funciones de validacion
+        "SOA": () => isValidSOARecord(serverObjectId, domain, value),
+        "NS": () => isValidNSRecord(serverObjectId, domain, value),
+        "A": () => isValidARecord(serverObjectId, domain, value),
+        "CNAME": () => isValidCNAMERecord(serverObjectId, domain, value)
+    }
+
+    try {
+
+        dnsRecordTypes[recordType.toUpperCase()](); //<-- validamos el registro
+        let record = new dnsRecord(domain, recordType, value);
+        addDnsEntry(serverObjectId, record);
+        $menu.querySelector("#records-table").innerHTML = $serverObject.querySelector(".dns-table").querySelector("table").innerHTML;
+
+    } catch (error) {
+
+        bodyComponent.render(popupMessage(error.message));
+
+    }
+
 }
 
+/**ESTA FUNCION GESTIONA EL ELIMINAR UN REGISTRO*/
 function removeDnsRecordHandler(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -225,6 +260,7 @@ function removeDnsRecordHandler(event) {
     const serverObjectId = document.getElementById("form-dns-item-id").innerHTML;
     const $serverObject = document.getElementById(serverObjectId);
     const domain = $menu.querySelector("#domain").value;
-    command_dns(serverObjectId, ["dns", "del", domain]);
+    const recordType = $menu.querySelector("#type").value;
+    delDnsEntry(serverObjectId, recordType, domain);
     $menu.querySelector("#records-table").innerHTML = $serverObject.querySelector(".dns-table").querySelector("table").innerHTML;
 }

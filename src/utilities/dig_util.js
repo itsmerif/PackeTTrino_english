@@ -1,4 +1,4 @@
-async function command_dig(dataId, args) {
+async function command_dig(networkObjectId, args) {
 
     let opt_x = false;
     let opt_t = false;
@@ -6,58 +6,68 @@ async function command_dig(dataId, args) {
     let domain;
     let dnsServer = "";
     let query_type = "A";
-    const validTypes = ["A", "SOA", "PTR", "NS", "AAAA", "MX"];
+    const validRecordTypes = ["A", "SOA", "PTR", "NS", "AAAA", "MX"];
 
     let $OPTS = catchopts(["-x", "-t:", "@:"], args);
 
-    for (option in $OPTS) {
-        switch (option) {
-            case "-x":
-                opt_x = true;
-                query_type = "PTR";
-                break;
-            case "-t":
-                opt_t = true;
-                query_type = $OPTS["-t"];
-                break;
-            case "@":
-                opt_server = true;
-                dnsServer = $OPTS["@"];
-                break;
-        }
+    const optionsHandler = {
+        "-x": () => { opt_x = true; query_type = "PTR"; },
+        "-t": () => { opt_t = true; query_type = $OPTS["-t"]; },
+        "@": () => { opt_server = true; dnsServer = $OPTS["@"]; }
     }
 
-    args = args.slice($OPTS['IND'] + 1)
+    for (option in $OPTS) if (optionsHandler[option]) optionsHandler[option]();
+
+    args = args.slice($OPTS['IND'] + 1) //<-- saltamos a los argumentos que no son opciones
 
     if (args.length === 0) {
-        terminalMessage("Error: falta el argumento dominio o ip.", dataId);
+        terminalMessage("Error: falta el argumento dominio o ip.", networkObjectId);
         return;
     }
 
-    domain = args[0];
+    domain = args[0]; //<-- el primer argumento es el dominio
 
-    if (opt_t && !validTypes.includes(query_type)) {
-        terminalMessage("Error: tipo de registro desconocido.", dataId);
+    if (opt_t && !validRecordTypes.includes(query_type)) { //<-- si se especifica el tipo de consulta, se comprueba que sea un tipo válido
+        terminalMessage("Error: tipo de registro desconocido.", networkObjectId);
         return;
     }
 
-    if (!opt_x && !isValidDomain(domain)) {
-        terminalMessage("Error: el dominio no es válido.", dataId);
+    if (!opt_x && !isValidDomain(domain)) { //<-- si no se especifica el tipo de consulta, se asume que debe ser un dominio válido
+        terminalMessage("Error: el dominio no es válido.", networkObjectId);
         return;
     }
 
-    if (opt_x && !isValidIp(domain)) {
-        terminalMessage("Error: ip no válida para la consulta inversa.", dataId);
+    if (opt_x && !isValidIp(domain)) { //<-- si se especifica el tipo de consulta como PTR, se comprueba que sea una ip válida
+        terminalMessage("Error: ip no válida para la consulta inversa.", networkObjectId);
         return;
     }
 
-    if (opt_server && !isValidIp(dnsServer)) {
-        terminalMessage("Error: ip del servidor no válida.", dataId);
+    if (opt_server && !isValidIp(dnsServer)) { //<-- si se especifica un servidor dns, se comprueba que sea una ip válida
+        terminalMessage("Error: ip del servidor no válida.", networkObjectId);
         return;
     }
 
-    cleanPacketTraffic();
     if (visualToggle) await minimizeTerminal();
-    await dig(dataId, domain, query_type, dnsServer);
+
+    try {
+
+        await getDomainFromServer(
+            networkObjectId,
+            domain, //dominio
+            true, // verbose
+            dnsServer, //ip del servidor
+            query_type, //tipo de registro
+            true, //eliminar despues de usar
+            false //no generar cache
+        );
+
+
+    } catch (error) {
+
+        terminalMessage(error.message, networkObjectId, );
+        
+    }
+
     if (visualToggle) await maximizeTerminal();
+
 }

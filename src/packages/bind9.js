@@ -14,7 +14,7 @@ function installBind9(networkObjectId) {
     attr("named", "true");
     attr("recursion", "false"); //<-- recursión
     attr("dns-slave", "false"); //<-- DNS Slave
-    attr("resolved", "true"); //<-- cache DNS
+    attr("resolved", "false"); //<-- cache DNS
     addOption(dnsRecordsOptionButton(), dnsServerConfig(), cacheDnsOptionButton());
     terminalMessage("Bind instalado correctamente.", networkObjectId);
 }

@@ -6,6 +6,98 @@ class dnsRecord {
     }
 }
 
+/**ESTA FUNCION DEVUELVE FALSO O VERDADERO SI EL REGISTRO SOA DE UN DOMINIO YA EXISTE EN EL SERVIDOR*/
+function hasSoaRecord(serverObjectId, targetDomain) {
+
+    const $networkObject = document.getElementById(serverObjectId);
+    const $dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
+    const $soaRecords = $dnsTable.querySelectorAll(".SOA");
+    let found = false;
+
+    $soaRecords.forEach($record => {
+        const $fields = $record.querySelectorAll("td");
+        const domain = $fields[0].innerHTML;
+        if (domain === targetDomain) found = true;
+    });
+
+    return found;
+
+}
+
+/**ESTA FUNCION DEVUELVE FALSO O VERDADERO SI UN SERVIDOR TIENE UN REGISTRO DE TIPO NS PARA UN DOMINIO*/
+function hasNsRecord(serverObjectId, targetDomain) {
+    const $networkObject = document.getElementById(serverObjectId);
+    const $dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
+    const $nsRecords = $dnsTable.querySelectorAll(".NS");
+    let found = false;
+
+    $nsRecords.forEach($record => {
+        const $fields = $record.querySelectorAll("td");
+        const domain = $fields[0].innerHTML;
+        if (domain === targetDomain) found = true;
+    });
+
+    return found;
+}
+
+/**ESTA FUNCION DEVUELVE EL VALOR DE UN REGISTRO DE TIPO A*/
+function getARecord(dataId, name) {
+    const $networkObject = document.getElementById(dataId);
+    const $dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
+    const $aRecords = $dnsTable.querySelectorAll(".A");
+    let response = false;
+
+    $aRecords.forEach($record => {
+        const $fields = $record.querySelectorAll("td");
+        const domainName = $fields[0].innerHTML
+        const value = $fields[2].innerHTML;
+        if (domainName === name) response = value;
+    });
+
+    return response;
+}
+
+/**ESTA FUNCION VALIDA UN REGISTRO SOA */
+function isValidSOARecord(dataId, domain, authorityNameServer) {
+    if (!isValidDomain(domain)) throw new Error(`Error: dominio ${domain} inválido`);
+    if (!domain.endsWith(".")) throw new Error(`Error: el dominio ${domain} debe ser un FQDN`);
+    if (!isValidDomain(authorityNameServer)) throw new Error(`Error: servidor autoritario ${authorityNameServer} inválido`);
+    if (!authorityNameServer.endsWith(".")) throw new Error(`Error: el servidor autoritario ${authorityNameServer} debe ser un FQDN`);
+    if (hasSoaRecord(dataId, domain)) throw new Error(`Error: Ya existe un registro de SOA para ${domain}.`);
+}
+
+/**ESTA FUNCION VALIDA UN REGISTRO NS */
+function isValidNSRecord(dataId, domain, authorityNameServer) {
+    if (!hasSoaRecord(dataId, domain)) throw new Error(`Error: El dominio ${domain} debe tener primero un registro SOA.`);
+    if (!isValidDomain(domain)) throw new Error("Error: Dominio Invalido");
+    if (!domain.endsWith(".")) throw new Error("Error: Dominio Debe Ser UN FQDN");
+    if (!isValidDomain(authorityNameServer)) throw new Error("Error: Autoridad Invalida");
+    if (!authorityNameServer.endsWith(".")) throw new Error("Error: Autoridad Debe Ser UN FQDN");
+}
+
+/**ESTA FUNCION VALIDA UN REGISTRO A */
+function isValidARecord(serverObjectId, name, value) {
+    if (!isValidDomain(name)) throw new Error(`Error: Nombre ${name} Invalido`);
+    let domain = name.split(".").slice(1).join("."); //<-- extraemos el dominio del nombre
+    if (!hasSoaRecord(serverObjectId, domain)) throw new Error(`Error: El dominio ${domain} debe tener primero un registro SOA.`);
+    if (!hasNsRecord(serverObjectId, domain)) throw new Error(`Error: El dominio ${domain} debe tener primero un registro NS.`);
+    if (!name.endsWith(".")) throw new Error(`Error: El nombre ${name} debe ser un FQDN`);
+    if (!isValidIp(value)) throw new Error(`Error: IP ${value} Invalida`);
+}
+
+/**ESTA FUNCION VALIDA UN REGISTRO CNAME */
+function isValidCNAMERecord(serverObjectId, alias, name) {
+    if (!isValidDomain(alias)) throw new Error(`Error: Dominio ${alias} inválido`);
+    if (!alias.endsWith(".")) throw new Error(`Error: el dominio ${alias} debe ser un FQDN`);
+    if (!isValidDomain(name)) throw new Error(`Error: Dominio ${name} inválido`);
+    if (!name.endsWith(".")) throw new Error(`Error: el dominio ${name} debe ser un FQDN`);
+    if (!getARecord(serverObjectId, name)) throw new Error(`Error: El dominio ${name} debe tener primero un registro A.`);
+}
+
+/**ESTA FUNCION VALIDA UN REGISTRO PTR */
+function isValidPTRRecord(dataId, domain, value) {
+
+}
 /**ESTA FUNCIONA DEVUELVE LA IP DE UN NOMBRE DE DOMINIO QUE ESTÉ ALMACENADO EN /ETC/HOSTS, O DEVUELVE FALSO SI NO EXISTE */
 function isDomainInEtcHosts(dataId, domain) {
     const $networkObject = document.getElementById(dataId);
@@ -19,35 +111,6 @@ function isDomainInEtcHosts(dataId, domain) {
     return false;
 }
 
-/**ESTA FUNCION DEVUELVE FALSO O VERDADERO SI EL REGISTRO SOA YA EXISTE EN EL SERVIDOR*/
-function isSOA(dataId, targetDomain) {
-
-    const $networkObject = document.getElementById(dataId);
-    const dnsTable = $networkObject.querySelector(".dns-table").querySelector("table");
-    const records = dnsTable.querySelectorAll("tr");
-
-    let i = 1;
-
-    while (i < records.length) {
-
-        let row = records[i];
-        let cells = row.querySelectorAll("td");
-        let domain = cells[0].innerHTML;
-        let type = cells[1].innerHTML;
-        let value = cells[2].innerHTML;
-
-        if (domain === targetDomain && type === "SOA") {
-            return true;
-        }
-
-        i++;
-
-    }
-
-    return false;
-
-}
-
 /**ESTA FUNCION AÑADE UN REGISTRO DNS A LA BASE DE DATOS DE UN SERVIDOR DNS*/
 function addDnsEntry(serverObjectId, newrecord) {
 
@@ -56,38 +119,42 @@ function addDnsEntry(serverObjectId, newrecord) {
     const newRow = document.createElement("tr");
 
     newRow.innerHTML = `
-        <tr>
-            <td>${newrecord.domain}</td>
-            <td>${(newrecord.type).toUpperCase()}</td>
-            <td>${newrecord.value}</td>
-        </tr>`;
+        <td>${newrecord.domain}</td>
+        <td>${(newrecord.type).toUpperCase()}</td>
+        <td>${newrecord.value}</td>
+    `;
+    
+    newRow.classList.add(newrecord.type.toUpperCase()); //<-- añadimos el tipo de registro a la fila
     dnsTable.appendChild(newRow);
+
+    if (newrecord.type === "A") { //<-- si se trata de un registro de tipo A, se genera automaticamente un registro PTR
+        const ptrRecord = document.createElement("tr");
+        ptrRecord.innerHTML = `
+            <td>${(newrecord.value).split(".").reverse().join(".") + ".IN-ADDR.ARPA."}</td>
+            <td>PTR</td>
+            <td>${newrecord.domain}</td>
+        `;
+        ptrRecord.classList.add("PTR");
+        dnsTable.appendChild(ptrRecord);
+    }
 
 }
 
 /**ESTA FUNCION ELIMINA UN REGISTRO DNS DE UN SERVIDOR*/
-function delDnsEntry(dataId, targetDomain) {
-    const $serverObject = document.getElementById(dataId);
+function delDnsEntry(serverObjectId, recordType, targetDomain) {
+
+    const $serverObject = document.getElementById(serverObjectId);
     const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
-    const $records = $dnsTable.querySelectorAll("tr");
-    let i = 1;
-    let found = false;
 
-    while ( i < $records.length && !found ) {
+    if (recordType.toUpperCase() === "SOA") dropDnsZone(serverObjectId, targetDomain);
 
-        let $record = $records[i];
+    const $records = $dnsTable.querySelectorAll(`.${recordType.toUpperCase()}`);
 
-        let $fields = $record.querySelectorAll("td");
-
-        let domain = $fields[0].innerHTML;
-
-        if (domain === targetDomain) {
-            $record.remove();
-            found = true;
-        }
-
-        i++;
-    }
+    $records.forEach($record => {
+        const $fields = $record.querySelectorAll("td");
+        const domain = $fields[0].innerHTML;
+        if (domain === targetDomain) $record.remove();
+    });
 
 }
 
@@ -186,20 +253,20 @@ function isDomainInCacheDns(networkObjectId, targetDomain) {
 }
 
 /**ESTA FUNCIÓN AÑADE UN REGISTRO A LA CACHE DNS*/
-function addDnsCacheEntry(networkObjectId, query, answer_type, answer, server) {
+function addDnsCacheEntry(networkObjectId, domain, recordType, value, server) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const dnsTable = $networkObject.querySelector(".cache-dns-table").querySelector("table");
     const newRow = document.createElement("tr");
 
-    if (!query.endsWith(".")) query = query + "."; //<-- los nombres se guardan como FQDN
+    if (!domain.endsWith(".")) domain = domain + "."; //<-- los nombres se guardan como FQDN
 
-    if (typeof answer !== 'string') answer = answer[0]; //<-- si tenemos un array de ips, nos quedamos con la primera ip
+    if (typeof value !== 'string') value = value[0]; //<-- si tenemos un array de ips, nos quedamos con la primera ip
 
     newRow.innerHTML = `
-        <td>${query}</td>
-        <td>${answer_type}</td>
-        <td>${answer}</td>
+        <td>${domain}</td>
+        <td>${recordType}</td>
+        <td>${value}</td>
     `;
 
     newRow.setAttribute("data-server", server); //<-- se añade el servidor al que se hizo la consulta
@@ -208,173 +275,39 @@ function addDnsCacheEntry(networkObjectId, query, answer_type, answer, server) {
 
 }
 
-/**ESTA FUNCION VALIDA UN REGISTRO SOA Y LO AÑADE A UN SERVIDOR*/
-function dns_SOA(dataId, args) {
-
-    if (args.length !== 6) {
-        terminalMessage("Error: Sintaxis: dns add -t SOA &lt;domain&gt; &lt;ns&gt; </p>", dataId);
-        return;
-    }
-
-    if (!isValidDomain(args[4])) {
-        terminalMessage("Error: Dominio Invalido", dataId);
-        return;
-    }
-
-    if (!args[4].endsWith(".")) {
-        terminalMessage("Error: Dominio Debe Ser UN FQDN", dataId);
-        return;
-    }
-
-    if (!isValidDomain(args[5])) {
-        terminalMessage("Error: Autoridad Invalida", dataId);
-        return;
-    }
-
-    if (!args[5].endsWith(".")) {
-        terminalMessage("Error: Autoridad Debe Ser UN FQDN", dataId);
-        return;
-    }
-
-    if (isSOA(dataId, args[4])) {
-        terminalMessage("Error: Ya existe un registro de SOA para este dominio.", dataId);
-        return;
-    }
-
-    let record = new dnsRecord(args[4], "SOA", args[5]);
-    addDnsEntry(dataId, record);
-
-}
-
-/**ESTA FUNCION VALIDA UN REGISTRO NS Y LO AÑADE A UN SERVIDOR*/
-function dns_NS(dataId, args) {
-
-    if (args.length !== 6) {
-        terminalMessage("Error: Sintaxis: dns add -t NS &lt;domain&gt; &lt;authority&gt; </p>", dataId);
-        return;
-    }
-
-    if (!isValidDomain(args[4])) {
-        terminalMessage("Error: Dominio Invalido", dataId);
-        return;
-    }
-
-    if (!args[4].endsWith(".")) {
-        terminalMessage("Error: Dominio Debe Ser UN FQDN", dataId);
-        return;
-    }
-
-    if (!isValidDomain(args[5])) {
-        terminalMessage("Error: Autoridad Invalida", dataId);
-        return;
-    }
-
-    if (!args[5].endsWith(".")) {
-        terminalMessage("Error: Autoridad Debe Ser UN FQDN", dataId);
-        return;
-    }
-
-    let record = new dnsRecord(args[4], "NS", args[5]);
-    addDnsEntry(dataId, record);
-
-}
-
-/**ESTA FUNCION VALIDA UN REGISTRO A Y LO AÑADE A UN SERVIDOR*/
-function dns_A(dataId, args) {
-
-    if (args.length !== 6) {
-        terminalMessage("Error: Sintaxis: dns add -t A &lt;domain&gt; &lt;ip&gt; </p>", dataId);
-        return;
-    }
-
-    if (!isValidDomain(args[4])) {
-        terminalMessage("Error: Dominio Invalido", dataId);
-        return;
-    }
-
-    if (!args[4].endsWith(".")) {
-        terminalMessage("Error: Dominio Debe Ser UN FQDN", dataId);
-        return;
-    }
-    
-    if (!isValidIp(args[5])) {
-        terminalMessage("Error: IP Invalida", dataId);
-        return;
-    }
-
-    let record = new dnsRecord(args[4], "A", args[5]);
-    addDnsEntry(dataId, record);
-}
-
-/**ESTA FUNCION VALIDA UN REGISTRO CNAME Y LO AÑADE A UN SERVIDOR*/
-function dns_CNAME(dataId, args) {
-
-    if (args.length !== 6) {
-        terminalMessage("Error: Sintaxis: dns add -t CNAME &lt;domain&gt; &lt;alias&gt; </p>", dataId);
-        return;
-    }
-
-    let record = new dnsRecord(args[4], "CNAME", args[5]);
-    addDnsEntry(dataId, record);
-
-}
-
-/**ESTA FUNCION PROCESA UN PAQUETE DE SOLICITUD DE REGISTRO SOA*/
-function dns_SOA_Request_Proc(serverObjectId, packet) {
+/**ESTA FUNCION DEVUELVE EL VALOR DE UN REGISTRO DE TIPO A EN UN SERVIDOR DNS*/
+function iterativeDnsQuery(serverObjectId, targetDomain) {
 
     const $serverObject = document.getElementById(serverObjectId);
-    const dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
-    const records = dnsTable.querySelectorAll("tr");
-    let recordIndex;
-    let query = packet.query;
-    let targetDomain;
-    let response = [false, false];
-
-    if (!query.endsWith(".")) query = query + "."; 
-    query = query.split(".");
-
-    for (let i = 0; i < query.length; i++) {
-        targetDomain = query.slice(i).join(".");
-        recordIndex = 1;
-        while (recordIndex < records.length && !response[0]) {
-            let row = records[recordIndex];
-            let cells = row.querySelectorAll("td");
-            let domain = cells[0].innerHTML;
-            let type = cells[1].innerHTML;
-            let value = cells[2].innerHTML;
-            if (targetDomain === domain && type === "SOA") response = [targetDomain, value];
-            recordIndex++;
-        }
-    }
-
-    return response;
-}
-
-/**ESTA FUNCION PROCESA UN PAQUETE DE SOLICITUD DE REGISTRO A*/
-function dns_A_Request_Proc(serverObjectId, packet) {
-
-    const $serverObject = document.getElementById(serverObjectId);
-    const dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
-    const records = dnsTable.querySelectorAll("tr");
+    const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
+    const $records = $dnsTable.querySelectorAll("tr");
     let response = false;
-    let recordIndex;
-    let query = packet.query;
 
-    if (!query.endsWith(".")) query = query + ".";
-
-    recordIndex = 1;
-
-    while (recordIndex < records.length && !response) {
-        let row = records[recordIndex];
-        let cells = row.querySelectorAll("td");
-        let domain = cells[0].innerHTML;
-        let type = cells[1].innerHTML;
-        let value = cells[2].innerHTML;
-        if (domain === query && type === "CNAME") query = value;
-        if (domain === query && type === "A") response = value;
-        recordIndex++;
-    }
-
+    $records.forEach($record => {       
+        const $fields = $record.querySelectorAll("td");       
+        if ($fields.length === 0) return;    
+        const domain = $fields[0].innerHTML;
+        const recordType = $fields[1].innerHTML;
+        const value = $fields[2].innerHTML;
+        if (domain === targetDomain && (recordType === "A" || recordType === "PTR")) response = value;
+        if (domain === targetDomain && recordType === "CNAME") response = iterativeDnsQuery(serverObjectId, value); //<-- si es un CNAME, se busca en el dominio que apunta
+    });
+    
     return response;
+}
+
+/**ESTA FUNCION ELIMINA TODOS LOS REGISTROS DE UN DOMINIO*/
+function dropDnsZone(serverObjectId, domain) {
+
+    const $serverObject = document.getElementById(serverObjectId);
+    const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");  
+    const $dnsRecords = $dnsTable.querySelectorAll("tr");
+
+    $dnsRecords.forEach($record => {
+        const $fields = $record.querySelectorAll("td");
+        if ($fields.length === 0) return;
+        const name = $fields[0].innerHTML;
+        if (name === domain || name.endsWith(`.${domain}`)) $record.remove();
+    });
 
 }

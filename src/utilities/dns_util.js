@@ -30,41 +30,66 @@ function command_dns(networkObjectId, args) {
 
     if (args[1] === "add") {
 
-        if (args[2] !== "-t"){  //dns add &lt;domain&gt; &lt;ip&gt;
-            let record = new dnsRecord(args[2], "A", args[3]);
+        if (args[2] !== "-t"){ //<-- si no se especifica el tipo de registro, se asume que es A
+            const domain = args[2];
+            const value = args[3];
+            let record = new dnsRecord(domain, "A", value);
             addDnsEntry(networkObjectId, record);
             terminalMessage("Se ha añadido correctamente el registro DNS.", networkObjectId);
             return;
         }
 
-        if (args[2] === "-t") {
+        if (args[2] === "-t") { //<-- si se especifica el tipo de registro, se valida primero
             
-            let type = args[3] || "none";
-            type = type.toUpperCase();
+            let recordType = args[3] || "none";
+            let domain = args[4];
+            let value = args[5];
 
             const dnsRecordTypes = {
-                "SOA": () => dns_SOA(networkObjectId, args),
-                "NS": () => dns_NS(networkObjectId, args),
-                "A": () => dns_A(networkObjectId, args),
-                "CNAME": () => dns_CNAME(networkObjectId, args),
-                "PTR": () => dns_PTR(networkObjectId, args)
+                "SOA": () => isValidSOARecord(networkObjectId, domain, value),
+                "NS": () => isValidNSRecord(networkObjectId, domain, value),
+                "A": () => isValidARecord(networkObjectId, domain, value),
+                "CNAME": () => isValidCNAMERecord(networkObjectId, domain, value),
+                "PTR": () => isValidPTRRecord(networkObjectId, domain, value)
             }
 
-            if (type in dnsRecordTypes) {
-                dnsRecordTypes[type]();
-                terminalMessage("Se ha añadido correctamente el registro DNS.", networkObjectId);
-                return;
+            if (recordType.toUpperCase() in dnsRecordTypes) { //<-- si el tipo de registro existe
+
+                try {
+
+                    dnsRecordTypes[recordType.toUpperCase()](); //<-- validamos el registro
+
+                    let record = new dnsRecord(
+                        domain, 
+                        recordType, 
+                        value
+                    );
+
+                    addDnsEntry(networkObjectId, record);
+                    terminalMessage(`Se ha añadido correctamente el registro ${recordType.toUpperCase()}.`, networkObjectId);
+
+                } catch (error) {
+
+                    terminalMessage(error.message, networkObjectId);
+
+                }
+
+            }else {
+
+                terminalMessage("Error: Tipo de Registro Desconocido.", networkObjectId);
+                terminalMessage("Error: Sintaxis: dns add -t &lt;tipo&gt; &lt;dominio&gt; &lt;valor&gt;", networkObjectId);
+
             }
             
-            terminalMessage("Error: Tipo de Registro Desconocido.", networkObjectId);
-
         }
 
         return;
     }
     
-    if (args[1] === "del") {       
-        delDnsEntry(networkObjectId, args[2]);
+    if (args[1] === "del") { //<-- dns del <tipo> <dominio>
+        let recordType= args[2];
+        let domain = args[3];
+        delDnsEntry(networkObjectId, recordType, domain);
         terminalMessage("Se ha eliminado correctamente el registro DNS.", networkObjectId);
         return;
     }

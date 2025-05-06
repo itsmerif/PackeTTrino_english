@@ -1,26 +1,3 @@
-async function dig(networkObjectId, domain, query_type, dnsServer) {
-
-    try {
-
-        await getDomainFromServer(
-            networkObjectId, //id del objeto
-            domain, //dominio
-            true, // verbose
-            dnsServer, //ip del servidor
-            query_type, //tipo de registro
-            true, //eliminar despues de usar
-            false //no generar cache
-        );
-
-
-    } catch (error) {
-
-        terminalMessage(error.message, networkObjectId, );
-        
-    }
-
-}
-
 async function domainNameResolution(networkObjectId, domain) {
 
     const $networkObject = document.getElementById(networkObjectId);
@@ -68,7 +45,7 @@ async function getDomainFromServer(networkObjectId, domain, verbose, dnsServer =
     const $networkObject = document.getElementById(networkObjectId);
     const isResolvedOn = $networkObject.getAttribute("resolved") === "true"; //<-- comprobamos si el equipo tiene una cache dns
 
-    if (!domain.endsWith(".")) domain = domain + "."; //<-- si el domino no es FQDN le agregamos el punto al final
+    if (!isValidIp(domain) && !domain.endsWith(".")) domain = domain + "."; //<-- si se trata de un dominio, nos aseguramos de que este termine en punto (FQDN)
 
     dnsRequestFlag[networkObjectId] = false; // <-- reseteamos el flag de comunicaciones
 
