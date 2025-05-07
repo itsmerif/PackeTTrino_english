@@ -146,7 +146,10 @@ function delDnsEntry(serverObjectId, recordType, targetDomain) {
     const $serverObject = document.getElementById(serverObjectId);
     const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
 
-    if (recordType.toUpperCase() === "SOA") dropDnsZone(serverObjectId, targetDomain);
+    if (recordType.toUpperCase() === "SOA") { //<-- si es un registro de tipo SOA, se elimina la zona completa
+        dropDnsZone(serverObjectId, targetDomain);
+        return;
+    }
 
     const $records = $dnsTable.querySelectorAll(`.${recordType.toUpperCase()}`);
 
@@ -155,6 +158,15 @@ function delDnsEntry(serverObjectId, recordType, targetDomain) {
         const domain = $fields[0].innerHTML;
         if (domain === targetDomain) $record.remove();
     });
+
+    if (recordType.toUpperCase() === "A") { //<-- si se trata de un registro de tipo A, se elimina el registro PTR asociado
+        const $ptrRecords = $dnsTable.querySelectorAll(`.${"PTR"}`);
+        $ptrRecords.forEach($ptrRecord => {
+            const $ptrFields = $ptrRecord.querySelectorAll("td");
+            const domain = $ptrFields[2].innerHTML;
+            if (domain === targetDomain) $ptrRecord.remove();
+        });
+    }
 
 }
 
