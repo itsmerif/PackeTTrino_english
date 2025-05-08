@@ -1,5 +1,5 @@
 function loadEtcHostsContent(networkObjectId) {
-    const fileEditorContainer = document.querySelector(".editor-container"); //obtenemos el contenedor del editor
+    const fileEditorContainer = document.querySelector(".editor-wrapper"); //obtenemos el contenedor del editor
     const $networkObject = document.getElementById(networkObjectId); //recuperamos el objeto
     let etcHostFile = $networkObject.getAttribute("data-etc-hosts"); //obtenemos el contenido etc-hosts
     let etcHostsEntries = JSON.parse(etcHostFile); //convertimos el contenido a un objeto

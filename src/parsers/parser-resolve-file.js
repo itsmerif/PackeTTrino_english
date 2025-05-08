@@ -7,7 +7,7 @@ function loadResolvConf(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const serverDns = $networkObject.getAttribute("data-dns-server");
-    const fileEditorContainer = document.querySelector(".editor-container");
+    const fileEditorContainer = document.querySelector(".editor-wrapper");
     let content = fileEditorContainer.querySelector(".file-editor");
     content.setAttribute("data-file", "/etc/resolv.conf");
 

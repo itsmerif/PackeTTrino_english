@@ -8,7 +8,7 @@ function loadApacheIndexContent(networkObjectId) {
         return;
     }
 
-    const fileEditorContainer = document.querySelector(".editor-container");
+    const fileEditorContainer = document.querySelector(".editor-wrapper");
     let webContent = $networkObject.getAttribute("web-content");
     let content = fileEditorContainer.querySelector(".file-editor");
     content.value = deMinifyHTML(webContent);
