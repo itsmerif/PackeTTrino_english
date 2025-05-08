@@ -64,6 +64,22 @@ function command_cd(networkObjectId, pathInput) {
 
 }
 
+function command_cat(networkObjectId, file) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    let fileSystem = new FileSystem($networkObject);
+    let directoryPath = pathBuilder(file);
+    let fileName = directoryPath.pop();
+
+    try {
+        let fileContent = fileSystem.open(fileName, directoryPath);
+        terminalMessage(fileContent, networkObjectId);
+    } catch (e) {
+        terminalMessage(e.message, networkObjectId);
+    }
+
+}
+
 function pathBuilder(pathInput) {
 
     let path;

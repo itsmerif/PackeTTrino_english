@@ -1,25 +1,23 @@
-function command_nano(networkObjectId, args) {
+function command_nano(networkObjectId, file) {
 
-    const fileName = args[1];
-    const fileEditor = document.querySelector(".file-editor");
+    const $networkObject = document.getElementById(networkObjectId);
     const frameTitle = document.querySelector(".editor-frame").querySelector("span");
+    const fileEditorContainer = document.querySelector(".editor-wrapper");
+    const editorArea = fileEditorContainer.querySelector(".file-editor");
+    let fileSystem = new FileSystem($networkObject);
+    let directoryPath = pathBuilder(file);
+    let fileName = directoryPath.pop();
 
-    const fileActions = {
-        "/etc/network/interfaces": () => loadNetworkFile(networkObjectId),
-        "/etc/resolv.conf": () => loadResolvConf(networkObjectId),
-        "/var/www/html/index.html": () => loadApacheIndexContent(networkObjectId),
-        "/etc/hosts": () => loadEtcHostsContent(networkObjectId),
+    try {
+        let fileContent = fileSystem.open(fileName, directoryPath); //<-- intentamos abrir el archivo
+        frameTitle.innerHTML = file; //<-- establecemos el título del editor visualmente
+        editorArea.setAttribute("data-file", file); //<-- establecemos el nombre del archivo en el editor
+        editorArea.value = fileContent; //<-- volcamos el contenido del archivo
+        fileEditorContainer.style.display = "block"; //<-- mostramos el editor
+        editorArea.focus();
+    } catch (e) {
+        terminalMessage(e.message, networkObjectId);
+        console.log(e);
     }
-
-    if (fileActions[fileName]) {
-
-        fileEditor.setAttribute("data-file", fileName);
-        frameTitle.innerHTML = fileName;
-        document.querySelector(".editor-buttons").addEventListener("mousedown", event => { event.stopPropagation();});
-        fileActions[fileName]();
-        return;
-    }
-
-    terminalMessage(`Error: No se reconoce el archivo ${fileName}.`, networkObjectId);
 
 }

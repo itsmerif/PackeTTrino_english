@@ -1,8 +1,7 @@
-function sendCommand(event) {
+function unixParser(event) {
 
-    const terminal = event.target.closest('.terminal-component');
-    const dataId = terminal.dataset.id;
-    const originIP = document.getElementById(dataId).getAttribute("ip-enp0s3");
+    const $terminal = document.querySelector(".terminal-component");
+    const networkObjectId = $terminal.dataset.id;
 
     if (event.key === "Enter") {
 
@@ -11,26 +10,28 @@ function sendCommand(event) {
         const command = args[0]; //el primer argumento es el comando
 
         const commandFunctions = {
-            "ping": () => command_ping(dataId, args),
-            "dhcp": () => command_Dhcp(dataId, args),
-            "iptables": () => command_Iptables(dataId, args),
-            "ip": () => command_Ip(dataId, args),
-            "dns": () => command_dns(dataId, args),
-            "dig": () => command_dig(dataId, args),
-            "arp": () => command_arp(dataId, args),
-            "apache": () => command_apache(dataId, args),
-            "nano": () => command_nano(dataId, args),
+            "ping": () => command_ping(networkObjectId, args),
+            "dhcp": () => command_Dhcp(networkObjectId, args),
+            "iptables": () => command_Iptables(networkObjectId, args),
+            "ifup": () => command_ifup(networkObjectId, args[1]),
+            "ip": () => command_Ip(networkObjectId, args),
+            "dns": () => command_dns(networkObjectId, args),
+            "dig": () => command_dig(networkObjectId, args),
+            "arp": () => command_arp(networkObjectId, args),
+            "apache": () => command_apache(networkObjectId, args),
+            "nano": () => command_nano(networkObjectId, args[1]),
             "help": () => command_help(),
             "man": () => command_man(args[1]),
-            "traceroute": () => command_traceroute(dataId, args),
-            "systemctl": () => command_systemctl(dataId, args),
-            "apt": () => command_apt(dataId, args),
-            "mkdir": () => command_mkdir(dataId, args[1]),
-            "touch": () => command_touch(dataId, args[1]),
-            "rm": () => command_rm(dataId, args[1]),
-            "mv": () => command_mv(dataId, args),
-            "ls": () => command_ls(dataId, args.slice(1)),
-            "cd": () => command_cd(dataId, args[1]),
+            "traceroute": () => command_traceroute(networkObjectId, args),
+            "systemctl": () => command_systemctl(networkObjectId, args),
+            "apt": () => command_apt(networkObjectId, args),
+            "mkdir": () => command_mkdir(networkObjectId, args[1]),
+            "touch": () => command_touch(networkObjectId, args[1]),
+            "rm": () => command_rm(networkObjectId, args[1]),
+            "mv": () => command_mv(networkObjectId, args),
+            "ls": () => command_ls(networkObjectId, args.slice(1)),
+            "cd": () => command_cd(networkObjectId, args[1]),
+            "cat": () => command_cat(networkObjectId, args[1]),
             "exit": () => closeTerminal(event)
         }
 
@@ -38,8 +39,8 @@ function sendCommand(event) {
         document.querySelector(".terminal-output").innerHTML = ""; //limpiamos la salida
         terminalBuffer.push(input); //añadimos el comando en el buffer
         currentCommandIndex++; //actualizamos el indice del cursor de comandos
-        document.querySelector(".terminal-component").querySelector("input").value = ""; //limpiamos la entrada
-        commandFunctions[command] ? commandFunctions[command]() : terminalMessage(`Error: comando ${command} desconocido.`, dataId); //ejecutamos la función correspondiente
+        $terminal.querySelector("input").value = ""; //limpiamos la entrada
+        commandFunctions[command] ? commandFunctions[command]() : terminalMessage(`Error: comando ${command} desconocido.`, networkObjectId); //ejecutamos la función correspondiente
     }
 
 }

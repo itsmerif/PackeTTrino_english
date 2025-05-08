@@ -18,7 +18,7 @@ class FileSystem {
         for (let i = 0; i < $PWD.length; i++) currentDirectory = currentDirectory[$PWD[i]];
         return currentDirectory;
     }
-
+    
     ls (...options) {
         
         const currentDirectory = this.getPWD();
@@ -117,4 +117,41 @@ class FileSystem {
 
     }
 
+
+    //gestion de archivos
+
+    open (fileName, directoryPath) {
+
+        let currentDirectory = this.structure["/"];
+
+        for (let i = 0; i < directoryPath.length; i++) {
+            if (!currentDirectory[directoryPath[i]]) throw new Error(`El directorio ${directoryPath[i]} no existe`);
+            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`El directorio ${directoryPath[i]} no es un directorio`);
+            currentDirectory = currentDirectory[directoryPath[i]];
+        }
+
+        if (!Object.hasOwn(currentDirectory, fileName)) throw new Error(`El archivo ${fileName} no existe`);
+
+        return currentDirectory[fileName]; //<-- devolvemos el contenido del archivo
+
+    }
+
+
+    write (fileName, directoryPath, content) {
+
+        let currentDirectory = this.structure["/"];
+
+        for (let i = 0; i < directoryPath.length; i++) {
+            if (!currentDirectory[directoryPath[i]]) throw new Error(`El directorio ${directoryPath[i]} no existe`);
+            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`El directorio ${directoryPath[i]} no es un directorio`);
+            currentDirectory = currentDirectory[directoryPath[i]];
+        }
+
+        if (!Object.hasOwn(currentDirectory, fileName)) throw new Error(`El archivo ${fileName} no existe`);
+
+        currentDirectory[fileName] = content;
+
+        this.compile();
+
+    }
 }
