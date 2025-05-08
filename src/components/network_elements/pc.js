@@ -18,8 +18,7 @@ function PcObject(x, y) {
         advancedOptionsObject("terminal", "arp", "cacheDns", "browser", "delete")
     );
 
-    /*
-    let filesystem = {
+    const filesystem = {
         "/": {
             "bin" : {},
             "boot" : {},
@@ -34,7 +33,7 @@ function PcObject(x, y) {
             "home" : {},
             "var": {}
         }
-    };*/
+    };
 
     //añadimos los atributos básicos
     attr("ip-enp0s3", "");
@@ -42,7 +41,8 @@ function PcObject(x, y) {
     attr("mac-enp0s3", getRandomMac());
     attr("data-switch-enp0s3", "");
     attr("data-gateway", "");
-    attr("data-etc-hosts", `{ "127.0.0.1": ["localhost"] }`);
+    attr("filesystem", JSON.stringify(filesystem));
+    //attr("data-etc-hosts", `{ "127.0.0.1": ["localhost"] }`);
     attr("data-dns-server", "");
 
     //añadimos el resolver
@@ -59,7 +59,7 @@ function PcObject(x, y) {
     attr("ondragstart", "BoardItemDragStart(event)");
     //attr("onmousedown", "startBoardItemMove(event)");
     //$networkObject.querySelector("img").draggable = false;
-    //attr("filesystem", JSON.stringify(filesystem));
+
 
     //devolvemos el objeto
     itemIndex++;
