@@ -96,8 +96,34 @@ img {
     p {
         color: var(--dark-mode-white) !important;
     }
+
 }
 
 .draggable-modal {
     animation: none !important;
+}
+
+.inner-table {
+
+    &.dark-mode {
+
+        background-color: var(--dark-mode-black);
+
+        th {
+            background-color: var(--darkblue);
+            color: #fff;
+        }
+
+        tr {
+            color: var(--dark-mode-white);
+
+            &:hover {
+                background-color: var(--dark-mode-white);
+                color: var(--dark-mode-black);
+            }
+
+        }
+
+    }
+
 }

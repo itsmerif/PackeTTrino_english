@@ -37,6 +37,7 @@ function activateDarkMode() {
         document.querySelector("#svg-board").querySelectorAll("line").forEach(line => line.setAttribute("stroke", "white"));
         document.querySelector(".board").querySelectorAll(".modal-table").forEach(modal => modal.classList.add("dark-mode"));
         document.querySelector(".packet-traffic").classList.add("dark-mode");
+        document.querySelectorAll(".inner-table").forEach(table => table.classList.add("dark-mode"));
         changePanelIcons("dark");
         return;
     }
@@ -48,6 +49,7 @@ function activateDarkMode() {
     document.querySelector("#svg-board").querySelectorAll("line").forEach(line => line.setAttribute("stroke", "black"));
     document.querySelector(".board").querySelectorAll(".modal-table").forEach(modal => modal.classList.remove("dark-mode"));
     document.querySelector(".packet-traffic").classList.remove("dark-mode");
+    document.querySelectorAll(".inner-table").forEach(table => table.classList.remove("dark-mode"));
     changePanelIcons("light");
 
     function changePanelIcons(theme) {

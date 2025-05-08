@@ -46,11 +46,6 @@ function dns_server_menu() {
                     <input class="btn-toggle" type="checkbox" id="dns-cache" name="dns-cache">
                 </div>
 
-                <div class="form-item">
-                    <label for="dns-secondary">Servidor DNS Secundario:</label>
-                    <input class="btn-toggle" type="checkbox" id="dns-secondary" name="dns-secondary">
-                </div>
-
             </section>
 
             <div class="button-wrapper">
@@ -88,7 +83,7 @@ function dns_server_menu() {
             </div>
             
             <div class="table-wrapper">
-                <table id="records-table"></table>
+                <table id="records-table" class="inner-table"></table>
             </div>
 
         </section>
@@ -123,7 +118,6 @@ function showDnsServerMenu(event) {
     const isDnsServer = $serverObject.id.startsWith("dns-server-");
     const isRecursive = $serverObject.getAttribute("recursion");
     const isCache = $serverObject.getAttribute("resolved");
-    const isSecondary = $serverObject.getAttribute("dns-slave");
     
     //<-- seccion basica de red (solo para servidores dns nativos)
     if (isDnsServer) {
@@ -136,7 +130,6 @@ function showDnsServerMenu(event) {
     //<-- seccion de dns
     $menu.querySelector("#dns-recursive").checked = isRecursive === "true";
     $menu.querySelector("#dns-cache").checked = isCache === "true";
-    $menu.querySelector("#dns-secondary").checked = isSecondary === "true";
 
     //<-- seccion de registros
     $menu.querySelector("#records-table").innerHTML = $serverObject.querySelector(".dns-table").querySelector("table").innerHTML;
@@ -154,7 +147,6 @@ function saveDnsServerMenu(event) {
     const $serverObject = document.getElementById($menu.querySelector("#form-dns-item-id").innerHTML);
     const isRecursive = $menu.querySelector("#dns-recursive").checked;
     const isCache = $menu.querySelector("#dns-cache").checked;
-    const isSecondary = $menu.querySelector("#dns-secondary").checked;
 
     if ($serverObject.id.startsWith("dns-server")) { //<-- solo para servidores dns nativos
 
@@ -185,7 +177,6 @@ function saveDnsServerMenu(event) {
 
     $serverObject.setAttribute("recursion", isRecursive);
     $serverObject.setAttribute("resolved", isCache);
-    $serverObject.setAttribute("dns-slave", isSecondary);
 
     bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
 

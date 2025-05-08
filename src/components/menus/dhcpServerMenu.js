@@ -89,7 +89,7 @@ function dhcp_server_menu() {
             <button class="btn-modern-blue dark small" id="add-reservation">Agregar</button>
 
             <div class="reservations-table-wrapper">
-                <table id="reservations-table">
+                <table id="reservations-table" class="inner-table">
                     <tr>
                         <th>MAC</th>
                         <th>IP</th>
