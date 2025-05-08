@@ -13,7 +13,6 @@ function installBind9(networkObjectId) {
     );
     attr("named", "true");
     attr("recursion", "false"); //<-- recursión
-    attr("dns-slave", "false"); //<-- DNS Slave
     attr("resolved", "false"); //<-- cache DNS
     addOption(dnsRecordsOptionButton(), dnsServerConfig(), cacheDnsOptionButton());
     terminalMessage("Bind instalado correctamente.", networkObjectId);
@@ -30,7 +29,7 @@ function uninstallBind9(networkObjectId) {
     const remove = (...nodes) => nodes.forEach(node => $networkObject.removeChild(node));
     const remOption = (...options) => options.forEach(option => $advancedOptions.querySelector("#" + option).remove());
     remove($dnsTable, $cacheDnsTable);
-    rattr("named","recursion", "dns-slave", "resolved");
+    rattr("named","recursion", "resolved");
     remOption("dns-option");
     remOption("dns-server-config");
     remOption("cache-dns-option");
