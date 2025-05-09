@@ -99,16 +99,38 @@ function isValidPTRRecord(dataId, domain, value) {
 
 }
 /**ESTA FUNCIONA DEVUELVE LA IP DE UN NOMBRE DE DOMINIO QUE ESTÉ ALMACENADO EN /ETC/HOSTS, O DEVUELVE FALSO SI NO EXISTE */
-function isDomainInEtcHosts(dataId, domain) {
-    const $networkObject = document.getElementById(dataId);
-    const etcHostFile = $networkObject.getAttribute("data-etc-hosts");
-    let etcHostsEntries = JSON.parse(etcHostFile);
+function isDomainInEtcHosts(networkObjectId, inputDomain) {
 
-    for (let ip in etcHostsEntries) {
-        if (etcHostsEntries[ip].includes(domain))  return ip;
-    }
+    const $networkObject = document.getElementById(networkObjectId);
+    let response = false; //<-- inicializamos la respuesta a falso
+    let fileSystem = new FileSystem($networkObject); //<-- creamos un objeto de sistema de archivos
+    let directoryPath = pathBuilder("/etc/hosts");
+    let fileName = directoryPath.pop(); 
     
-    return false;
+    try {
+
+        const etcHostsContent = fileSystem.open(fileName, directoryPath); //<-- obtenemos el contenido del archivo
+        const lines = etcHostsContent.split("\n"); //<-- dividimos el contenido en lineas
+
+        lines.forEach(line => {
+            const tokens = line.replace(/\s+/g, " ").trim().split(" "); //<-- dividimos la linea en tokens
+            const lineIp = tokens[0]; //<-- obtenemos la ip de cada linea
+            const lineDomains = tokens.slice(1); //<-- obtenemos los dominios asociados
+
+            lineDomains.forEach(domain => {
+                if (domain === inputDomain) response = lineIp; //<-- si el dominio es igual al que estamos buscando, devolvemos la ip
+            });
+
+        });
+
+    } catch (e) {
+
+        response = false;
+
+    }
+
+    return response;
+
 }
 
 /**ESTA FUNCION AÑADE UN REGISTRO DNS A LA BASE DE DATOS DE UN SERVIDOR DNS*/
