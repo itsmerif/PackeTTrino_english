@@ -17,11 +17,29 @@ function DnsServerObject(x, y) {
         advancedOptionsObject("terminal", "delete")
     );
 
+    const filesystem = {
+        "/": {
+            "bin" : {},
+            "boot" : {},
+            "dev" : {},
+            "etc": {
+                "hosts": "{'127.0.0.1': ['localhost']}" ,
+                "resolv.conf": "",
+                "network": {
+                    "interfaces": ""
+                }
+            },
+            "home" : {},
+            "var": {}
+        }
+    };
+
     attr("ip-enp0s3", "");
     attr("netmask-enp0s3", "");
     attr("mac-enp0s3", getRandomMac());
     attr("data-gateway", "");
     attr("data-switch-enp0s3", "");
+    attr("filesystem", JSON.stringify(filesystem));
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showDnsServerMenu(event)");
