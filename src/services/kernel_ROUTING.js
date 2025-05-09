@@ -241,3 +241,18 @@ function getRoutingRules(routerObjectid, targetinterface) {
 
     return rules;
 }
+
+/**ESTA FUNCION ELIMINA LAS REGLAS REMOTAS ASOCIADAS A UNA INTERFAZ DE UN EQUIPO */
+function removeInterfaceRoutingRules(routerObjectId, interface) {
+
+    const $networkObject = document.getElementById(routerObjectId);
+    const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
+    const $routingRules = $routingTable.querySelectorAll("tr");
+
+    $routingRules.forEach($rule => {
+        const $fields = $rule.querySelectorAll("td");
+        if ($fields.length === 0) return;
+        if ($fields[3].innerHTML === interface) $rule.remove();
+    });
+    
+}
