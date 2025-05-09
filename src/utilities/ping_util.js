@@ -5,7 +5,7 @@ async function command_ping(dataId, args) {
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
 
-    const stateHandler = {
+    const stateHandler = { //<-- definimos el manejador de los estados
         0: () => pingSuccess(args[1]),
         1: () => terminalMessage(`ping: ${args[1]}: Nombre o servicio desconocido.`, dataId),
         2: () => terminalMessage(`ping: ${args[1]}: La dirección IP no es válida.`, dataId),
@@ -26,9 +26,9 @@ async function command_ping(dataId, args) {
 
     if (visualToggle) await minimizeTerminal();
 
-    let stateCode = await ping(dataId, args[1]);
+    let stateCode = await ping(dataId, args[1]); //<-- realizamos el ping obteniendo el codigo de estado
 
-    stateHandler[stateCode]();
+    stateHandler[stateCode](); //<-- ejecutamos el manejador de estados
     
     if (visualToggle) await maximizeTerminal();
 
