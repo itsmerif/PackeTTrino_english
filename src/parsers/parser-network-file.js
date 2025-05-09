@@ -4,8 +4,10 @@ function parseInterfacesFile(networkObjectId, content) {
     const filteredContent = content.replace(/\n/g, " ").replace(/\s+/g, " ").trim(); //<- quitamos los saltos de línea y los espacios
     const instructions = filteredContent.split("iface").map( line => (`iface ${line}`).replace(/\s+/g, " ").trim()).slice(1); //<-- obtenemos las instrucciones de red del archivo
     
-    instructions.forEach(instruction => { //<-- evaluamos cada instrucción
+    // <-- ejemplo de instruccion: iface enp0s3 inet static address 192.168.1.100 netmask 255.255.255.0 gateway 192.168.1.1
 
+    instructions.forEach(instruction => { //<-- evaluamos cada instrucción
+        
         const interfaceObject = { //<-- inicializamos el objeto de análisis
             "iface": "",
             "inet": "",
@@ -72,7 +74,48 @@ function parseInterfacesFile(networkObjectId, content) {
 
         }
 
+        //<-- estudiamos las reglas de enrutamiento de cada bloque iface
+
+        const routingInstructions = instruction.split("ip").map(rule => (`ip ${rule}`).replace(/\s+/g, " ").trim()).slice(1);
+
+        routingInstructions.forEach(routingInstruction => {
+
+            const tokens = routingInstruction.split(" "); //<--obtenemos los tokens de la instrucción ip route
+            const destinationCIDR = tokens[3]; 
+            const nexthop = tokens[5];
+
+            if (!isValidCidrIp(destinationCIDR)) throw new Error(`Error: direccion IP ${destinationCIDR} no válida`);
+
+            const [destinationIp, netmaskIp] = parseCidr(destinationCIDR);
+
+            if (getNetwork(destinationIp, netmaskIp) !== destinationIp) throw new Error(`Error: dirección IP ${destinationCIDR} no es una dirección de red`);
+
+            if (!isValidIp(nexthop)) throw new Error(`Error: dirección IP ${nexthop} no válida`);
+
+            if (getNetwork(nexthop, interfaceObject["netmask"]) !== getNetwork(interfaceObject["address"], interfaceObject["netmask"])) {
+                throw new Error(`Error: dirección IP ${nexthop} no es accesible`);
+            }
+
+            setRemoteRoutingRule(networkObjectId,
+                destinationIp, //<-- red de destino
+                netmaskIp, //<-- mascara de red
+                interfaceObject["address"], //<-- ip de salida
+                interfaceObject["iface"], //<-- interfaz
+                nexthop //<-- siguiente salto
+            );
+
+        });
+
     });
 
 }
  
+/***
+ * DIFERENCIAS CON EL FUNCIONAMIENTO HABITUAL EN LINUX:
+ * 
+ * LOS BLOQUES DE INSTRUCCIONES COMIENZAN POR "iface" Y DEBEN SER EN LA FORMA "iface <INTERFAZ> inet <TIPO> address <IP> netmask <MASCARA> gateway <IP>"
+ * NO SE ESTUDIAN LAS INSTUCCIONES "AUTO <INTERFAZ>"
+ * LAS REGLAS DE ENRUTAMIENTO DEBEN SER EN LA FORMA "ip route add <IP_DESTINO>/<MASCARA_DESTINO> via <IP_NEXTHOP>"
+ * LAS REGLAS DE ENRUTAMIENTO NO COMIENZAN POR "up" O "down"
+ * LAS REGLAS DE ENRUTAMIENTO SIEMPRE LLEVAN "ADD" y NO "DEL"
+ */
