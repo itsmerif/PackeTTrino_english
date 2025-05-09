@@ -142,31 +142,31 @@ async function savePcMenu(event) {
     const buttonFunctions = {
 
         "save-btn": () => {
-            configureInterface($networkObject.id, newIp, newNetmask, "enp0s3");
-            setDirectRoutingRule($networkObject.id, newIp, newNetmask, "enp0s3");
-            $networkObject.setAttribute("data-gateway", newGateway);
-            setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, "enp0s3", newGateway);
-            $networkObject.setAttribute("data-dns-server", newDnsServer);
+            configureInterface($networkObject.id, newIp, newNetmask, "enp0s3"); //<-- configuramos la interfaz
+            setDirectRoutingRule($networkObject.id, newIp, newNetmask, "enp0s3"); //<-- añadimos la regla de enrutamiento directo
+            $networkObject.setAttribute("data-gateway", newGateway); //<-- configuramos la puerta de enlace
+            setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, "enp0s3", newGateway); //<-- añadimos la regla por defecto
+            $networkObject.setAttribute("data-dns-server", newDnsServer); //<-- configuramos el servidor DNS
             bodyComponent.render(popupMessage("Los cambios se han aplicado correctamente."));
         },
 
         "get-btn": async () => {
             if (visualToggle) document.querySelector(".pc-form").style.display = "none";
-            await dhcpDiscoverHandler($networkObject.id);
+            await dhcpDiscoverHandler($networkObject.id); //<-- iniciamos el proceso de DHCP discover
         },
 
         "renew-btn": async () => {
             if (visualToggle) document.querySelector(".pc-form").style.display = "none";
-            await dhcpRenewHandler($networkObject.id);
+            await dhcpRenewHandler($networkObject.id); //<-- iniciamos el proceso de dhcp renew
         },
 
         "release-btn": async () => {
             if (visualToggle) document.querySelector(".pc-form").style.display = "none";
-            await dhcpReleaseHandler($networkObject.id);
+            await dhcpReleaseHandler($networkObject.id); //<-- iniciamos el proceso de dhcp release
         },
 
         "close-btn": () => {
-            restorePcForm();
+            restorePcForm(); //<-- restauramos el menu de configuración
             document.querySelector(".pc-form").style.display = "none";
         }
     }

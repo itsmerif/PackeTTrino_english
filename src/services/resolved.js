@@ -2,35 +2,33 @@ async function domainNameResolution(networkObjectId, domain) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const useCache = $networkObject.getAttribute("resolved") === "true";
+    let response = false; //<-- inicializamos la respuesta a falso
 
-    let response = false;
+    response = isDomainInEtcHosts(networkObjectId, domain); //<--comprobamos si el dominio esta en el archivo /etc/hosts
 
-    response = isDomainInEtcHosts(networkObjectId, domain);
+    if (!response && useCache) response = isDomainInCacheDns(networkObjectId, domain)[1]; //<--comprobamos si el dominio esta en la cache dns (si la cache esta activa)
 
-    if (!response && useCache) response = isDomainInCacheDns(networkObjectId, domain)[1];
-
-    if (!response) {
+    if (!response) { //<-- intentamos resolver el dominio desde el servidor dns
 
         try {
 
-            await getDomainFromServer(
+            await getDomainFromServer( 
                 networkObjectId, //id del objeto
                 domain, //dominio
                 false, //verbose
                 "", //ip del servidor (por defecto la del equipo)
                 "A", //tipo de registro
                 false, //eliminar despues de usar
-                true //generar cache
+                true //intentar generar cache
             );
 
             let dnsReply = buffer[networkObjectId];
             delete buffer[networkObjectId];
-
-            response = dnsReply.answer;
+            response = dnsReply.answer; //<-- respuesta obtenida
 
         } catch (error) {
             
-            response = false;
+            response = false; //<-- falso si no se pudo resolver
             
         }
 

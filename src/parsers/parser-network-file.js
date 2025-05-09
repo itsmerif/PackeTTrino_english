@@ -24,7 +24,7 @@ function parseInterfacesFile(networkObjectId, content) {
             "gateway:"
         ], tokens);
 
-        const optionsHandler = {
+        const optionsHandler = { //<-- definimos el manejador de las opciones
             "iface": () => { interfaceObject["iface"] = $OPTS["iface"]; },
             "inet": () => { interfaceObject["inet"] = $OPTS["inet"]; },
             "address": () => { interfaceObject["address"] = $OPTS["address"]; },
@@ -32,7 +32,7 @@ function parseInterfacesFile(networkObjectId, content) {
             "gateway": () => { interfaceObject["gateway"] = $OPTS["gateway"]; }
         }
 
-        for (let option in $OPTS) if (optionsHandler[option]) optionsHandler[option]();
+        for (let option in $OPTS) if (optionsHandler[option]) optionsHandler[option](); //<-- ejecutamos el manejador de las opciones por cada opción
 
         //<-- evaluamos las opciones de la instrucción
         if (!availableInterfaces.includes(interfaceObject["iface"])) throw new Error(`Error: no se reconoce la interfaz ${interfaceObject["iface"]}`);
@@ -44,25 +44,31 @@ function parseInterfacesFile(networkObjectId, content) {
         //<-- configuramos la interfaz si el metodo es static
         if (interfaceObject["inet"] === "static") {
 
-            configureInterface(networkObjectId, 
+            configureInterface(networkObjectId, //<-- configuramos la interfaz
                 interfaceObject["address"], 
                 interfaceObject["netmask"], 
                 interfaceObject["iface"]
             );
 
-            setDirectRoutingRule(networkObjectId, 
+            setDirectRoutingRule(networkObjectId, //<-- añadimos la regla de enrutamiento directo
                 interfaceObject["address"], 
                 interfaceObject["netmask"], 
                 interfaceObject["iface"]
             );
 
-            if (interfaceObject["gateway"] !== "") setRemoteRoutingRule(networkObjectId, 
-                "0.0.0.0", 
-                "0.0.0.0",
-                interfaceObject["address"], //<-- salida
-                interfaceObject["iface"],  //<-- interfaz
-                interfaceObject["gateway"] //<-- siguiente salto
-            );
+            if (interfaceObject["gateway"] !== "") {
+
+                document.getElementById(networkObjectId).setAttribute("data-gateway", interfaceObject["gateway"]); //<-- configuramos la puerta de enlace
+
+                setRemoteRoutingRule(networkObjectId, //<-- añadimos la regla por defecto
+                    "0.0.0.0", 
+                    "0.0.0.0",
+                    interfaceObject["address"], //<-- salida
+                    interfaceObject["iface"],  //<-- interfaz
+                    interfaceObject["gateway"] //<-- siguiente salto
+                );
+
+            }
 
         }
 
