@@ -61,7 +61,7 @@ function parseInterfacesFile(networkObjectId, content) {
                 "0.0.0.0",
                 interfaceObject["address"], //<-- salida
                 interfaceObject["iface"],  //<-- interfaz
-                ginterfaceObject["gateway"] //<-- siguiente salto
+                interfaceObject["gateway"] //<-- siguiente salto
             );
 
         }
