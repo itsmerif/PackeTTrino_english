@@ -4,10 +4,7 @@ async function apache_service(networkObjectId, packet) {
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     const isApacheOn = $networkObject.getAttribute("apache") === "true";
-
-    if (packet.destination_ip !== networkObjectIp) return;
-
-    if (!isApacheOn) return;
+    const networkObjectFyleSystem = new FileSystem($networkObject);
 
     let newPacket = new httpReply(
         networkObjectIp, //ip del origen
@@ -18,7 +15,10 @@ async function apache_service(networkObjectId, packet) {
         packet.sport //puerto del destino
     );
 
-    newPacket.body = $networkObject.getAttribute("web-content");
+    let directoryPath = pathBuilder("/var/www/html/index.html");
+    let fileName = directoryPath.pop();
+
+    newPacket.body = networkObjectFyleSystem.open(fileName, directoryPath); //<-- obtenemos el contenido del archivo index.html
 
     return newPacket;  
 }

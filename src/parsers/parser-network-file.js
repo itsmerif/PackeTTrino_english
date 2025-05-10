@@ -1,3 +1,13 @@
+/***
+ * DIFERENCIAS CON EL FUNCIONAMIENTO HABITUAL EN LINUX:
+ * -a NO REPRESENTA LAS LINEAS "AUTO", REPRESENTA TODAS LAS INTERFACES (--all)
+ * LOS BLOQUES DE INSTRUCCIONES COMIENZAN POR "iface" Y DEBEN SER EN LA FORMA "iface <INTERFAZ> inet <TIPO> address <IP> netmask <MASCARA> gateway <IP>"
+ * NO SE USAN LAS INSTUCCIONES "AUTO <INTERFAZ>"
+ * LAS REGLAS DE ENRUTAMIENTO DEBEN SER EN LA FORMA "ip route add <IP_DESTINO>/<MASCARA_DESTINO> via <IP_NEXTHOP>"
+ * LAS REGLAS DE ENRUTAMIENTO NO COMIENZAN POR "up" o "down"
+ * LAS REGLAS DE ENRUTAMIENTO SIEMPRE LLEVAN "add"
+ */
+
 function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
     
     const availableInterfaces = getInterfaces(networkObjectId); //<-- obtenemos las interfaces disponibles del dispositivo
@@ -113,12 +123,3 @@ function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
 
 }
  
-/***
- * DIFERENCIAS CON EL FUNCIONAMIENTO HABITUAL EN LINUX:
- * -a NO REPRESENTA LAS LINEAS "AUTO", REPRESENTA TODAS LAS INTERFACES (--all)
- * LOS BLOQUES DE INSTRUCCIONES COMIENZAN POR "iface" Y DEBEN SER EN LA FORMA "iface <INTERFAZ> inet <TIPO> address <IP> netmask <MASCARA> gateway <IP>"
- * NO SE USAN LAS INSTUCCIONES "AUTO <INTERFAZ>"
- * LAS REGLAS DE ENRUTAMIENTO DEBEN SER EN LA FORMA "ip route add <IP_DESTINO>/<MASCARA_DESTINO> via <IP_NEXTHOP>"
- * LAS REGLAS DE ENRUTAMIENTO NO COMIENZAN POR "up" o "down"
- * LAS REGLAS DE ENRUTAMIENTO SIEMPRE LLEVAN "add"
- */
