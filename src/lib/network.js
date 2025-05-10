@@ -1,15 +1,3 @@
-/**ESTA FUNCION DEVUELVE UNA DIRECCION IP A PARTIR DE UN IP Y UN NETMASK */
-function getNetwork(ip, netmask) {
-
-    ip = ip.split('.'); //separamos cada octeto de la ip
-    netmask = netmask.split('.'); //separamos cada octeto de la netmask
-    let network = [];
-    for (let i = 0; i < 4; i++) {
-        network[i] = ip[i] & netmask[i]; //aplicamos el AND entre cada octeto de la ip y la netmask
-    }
-    return network.join('.'); //juntamos los resultados 
-}
-
 /**ESTA FUNCION GENERA UNA DIRECCION MAC ALEATORIA */
 function getRandomMac() {
     //genero los 48 bits aleatorios
@@ -26,6 +14,24 @@ function getRandomMac() {
     //unimos los bloques en una cadena
     let mac = macBlocks.join(':');
     return mac;
+}
+
+/**ESTA FUNCION DEVUELVE UNA DIRECCION IP A PARTIR DE UN IP Y UN NETMASK */
+function getNetwork(ip, netmask) {
+
+    ip = ip.split('.'); //separamos cada octeto de la ip
+    netmask = netmask.split('.'); //separamos cada octeto de la netmask
+    let network = [];
+    for (let i = 0; i < 4; i++) {
+        network[i] = ip[i] & netmask[i]; //aplicamos el AND entre cada octeto de la ip y la netmask
+    }
+    return network.join('.'); //juntamos los resultados 
+}
+
+/**ESTA FUNCION DEVUELVE LA DIRECCION IP DE BROADCAST DE UN IP Y UN NETMASK */
+
+function getBroadcast(ip, netmask) {
+    return binaryToIp((ipToBinary(ip)).slice(0, ipToBinary(netmask).split("0")[0].length).padEnd(32, "1"))
 }
 
 /**ESTA FUNCION TRANSFORMA UNA IP(DECIMAL) A IP(BINARIO) */
