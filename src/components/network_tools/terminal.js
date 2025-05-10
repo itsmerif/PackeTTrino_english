@@ -7,10 +7,10 @@ function terminal() {
 
     $terminal.innerHTML = `
 
-        <div class="window-frame"></div>
+        <div class="window-frame">Terminal</div>
 
         <p>
-            <span id="terminal-prompt">root@packettrino:/#</span>
+            <span id="terminal-prompt"></span>
             <input type="text" class="terminal-input" autofocus>
         </p>
 
@@ -126,7 +126,7 @@ function showTerminal(event) {
     const $terminal = document.querySelector(".terminal-component");
     const $advOptsModal = $networkObject.querySelector(".advanced-options-modal");
     $terminal.setAttribute("data-id", $networkObject.id);
-    $terminal.querySelector(".window-frame").innerHTML = $networkObject.id;
+    $terminal.querySelector("#terminal-prompt").innerHTML = `root@${$networkObject.id}:/#`;	
     $terminal.style.display = "block";
     $terminal.querySelector(".terminal-input").focus();
     $advOptsModal.style.display = "none";

@@ -57,7 +57,8 @@ function command_cd(networkObjectId, pathInput) {
 
     try {
         fileSystem.cd(directoryPath);
-        document.querySelector(".terminal-component").querySelector("#terminal-prompt").innerHTML = `root@debian:/${directoryPath.join("/")}#`;
+        const $terminalPrompt = document.querySelector(".terminal-component").querySelector("#terminal-prompt");
+        $terminalPrompt.innerHTML = `root@${$networkObject.id}:/${directoryPath.join("/")}#`;
     }catch(e) {
         terminalMessage(e.message, networkObjectId);
     }
