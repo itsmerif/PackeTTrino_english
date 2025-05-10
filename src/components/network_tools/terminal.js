@@ -6,8 +6,11 @@ function terminal() {
     $terminal.setAttribute("data-id", "");
 
     $terminal.innerHTML = `
+
+        <div class="window-frame"></div>
+
         <p>
-            <span id="terminal-prompt">root@debian:/#</span>
+            <span id="terminal-prompt">root@packettrino:/#</span>
             <input type="text" class="terminal-input" autofocus>
         </p>
 
@@ -24,7 +27,7 @@ function terminal() {
     `;
 
     $terminal.addEventListener("keydown", terminalKeyboard);
-    $terminal.addEventListener("mousedown", dragModal);
+    $terminal.querySelector(".window-frame").addEventListener("mousedown", dragModal);
     $terminal.addEventListener("click", clickTerminal);
     $terminal.querySelector(".terminal-input").addEventListener("keydown", unixParser);
     $terminal.querySelector(".terminal-output").addEventListener("click", clickTerminal);
@@ -123,7 +126,9 @@ function showTerminal(event) {
     const $terminal = document.querySelector(".terminal-component");
     const $advOptsModal = $networkObject.querySelector(".advanced-options-modal");
     $terminal.setAttribute("data-id", $networkObject.id);
+    $terminal.querySelector(".window-frame").innerHTML = $networkObject.id;
     $terminal.style.display = "block";
+    $terminal.querySelector(".terminal-input").focus();
     $advOptsModal.style.display = "none";
 }
 
