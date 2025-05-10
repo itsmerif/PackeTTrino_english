@@ -94,12 +94,8 @@ function isValidCNAMERecord(serverObjectId, alias, name) {
     if (!getARecord(serverObjectId, name)) throw new Error(`Error: El dominio ${name} debe tener primero un registro A.`);
 }
 
-/**ESTA FUNCION VALIDA UN REGISTRO PTR */
-function isValidPTRRecord(dataId, domain, value) {
-
-}
 /**ESTA FUNCIONA DEVUELVE LA IP DE UN NOMBRE DE DOMINIO QUE ESTÉ ALMACENADO EN /ETC/HOSTS, O DEVUELVE FALSO SI NO EXISTE */
-function isDomainInEtcHosts(networkObjectId, inputDomain) {
+function getDomainFromEtcHosts(networkObjectId, inputDomain) {
 
     const $networkObject = document.getElementById(networkObjectId);
     let response = false; //<-- inicializamos la respuesta a falso

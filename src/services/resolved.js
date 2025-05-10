@@ -4,7 +4,7 @@ async function domainNameResolution(networkObjectId, domain) {
     const useCache = $networkObject.getAttribute("resolved") === "true";
     let response = false; //<-- inicializamos la respuesta a falso
 
-    response = isDomainInEtcHosts(networkObjectId, domain); //<--comprobamos si el dominio esta en el archivo /etc/hosts
+    response = getDomainFromEtcHosts(networkObjectId, domain); //<--comprobamos si el dominio esta en el archivo /etc/hosts
 
     if (!response && useCache) response = isDomainInCacheDns(networkObjectId, domain)[1]; //<--comprobamos si el dominio esta en la cache dns (si la cache esta activa)
 
