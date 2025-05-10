@@ -61,7 +61,7 @@ function command_Ip(networkObjectId, args) {
         }
 
         if (!opt_add && !opt_flush) {
-            showObjectInfo(networkObjectId);
+            showNetworkObjectInfo(networkObjectId);
             return;
         }
 

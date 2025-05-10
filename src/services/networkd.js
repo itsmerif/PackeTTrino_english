@@ -13,18 +13,23 @@ function deconfigureInterface(networkObjectId, interface) {
 }
 
 /**ESTA FUNCION MUESTRA POR TERMINAL LA INFORMACION DE LAS INTERFACES DE UN EQUIPO */
-function showObjectInfo(networkObjectId) {
+function showNetworkObjectInfo(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
     const interfaces = getInterfaces(networkObjectId);
-    terminalMessage("1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000", networkObjectId);
-    terminalMessage("    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00", networkObjectId);
-    terminalMessage("    inet 127.0.0.1/8 scope host lo", networkObjectId);
+
+    let message = "1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt;\n";
+    message += "    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\n";
+    message += "    inet 127.0.0.1/8 scope host lo\n";
+
     interfaces.forEach((interface, i) => {
         const ip = $networkObject.getAttribute("ip-" + interface);
         const netmask = $networkObject.getAttribute("netmask-" + interface);
         const mac = $networkObject.getAttribute("mac-" + interface);
-        terminalMessage(`${i + 1}: ${interface}: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;  mtu 1500 qdisc fq_codel state UP group default qlen 1000`, networkObjectId);
-        terminalMessage(`    link/ether ${mac} brd ff:ff:ff:ff:ff:ff`, networkObjectId);
-        if (ip) terminalMessage(`    inet ${ip}/${netmaskToCidr(netmask)} brd 192.168.1.255 scope global dynamic ${interface}`, networkObjectId);
+        message += `${i + 1}: ${interface}: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;\n`;
+        message += `    link/ether ${mac} brd ff:ff:ff:ff:ff:ff\n`;
+        if (ip) message += `    inet ${ip}/${netmaskToCidr(netmask)} brd ${getBroadcast(ip, netmask)} scope global dynamic ${interface}\n`;
     });
+
+    terminalMessage(message, networkObjectId);
+
 }
