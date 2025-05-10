@@ -1,4 +1,4 @@
-function parseInterfacesFile(networkObjectId, content) {
+function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
     
     const availableInterfaces = getInterfaces(networkObjectId); //<-- obtenemos las interfaces disponibles del dispositivo
     const filteredContent = content.replace(/\n/g, " ").replace(/\s+/g, " ").trim(); //<- quitamos los saltos de línea y los espacios
@@ -42,6 +42,9 @@ function parseInterfacesFile(networkObjectId, content) {
         if (!isValidIp(interfaceObject["address"])) throw new Error(`Error: la ip ${interfaceObject["address"]} no es válida`);
         if (!isValidIp(interfaceObject["netmask"])) throw new Error(`Error: la mascara de red ${interfaceObject["netmask"]} no es válida`);
         if ( interfaceObject["gateway"] !== "" && !isValidIp(interfaceObject["gateway"])) throw new Error(`Error: la puerta de enlace ${interfaceObject["gateway"]} no es válida`);
+
+        //<-- si se ha especificado una interfaz, solo evaluamos a esa interfaz
+        if (interfaceInput !== "-a" && interfaceInput !== interfaceObject["iface"]) return;
 
         //<-- configuramos la interfaz si el metodo es static
         if (interfaceObject["inet"] === "static") {
@@ -112,10 +115,10 @@ function parseInterfacesFile(networkObjectId, content) {
  
 /***
  * DIFERENCIAS CON EL FUNCIONAMIENTO HABITUAL EN LINUX:
- * 
+ * -a NO REPRESENTA LAS LINEAS "AUTO", REPRESENTA TODAS LAS INTERFACES (--all)
  * LOS BLOQUES DE INSTRUCCIONES COMIENZAN POR "iface" Y DEBEN SER EN LA FORMA "iface <INTERFAZ> inet <TIPO> address <IP> netmask <MASCARA> gateway <IP>"
- * NO SE ESTUDIAN LAS INSTUCCIONES "AUTO <INTERFAZ>"
+ * NO SE USAN LAS INSTUCCIONES "AUTO <INTERFAZ>"
  * LAS REGLAS DE ENRUTAMIENTO DEBEN SER EN LA FORMA "ip route add <IP_DESTINO>/<MASCARA_DESTINO> via <IP_NEXTHOP>"
- * LAS REGLAS DE ENRUTAMIENTO NO COMIENZAN POR "up" O "down"
- * LAS REGLAS DE ENRUTAMIENTO SIEMPRE LLEVAN "ADD" y NO "DEL"
+ * LAS REGLAS DE ENRUTAMIENTO NO COMIENZAN POR "up" o "down"
+ * LAS REGLAS DE ENRUTAMIENTO SIEMPRE LLEVAN "add"
  */
