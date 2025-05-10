@@ -22,7 +22,7 @@ function unixParser(event) {
             "apache": () => command_apache(networkObjectId, args),
             "nano": () => command_nano(networkObjectId, args[1]),
             "help": () => command_help(),
-            "man": () => command_man(args[1]),
+            "man": () => command_man(networkObjectId, args[1]),
             "traceroute": () => command_traceroute(networkObjectId, args),
             "systemctl": () => command_systemctl(networkObjectId, args),
             "apt": () => command_apt(networkObjectId, args),
