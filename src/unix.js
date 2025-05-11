@@ -11,7 +11,6 @@ function unixParser(event) {
 
         const commandFunctions = {
             "ping": () => command_ping(networkObjectId, args),
-            "dhcp": () => command_Dhcp(networkObjectId, args),
             "iptables": () => command_Iptables(networkObjectId, args),
             "ifup": () => command_ifup(networkObjectId, args[1]),
             "ifdown": () => command_ifdown(networkObjectId, args[1]),
