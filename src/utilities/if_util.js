@@ -30,9 +30,16 @@ function command_ifdown(networkObjectId, interfaceInput)  {
     availableInterfaces.forEach(availableInterface => {
 
         if (interfaceInput === "-a" || interfaceInput === availableInterface) {
+
+            if ($networkObject.getAttribute("dhclient") === "true") {
+                dhcpReleaseHandler(networkObjectId); //<-- en modo dhcp, se hace un release de la ip asignada
+                return;
+            }
+
             deconfigureInterface(networkObjectId, availableInterface); //<-- desconfiguramos la interfaz
             removeInterfaceRoutingRules(networkObjectId, availableInterface); //<-- eliminamos todas las reglas de enrutamiento asociadas a la interfaz
             $networkObject.setAttribute("data-gateway", ""); //<-- eliminamos la puerta de enlace (si existe)
+            
         }
 
     });
