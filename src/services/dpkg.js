@@ -1,7 +1,9 @@
 function dpkg(networkObjectId, option, package) {
     
     const $networkObject = document.getElementById(networkObjectId);
+
     const availabePackages = ["apache2", "bind9", "isc-dhcp-server", "isc-dhcp-relay", "isc-dhcp-client"];
+
     const packagesToServices = {
         "apache2": "apache",
         "bind9": "named",
@@ -11,11 +13,16 @@ function dpkg(networkObjectId, option, package) {
     }
 
     if (!availabePackages.includes(package)) throw new Error(`Error: No se ha podido localizar el paquete ${package}.`);
+
     const service = packagesToServices[package];
     const isServiceInstalled = $networkObject.getAttribute(service) !== null;
+
     if (option === "install" && isServiceInstalled) throw new Error(`${package} ya está en su versión más reciente.`);
+
     if (option === "remove" && !isServiceInstalled) throw new Error(`Error: El paquete ${package} no está instalado, no se eliminará.`);
+
     if (option === "install") dpkgInstaller(networkObjectId, package);
+    
     if (option === "remove") dpkgUninstaller(networkObjectId, package);
     
 }
