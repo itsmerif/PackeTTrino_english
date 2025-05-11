@@ -69,13 +69,15 @@ function dropItemOverBoard(event) {
         "text": () => TextObject(x, y),
     }
 
-    if (itemType === "item" && boardItemRender[itemId]) {
+    if (itemType === "item" && boardItemRender[itemId]) { //<-- es un item del panel y existe una función para renderizarlo
         let $newItem = boardItemRender[itemId]();
+        //se le añade el evento de arrastrar y soltar sobre un switch
         if (!itemId.startsWith("switch")) $newItem.setAttribute("ondrop", `dropPackageOverItem(event); dropSwitchOverItem(event);`);
         boardComponent.render($newItem);
+        itemIndex++; //<-- incrementamos el índice de items para generar un nuevo id único
     }
 
-    if (itemType === "item-dropped" && !isConnected(itemId)) {
+    if (itemType === "item-dropped" && !isConnected(itemId)) { //<-- es un item que se ha arrastrado y no tiene ninguna conexión
         [x, y] = checkObjectClip(x, y);
         $networkObject.style.left = `${x}px`;
         $networkObject.style.top = `${y}px`;
@@ -138,7 +140,6 @@ function dropSwitchOverItem(event) {
 
     if (!switchId.startsWith("switch-")) return;
 
-    const $switchObject = document.getElementById(switchId);
     const switchX = JSON.parse(switchInfo).originx;
     const switchY = JSON.parse(switchInfo).originy;
     const $networkObject = event.target.closest(".item-dropped");

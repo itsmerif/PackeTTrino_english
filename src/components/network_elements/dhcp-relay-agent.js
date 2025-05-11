@@ -47,8 +47,7 @@ function DhcpRelayObject(x, y) {
 
     installDhcprelay($networkObject);
     installIptables($networkObject);
-
-    itemIndex++;
+ 
     return $networkObject;
 
 }

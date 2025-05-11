@@ -56,8 +56,6 @@ function PcObject(x, y) {
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("ondragstart", "BoardItemDragStart(event)");
 
-
-    itemIndex++;
     return $networkObject;
 
 }

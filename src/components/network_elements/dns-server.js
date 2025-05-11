@@ -47,8 +47,6 @@ function DnsServerObject(x, y) {
     installBind9($networkObject);
     installIptables($networkObject);
 
-    itemIndex++;
-
     return $networkObject;
     
 }

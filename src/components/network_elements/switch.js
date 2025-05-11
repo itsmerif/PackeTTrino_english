@@ -42,7 +42,6 @@ function SwitchObject(x, y) {
     $switchObject.setAttribute("ondrop", "switchConn(event)");
     $switchObject.setAttribute("onclick", "showObjectModalTable(event, '.mac-table')");
     $switchObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
-    itemIndex++;
 
     return $switchObject;
 

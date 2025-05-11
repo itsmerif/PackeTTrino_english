@@ -31,7 +31,6 @@ function TextObject(x, y) {
 
     $textObject.appendChild($advancedOptions);
     $textObject.appendChild($input);
-    itemIndex++;
 
     return $textObject;
 }

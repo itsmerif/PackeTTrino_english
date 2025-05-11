@@ -57,8 +57,6 @@ function RouterObject(x, y) {
     attr("onclick", "showRouterMenu(event)");
 
     installIptables($networkObject);
-    
-    itemIndex++;
 
     return $networkObject;
 

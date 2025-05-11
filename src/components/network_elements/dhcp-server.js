@@ -47,7 +47,6 @@ function DhcpServerObject(x, y) {
     installDhcpd($networkObject);
     installIptables($networkObject);
       
-    itemIndex++;
     return $networkObject;
 
 }
