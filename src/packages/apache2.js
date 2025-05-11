@@ -8,7 +8,7 @@ function installApache2(networkObjectId) {
     attr("apache", "false");
     fileSystem.mkdir("html", ["var", "www"]); //<-- creamos la carpeta html dentro de la ruta var/www
     fileSystem.touch("index.html", ["var", "www", "html"]); //<-- creamos el archivo index.html dentro de la carpeta html
-    fileSystem.write("index.html", ["var", "www", "html"], defaultApacheContent); //<-- escribimos el contenido del archivo index.html
+    fileSystem.write("index.html", ["var", "www", "html"], defaultApacheContent.replace(/\s+/g, " ")); //<-- escribimos el contenido del archivo index.html
     terminalMessage("Apache instalado correctamente.", networkObjectId);
 }
 
