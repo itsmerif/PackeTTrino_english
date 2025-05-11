@@ -5,48 +5,51 @@ function browser() {
     $browser.setAttribute("data-id", "");
     
     $browser.innerHTML = `
+
         <div class="browser-header">
 
-        <div class="browser-controls">
-            <button class="control close" aria-label="Cerrar"></button>
-            <button class="control minimize" aria-label="Minimizar"></button>
-            <button class="control maximize" aria-label="Maximizar"></button>
-        </div>
-
-        <div class="browser-tabs">
-            <button class="tab active">Nueva pestaña</button>
-        </div>
-
-        <div class="browser-address-bar">
-
-            <div class="address-bar-icons">
-            <button class="icon back" aria-label="Atrás">◀</button>
-            <button class="icon forward" aria-label="Adelante">▶</button>
-            <button class="icon refresh" aria-label="Actualizar">↻</button>
+            <div class="browser-controls">
+                <button class="control close" aria-label="Cerrar"></button>
+                <button class="control minimize" aria-label="Minimizar"></button>
+                <button class="control maximize" aria-label="Maximizar"></button>
             </div>
 
-            <input type="text" class="address-input" placeholder="https://www.ejemplo.com"
-            aria-label="Barra de direcciones">
-
-            <div class="address-bar-icons">
-            <button class="icon star" aria-label="Marcar como favorito">★</button>
-            <button class="icon menu" aria-label="Menú">⋮</button>
+            <div class="browser-tabs">
+                <button class="tab active">Nueva pestaña</button>
             </div>
 
-        </div>
+            <div class="browser-address-bar">
+
+                <div class="address-bar-icons">
+                   <!-- <button class="icon back" aria-label="Atrás">◀</button>
+                    <button class="icon forward" aria-label="Adelante">▶</button> -->
+                    <button class="icon refresh" aria-label="Actualizar" id="btn-refresh">↻</button>
+                </div>
+
+                <input type="text" class="address-input" placeholder="https://www.ejemplo.com" aria-label="Barra de direcciones">
+
+               <!-- <div class="address-bar-icons">
+                    <button class="icon star" aria-label="Marcar como favorito">★</button>
+                    <button class="icon menu" aria-label="Menú">⋮</button>
+                </div> -->
+
+            </div>
 
         </div>
 
         <iframe class="browser-content"></iframe>
     `;
     
-    $browser.addEventListener("mousedown", dragModal);
+    $browser.querySelector(".browser-tabs").addEventListener("mousedown", dragModal);
     $browser.querySelector(".control.close").addEventListener("click", closeBrowser);
     $browser.querySelector(".control.minimize").addEventListener("click", minimizeBrowser);
     $browser.querySelector(".control.maximize").addEventListener("click", maximizeBrowser);
-    $browser.querySelector(".address-input").addEventListener("keydown", browserSearch);
+    $browser.querySelector(".address-input").addEventListener("keydown", event => {
+        if (event.key === 'Enter') browserSearch();
+    });
     $browser.querySelector(".address-input").addEventListener("mousedown", event => { event.stopPropagation(); });
     $browser.querySelector(".browser-content").addEventListener("mousedown", event => { event.stopPropagation(); });
+    $browser.querySelector("#btn-refresh").addEventListener("click", browserSearch);
 
     return $browser;
 
@@ -54,18 +57,18 @@ function browser() {
 
 //constantes de navegador
 
-const $homepage = `
+var $homepage = `
     <title>Amin Search</title><meta charset=UTF-8><meta content="width=device-width,initial-scale=1"name=viewport>
     <style>body{margin:0;display:grid;place-items:center;height:70vh}</style><img alt=logo src=./assets/browser/aminsearch.png>
 `;
 
-const $error404 = `
+var $error404 = `
     <title>Amin Search</title><meta charset=UTF-8><meta content="width=device-width,initial-scale=1"name=viewport>
     <style>body{margin:0;display:grid;place-items:center;height:70vh}</style><div class=container><div class=error-code>404</div>
     <h1>¡Página no encontrada!</h1><p>La página que estás buscando no existe o ha sido movida a otra ubicación.</div>
 `;
 
-const $forbidden403 = `
+var $forbidden403 = `
     <!doctypehtml><html style=height:100%><title>403 Forbidden</title><style>@media (prefers-color-scheme:dark){body{background-color:#000!important}}</style>
     <body style="color:#444;margin:0;font:normal 14px/20px Arial,Helvetica,sans-serif;height:100%;background-color:#fff"><div style=height:auto;min-height:100%>
     <div style=text-align:center;width:800px;margin-left:-400px;position:absolute;top:30%;left:50%><h1 style=margin:0;font-size:150px;line-height:150px;font-weight:700>

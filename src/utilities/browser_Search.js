@@ -1,22 +1,26 @@
-async function browserSearch(event) {
+async function browserSearch() {
 
-    if (event.key === 'Enter') {
+    const $networkObject = document.getElementById(document.querySelector(".browser-component").getAttribute("data-id"));
+    const $browser = document.querySelector(".browser-component");
+    const $addressInput = $browser.querySelector(".address-input");
 
-        const $networkObject = document.getElementById(document.querySelector(".browser-component").getAttribute("data-id"));
-        const search = event.target.value.trim();
+    const search = $addressInput.value.trim(); //<-- obtenemos la entrada de direccion
 
-        if (visualToggle) await minimizeBrowser();
+    if (visualToggle) await minimizeBrowser();
 
-        try {
-            await http($networkObject.id, search);
-        } catch (error) {
-            console.log(error);
-            document.querySelector(".browser-content").srcdoc = $error404;
-        }
+    try {
 
-        if (visualToggle) await maximizeBrowser();
+        await http($networkObject.id, search);
+
+    } catch (error) {
+
+        document.querySelector(".browser-content").srcdoc = $error404;
 
     }
+
+    if (visualToggle) await maximizeBrowser();
+
+
 }
 
 async function http(networkObjectId, arg) {
@@ -36,7 +40,7 @@ async function http(networkObjectId, arg) {
     if (tcpSyncFlag[networkObjectId] === false) throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
 
     await httpRequestPacketGenerator(networkObjectId, destinationIp, source_port, 80);
-    
+
     let htmlReply = browserBuffer[networkObjectId];
 
     if (!htmlReply) throw new Error("Error: No se ha recibido respuesta del servidor web.");
