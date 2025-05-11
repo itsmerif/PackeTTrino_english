@@ -49,18 +49,14 @@ function PcObject(x, y) {
 
     //instalamos paquetes
     installDhclient($networkObject);
-    installApache2($networkObject);
     installIptables($networkObject);
 
     //añadimos eventos
     attr("onclick", "showPcMenu('" + $networkObject.id + "')");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("ondragstart", "BoardItemDragStart(event)");
-    //attr("onmousedown", "startBoardItemMove(event)");
-    //$networkObject.querySelector("img").draggable = false;
 
 
-    //devolvemos el objeto
     itemIndex++;
     return $networkObject;
 
