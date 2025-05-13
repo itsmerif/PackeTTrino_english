@@ -5,7 +5,7 @@ async function generalProcessorRouter(switchId, routerObjectId, packet) {
     const [routerObjectIp, routerObjectNetmask, routerObjectMac] = getInterfaceSwitchInfo(routerObjectId, switchId);
     const interface = switchToInterface(routerObjectId, switchId); // <-- obtenemos la interfaz de entrada
     const availableIps = getAvailableIps(routerObjectId); // <-- obtenemos la lista de IPs disponibles
-    const activeServices = getActiveServices(routerObjectId); // <-- obtenemos la lista de servicios activos
+    const activeServices = getAvailableServices(routerObjectId); // <-- obtenemos la lista de servicios activos
 
     if (!routerObjectIp || !routerObjectNetmask || !routerObjectMac) return; //si la interfaz no está correctamente configurada, no se procesa nada
 

@@ -6,7 +6,7 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     const interface = switchToInterface(networkObjectId, switchId);
     const networkObjectMac = $networkObject.getAttribute(`mac-${interface}`);
     const networkObjectIp = $networkObject.getAttribute(`ip-${interface}`);
-    const activeServices = getActiveServices(networkObjectId);
+    const activeServices = getAvailableServices(networkObjectId);
 
     if (!firewallProcessorFilter(networkObjectId, packet, "INPUT", interface, "")) {
         if (visualToggle) igniteFire(networkObjectId);

@@ -52,17 +52,17 @@ function pc_menu() {
 
         <section class="button-container">
 
-            <button class="btn-modern-blue" type="submit" id="save-btn">Guardar</button>
+            <button class="btn-modern-blue" type="submit" id="save-btn" style="display: none;">Guardar</button>
             <button class="btn-modern-blue" type="submit" id="get-btn" style="display: none;">Obtener IP</button>
             <button class="btn-modern-blue" type="submit" id="renew-btn" style="display: none;">Renovar IP</button>
             <button class="btn-modern-blue" type="submit" id="release-btn" style="display: none;">Liberar IP</button>
-            <button class="btn-modern-red"  type="submit" id="close-btn">Cerrar</button>
+            <button class="btn-modern-red"  type="submit" id="close-btn" style="display: none;">Cerrar</button>
 
         </section>
 
     `;
 
-    $menu.addEventListener("submit", savePcMenu);
+    $menu.addEventListener("submit", pcMenuButtonsHandler);
     $menu.querySelector("#dhcp").addEventListener("change", dhcpHandler);
     $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
 
@@ -70,87 +70,96 @@ function pc_menu() {
 
 }
 
-function showPcMenu(id) {
+function showPcMenu(networkObjectId) {
 
     if (icmpTryoutToggle) { //esto controla si está usando la utilidad de ping visual
-        icmpTryoutProcess(id);
+        icmpTryoutProcess(networkObjectId);
         return;
     }
 
-    const $networkObject = document.getElementById(id);
+    const $networkObject = document.getElementById(networkObjectId);
     const $menu = document.querySelector(".pc-form");
     const $textInputs = $menu.querySelectorAll("input[type='text']");
     const $buttonSection = $menu.querySelector(".button-container"); //<-- seccion de botones
-    $buttonSection.querySelectorAll("button").forEach(button => button.style.display = "none"); //<-- ocultamos todos los botones al inicio
-
+    const activeServices = getAvailableServices(networkObjectId);
+    const networkInterface = getInterfaces(networkObjectId)[0]; //<-- nos quedamos con la primera interfaz (por ahora)
+    
     //<-- configuracion basica de red
-    const ip = $networkObject.getAttribute("ip-enp0s3");
-    const netmask = $networkObject.getAttribute("netmask-enp0s3");
-    const gateway = $networkObject.getAttribute("data-gateway");
-    const dnsServer = $networkObject.getAttribute("data-dns-server");
-    const activeServices = getActiveServices(id);
-    $menu.querySelector("#ip").value = ip;
-    $menu.querySelector("#netmask").value = netmask;
-    $menu.querySelector("#gateway").value = gateway;
-    $menu.querySelector("#dns-server").value = dnsServer;
-    $menu.querySelector("#form-item-id").innerHTML = id;
+
+    $menu.querySelector("#ip").value = $networkObject.getAttribute(`ip-${networkInterface}`);
+    $menu.querySelector("#netmask").value = $networkObject.getAttribute(`netmask-${networkInterface}`);
+    $menu.querySelector("#gateway").value = $networkObject.getAttribute("data-gateway");
+    $menu.querySelector("#dns-server").value = $networkObject.getAttribute("data-dns-server");
+    $menu.querySelector("#form-item-id").innerHTML = networkObjectId;
 
     if (activeServices.includes("dhclient")) { //<-- comprueba si existe el servicio dhcp cliente
 
         if ($networkObject.getAttribute("dhclient") === "true") { //<-- comprobamos si el servicio esta activo
 
             $menu.querySelector("#dhcp").checked = true;
-            $textInputs.forEach(input => input.disabled = true);
+            $textInputs.forEach(input => input.disabled = true); //<-- bloqueamos la configuración manual de la interfaz
 
-            if (!ip) { 
+            if (!$menu.querySelector("#ip").value) {  //<-- si no tenemos una IP asignada, solo se muestra el botón de "Obtener IP"
+
                 $buttonSection.querySelector("#get-btn").style.display = "block";
-            }else {
+
+            }else { //<-- si tenemos una IP asignada, se muestran los botones de "Renovar IP" y "Liberar IP"
+
                 $buttonSection.querySelector("#renew-btn").style.display = "block";
                 $buttonSection.querySelector("#release-btn").style.display = "block";
+
             }
+
         }
 
-        $menu.querySelector("#dhcp-mode").classList.remove("hidden");
+        $menu.querySelector("#dhcp-mode").classList.remove("hidden"); //<-- mostramos el modulo de DHCP
+
     }
 
-    if (activeServices.includes("apache")) { //<-- comprobamos si existe el servicio web server
+    if (activeServices.includes("apache")) { //<-- comprobamos si existe el servicio Apache
 
         if ($networkObject.getAttribute("apache") === "true") $menu.querySelector("#web-server").checked = true;
 
-        $menu.querySelector("#web-server-mode").classList.remove("hidden");
+        $menu.querySelector("#web-server-mode").classList.remove("hidden"); //<-- mostramos el modulo de Apache
         
     }
     
     $buttonSection.querySelector("#save-btn").style.display = "block"; //<-- mostramos el boton de guardar
     $buttonSection.querySelector("#close-btn").style.display = "block"; //<-- mostramos el boton de cerrar
-    document.querySelector(".pc-form").style.display = "flex"; //<-- mostramos el formulario
+    $menu.style.display = "flex"; //<-- mostramos el menu
 }
 
-async function savePcMenu(event) {
+async function pcMenuButtonsHandler(event) {
 
     event.preventDefault();
 
     const $networkObject = document.getElementById(document.getElementById("form-item-id").innerHTML);
     const $networkObjectIcon = $networkObject.querySelector("img");
-    const newIp = document.querySelector(".pc-form #ip").value;
-    const newNetmask = document.querySelector(".pc-form #netmask").value;
-    const newGateway = document.querySelector(".pc-form #gateway").value;
-    const isDhcpOn = document.querySelector(".pc-form #dhcp").checked;
-    const isWebServerOn = document.querySelector(".pc-form #web-server").checked;
-    const newDnsServer = document.querySelector(".pc-form #dns-server").value;
+    const networkInterface = getInterfaces($networkObject.id)[0]; //<-- nos quedamos con la primera interfaz (por ahora)
+    const networkObjectServices = getAvailableServices($networkObject.id);
+    const $menu = document.querySelector(".pc-form");
 
-    const buttonFunctions = {
+    //recuperamos la información del menu
+    
+    const newIp = $menu.querySelector("#ip").value;
+    const newNetmask = $menu.querySelector("#netmask").value;
+    const newGateway = $menu.querySelector("#gateway").value;
+    const newDnsServer = $menu.querySelector("#dns-server").value;
+    const isDhcpOn = $menu.querySelector("#dhcp").checked;
+    const isWebServerOn = $menu.querySelector("#web-server").checked;
+
+    const buttonFunctions = { //<-- diccionario de funciones para los botones
 
         "save-btn": () => {
-            configureInterface($networkObject.id, newIp, newNetmask, "enp0s3"); //<-- configuramos la interfaz
-            setDirectRoutingRule($networkObject.id, newIp, newNetmask, "enp0s3"); //<-- añadimos la regla de enrutamiento directo
+            configureInterface($networkObject.id, newIp, newNetmask, networkInterface); //<-- configuramos la interfaz
+            setDirectRoutingRule($networkObject.id, newIp, newNetmask, networkInterface); //<-- añadimos la regla de enrutamiento directo
             $networkObject.setAttribute("data-gateway", newGateway); //<-- configuramos la puerta de enlace
-            setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, "enp0s3", newGateway); //<-- añadimos la regla por defecto
+            setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, networkInterface, newGateway); //<-- añadimos la regla por defecto
             $networkObject.setAttribute("data-dns-server", newDnsServer); //<-- configuramos el servidor DNS
             bodyComponent.render(popupMessage("Los cambios se han aplicado correctamente."));
         },
 
-        "get-btn": async () => {
+        "get-btn": async () => { 
             if (visualToggle) document.querySelector(".pc-form").style.display = "none";
             await dhcpDiscoverHandler($networkObject.id); //<-- iniciamos el proceso de DHCP discover
         },
@@ -166,14 +175,16 @@ async function savePcMenu(event) {
         },
 
         "close-btn": () => {
-            restorePcForm(); //<-- restauramos el menu de configuración
-            document.querySelector(".pc-form").style.display = "none";
+            restorePcForm();
         }
+
     }
 
-    $networkObject.setAttribute("dhclient", isDhcpOn);
-    $networkObject.setAttribute("apache", isWebServerOn);
-    $networkObjectIcon.src = (isWebServerOn) ? "./assets/board/www-server.svg" : "./assets/board/pc.svg";
+    if(networkObjectServices.includes("dhcpd") ) $networkObject.setAttribute("dhcpd", isDhcpOn);
+    if(networkObjectServices.includes("apache") ) $networkObject.setAttribute("apache", isWebServerOn);
+    if (isWebServerOn) $networkObjectIcon.src = "./assets/board/www-server.svg"; //<-- si se activa el servicio de Apache, cambiamos el icono del equipo
+
+    //ejecutamos la función correspondiente al botón
     (event.submitter.id in buttonFunctions) ? buttonFunctions[event.submitter.id]() : buttonFunctions["save-btn"]();
 }
 
@@ -214,14 +225,11 @@ function dhcpHandler(event) {
 function restorePcForm() {
 
     const $menu = document.querySelector(".pc-form");
+    const $modules = $menu.querySelector(".modes-wrapper").querySelectorAll(".form-item");
+    const $buttons = $menu.querySelector(".button-container").querySelectorAll("button");
 
-    $menu.querySelector(".modes-wrapper").querySelectorAll(".form-item").forEach(item => {
-        item.classList.add("hidden");
-        item.querySelectorAll(".btn-toggle").forEach(btn => btn.checked = false);
-    });
+    $modules.forEach($module => $module.classList.add("hidden"));
+    $buttons.forEach(button => button.style.display = "none");
+    $menu.style.display = "none"; //<-- ocultamos el menu
 
-    $menu.querySelector(".button-container").querySelectorAll("button").forEach( button => { 
-        if (button.id !== "close-btn" && button.id !== "save-btn") button.style.display = "none";
-    });
-
-}
+}  
