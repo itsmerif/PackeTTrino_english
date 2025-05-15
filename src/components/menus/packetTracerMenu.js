@@ -3,9 +3,12 @@ let trafficBuffer = [];
 function packetTracer() {
 
     const $packetTracer = document.createElement("article");
-    $packetTracer.classList.add("packet-traffic");
+    $packetTracer.classList.add("packet-traffic", "draggable-modal");
 
     $packetTracer.innerHTML = `
+
+        <div class="window-frame"><p>Rastreador de Paquetes</p></div>
+
         <div class="filter-traffic">
             <input type="text">
             <button id="filter-traffic-button">Filtrar</button>
@@ -14,24 +17,28 @@ function packetTracer() {
                 <option value="all">Todos</option>
             </select>
         </div>
-        <table>
-        <tr>
-            <th>XID</th>
-            <th>Protocol</th>
-            <th>Type</th>
-            <th>Origin IP</th>
-            <th>Destination IP</th>
-            <th>Origin MAC</th>
-            <th>Destination MAC</th>
-            <th>TTL</th>
-        </tr>
-        </table>
+
+        <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th>XID</th>
+                    <th>Protocol</th>
+                    <th>Type</th>
+                    <th>Origin IP</th>
+                    <th>Destination IP</th>
+                    <th>Origin MAC</th>
+                    <th>Destination MAC</th>
+                    <th>TTL</th>
+                </tr>
+            </table>
+        </div>
     `;
 
     $packetTracer.querySelector("input").addEventListener("keydown", (event) => { if (event.key === "Enter") filterPacketTraffic(); });
     $packetTracer.querySelector("#filter-traffic-button").addEventListener("click", filterPacketTraffic);
     $packetTracer.querySelector("#clean-traffic-button").addEventListener("click", cleanPacketTraffic);
     $packetTracer.querySelector("#filter-by-device").addEventListener("change", filterPacketTrafficbyDevice);
+    $packetTracer.querySelector(".window-frame").addEventListener("mousedown", dragModal);
 
     return $packetTracer;
 
