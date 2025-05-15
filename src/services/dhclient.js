@@ -123,7 +123,6 @@ async function dhcpReleaseGenerator(networkObjectId) {
 function setDhcpInfo(networkObjectId, packet, interface = "enp0s3") {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const $pcForm = document.querySelector(".pc-form");
     const newIp = packet.yiaddr;
     const newNetmask = packet.netmask;
     const newGateway = packet.gateway;
@@ -142,24 +141,12 @@ function setDhcpInfo(networkObjectId, packet, interface = "enp0s3") {
     $networkObject.setAttribute("data-dns-server", newDns);
     $networkObject.setAttribute("data-dhcp-lease-time", newLeaseTime);
 
-    //si tenemos el menu grafico abierto, se actualizan los campos
-    if ($pcForm.style.display === "flex" && $pcForm.querySelector("#form-item-id").innerHTML === networkObjectId) {
-        $pcForm.querySelector("#ip").value = newIp;
-        $pcForm.querySelector("#netmask").value = newNetmask;
-        $pcForm.querySelector("#gateway").value = newGateway;
-        $pcForm.querySelector("#dns-server").value = newDns;
-        $pcForm.querySelector("#renew-btn").style.display = "block";
-        $pcForm.querySelector("#release-btn").style.display = "block";
-        $pcForm.querySelector("#get-btn").style.display = "none";
-    }
-
 }
 
 /**ESTA FUNCION ELIMINA LA INFORMACION DE RED DE UNA INTERFAZ (POR DEFECTO ENP0S3) DE UN EQUIPO EN DHCP */
 function deleteDhcpInfo(networkObjectId, interface = "enp0s3") {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const $pcForm = document.querySelector(".pc-form");
 
     //deconfiguramos la interfaz y eliminamos la entrada de la tabla de enrutamiento
     deconfigureInterface($networkObject.id, interface);
@@ -177,17 +164,6 @@ function deleteDhcpInfo(networkObjectId, interface = "enp0s3") {
     $networkObject.setAttribute("data-dhcp-flag-t2", "false");
     clearInterval(clientLeaseTimers[networkObjectId]);
     delete clientLeaseTimers[networkObjectId];
-
-    //si tenemos el menu grafico abierto, se actualizan los campos    
-    if ($pcForm.style.display === "flex" && $pcForm.querySelector("#form-item-id").innerHTML === networkObjectId) {
-        $pcForm.querySelector("#ip").value = "";
-        $pcForm.querySelector("#netmask").value = "";
-        $pcForm.querySelector("#gateway").value = "";
-        $pcForm.querySelector("#dns-server").value = "";
-        $pcForm.querySelector("#renew-btn").style.display = "none";
-        $pcForm.querySelector("#release-btn").style.display = "none";
-        $pcForm.querySelector("#get-btn").style.display = "block";
-    }
 }
 
 /**ESTA FUNCION INICIA/REINICIA EL TIEMPO DE ALQUILER DHCP DE UN EQUIPO*/
