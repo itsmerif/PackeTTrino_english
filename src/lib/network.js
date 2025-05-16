@@ -454,6 +454,22 @@ function getMacAddresses(networkObjectId) {
 
 }
 
+/**ESTA FUNCIÓN DEVUELVE TRUE SI LA IP ES LOCAL PARA EL DISPOSITIVO */
+function isLocalIp(networkObjectId, ip)  {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const interfaces = getInterfaces(networkObjectId);
+    let response = false;
+
+    //si forma parte de alguna interfaz
+    for (let interface of interfaces) if ($networkObject.getAttribute(`ip-${interface}`) === ip) response = true;
+
+    //si forma parte del bucle local
+    if (getNetwork(ip,"255.0.0.0") === "127.0.0.0") response = true;
+
+    return response;
+}
+
 //FUNCIONES DE SIMULACION DE CONSTRUCCION DE REDES
 function getLastElement(selector, position = -1) {
     const elements = document.querySelectorAll(selector);
