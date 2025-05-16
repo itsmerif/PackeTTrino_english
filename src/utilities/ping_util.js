@@ -1,24 +1,19 @@
-async function command_ping(dataId, args) {
+async function command_ping(networkObjectId, destination) {
 
-    const $networkObject = document.getElementById(dataId);
+    const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
 
-    const stateHandler = { //<-- definimos el manejador de los estados
-        0: () => pingSuccess(args[1]),
-        1: () => terminalMessage(`ping: ${args[1]}: Nombre o servicio desconocido.`, dataId),
-        2: () => terminalMessage(`ping: ${args[1]}: La dirección IP no es válida.`, dataId),
-        3: () => pingFailure(args[1])
-    }
-
-    if (args.length !== 2) {
-        terminalMessage("Error: Sintaxis: ping  &lt;ip | dominio&gt;", dataId);
-        return;
+    const stateHandler = {
+        0: () => pingSuccess(destination),
+        1: () => terminalMessage(`ping: ${destination}: Nombre o servicio desconocido.`, networkObjectId),
+        2: () => terminalMessage(`ping: ${destination}: La dirección IP no es válida.`, networkObjectId),
+        3: () => pingFailure(destination)
     }
 
     if (!networkObjectIp || !networkObjectNetmask || !networkObjectMac) {
-        terminalMessage("ping: connect: La red es inaccesible.", dataId);
+        terminalMessage("ping: connect: La red es inaccesible.", networkObjectId);
         return;
     }
 
@@ -26,7 +21,7 @@ async function command_ping(dataId, args) {
 
     if (visualToggle) await minimizeTerminal();
 
-    let stateCode = await ping(dataId, args[1]); //<-- realizamos el ping obteniendo el codigo de estado
+    let stateCode = await ping(networkObjectId, destination); //<-- realizamos el ping obteniendo el codigo de estado
 
     stateHandler[stateCode](); //<-- ejecutamos el manejador de estados
     

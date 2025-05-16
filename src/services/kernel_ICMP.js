@@ -9,23 +9,19 @@ async function ping(networkObjectId, destination) {
         if (!destination) return 1;
     }
 
-    if (destination === getNetwork(destination, networkObjectNetmask)) return 2;
-
     if (isLocalIp(networkObjectId, destination)) {
         await new Promise(resolve => setTimeout(resolve, 50)); //<-- esta promesa esta aquí para que la terminal visualmente no se "buguee"
         return 0;
     }
 
+    if (destination === getNetwork(destination, networkObjectNetmask)) return 2;
+
     icmpFlag[networkObjectId] = false;
 
-    try {
-        
+    try {       
         await icmpRequestPacketGenerator(networkObjectId, networkObjectIp, destination);
-
     } catch (error) {
-
         return 3;
-
     }
 
     if (icmpFlag[networkObjectId] === false) return 3;
@@ -33,60 +29,76 @@ async function ping(networkObjectId, destination) {
 
 }
 
-async function traceroute(dataId, destination, numeric = false) {
+async function traceroute(networkObjectId, destination, numeric = false) {
     
-    trace[dataId] = true;
-    traceFlag[dataId] = false;
-
-    const $networkObject = document.getElementById(dataId);
+    const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
     let hops = numeric ? 1 : "";
 
     if (!isValidIp(destination)) {
-        destination = await domainNameResolution(dataId, destination);
-        if (!destination) return 1;
+        const domainName = destination;
+        destination = await domainNameResolution(networkObjectId, destination);
+        if (!destination) {
+            terminalMessage(`traceroute: Nombre "${domainName}" o servicio desconocido.`, networkObjectId);
+            return;
+        }
     }
 
-    let packet = new IcmpEchoRequest(networkObjectIp, destination, networkObjectMac, "");
-    packet.ttl = 1;
+    if (isLocalIp(networkObjectId, destination)) {
+        await new Promise(resolve => setTimeout(resolve, 50)); //<-- esta promesa esta aquí para que la terminal visualmente no se "buguee"
+        return;
+    }
 
-    traceBuffer[dataId] = [networkObjectIp];
-    traceReturn[dataId] = false;
+    trace[networkObjectId] = true; //<-- activamos el modo de trazado
+    traceFlag[networkObjectId] = false;
 
-    await customPacketGenerator(dataId, packet);
+    let packet = new IcmpEchoRequest(
+        networkObjectIp, //ip de origen
+        destination, //ip de destino
+        networkObjectMac, //mac de origen
+        "" //mac de destino
+    );
 
-    while (traceReturn[dataId] === true) {
-        terminalMessage(
-            hops + " " + 
-            traceBuffer[dataId][traceBuffer[dataId].length - 2].toString().padEnd(15," ") + 
-            traceBuffer[dataId][traceBuffer[dataId].length - 1].toString(),
-        dataId);
-        traceReturn[dataId] = false;
+    packet.ttl = 1; //el TTL inicial es 1
+
+    traceBuffer[networkObjectId] = [networkObjectIp]; //el punto de partida es la IP del objeto
+    traceReturn[networkObjectId] = false;
+
+    await hostRouting(networkObjectId, packet);
+
+    while (traceReturn[networkObjectId] === true) {
+        //construimos y mostramos el mensaje de salida
+        let message = `${hops}`;
+        message +=` ${traceBuffer[networkObjectId][traceBuffer[networkObjectId].length - 2].toString().padEnd(15," ")}`;
+        message +=` ${traceBuffer[networkObjectId][traceBuffer[networkObjectId].length - 1].toString()}`;
+        terminalMessage(message, networkObjectId);
+        //limpiamos el buffer de mensajes de salida
+        traceReturn[networkObjectId] = false;
+        //aumentamos el TTL y enviamos el paquete de nuevo
         packet.ttl++;
-        hops = numeric ? hops + 1 : "";
-        await customPacketGenerator(dataId, packet);
+        hops = (numeric) ? hops + 1 : "";
+        await hostRouting(networkObjectId, packet);
     }
 
-    if (traceFlag[dataId] === true) {
-        terminalMessage(
-            hops + " " + 
-            traceBuffer[dataId][traceBuffer[dataId].length - 2].toString().padEnd(15," ") + 
-            traceBuffer[dataId][traceBuffer[dataId].length - 1].toString(), 
-            dataId);
+    if (traceFlag[networkObjectId] === true) {
+        let message = `${hops}`;
+        message +=` ${traceBuffer[networkObjectId][traceBuffer[networkObjectId].length - 2].toString().padEnd(15," ")}`;
+        message +=` ${traceBuffer[networkObjectId][traceBuffer[networkObjectId].length - 1].toString()}`;
+        terminalMessage(message, networkObjectId);
     } else {
-        traceRouteFail(traceBuffer[dataId][traceBuffer[dataId].length - 1], hops, numeric);
+        traceRouteFail(traceBuffer[networkObjectId][traceBuffer[networkObjectId].length - 1], hops, numeric);
     }
 
-    trace[dataId] = false;
+    trace[networkObjectId] = false; //<-- desactivamos el modo de trazado
 
     function traceRouteFail(origin, seq, numeric = false) {
         if (document.querySelector(".terminal-component").style.display === "none") return;
         seq = numeric ? seq + 1 : "";
-        terminalMessage(seq + " " + origin.toString().padEnd(15," ") + " *\n", dataId);
+        terminalMessage(seq + " " + origin.toString().padEnd(15," ") + " *\n", networkObjectId);
         window.pingInterval = setInterval(() => {
             seq = numeric ? seq + 1 : "";
-            terminalMessage(seq + " " + `*               *\n`, dataId);
+            terminalMessage(seq + " " + `*               *\n`, networkObjectId);
         }, 500);
     }
 
@@ -97,48 +109,4 @@ async function icmpRequestPacketGenerator(networkObjectId, originIp, destination
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3"); 
     let packet = new IcmpEchoRequest(originIp, destinationIp, networkObjectMac, "");
     await hostRouting(networkObjectId, packet);
-}
-
-async function customPacketGenerator(networkObjectId, packet) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const switchId = $networkObject.getAttribute("data-switch-enp0s3");
-    const destination_ip = packet.destination_ip;
-    const isSameNetwork = getNetwork(networkObjectIp, $networkObject.getAttribute("netmask-enp0s3")) === getNetwork(destination_ip, $networkObject.getAttribute("netmask-enp0s3"));
-
-    if (!isSameNetwork) {
-
-        const defaultGateway = $networkObject.getAttribute("data-gateway");
-
-        if (!defaultGateway) throw new Error("Error: Puerta de Enlace Predeterminada No Configurada");
-
-        const defaultGatewayMac = isIpInARPTable(networkObjectId, defaultGateway);
-
-        if (!defaultGatewayMac) {
-            buffer[networkObjectId] = packet;
-            await arpResolve(networkObjectId, defaultGateway);
-            return;
-        }
-
-        packet.destination_mac = defaultGatewayMac;
-        addPacketTraffic(packet);
-        await switchProcessor(switchId, networkObjectId, packet);
-        return;
-
-    }
-
-
-    const destination_mac = isIpInARPTable(networkObjectId, destination_ip);
-
-    if (!destination_mac) {
-        buffer[networkObjectId] = packet;
-        await arpResolve(networkObjectId, destination_ip);
-        return;
-    }
-
-    packet.destination_mac = destination_mac;
-    addPacketTraffic(packet);
-    await switchProcessor(switchId, networkObjectId, packet);
-
 }

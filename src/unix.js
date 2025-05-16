@@ -10,7 +10,7 @@ function unixParser(event) {
         const command = args[0]; //el primer argumento es el comando
 
         const commandFunctions = {
-            "ping": () => command_ping(networkObjectId, args),
+            "ping": () => command_ping(networkObjectId, args[1]),
             "iptables": () => command_Iptables(networkObjectId, args),
             "ifup": () => command_ifup(networkObjectId, args[1]),
             "ifdown": () => command_ifdown(networkObjectId, args[1]),
@@ -22,7 +22,7 @@ function unixParser(event) {
             "nano": () => command_nano(networkObjectId, args[1]),
             "help": () => command_help(),
             "man": () => command_man(networkObjectId, args[1]),
-            "traceroute": () => command_traceroute(networkObjectId, args),
+            "traceroute": () => command_traceroute(networkObjectId, args.slice(1)),
             "systemctl": () => command_systemctl(networkObjectId, args),
             "apt": () => command_apt(networkObjectId, args),
             "mkdir": () => command_mkdir(networkObjectId, args[1]),
