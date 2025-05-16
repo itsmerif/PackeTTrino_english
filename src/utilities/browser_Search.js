@@ -15,6 +15,7 @@ async function browserSearch() {
     } catch (error) {
 
         document.querySelector(".browser-content").srcdoc = $error404;
+        console.log(error);
 
     }
 
@@ -23,32 +24,34 @@ async function browserSearch() {
 
 }
 
-async function http(networkObjectId, arg) {
+async function http(networkObjectId, destinationIp) {
 
-    delete browserBuffer[networkObjectId];
-    let destinationIp = arg;
+    const $browserContent = document.querySelector(".browser-content");
+    let content;
 
     if (!isValidIp(destinationIp)) {
         destinationIp = await domainNameResolution(networkObjectId, destinationIp);
         if (!destinationIp) throw new Error("Error: No se pudo resolver el dominio.");
     }
 
+    if (isLocalIp(networkObjectId,destinationIp)) {
+        content = getApacheWebContent(networkObjectId);
+        $browserContent.srcdoc = content;
+        return;
+    }
+
+    //comenzamos el proceso de sincronización TCP
+
+    delete browserBuffer[networkObjectId];
     const source_port = Math.floor(Math.random() * (65535 - 49152 + 1)) + 49152; // <--- puerto efímero aleatorio para el origen
-
     await tcpSynPacketGenerator(networkObjectId, destinationIp, source_port, 80);
-
     if (tcpSyncFlag[networkObjectId] === false) throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
-
     await httpRequestPacketGenerator(networkObjectId, destinationIp, source_port, 80);
-
     let htmlReply = browserBuffer[networkObjectId];
-
     if (!htmlReply) throw new Error("Error: No se ha recibido respuesta del servidor web.");
 
-    terminalMessage("Conexión establecida con el servidor web.", networkObjectId);
-
-    let content = htmlReply.body;
-    const $browserContent = document.querySelector(".browser-content");
+    //mostramos el contenido del servidor web
+    content = htmlReply.body;
     $browserContent.srcdoc = content;
 
 }
