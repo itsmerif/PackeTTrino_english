@@ -9,7 +9,7 @@ function command_nano(networkObjectId, file) {
     let fileName = directoryPath.pop();
 
     try {
-        let fileContent = fileSystem.open(fileName, directoryPath); //<-- intentamos abrir el archivo
+        let fileContent = fileSystem.read(fileName, directoryPath); //<-- intentamos abrir el archivo
         frameTitle.innerHTML = file; //<-- establecemos el título del editor visualmente
         editorArea.setAttribute("data-file", file); //<-- establecemos el nombre del archivo en el editor
         editorArea.value = fileContent; //<-- volcamos el contenido del archivo

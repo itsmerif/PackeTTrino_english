@@ -10,7 +10,7 @@ function command_ifup(networkObjectId, interfaceInput)  {
     let fileName = directoryPath.pop();
 
     try {
-        let interfacesContent = networkElementFileSystem.open(fileName, directoryPath); //<-- recuperamos el contenido del archivo interfaces
+        let interfacesContent = networkElementFileSystem.read(fileName, directoryPath); //<-- recuperamos el contenido del archivo interfaces
         interfacesFileInterpreter(networkObjectId, interfacesContent, interfaceInput); //<-- parseamos e interpretamos el contenido del archivo
     } catch (e) {
         terminalMessage(e.message, networkObjectId);

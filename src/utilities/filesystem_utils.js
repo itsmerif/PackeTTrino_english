@@ -73,7 +73,7 @@ function command_cat(networkObjectId, file) {
     let fileName = directoryPath.pop();
 
     try {
-        let fileContent = fileSystem.open(fileName, directoryPath);
+        let fileContent = fileSystem.read(fileName, directoryPath);
         terminalMessage(fileContent, networkObjectId);
     } catch (e) {
         terminalMessage(e.message, networkObjectId);

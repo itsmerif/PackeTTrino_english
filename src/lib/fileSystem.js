@@ -120,7 +120,7 @@ class FileSystem {
 
     //gestion de archivos
 
-    open (fileName, directoryPath) {
+    read (fileName, directoryPath) {
 
         let currentDirectory = this.structure["/"];
 
@@ -132,7 +132,7 @@ class FileSystem {
 
         if (!Object.hasOwn(currentDirectory, fileName)) throw new Error(`El archivo ${fileName} no existe`);
 
-        return currentDirectory[fileName]; //<-- devolvemos el contenido del archivo
+        return currentDirectory[fileName]; 
 
     }
 

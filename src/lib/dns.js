@@ -105,7 +105,7 @@ function getDomainFromEtcHosts(networkObjectId, inputDomain) {
     
     try {
 
-        const etcHostsContent = fileSystem.open(fileName, directoryPath); //<-- obtenemos el contenido del archivo
+        const etcHostsContent = fileSystem.read(fileName, directoryPath); //<-- obtenemos el contenido del archivo
         const lines = etcHostsContent.split("\n"); //<-- dividimos el contenido en lineas
 
         lines.forEach(line => {
