@@ -1,35 +1,35 @@
-async function ping(dataId, destination) {
+async function ping(networkObjectId, destination) {
 
-    const $networkObject = document.getElementById(dataId);
+    const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
     const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
 
     if (!isValidIp(destination)) {
-        destination = await domainNameResolution(dataId, destination); //<-- intentamos resolver el nombre
-        if (!destination) return 1; //<-- si no se pudo resolver el nombre
+        destination = await domainNameResolution(networkObjectId, destination);
+        if (!destination) return 1;
     }
 
-    if (destination === getNetwork(destination, networkObjectNetmask)) return 2; //<-- si el destino es una red
+    if (destination === getNetwork(destination, networkObjectNetmask)) return 2;
 
-    if (destination === networkObjectIp || getNetwork(destination, "255.0.0.0") === "127.0.0.0") { //<-- si el destino es la ip del equipo o el bucle local
+    if (isLocalIp(networkObjectId, destination)) {
         await new Promise(resolve => setTimeout(resolve, 50)); //<-- esta promesa esta aquí para que la terminal visualmente no se "buguee"
         return 0;
     }
 
-    icmpFlag[dataId] = false;
+    icmpFlag[networkObjectId] = false;
 
     try {
         
-        await icmpRequestPacketGenerator(dataId, networkObjectIp, destination);
+        await icmpRequestPacketGenerator(networkObjectId, networkObjectIp, destination);
 
     } catch (error) {
 
-        return 3; //<-- error de ping
+        return 3;
 
     }
 
-    if (icmpFlag[dataId] === false) return 3; //<-- error de ping
-    else return 0; //<-- ping exitoso
+    if (icmpFlag[networkObjectId] === false) return 3;
+    else return 0;
 
 }
 
