@@ -39,13 +39,13 @@ function pc_menu() {
         <section class="modes-wrapper">
 
             <div class="form-item hidden" id="dhcp-mode">
-                <label for="dhcp"> Modo DHCP: </label>
-                <input class="btn-toggle" type="checkbox" id="dhcp-toggle" name="dhcp">
+                <label for="dhcp-toggle"> Modo DHCP: </label>
+                <input class="btn-toggle" type="checkbox" id="dhcp-toggle" name="dhcp-toggle">
             </div>
 
             <div class="form-item hidden" id="web-server-mode">
-                <label for="web-server"> Servidor Web: </label>
-                <input class="btn-toggle" type="checkbox" id="web-server-toggle" name="web-server">
+                <label for="web-server-toggle"> Servidor Web: </label>
+                <input class="btn-toggle" type="checkbox" id="web-server-toggle" name="web-server-toggle">
             </div>
 
         </section>
@@ -197,10 +197,11 @@ async function pcMenuButtonsHandler(event) {
     }
 
     var updateButtonDisplay = () => {
-        var hasIp = $networkObject.getAttribute(`ip-${networkInterface}`) !== "";
-        $menu.querySelector("#get-btn").style.display = hasIp ? "none" : "block";
-        $menu.querySelector("#renew-btn").style.display = hasIp ? "block" : "none";
-        $menu.querySelector("#release-btn").style.display = hasIp ? "block" : "none";
+        const isDhcpOn = $networkObject.getAttribute("dhclient") === "true";
+        const hasIp = $networkObject.getAttribute(`ip-${networkInterface}`) !== "";
+        $menu.querySelector("#get-btn").style.display = (isDhcpOn && !hasIp) ? "block" : "none";
+        $menu.querySelector("#renew-btn").style.display = (isDhcpOn && hasIp) ? "block" : "none";
+        $menu.querySelector("#release-btn").style.display = (isDhcpOn && hasIp) ? "block" : "none";
     }
 
     var restorePcForm = () => {
