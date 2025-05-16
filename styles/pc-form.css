@@ -132,10 +132,16 @@
 
     .button-container {
 
-        align-self: center;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
+        align-items: center;
         gap: 10px;
+
+        div {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
 
     }
 

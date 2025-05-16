@@ -40,30 +40,35 @@ function pc_menu() {
 
             <div class="form-item hidden" id="dhcp-mode">
                 <label for="dhcp"> Modo DHCP: </label>
-                <input class="btn-toggle" type="checkbox" id="dhcp" name="dhcp">
+                <input class="btn-toggle" type="checkbox" id="dhcp-toggle" name="dhcp">
             </div>
 
             <div class="form-item hidden" id="web-server-mode">
                 <label for="web-server"> Servidor Web: </label>
-                <input class="btn-toggle" type="checkbox" id="web-server" name="web-server">
+                <input class="btn-toggle" type="checkbox" id="web-server-toggle" name="web-server">
             </div>
 
         </section>
 
         <section class="button-container">
 
-            <button class="btn-modern-blue" type="submit" id="save-btn" style="display: none;">Guardar</button>
-            <button class="btn-modern-blue" type="submit" id="get-btn" style="display: none;">Obtener IP</button>
-            <button class="btn-modern-blue" type="submit" id="renew-btn" style="display: none;">Renovar IP</button>
-            <button class="btn-modern-blue" type="submit" id="release-btn" style="display: none;">Liberar IP</button>
-            <button class="btn-modern-red"  type="submit" id="close-btn" style="display: none;">Cerrar</button>
+            <div id="dhcp-buttons">
+                <button class="btn-modern-blue" type="submit" id="get-btn" style="display: none;">Obtener IP</button>
+                <button class="btn-modern-blue" type="submit" id="renew-btn" style="display: none;">Renovar IP</button>
+                <button class="btn-modern-blue" type="submit" id="release-btn" style="display: none;">Liberar IP</button>
+            </div>
+            
+            <div id="basic-buttons">
+                <button class="btn-modern-blue" type="submit" id="save-btn" style="display: none;">Guardar</button>
+                <button class="btn-modern-red"  type="submit" id="close-btn" style="display: none;">Cerrar</button>
+            </div>
 
         </section>
 
     `;
 
     $menu.addEventListener("submit", pcMenuButtonsHandler);
-    $menu.querySelector("#dhcp").addEventListener("change", dhcpHandler);
+    $menu.querySelector("#dhcp-toggle").addEventListener("change", dhcpHandler);
     $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
 
     return $menu;
@@ -92,14 +97,14 @@ function showPcMenu(networkObjectId) {
     $menu.querySelector("#dns-server").value = $networkObject.getAttribute("data-dns-server");
     $menu.querySelector("#form-item-id").innerHTML = networkObjectId;
 
-    if (activeServices.includes("dhclient")) { //<-- comprueba si existe el servicio dhcp cliente
+    if (activeServices.includes("dhclient")) {
 
-        if ($networkObject.getAttribute("dhclient") === "true") { //<-- comprobamos si el servicio esta activo
+        if ($networkObject.getAttribute("dhclient") === "true") {
 
-            $menu.querySelector("#dhcp").checked = true;
+            $menu.querySelector("#dhcp-toggle").checked = true;
             $textInputs.forEach(input => input.disabled = true); //<-- bloqueamos la configuración manual de la interfaz
 
-            if (!$menu.querySelector("#ip").value) {  //<-- si no tenemos una IP asignada, solo se muestra el botón de "Obtener IP"
+            if ($menu.querySelector("#ip").value === "") {  //<-- si no tenemos una IP asignada, solo se muestra el botón de "Obtener IP"
 
                 $buttonSection.querySelector("#get-btn").style.display = "block";
 
@@ -110,22 +115,27 @@ function showPcMenu(networkObjectId) {
 
             }
 
+        } else {
+
+            $menu.querySelector("#dhcp-toggle").checked = false;
+
         }
 
         $menu.querySelector("#dhcp-mode").classList.remove("hidden"); //<-- mostramos el modulo de DHCP
 
     }
 
-    if (activeServices.includes("apache")) { //<-- comprobamos si existe el servicio Apache
+    if (activeServices.includes("apache")) { 
 
-        if ($networkObject.getAttribute("apache") === "true") $menu.querySelector("#web-server").checked = true;
+        if ($networkObject.getAttribute("apache") === "true") $menu.querySelector("#web-server-toggle").checked = true;
+        else $menu.querySelector("#web-server-toggle").checked = false;
 
         $menu.querySelector("#web-server-mode").classList.remove("hidden"); //<-- mostramos el modulo de Apache
         
     }
     
-    $buttonSection.querySelector("#save-btn").style.display = "block"; //<-- mostramos el boton de guardar
     $buttonSection.querySelector("#close-btn").style.display = "block"; //<-- mostramos el boton de cerrar
+    $buttonSection.querySelector("#save-btn").style.display = "block"; //<-- mostramos el boton de guardar
     $menu.style.display = "flex"; //<-- mostramos el menu
 }
 
@@ -133,22 +143,25 @@ async function pcMenuButtonsHandler(event) {
 
     event.preventDefault();
 
-    const $networkObject = document.getElementById(document.getElementById("form-item-id").innerHTML);
-    const $networkObjectIcon = $networkObject.querySelector("img");
-    const networkInterface = getInterfaces($networkObject.id)[0]; //<-- nos quedamos con la primera interfaz (por ahora)
-    const networkObjectServices = getAvailableServices($networkObject.id);
-    const $menu = document.querySelector(".pc-form");
+    var buttonId = event.submitter.id;
+    var $networkObject = document.getElementById(document.getElementById("form-item-id").innerHTML);
+    var $menu = document.querySelector(".pc-form");
+    var $modules = $menu.querySelector(".modes-wrapper").querySelectorAll(".form-item");
+    var $buttons = $menu.querySelector(".button-container").querySelectorAll("button");
+    var $networkObjectIcon = $networkObject.querySelector("img");
+    var networkInterface = getInterfaces($networkObject.id)[0]; //<-- nos quedamos con la primera interfaz (por ahora)
+    var networkObjectServices = getAvailableServices($networkObject.id);
 
     //recuperamos la información del menu
     
-    const newIp = $menu.querySelector("#ip").value;
-    const newNetmask = $menu.querySelector("#netmask").value;
-    const newGateway = $menu.querySelector("#gateway").value;
-    const newDnsServer = $menu.querySelector("#dns-server").value;
-    const isDhcpOn = $menu.querySelector("#dhcp").checked;
-    const isWebServerOn = $menu.querySelector("#web-server").checked;
+    var newIp = $menu.querySelector("#ip").value;
+    var newNetmask = $menu.querySelector("#netmask").value;
+    var newGateway = $menu.querySelector("#gateway").value;
+    var newDnsServer = $menu.querySelector("#dns-server").value;
+    var isDhcpOn = $menu.querySelector("#dhcp-toggle").checked;
+    var isWebServerOn = $menu.querySelector("#web-server-toggle").checked;
 
-    const buttonFunctions = { //<-- diccionario de funciones para los botones
+    var buttonFunctions = {
 
         "save-btn": () => {
             configureInterface($networkObject.id, newIp, newNetmask, networkInterface); //<-- configuramos la interfaz
@@ -172,33 +185,61 @@ async function pcMenuButtonsHandler(event) {
         "release-btn": async () => {
             if (visualToggle) document.querySelector(".pc-form").style.display = "none";
             await dhcpReleaseHandler($networkObject.id); //<-- iniciamos el proceso de dhcp release
-        },
-
-        "close-btn": () => {
-            restorePcForm();
         }
 
     }
 
-    if(networkObjectServices.includes("dhcpd") ) $networkObject.setAttribute("dhcpd", isDhcpOn);
-    if(networkObjectServices.includes("apache") ) $networkObject.setAttribute("apache", isWebServerOn);
-    if (isWebServerOn) $networkObjectIcon.src = "./assets/board/www-server.svg"; //<-- si se activa el servicio de Apache, cambiamos el icono del equipo
+    var updatePcFormFields = () => {
+        $menu.querySelector("#ip").value = $networkObject.getAttribute(`ip-${networkInterface}`);
+        $menu.querySelector("#netmask").value = $networkObject.getAttribute(`netmask-${networkInterface}`);
+        $menu.querySelector("#gateway").value = $networkObject.getAttribute("data-gateway");
+        $menu.querySelector("#dns-server").value = $networkObject.getAttribute("data-dns-server");
+    }
 
-    //ejecutamos la función correspondiente al botón
-    (event.submitter.id in buttonFunctions) ? buttonFunctions[event.submitter.id]() : buttonFunctions["save-btn"]();
+    var updateButtonDisplay = () => {
+        var hasIp = $networkObject.getAttribute(`ip-${networkInterface}`) !== "";
+        $menu.querySelector("#get-btn").style.display = hasIp ? "none" : "block";
+        $menu.querySelector("#renew-btn").style.display = hasIp ? "block" : "none";
+        $menu.querySelector("#release-btn").style.display = hasIp ? "block" : "none";
+    }
+
+    var restorePcForm = () => {
+        $modules.forEach($module => $module.classList.add("hidden"));
+        $buttons.forEach(button => button.style.display = "none");
+        $menu.style.display = "none";
+    }
+
+    if(networkObjectServices.includes("dhclient") ) $networkObject.setAttribute("dhclient", isDhcpOn);
+    
+    if(networkObjectServices.includes("apache") ) $networkObject.setAttribute("apache", isWebServerOn);
+    
+    if (isWebServerOn) $networkObjectIcon.src = "./assets/board/www-server.svg"; 
+    
+    if (buttonId in buttonFunctions) await buttonFunctions[buttonId]();
+    
+    if (buttonId === "close-btn") {
+        restorePcForm();
+        return;
+    }
+
+    updatePcFormFields();
+    updateButtonDisplay();
+
 }
 
 function dhcpHandler(event) {
 
     const $dhcpToggle = event.target;
-    const $buttonSection = document.querySelector(".pc-form .button-container");
-    const $textInputs = document.querySelector(".pc-form").querySelectorAll("input[type='text']");
-    const hasIp = document.querySelector(".pc-form #ip").value !== "";
+    const $menu = document.querySelector(".pc-form");
+    const $buttonSection = $menu.querySelector(".button-container");
+    const $networkObject = document.getElementById($menu.querySelector("#form-item-id").innerHTML);
+    const $textInputs = $menu.querySelectorAll("input[type='text']");
+    const hasIp = $menu.querySelector("#ip").value !== "";
 
     if (!$dhcpToggle.checked) {
 
         $textInputs.forEach(input => input.disabled = false);
-
+        $networkObject.setAttribute("dhclient", false);
         $buttonSection.querySelector("#get-btn").style.display = "none";
         $buttonSection.querySelector("#renew-btn").style.display = "none";
         $buttonSection.querySelector("#release-btn").style.display = "none";
@@ -206,30 +247,16 @@ function dhcpHandler(event) {
     } else {
 
         $textInputs.forEach(input => input.disabled = true);
+        $networkObject.setAttribute("dhclient", true);
 
         if (hasIp) {
-
             $buttonSection.querySelector("#renew-btn").style.display = "block";
             $buttonSection.querySelector("#release-btn").style.display = "block";
-
         } else {
-
             $buttonSection.querySelector("#get-btn").style.display = "block";
-
         }
 
     }
 
 }
 
-function restorePcForm() {
-
-    const $menu = document.querySelector(".pc-form");
-    const $modules = $menu.querySelector(".modes-wrapper").querySelectorAll(".form-item");
-    const $buttons = $menu.querySelector(".button-container").querySelectorAll("button");
-
-    $modules.forEach($module => $module.classList.add("hidden"));
-    $buttons.forEach(button => button.style.display = "none");
-    $menu.style.display = "none"; //<-- ocultamos el menu
-
-}  
