@@ -15,8 +15,7 @@ async function browserSearch() {
     } catch (error) {
 
         document.querySelector(".browser-content").srcdoc = $error404;
-        console.log(error);
-
+        
     }
 
     if (visualToggle) await maximizeBrowser();

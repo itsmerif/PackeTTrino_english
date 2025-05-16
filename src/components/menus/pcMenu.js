@@ -69,6 +69,7 @@ function pc_menu() {
 
     $menu.addEventListener("submit", pcMenuButtonsHandler);
     $menu.querySelector("#dhcp-toggle").addEventListener("change", dhcpHandler);
+    $menu.querySelector("#web-server-toggle").addEventListener("change", webServerHandler);
     $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
 
     return $menu;
@@ -148,9 +149,7 @@ async function pcMenuButtonsHandler(event) {
     var $menu = document.querySelector(".pc-form");
     var $modules = $menu.querySelector(".modes-wrapper").querySelectorAll(".form-item");
     var $buttons = $menu.querySelector(".button-container").querySelectorAll("button");
-    var $networkObjectIcon = $networkObject.querySelector("img");
     var networkInterface = getInterfaces($networkObject.id)[0]; //<-- nos quedamos con la primera interfaz (por ahora)
-    var networkObjectServices = getAvailableServices($networkObject.id);
 
     //recuperamos la información del menu
     
@@ -158,8 +157,6 @@ async function pcMenuButtonsHandler(event) {
     var newNetmask = $menu.querySelector("#netmask").value;
     var newGateway = $menu.querySelector("#gateway").value;
     var newDnsServer = $menu.querySelector("#dns-server").value;
-    var isDhcpOn = $menu.querySelector("#dhcp-toggle").checked;
-    var isWebServerOn = $menu.querySelector("#web-server-toggle").checked;
 
     var buttonFunctions = {
 
@@ -209,13 +206,7 @@ async function pcMenuButtonsHandler(event) {
         $buttons.forEach(button => button.style.display = "none");
         $menu.style.display = "none";
     }
-
-    if(networkObjectServices.includes("dhclient") ) $networkObject.setAttribute("dhclient", isDhcpOn);
-    
-    if(networkObjectServices.includes("apache") ) $networkObject.setAttribute("apache", isWebServerOn);
-    
-    if (isWebServerOn) $networkObjectIcon.src = "./assets/board/www-server.svg"; 
-    
+      
     if (buttonId in buttonFunctions) await buttonFunctions[buttonId]();
     
     if (buttonId === "close-btn") {
@@ -257,6 +248,23 @@ function dhcpHandler(event) {
             $buttonSection.querySelector("#get-btn").style.display = "block";
         }
 
+    }
+
+}
+
+function webServerHandler(event) {
+
+    const $webServerToggle = event.target;
+    const $menu = document.querySelector(".pc-form");
+    const $networkObject = document.getElementById($menu.querySelector("#form-item-id").innerHTML);
+    const $networkObjectIcon = $networkObject.querySelector("img");
+
+    if (!$webServerToggle.checked) {
+        $networkObject.setAttribute("apache", false);
+        $networkObjectIcon.src = "./assets/board/pc.svg"; 
+    } else {
+        $networkObject.setAttribute("apache", true);
+        $networkObjectIcon.src = "./assets/board/www-server.svg";
     }
 
 }
