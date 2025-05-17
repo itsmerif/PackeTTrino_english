@@ -11,8 +11,8 @@ function packetTracer() {
 
         <div class="filter-traffic">
             <input type="text">
-            <button id="filter-traffic-button">Filtrar</button>
-            <button id="clean-traffic-button">Limpiar</button>
+            <button class="btn-blue" id="filter-traffic-button">Filtrar</button>
+            <button class="btn-blue" id="clean-traffic-button">Limpiar</button>
             <select id="filter-by-device">
                 <option value="all">Todos</option>
             </select>
