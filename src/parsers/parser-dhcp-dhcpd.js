@@ -78,4 +78,43 @@ function dhcpdFileInterpreter(networkObjectId, content)  {
 
     });
 
+    const hostBlocks = filteredContent.split("host").map(line => (`host ${line}`).replace(/\s+/g, " ").trim()).slice(1);
+
+    hostBlocks.forEach(hostBlock => {
+
+        const instructions = (hostBlock.split("{")[1].split("}")[0]).split(";").map(option => option.trim()).filter(option => option !== "");
+
+        const hostObject = {
+            "mac": "",
+            "reservedIp": ""
+        }
+
+        instructions.forEach(instruction => {
+
+            const tokens = instruction.split(" ");
+
+            const optionsMap = {
+
+                "hardware ethernet": () => {
+                    hostObject["mac"] = tokens[2];
+                },
+
+                "fixed-address": () => {
+                    hostObject["reservedIp"] = tokens[1];
+                },
+
+            }
+
+            for (let option in optionsMap) if (instruction.startsWith(option)) optionsMap[option]();
+
+        });
+
+        //ahora validamos los campos
+
+        if (!isValidMac(hostObject["mac"])) throw new Error(`Error: La mac "${hostObject["mac"]}" no es válida`);
+        if (!isValidIp(hostObject["reservedIp"])) throw new Error(`Error: La IP "${hostObject["reservedIp"]}" no es válida`);
+
+        addDhcpReservation(networkObjectId, hostObject["mac"], hostObject["reservedIp"]);
+
+    });
 }
