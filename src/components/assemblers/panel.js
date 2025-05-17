@@ -130,18 +130,18 @@ async function itemPanel() {
             "tooltip": "Simulador de Ping"
         },
         {
-            "name": "settings",
-            "image": "./assets/panel/settings.svg",
-            "draggable": false,
-            "size": "100%",
-            "tooltip": "Opciones Avanzadas"
-        },
-        {
             "name": "animation-controls",
             "image": "./assets/panel/animationControls.svg",
             "draggable": false,
             "size": "100%",
             "tooltip": "Controles de Animación"
+        },
+        {
+            "name": "settings",
+            "image": "./assets/panel/settings.svg",
+            "draggable": false,
+            "size": "100%",
+            "tooltip": "Opciones Avanzadas"
         }
     ]
 

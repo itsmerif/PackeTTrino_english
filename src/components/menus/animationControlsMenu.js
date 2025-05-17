@@ -1,6 +1,6 @@
 function AnimationControls() {
     const $animationControls = document.createElement("div");
-    $animationControls.classList.add("video-controls", "hidden");
+    $animationControls.classList.add("video-controls", "hidden", "modal");
     $animationControls.innerHTML = `
 
         <div class="control-buttons">
