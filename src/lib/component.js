@@ -290,3 +290,17 @@ function startBoardItemMove(event) {
     }
 
 }
+
+/**ESTA FUNCION HACE SPLIT DE UNA CADENA DE TEXTO CON SOLO LA PRIMERA COINCIDENCIA DE UN TEXTO*/
+function splitFirst(text, separator) {
+    const index = text.indexOf(separator);
+    if (index === -1) return [text];
+    return [text.substring(0, index), text.substring(index + separator.length)];
+}
+
+/**ESTA FUNCION HACE SPLIT DE UNA CADENA DE TEXTO CON SOLO LA ÚLTIMA COINCIDENCIA DE UN TEXTO*/
+function splitLast(text, separator) {
+    const index = text.lastIndexOf(separator);
+    if (index === -1) return [text];
+    return [text.substring(0, index), text.substring(index + separator.length)];
+}
