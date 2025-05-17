@@ -7,7 +7,16 @@ function installDhcpd(networkObjectId) {
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
     const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
     const addOption = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));
+
+    //cargamos archivos sobre el equipo
+    const networkObjectFileSystem = new FileSystem($networkObject);
+    networkObjectFileSystem.mkdir("dhcp", ["etc"]);
+    networkObjectFileSystem.touch("dhcpd.conf", ["etc", "dhcp"]);
+    
+    //tabla de dhcp
     append(dhcpTable());
+
+    //atributos de dhcp
     attr("dhcpd", "true");
     attr("data-range-start", "");
     attr("data-range-end", "");
@@ -17,6 +26,8 @@ function installDhcpd(networkObjectId) {
     attr("offer-lease-time", "");
     attr("data-interval", "false");
     attr("ip-reservations", `{}`);
+
+    //opciones de dhcp
     addOption(leasesTableOptionButton(), dhcpServerConfig());
     terminalMessage("DHCP Server instalado correctamente.", networkObjectId);
 }

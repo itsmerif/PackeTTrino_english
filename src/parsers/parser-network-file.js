@@ -6,18 +6,18 @@
  * LAS REGLAS DE ENRUTAMIENTO DEBEN SER EN LA FORMA "ip route add <IP_DESTINO>/<MASCARA_DESTINO> via <IP_NEXTHOP>"
  * LAS REGLAS DE ENRUTAMIENTO NO COMIENZAN POR "up" o "down"
  * LAS REGLAS DE ENRUTAMIENTO SIEMPRE LLEVAN "add"
- */
+*/
 
 function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
     
     const $networkObject = document.getElementById(networkObjectId);
     const availableInterfaces = getInterfaces(networkObjectId); //<-- obtenemos las interfaces disponibles del dispositivo
     const filteredContent = content.replace(/\n/g, " ").replace(/\s+/g, " ").trim(); //<- quitamos los saltos de línea y los espacios
-    const instructions = filteredContent.split("iface").map( line => (`iface ${line}`).replace(/\s+/g, " ").trim()).slice(1); //<-- obtenemos las instrucciones de red del archivo
+    const ifaceBlocks = filteredContent.split("iface").map( line => (`iface ${line}`).replace(/\s+/g, " ").trim()).slice(1); //<-- obtenemos las instrucciones de red del archivo
     
     // <-- ejemplo de instruccion: iface enp0s3 inet static address 192.168.1.100 netmask 255.255.255.0 gateway 192.168.1.1
 
-    instructions.forEach(instruction => { //<-- evaluamos cada instrucción
+    ifaceBlocks.forEach(ifaceBlock => { //<-- evaluamos cada instrucción
         
         const interfaceObject = { //<-- inicializamos el objeto de análisis
             "iface": "",
@@ -27,7 +27,7 @@ function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
             "gateway": ""
         }
 
-        const tokens = (`int ${instruction}`).split(" "); //<-- dividimos la instrucción en tokens, añadimos un prefijo para que el parser de opciones pueda funcionar
+        const tokens = (`int ${ifaceBlock}`).split(" "); //<-- dividimos la instrucción en tokens, añadimos un prefijo para que el parser de opciones pueda funcionar
 
         const $OPTS = catchopts([ //<-- obtenemos las opciones de la instrucción y sus valores
             "iface:", 
@@ -95,7 +95,7 @@ function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
 
         //<-- estudiamos las reglas de enrutamiento de cada bloque iface
 
-        const routingInstructions = instruction.split("ip").map(rule => (`ip ${rule}`).replace(/\s+/g, " ").trim()).slice(1);
+        const routingInstructions = ifaceBlock.split("ip").map(rule => (`ip ${rule}`).replace(/\s+/g, " ").trim()).slice(1);
 
         routingInstructions.forEach(routingInstruction => {
 
