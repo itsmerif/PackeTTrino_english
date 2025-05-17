@@ -135,6 +135,13 @@ async function itemPanel() {
             "draggable": false,
             "size": "100%",
             "tooltip": "Opciones Avanzadas"
+        },
+        {
+            "name": "animation-controls",
+            "image": "./assets/panel/animationControls.svg",
+            "draggable": false,
+            "size": "100%",
+            "tooltip": "Controles de Animación"
         }
     ]
 
@@ -165,6 +172,7 @@ async function itemPanel() {
     $panel.querySelector(".upload").addEventListener("click", () => $panel.querySelector("#fileInput").click());
     $panel.querySelector(".load").addEventListener("click", fileInputLoadHandler);
     $panel.querySelector(".download").addEventListener("click", downloadState);
+    $panel.querySelector(".animation-controls").addEventListener("click", function () { document.querySelector(".video-controls").classList.toggle("hidden"); });
 
     return $panel;
 

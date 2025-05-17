@@ -1,3 +1,21 @@
+function pauseSimulation() {
+    paused = true;
+}
+
+function resumeSimulation() {
+    paused = false;
+}
+
+function waitUntilResumed() {
+    return new Promise(resolve => {
+        const check = () => {
+            if (!paused) resolve();
+            else requestAnimationFrame(check);
+        };
+        check();
+    });
+}
+
 async function movePacket(x1, y1, x2, y2, type) {
     return new Promise(resolve => {
         const $svg = document.getElementById("svg-board");
@@ -17,14 +35,22 @@ async function movePacket(x1, y1, x2, y2, type) {
 
         function animateMove(time) {
             if (!startTime) startTime = time;
-            const progress = (time - startTime)/visualSpeed;
-            const currentX = x1 + (x2 - x1)*Math.min(progress, 1);
-            const currentY = y1 + (y2 - y1)*Math.min(progress, 1);
+            const elapsed = time - startTime;
+            const progress = elapsed / visualSpeed;
+            const currentX = x1 + (x2 - x1) * Math.min(progress, 1);
+            const currentY = y1 + (y2 - y1) * Math.min(progress, 1);
             img.setAttribute("x", currentX);
             img.setAttribute("y", currentY);
 
             if (progress < 1) {
-                requestAnimationFrame(animateMove);
+                if (paused) {
+                    waitUntilResumed().then(() => {
+                        startTime = performance.now() - elapsed;
+                        requestAnimationFrame(animateMove);
+                    });
+                } else {
+                    requestAnimationFrame(animateMove);
+                }
             } else {
                 $svg.removeChild(img);
                 resolve();
@@ -32,6 +58,5 @@ async function movePacket(x1, y1, x2, y2, type) {
         }
 
         requestAnimationFrame(animateMove);
-
     });
 }

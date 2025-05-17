@@ -3,6 +3,7 @@ let itemIndex = 0;
 let darkMode = false;
 let visualToggle = false;
 let visualSpeed = 300;
+let paused = false;
 let terminalBuffer = [];
 let currentCommandIndex = 0;
 let ignoreArpTraffic = false;

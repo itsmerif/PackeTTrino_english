@@ -14,6 +14,7 @@ bodyComponent.render(
     dhcp_server_menu(),
     dhcp_agent_menu(),
     router_menu(),
+    AnimationControls(),
     terminal(),
     browser(),
     packetTracer(),
@@ -48,7 +49,7 @@ function startApp() {
         setTimeout( () => {
             item.classList.remove("hidden");
         }, time);
-        time += 30;
+        time += 10;
     });
 
 }

@@ -23,12 +23,6 @@ function GeneralOptions() {
             <input type="checkbox" class="btn-toggle" id="dark-mode" name="dark-mode">
         </div>
         
-        <div class="options-group">
-            <label for="visual-speed"> Velocidad de Animación </label>
-            <input type="range" id="visual-speed" name="visual-speed" min="100" max="1000">
-            <p id="visual-speed-value">300</p><span>ms</span>
-        </div>
-
         <button class="btn-modern-blue">Cerrar</button>
     `;
 
@@ -37,10 +31,6 @@ function GeneralOptions() {
     $generalOptions.querySelector("#dark-mode").addEventListener("change", activateDarkMode);
     $generalOptions.querySelector(".btn-modern-blue").addEventListener("click", generalOptionsHandler);
     $generalOptions.querySelector(".window-frame").addEventListener("mousedown", dragModal);
-    $generalOptions.querySelector("#visual-speed").addEventListener("input", function () { 
-        visualSpeed = this.value; 
-        $generalOptions.querySelector("#visual-speed-value").innerHTML = this.value;
-    });
 
     return $generalOptions;
 
