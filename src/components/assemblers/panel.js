@@ -4,7 +4,7 @@ async function itemPanel() {
     const $itemsContainer = document.createElement("div");
     $panel.id = "item-panel";
     $panel.classList.add("hidden");
-    $panel.innerHTML = `<input type="file" id="fileInput" accept=".html" style="display: none;">`;
+    $panel.innerHTML = `<input type="file" id="fileInput" accept=".ptt" style="display: none;">`;
     $itemsContainer.classList.add("item-panel-elements");
     $itemsContainer.appendChild(dynamicRoutingButton());
     $panel.appendChild($itemsContainer);
@@ -249,12 +249,12 @@ function icmpTryoutStart() {
 
 function downloadState() {
     const elemento = document.querySelector(".board");
-    const contenidoHTML = elemento.innerHTML;
+    const contenidoHTML = (elemento.innerHTML).replace(/\s+/g, " ");
     const blob = new Blob([contenidoHTML], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     const enlace = document.createElement("a");
     enlace.href = url;
-    enlace.download = "contenido.html";
+    enlace.download = "red.ptt";
     document.body.appendChild(enlace);
     enlace.click();
     document.body.removeChild(enlace);
