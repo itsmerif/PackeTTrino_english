@@ -1,27 +1,15 @@
 function systemd(networkObjectId, service, option) {
 
-    const $networkObject = document.getElementById(networkObjectId);
-    
-    let daemonStatus = $networkObject.getAttribute(service);
+    const $networkObject = document.getElementById(networkObjectId);   
+    const daemonStatus = $networkObject.getAttribute(service) !== null;
 
-    if (!daemonStatus) {
-        terminalMessage("Error: Servicio no disponible para este equipo.", networkObjectId);
-        return;
-    }
+    if (!daemonStatus) throw new Error(`Error: Servicio ${service} no disponible para este equipo.`);
 
     const stateFunctions = {
 
-        "start": () => {
-            $networkObject.setAttribute(service, "true");
-            terminalMessage(`${service}.service`, networkObjectId);
-            terminalMessage("Servicio Iniciado.", networkObjectId);
-        },
+        "start": () => startService(networkObjectId, service),
 
-        "restart": () => {
-            $networkObject.setAttribute(service, "true");
-            terminalMessage(`${service}.service`, networkObjectId);
-            terminalMessage("Servicio Iniciado.", networkObjectId);
-        },
+        "restart": () => startService(networkObjectId, service),
 
         "stop": () => {
             $networkObject.setAttribute(service, "false");
@@ -78,4 +66,23 @@ function getAvailableServices(networkObjectId) {
     });
 
     return response;
+}
+
+function startService(networkObjectId, service) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkElementFileSystem = new FileSystem($networkObject);
+
+    const startFunctions = {        
+
+        "dhcpd": () => {
+            $networkObject.setAttribute("dhcpd", "true");
+            let dhcpdContent = networkElementFileSystem.read("dhcpd.conf", ["etc", "dhcp"]);
+            dhcpdFileInterpreter(networkObjectId, dhcpdContent);
+        },
+
+    }
+
+    startFunctions[service]();
+
 }

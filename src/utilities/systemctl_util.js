@@ -22,6 +22,10 @@ function command_systemctl(networkObjectId, args) {
         return;
     }
 
-    systemd(networkObjectId, service, option);
+    try {
+        systemd(networkObjectId, service, option);
+    } catch (e) {
+        terminalMessage(e.message, networkObjectId);
+    }
 
 }
