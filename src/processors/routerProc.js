@@ -14,7 +14,9 @@ async function generalProcessorRouter(switchId, routerObjectId, packet) {
         packet.ttl--;
 
         if (packet.ttl < 1) {
-            packet = new IcmpTimeExceeded(routerObjectIp, packet.origin_ip, routerObjectMac, routerObjectMac);
+            let newPacket = new IcmpTimeExceeded(routerObjectIp, packet.origin_ip, routerObjectMac, routerObjectMac);
+            await routing(routerObjectId, newPacket);
+            return;
         }
 
     }
@@ -104,9 +106,10 @@ async function generalProcessorRouter(switchId, routerObjectId, packet) {
 
         }
 
-        if (!replyPacket) return;
-        await routing(routerObjectId, replyPacket); // <-- tras procesar el paquete, se enruta la respuesta si es necesario
-        return;
+        if (replyPacket) { // <-- tras procesar el paquete, se enruta la respuesta si es necesario
+            await routing(routerObjectId, replyPacket); 
+            return;
+        }
 
     }
 
