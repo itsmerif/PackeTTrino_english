@@ -32,7 +32,7 @@ async function named_service(networkObjectId, packet) {
         newPacket.answer_type = "PTR"; //<-- se añade el tipo de registro
     }
 
-    if (packet.answer_type === "SOA") { 
+    if (packet.answer_type === "SOA" || packet.answer_type === "NS") {
         let [authorityNameServer, authorityDomain] = getSoaRecord(networkObjectId, packet.query);
         if (authorityNameServer) newPacket.authority = "1";
         newPacket.answer_type = "SOA";
