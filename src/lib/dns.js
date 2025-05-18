@@ -191,8 +191,8 @@ function delDnsEntry(serverObjectId, recordType, targetDomain) {
 /**ESTA FUNCION GENERA UNA RESPUESTA DNS DE UN PAQUETE EN LA CONSOLA*/
 function generateDnsOuput(packet, networkObjectId) {
 
-    //campos del paquete
-
+    const currentDate = new Date();
+    const currentDateString = currentDate.toString();
     let query = packet.query;
     let answer = packet.answer || "";
     let answer_type = packet.answer_type;
@@ -201,45 +201,46 @@ function generateDnsOuput(packet, networkObjectId) {
     let server_ip = packet.origin_ip;
     let answerBoolean = (!answer || (authority === "1" && query !== authority_domain)) ? "0" : "1";
 
-    //fecha actual
-
-    const currentDate = new Date();
-    const currentDateString = currentDate.toString();
-
     //header
-
-    terminalMessage(`<p>QUERY: 1, ANSWER: ${answerBoolean}, AUTHORITY: ${authority}, ADDITIONAL: 0</p>`, networkObjectId);
+    let message = `QUERY: 1, ANSWER: ${answerBoolean}, AUTHORITY: ${authority}, ADDITIONAL: 0\n`;
 
     //seccion de query
-
-    terminalMessage(`<p>QUESTION SECTION: </p>`, networkObjectId);
-    terminalMessage(`<p>${query.padEnd(15, " ")}` + " IN " + `${answer_type} </p>`, networkObjectId);
+    message += `\nQUESTION SECTION:\n`;
+    message += `${query.padEnd(15, " ")} IN ${answer_type}\n`;
 
     //seccion de respuesta
 
-    if (answer) {
-        terminalMessage(`ANSWER SECTION:`, networkObjectId);
+    if (answer && authority === "0") {
+
+        message += `\nANSWER SECTION:\n`;
+
         if (typeof answer === 'string') {
-            terminalMessage(`<p>${query.padEnd(15, " ")} 86400 IN ${answer_type} ${answer}</p>`, networkObjectId);
+
+            message += `${query.padEnd(15, " ")} 86400 IN ${answer_type} ${answer}\n`;
+
         } else {
+
             for (let i = 0; i < answer.length; i++) {
-                terminalMessage(`<p>${query.padEnd(15, " ")} 86400 IN ${answer_type} ${answer[i]}</p>`, networkObjectId);
+                message += `${query.padEnd(15, " ")} 86400 IN ${answer_type} ${answer[i]}\n`;
             }
+
         }
     }
 
     //seccion de autoridad
 
     if (authority !== "0") {
-        terminalMessage(`AUTHORITY SECTION:`, networkObjectId);
-        terminalMessage(`<p>${authority_domain.padEnd(15, " ")}` + " 86400 IN " + `${answer_type}` + " " + `${authority} </p>`, networkObjectId);
+        message += `\nAUTHORITY SECTION:\n`;
+        message += `${authority_domain.padEnd(15, " ")} 86400 IN ${answer_type} ${answer}\n`;
     }
 
     //seccion de tiempo
-    terminalMessage("<p>Query time: 4 msec<p>", networkObjectId);
-    terminalMessage(`<p>SERVER: ${server_ip}#53(${server_ip}) (UDP)</p>`, networkObjectId);
-    terminalMessage("<p>WHEN: " + currentDateString + "</p>", networkObjectId);
-    terminalMessage("<p>MSG SIZE  rcvd: 87</p>", networkObjectId);
+    message += `\nQuery time: 4 msec\n`;
+    message += `SERVER: ${server_ip}#53(${server_ip}) (UDP)\n`;
+    message += `WHEN: ${currentDateString}\n`;
+    message += `MSG SIZE  rcvd: 87\n`;
+
+    terminalMessage(message, networkObjectId);
 }
 
 /**ESTA FUNCION DEVUELVE [TIPO, VALOR, SERVIDOR QUE DIO LA RESPUESTA] DE UN DOMINIO EN CACHE DNS*/
@@ -356,7 +357,7 @@ function getSoaRecord(serverObjectId, targetDomain) {
         const soaDomain = $fields[0].innerHTML;
         if (targetDomain.endsWith(`.${soaDomain}`) || soaDomain === targetDomain) {
             authorityNameServer = $fields[2].innerHTML;
-            authorityDomain = $fields[1].innerHTML;
+            authorityDomain = soaDomain;
         }
     });
 
