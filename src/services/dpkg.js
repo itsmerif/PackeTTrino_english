@@ -5,7 +5,7 @@ function dpkg(networkObjectId, option, package) {
     const availablePackages = ["apache2", "bind9", "isc-dhcp-server", "isc-dhcp-relay", "isc-dhcp-client"];
 
     const packagesToServices = {
-        "apache2": "apache",
+        "apache2": "apache2",
         "bind9": "named",
         "isc-dhcp-server": "dhcpd",
         "isc-dhcp-relay": "dhcrelay",

@@ -152,7 +152,7 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
         await hostRouting(networkObjectId, replyPacket);
     }
 
-    if (packet.protocol === "http" && packet.type === "request" && activeServices.includes("apache")) {
+    if (packet.protocol === "http" && packet.type === "request" && activeServices.includes("apache2")) {
         let replyPacket = await apache_service(networkObjectId, packet);
         if (!replyPacket) return;
         await hostRouting(networkObjectId, replyPacket);

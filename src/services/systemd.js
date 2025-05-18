@@ -90,7 +90,7 @@ function startService(networkObjectId, service) {
         },
 
         "apache2": () => {
-            $networkObject.setAttribute("apache", "true");
+            $networkObject.setAttribute("apache2", "true");
         },
 
         "dhcrelay": () => {

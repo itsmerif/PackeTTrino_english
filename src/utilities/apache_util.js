@@ -11,19 +11,19 @@ function command_apache(networkObjectId, args) {
     }
 
     if (args[1] === "on") {
-        $networkObject.setAttribute("apache", "on");
+        $networkObject.setAttribute("apache2", "on");
         terminalMessage("Servidor web encendido correctamente.", networkObjectId);
         return;
     }
 
     if (args[1] === "off") {
-        $networkObject.setAttribute("apache", "off");
+        $networkObject.setAttribute("apache2", "off");
         terminalMessage("Servidor web apagado correctamente.", networkObjectId);
         return;
     }
 
     if (args[1] === "status") {
-        ($networkObject.getAttribute("apache") === "on") 
+        ($networkObject.getAttribute("apache2") === "on") 
         ? terminalMessage("Servidor web encendido.", networkObjectId)
         : terminalMessage("Servidor web apagado.", networkObjectId);
         return;
