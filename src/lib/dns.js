@@ -341,3 +341,25 @@ function dropDnsZone(serverObjectId, domain) {
     });
 
 }
+
+/**ESTA FUNCION DEVUELVE [SERVIDOR DE AUTORIDAD, DOMINIO DE AUTORIDAD] DE UN REGISTRO EN UN SERVIDOR DNS*/
+function getSoaRecord(serverObjectId, targetDomain) {
+
+    const $serverObject = document.getElementById(serverObjectId);
+    const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
+    const $soaRecords = $dnsTable.querySelectorAll(".SOA");
+    
+    let [authorityNameServer, authorityDomain] = [false, false];
+
+    $soaRecords.forEach($record => {
+        const $fields = $record.querySelectorAll("td");
+        const soaDomain = $fields[0].innerHTML;
+        if (targetDomain.endsWith(`.${soaDomain}`) || soaDomain === targetDomain) {
+            authorityNameServer = $fields[2].innerHTML;
+            authorityDomain = $fields[1].innerHTML;
+        }
+    });
+
+    return [authorityNameServer, authorityDomain];
+
+}

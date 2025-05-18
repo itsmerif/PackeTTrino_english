@@ -64,7 +64,7 @@ async function command_dig(networkObjectId, args) {
 
     } catch (error) {
 
-        terminalMessage(error.message, networkObjectId, );
+        console.log(error);
         
     }
 

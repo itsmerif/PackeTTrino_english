@@ -17,15 +17,7 @@ async function named_service(networkObjectId, packet) {
         "" // <--respuesta
     ); 
 
-    /*if (packet.answer_type === "SOA") { //<-- se nos pide el SOA
-        let [authority_domain, answer] = iterativeDnsQuery(networkObjectId, packet);
-        if (answer) newPacket.authority = "1";
-        newPacket.answer_type = "SOA";
-        newPacket.answer = answer;
-        newPacket.authority_domain = authority_domain;
-    }*/
-
-    if (packet.answer_type === "A") { //<-- se nos pide un registro de tipo A
+    if (packet.answer_type === "A") {
         let answer = iterativeDnsQuery(networkObjectId, packet.query); //<-- consulta iterativa
         if (!answer && isCacheOn) answer = isDomainInCacheDns(networkObjectId, packet.query)[1]; //<-- consulta cache dns
         if (!answer && isRecursiveOn) answer = await recursiveDnsQuery(packet.query); // <-- consulta recursiva
@@ -34,10 +26,18 @@ async function named_service(networkObjectId, packet) {
         newPacket.answer_type = "A"; //<-- se añade el tipo de registro
     }
 
-    if (packet.answer_type === "PTR") { //<-- se nos pide un registro de tipo PTR
+    if (packet.answer_type === "PTR") {
         let answer = iterativeDnsQuery(networkObjectId, (packet.query).split(".").reverse().join(".") + ".IN-ADDR.ARPA."); //<-- consulta iterativa
         newPacket.answer = answer; //<-- se añade la respuesta
         newPacket.answer_type = "PTR"; //<-- se añade el tipo de registro
+    }
+
+    if (packet.answer_type === "SOA") { 
+        let [authorityNameServer, authorityDomain] = getSoaRecord(networkObjectId, packet.query);
+        if (authorityNameServer) newPacket.authority = "1";
+        newPacket.answer_type = "SOA";
+        newPacket.answer = authorityNameServer;
+        newPacket.authority_domain = authorityDomain;
     }
 
     return newPacket;
