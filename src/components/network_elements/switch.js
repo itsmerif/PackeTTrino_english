@@ -57,7 +57,7 @@ function switchConn(event) {
     const isClusterized = $switchObject.getAttribute("clusterized");
 
     if (isClusterized === "true") {
-        bodyComponent.render(popupMessage(`<span>Error</span>Debes des-clusterizar el switch antes de poder añadir dispositivos.`));
+        bodyComponent.render(popupMessage(`<span>Error: </span>Debes des-clusterizar el switch antes de poder añadir dispositivos.`));
         return;
     }
 
