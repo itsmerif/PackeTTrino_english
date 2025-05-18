@@ -81,6 +81,22 @@ class FileSystem {
 
     }
 
+    rmdir (folderName, directoryPath) { 
+        
+        let currentDirectory = (this.structure)["/"];
+
+        for (let i = 0; i < directoryPath.length; i++) {
+            if (!Object.hasOwn(currentDirectory, directoryPath[i])) throw new Error(`El directorio ${directoryPath[i]} no existe`);
+            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`El directorio ${directoryPath[i]} no es un directorio`);
+            currentDirectory = currentDirectory[directoryPath[i]];
+        }
+
+        if (!Object.hasOwn(currentDirectory, folderName)) throw new Error(`El directorio ${folderName} no existe`);
+        delete currentDirectory[folderName];
+        this.compile();
+
+    }
+
     mkdir (folderName, directoryPath) { 
 
         let currentDirectory = (this.structure)["/"];
