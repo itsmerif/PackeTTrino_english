@@ -14,7 +14,7 @@ async function browserSearch() {
 
     } catch (error) {
 
-        document.querySelector(".browser-content").srcdoc = $error404;
+        document.querySelector(".browser-content").srcdoc = $error404 + "<br><br>" + error.message;
         
     }
 
@@ -39,14 +39,18 @@ async function http(networkObjectId, destinationIp) {
         return;
     }
 
-    //comenzamos el proceso de sincronización TCP
+    delete browserBuffer[networkObjectId]; //<-- borramos el buffer de respuesta anterior
 
-    delete browserBuffer[networkObjectId];
-    const source_port = Math.floor(Math.random() * (65535 - 49152 + 1)) + 49152; // <--- puerto efímero aleatorio para el origen
-    await tcpSynPacketGenerator(networkObjectId, destinationIp, source_port, 80);
+    const source_port = Math.floor(Math.random() * (65535 - 49152 + 1)) + 49152; // <--- generamos un puerto efímero aleatorio para el origen
+
+    await tcpSynPacketGenerator(networkObjectId, destinationIp, source_port, 80); 
+
     if (tcpSyncFlag[networkObjectId] === false) throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
+
     await httpRequestPacketGenerator(networkObjectId, destinationIp, source_port, 80);
+
     let htmlReply = browserBuffer[networkObjectId];
+
     if (!htmlReply) throw new Error("Error: No se ha recibido respuesta del servidor web.");
 
     //mostramos el contenido del servidor web
