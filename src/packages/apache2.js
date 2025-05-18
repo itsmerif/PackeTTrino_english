@@ -371,7 +371,7 @@ function installApache2($networkObject) {
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
     const fileSystem = new FileSystem($networkObject);
 
-    attr("apache", "true"); 
+    attr("apache2", "true"); 
     fileSystem.mkdir("html", ["var", "www"]); 
     fileSystem.touch("index.html", ["var", "www", "html"]); 
     fileSystem.write("index.html", ["var", "www", "html"], defaultApacheContent.replace(/\s+/g, " "));
@@ -389,7 +389,7 @@ function uninstallApache2(networkObjectId) {
     const networkObjectFileSystem = new FileSystem($networkObject);
 
     networkObjectFileSystem.rmdir("www", ["var"]);
-    rattr("apache");
+    rattr("apache2");
     if ($networkObject.id.startsWith("pc-")) $networkObject.querySelector("img").src = "./assets/board/pc.svg";
 
     terminalMessage("Apache desinstalado correctamente.", networkObjectId);

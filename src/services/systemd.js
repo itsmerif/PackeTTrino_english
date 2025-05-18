@@ -1,24 +1,28 @@
 function systemd(networkObjectId, service, option) {
 
     const $networkObject = document.getElementById(networkObjectId);   
-    const daemonStatus = $networkObject.getAttribute(service) !== null;
+    const currentServices = ["dhcpd", "apache2", "dhclient", "dhcrelay", "resolved", "named"];
+    const isServiceInstalled = $networkObject.getAttribute(service) !== null;
 
-    if (!daemonStatus) throw new Error(`Error: Servicio ${service} no disponible para este equipo.`);
+    if (!currentServices.includes(service)) throw new Error(`Error: Servicio "${service}" desconocido.`);
+    if (!isServiceInstalled) throw new Error(`Error: Servicio "${service}" no instalado.`);
 
     const stateFunctions = {
 
         "start": () => startService(networkObjectId, service),
 
-        "restart": () => startService(networkObjectId, service),
+        "restart": () => {
+            $networkObject.setAttribute(service, "false");
+            startService(networkObjectId, service);
+        },
 
         "stop": () => {
             $networkObject.setAttribute(service, "false");
-            terminalMessage(`${service}.service`, networkObjectId);
-            terminalMessage("Servicio Interrumpido.", networkObjectId);
         },
 
         "status": () => {
-            let daemonMessage = (daemonStatus === "true") ? "<span style='color:#4ade80;'> Activo (running)</span>" : "<span style='color:red;'> Inactivo (dead) </span>";
+            const serviceStatus = $networkObject.getAttribute(service) === "true";
+            let daemonMessage = (serviceStatus) ? "<span style='color:#4ade80;'> Activo (running)</span>" : "<span style='color:red;'> Inactivo (dead) </span>";
             terminalMessage(`${service}.service`, networkObjectId);
             terminalMessage(`Status: ${daemonMessage}`, networkObjectId);
         },
@@ -34,7 +38,7 @@ function listallServices(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
     const availableServices = {
         "dhcpd": "LSB: DHCP server",
-        "apache": "The Apache HTTP Server",
+        "apache2": "The Apache HTTP Server",
         "dhclient": "LSB: DHCP client",
         "dhcrelay": "",
         "resolved": "",
@@ -58,7 +62,7 @@ function listallServices(networkObjectId) {
 function getAvailableServices(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    let availableServices = ["dhcpd", "apache", "dhclient", "dhcrelay", "resolved", "named"];
+    let availableServices = ["dhcpd", "apache2", "dhclient", "dhcrelay", "resolved", "named"];
     let response = [];
 
     availableServices.forEach(service => {
@@ -81,6 +85,25 @@ function startService(networkObjectId, service) {
             dhcpdFileInterpreter(networkObjectId, dhcpdContent);
         },
 
+        "dhclient": () => {
+            $networkObject.setAttribute("dhclient", "true");
+        },
+
+        "apache2": () => {
+            $networkObject.setAttribute("apache", "true");
+        },
+
+        "dhcrelay": () => {
+            $networkObject.setAttribute("dhcrelay", "true");
+        },
+
+        "named": () => {
+            $networkObject.setAttribute("named", "true");
+        },
+
+        "resolved": () => {
+            $networkObject.setAttribute("resolved", "true");
+        },
     }
 
     startFunctions[service]();

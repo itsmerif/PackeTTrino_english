@@ -2,7 +2,7 @@ function dpkg(networkObjectId, option, package) {
     
     const $networkObject = document.getElementById(networkObjectId);
 
-    const availabePackages = ["apache2", "bind9", "isc-dhcp-server", "isc-dhcp-relay", "isc-dhcp-client"];
+    const availablePackages = ["apache2", "bind9", "isc-dhcp-server", "isc-dhcp-relay", "isc-dhcp-client"];
 
     const packagesToServices = {
         "apache2": "apache",
@@ -12,7 +12,7 @@ function dpkg(networkObjectId, option, package) {
         "isc-dhcp-client": "dhclient",
     }
 
-    if (!availabePackages.includes(package)) throw new Error(`Error: No se ha podido localizar el paquete ${package}.`);
+    if (!availablePackages.includes(package)) throw new Error(`Error: No se ha podido localizar el paquete ${package}.`);
 
     const service = packagesToServices[package];
     const isServiceInstalled = $networkObject.getAttribute(service) !== null;
