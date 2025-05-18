@@ -106,7 +106,8 @@ async function generalProcessorRouter(switchId, routerObjectId, packet) {
 
         }
 
-        if (replyPacket) { // <-- tras procesar el paquete, se enruta la respuesta si es necesario
+        if (!replyPacket) return;
+        else {
             await routing(routerObjectId, replyPacket); 
             return;
         }
