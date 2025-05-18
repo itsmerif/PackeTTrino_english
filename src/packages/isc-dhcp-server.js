@@ -1,22 +1,18 @@
-function installDhcpd(networkObjectId) {
-    let $networkObject;
+function installDhcpd($networkObject) {
+
+    const networkObjectId = $networkObject.id;
+
     terminalMessage("Instalando DHCP Server...", networkObjectId);
-    if (typeof networkObjectId === "string") $networkObject = document.getElementById(networkObjectId);
-    if (networkObjectId instanceof Node) $networkObject = networkObjectId;
+
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
     const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
     const addOption = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));
-
-    //cargamos archivos sobre el equipo
     const networkObjectFileSystem = new FileSystem($networkObject);
-    networkObjectFileSystem.mkdir("dhcp", ["etc"]);
-    networkObjectFileSystem.touch("dhcpd.conf", ["etc", "dhcp"]);
-    
-    //tabla de dhcp
-    append(dhcpTable());
 
-    //atributos de dhcp
+    networkObjectFileSystem.mkdir("dhcp", ["etc"]);
+    networkObjectFileSystem.touch("dhcpd.conf", ["etc", "dhcp"]); 
+    append(dhcpTable());
     attr("dhcpd", "true");
     attr("data-range-start", "");
     attr("data-range-end", "");
@@ -26,15 +22,12 @@ function installDhcpd(networkObjectId) {
     attr("offer-lease-time", "");
     attr("data-interval", "false");
     attr("ip-reservations", `{}`);
-
-    //opciones de dhcp
     addOption(leasesTableOptionButton(), dhcpServerConfig());
+
     terminalMessage("DHCP Server instalado correctamente.", networkObjectId);
 }
 
 function uninstallDhcpd(networkObjectId) {
-
-    if (networkObjectId.startsWith("dhcp-server-")) throw new Error("Error: no se puede desinstalar isc-dhcp-server en este dispositivo.", networkObjectId);
 
     terminalMessage("Desinstalando DHCP Server...", networkObjectId);
 
@@ -44,7 +37,9 @@ function uninstallDhcpd(networkObjectId) {
     const rattr = (...attributes) => attributes.forEach(attribute => $networkObject.removeAttribute(attribute));
     const remove = (...nodes) => nodes.forEach(node => $networkObject.removeChild(node));
     const remOption = (...options) => options.forEach(option => $advancedOptions.querySelector("#" + option).remove());
+    const networkObjectFileSystem = new FileSystem($networkObject);
 
+    networkObjectFileSystem.rmdir("dhcp", ["etc"]);
     rattr("dhcpd", "data-range-start", "data-range-end", "offer-gateway", "offer-netmask", "offer-dns", "offer-lease-time", "data-interval");
     remOption("dhcp-option", "dhcp-server-config");
     remove($dhcpTable);

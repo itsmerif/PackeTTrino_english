@@ -1,18 +1,19 @@
-function installDhclient(networkObjectId) {
-    let $networkObject;
+function installDhclient($networkObject) {
+
+    const networkObjectId = $networkObject.id;
+    const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
+
+    if (networkObjectId.startsWith("router-")) throw new Error("Error: En esta versión no se puede instalar el paquete DHCP Client en un router.");
+
     terminalMessage("Instalando DHCP Client...", networkObjectId);
-    if (typeof networkObjectId === "string") $networkObject = document.getElementById(networkObjectId);
-    if (networkObjectId instanceof Node) $networkObject = networkObjectId;
-
-    if ($networkObject.id.startsWith("router-")) throw new Error("Error: En esta versión no se puede instalar el paquete DHCP Client en un router.");
-
-    const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);       
+          
     attr("dhclient", "false");   
     attr("data-dhcp-server", "");
     attr("data-dhcp-lease-time", "");
     attr("data-dhcp-current-lease-time", "");
     attr("data-dhcp-flag-t1", "false");
     attr("data-dhcp-flag-t2", "false");
+    
     terminalMessage("DHCP Client instalado correctamente.", networkObjectId);
 }
 

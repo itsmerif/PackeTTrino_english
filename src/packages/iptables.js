@@ -1,6 +1,6 @@
 function installIptables($networkObject) {
 
-    let networkObjectId = $networkObject.id;
+    const networkObjectId = $networkObject.id;
     
     terminalMessage("Instalando Iptables...", networkObjectId);
 

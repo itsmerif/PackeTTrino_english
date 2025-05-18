@@ -30,12 +30,14 @@ function dpkg(networkObjectId, option, package) {
 
 function dpkgInstaller(networkObjectId, package) {
 
+    const $networkObject = document.getElementById(networkObjectId);
+
     const installFunctions = {
-        "apache2": () => installApache2(networkObjectId),
-        "bind9": () => installBind9(networkObjectId),
-        "isc-dhcp-server": () => installDhcpd(networkObjectId),
-        "isc-dhcp-relay": () => installDhcprelay(networkObjectId),
-        "isc-dhcp-client": () => installDhclient(networkObjectId),
+        "apache2": () => installApache2($networkObject),
+        "bind9": () => installBind9($networkObject),
+        "isc-dhcp-server": () => installDhcpd($networkObject),
+        "isc-dhcp-relay": () => installDhcprelay($networkObject),
+        "isc-dhcp-client": () => installDhclient($networkObject),
     }
 
     installFunctions[package]();

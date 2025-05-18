@@ -1,21 +1,22 @@
-function installDhcprelay(networkObjectId) {
-    let $networkObject;
+function installDhcprelay($networkObject) {
+
+    const networkObjectId = $networkObject.id;
+
     terminalMessage("Instalando DHCP Relay...", networkObjectId);
-    if (typeof networkObjectId === "string") $networkObject = document.getElementById(networkObjectId);
-    if (networkObjectId instanceof Node) $networkObject = networkObjectId;
+
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
     const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
     const addOption = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));
+
     attr("dhcrelay", "true");
     attr("data-main-server", "");
     addOption(dhcpRelayConfig());
+
     terminalMessage("DHCP Relay instalado correctamente.", networkObjectId);
 }
 
 function uninstallDhcprelay(networkObjectId) {
-
-    if (networkObjectId.startsWith("dhcp-relay-server-")) throw new Error("Error: No se puede desinstalar isc-dhcp-relay en este dispositivo.");
 
     terminalMessage("Desinstalando DHCP Relay...", networkObjectId);
 
