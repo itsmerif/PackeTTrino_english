@@ -12,7 +12,7 @@ async function command_dig(networkObjectId, args) {
 
     const optionsHandler = {
         "-x": () => { opt_x = true; query_type = "PTR"; },
-        "-t": () => { opt_t = true; query_type = $OPTS["-t"]; },
+        "-t": () => { opt_t = true; query_type = $OPTS["-t"].toUpperCase(); },
         "@": () => { opt_server = true; dnsServer = $OPTS["@"]; }
     }
 
