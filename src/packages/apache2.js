@@ -123,29 +123,22 @@ function installApache2($networkObject) {
                     <div class="page_header floating_element">
                         <img src="./assets/favicon.svg" alt="Ubuntu Logo" class="floating_element"/>
                         <span class="floating_element">
-                            Apache2 PackeTTrino Default Page
+                            Página por Defecto de Apache2 PackeTTrino
                         </span>
                     </div>
                     <div class="content_section floating_element">
                         <div class="section_header section_header_red">
                             <div id="about"></div>
-                            It works!
+                            ¡Funciona!
                         </div>
                         <div class="content_section_text">
                             <p>
-                                This is the default welcome page used to test the correct 
-                                operation of the Apache2 server after installation on Ubuntu systems.
-                                It is based on the equivalent page on Debian, from which the Ubuntu Apache
-                                packaging is derived.
-                                If you can read this page, it means that the Apache HTTP server installed at
-                                this site is working properly. You should <b>replace this file</b> (located at
-                                <tt>/var/www/html/index.html</tt>) before continuing to operate your HTTP server.
-                            </p>
-                            <p>
-                                If you are a normal user of this web site and don't know what this page is
-                                about, this probably means that the site is currently unavailable due to
-                                maintenance.
-                                If the problem persists, please contact the site's administrator.
+                                Esta es la página de bienvenida predeterminada que se utiliza para comprobar el correcto
+                                funcionamiento del servidor Apache2 PackeTTrino tras su instalación.
+                                Está basada en la página equivalente de Debian, de la cual se deriva el paquete de Apache en Ubuntu.
+                                Si puedes leer esta página, significa que el servidor HTTP Apache PackeTTrino instalado en este sitio está funcionando correctamente.
+                                Deberías <b>reemplazar este archivo</b> (ubicado en
+                                <tt>/var/www/html/index.html</tt>) antes de continuar usando tu servidor HTTP.
                             </p>
                         </div>
                     </div>
