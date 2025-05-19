@@ -3,8 +3,9 @@ async function http(networkObjectId, destinationIp, method, port) {
     if (isNaN(port) || port < 1 || port > 65535) throw new Error(`Error: Puerto ${port} no válido.`);
 
     if (!isValidIp(destinationIp)) {
+        const domainName = destinationIp;
         destinationIp = await domainNameResolution(networkObjectId, destinationIp);
-        if (!destinationIp) throw new Error("Error: No se pudo resolver el dominio.");
+        if (!destinationIp) throw new Error(`Error: No se pudo resolver el dominio "${domainName}".`);
     }
 
     if (isLocalIp(networkObjectId,destinationIp)) return getApacheWebContent(networkObjectId); 
@@ -22,7 +23,8 @@ async function http(networkObjectId, destinationIp, method, port) {
     //comprobamos si hay respuesta en el buffer
     const htmlReply = browserBuffer[networkObjectId];
     if (!htmlReply) throw new Error("Error: No se ha recibido respuesta del servidor web.");
-    return htmlReply.body;
+
+    return htmlReply //devolvemos el objeto HTTPReply
     
 }
 

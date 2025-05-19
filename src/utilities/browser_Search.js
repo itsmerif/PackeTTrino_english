@@ -13,9 +13,9 @@ async function browserSearch() {
 
         $browser.querySelector(".address-input").value = `http://${address}${(port === 80) ? "" : `:${port}`}`; //<-- actualizamos la entrada
 
-        const webContent = await http($networkObject.id, address, "GET", port);
+        const httpReply = await http($networkObject.id, address, "GET", port);
 
-        $browserContent.srcdoc = webContent;
+        $browserContent.srcdoc = httpReply.body;
 
     } catch (error) {
 
