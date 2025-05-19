@@ -1,4 +1,6 @@
-async function http(networkObjectId, destinationIp) {
+async function http(networkObjectId, destinationIp, method, port) {
+
+    if (isNaN(port) || port < 1 || port > 65535) throw new Error(`Error: Puerto ${port} no válido.`);
 
     if (!isValidIp(destinationIp)) {
         destinationIp = await domainNameResolution(networkObjectId, destinationIp);
@@ -11,11 +13,11 @@ async function http(networkObjectId, destinationIp) {
 
     //iniciamos la sincronización TCP
     const source_port = Math.floor(Math.random() * (65535 - 49152 + 1)) + 49152; // <--- generamos un puerto efímero aleatorio para el origen
-    await tcpSynPacketGenerator(networkObjectId, destinationIp, source_port, 80); 
+    await tcpSynPacketGenerator(networkObjectId, destinationIp, source_port, port); 
     if (tcpSyncFlag[networkObjectId] === false) throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
 
     //realizamos la petición HTTP
-    await httpRequestPacketGenerator(networkObjectId, destinationIp, source_port, 80);
+    await httpRequestPacketGenerator(networkObjectId, destinationIp, source_port, port, method);
 
     //comprobamos si hay respuesta en el buffer
     const htmlReply = browserBuffer[networkObjectId];
@@ -24,7 +26,7 @@ async function http(networkObjectId, destinationIp) {
     
 }
 
-async function httpRequestPacketGenerator(networkObjectId, destinationIp, source_port, destination_port) {
+async function httpRequestPacketGenerator(networkObjectId, destinationIp, source_port, destination_port, method) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkjObjectInterface = getInterfaces(networkObjectId)[0];
     const networkObjectMac = $networkObject.getAttribute(`mac-${networkjObjectInterface}`);
@@ -37,7 +39,7 @@ async function httpRequestPacketGenerator(networkObjectId, destinationIp, source
         "", //mac del destino
         source_port, //puerto del origen
         destination_port, //puerto del destino
-        "GET" //método
+        method //método
     );
 
     await hostRouting(networkObjectId, packet);
