@@ -2,22 +2,27 @@ async function browserSearch() {
 
     const $networkObject = document.getElementById(document.querySelector(".browser-component").getAttribute("data-id"));
     const $browser = document.querySelector(".browser-component");
-    const $addressInput = $browser.querySelector(".address-input");
-    const search = $addressInput.value.trim(); //<-- obtenemos la entrada de direccion
+    const $browserContent = $browser.querySelector(".browser-content");
+    const $addressInput =  $browser.querySelector(".address-input");
 
     if (visualToggle) await minimizeBrowser();
 
     try {
 
-        const webContent = await http($networkObject.id, search);
-        $browser.querySelector(".browser-content").srcdoc = webContent;
+        const [protocol, address, port] = parseSearch($addressInput.value.trim());
+
+        $browser.querySelector(".address-input").value = `http://${address}${(port === 80) ? "" : `:${port}`}`; //<-- actualizamos la entrada
+
+        const webContent = await http($networkObject.id, address, "GET", port);
+
+        $browserContent.srcdoc = webContent;
 
     } catch (error) {
 
-        $browser.querySelector(".browser-content").srcdoc = $error404 + "<br><br>" + error.message;       
+        $browserContent.srcdoc = $error404;
+        
     }
 
     if (visualToggle) await maximizeBrowser();
-
 
 }
