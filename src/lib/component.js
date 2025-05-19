@@ -291,7 +291,7 @@ function startBoardItemMove(event) {
 
 }
 
-/**ESTA FUNCION HACE SPLIT DE UNA CADENA DE TEXTO CON SOLO LA PRIMERA COINCIDENCIA DE UN TEXTO*/
+/**ESTA FUNCION HACE SPLIT DE UNA CADENA DE TEXTO CON SOLO LA PRIMERA COINCIDENCIA CON UN SEPARADOR*/
 function splitFirst(text, separator) {
     const index = text.indexOf(separator);
     if (index === -1) return [text];

@@ -541,3 +541,30 @@ function setRouterIps($router, ip1, ip2 = "", ip3 = "") {
     });
 
 }
+
+/**ESTA FUNCION PARSEA UNA DIRECCIÓN DE BÚSQUEDA EN [PROTOCOLO, IP, PUERTO] */
+function parseSearch(input) {
+    
+    let protocol;
+    let address;
+    let port;
+
+    const parsebyProtocol = splitFirst(input, "://");
+
+    if (parsebyProtocol.length < 2)  {
+
+        protocol = "http";
+        [address, port] = splitFirst(input, ":");
+
+    } else {
+
+        protocol = parsebyProtocol[0];
+        [address, port] = splitFirst(parsebyProtocol[1], ":");
+
+    }
+
+    if (!port) port = 80;
+
+    return [protocol, address, port];
+
+}
