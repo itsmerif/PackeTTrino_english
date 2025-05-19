@@ -50,12 +50,13 @@ function clickTerminal(event) {
     input.focus();
 }
 
-function terminalMessage(message, networkObjectId) {
+function terminalMessage(message, networkObjectId, isHtml = true) {
     const $terminal = document.querySelector(".terminal-component");
     const $output = document.querySelector(".terminal-output");
     if (window.getComputedStyle($terminal).display === "none") return;
     if ($terminal.dataset.id !== networkObjectId) return;
-    $output.innerHTML += `${message}\n`;
+    if (isHtml) $output.innerHTML += `${message}\n`;
+    else $output.textContent += `${message}\n`;
 }
 
 function terminalKeyboard(event) {
