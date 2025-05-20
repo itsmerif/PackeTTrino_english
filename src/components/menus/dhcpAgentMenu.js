@@ -10,30 +10,39 @@ function dhcp_agent_menu() {
 
             <div class="form-item">
                 <label for="ip-relay">Dirección IP (ipv4):</label>
-                <input type="text" id="ip-relay" name="ip-relay" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                <input type="text" id="ip-relay" name="ip-relay" placeholder="192.168.1.1">
             </div>
 
             <div class="form-item">
                 <label for="netmask-relay">Máscara de Red:</label>
-                <input type="text" id="netmask-relay" name="netmask-relay" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                <input type="text" id="netmask-relay" name="netmask-relay" placeholder="255.255.255.0">
             </div>
 
             <div class="form-item">
                 <label for="gateway-relay">Puerta de enlace:</label>
-                <input type="text" id="gateway-relay" name="gateway-relay" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                <input type="text" id="gateway-relay" name="gateway-relay" placeholder="192.168.1.1">
             </div>
         
         </section>
 
         <section class="dhcp-relay-section">
+
             <div class="form-item">
                 <label for="main-server">Servidor DHCP Principal:</label>
-                <input type="text" id="main-server" name="main-server" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                <input type="text" id="main-server" name="main-server" placeholder="172.16.1.254">
             </div>
+
+            <div class="form-item">
+                <label for="listen-on-interfaces">Interfaces De Escucha:</label>
+                <input type="text" id="listen-on-interfaces" name="listen-on-interfaces" placeholder="enp0s3,enp0s8">
+            </div>
+
         </section>
         
-        <button class="btn-modern-blue" type="submit">Guardar</button>
-        <button class="btn-modern-red"  id="btn-close">Cerrar</button>
+        <div class="button-wrapper">
+            <button class="btn-modern-blue" type="submit">Guardar</button>
+            <button class="btn-modern-red"  id="btn-close">Cerrar</button>
+        </div>
     `;
 
     $menu.addEventListener("submit", saveDhcpRelayMenu);
@@ -62,7 +71,8 @@ function showDhcpRelayMenu(event) {
     $form.querySelector("#ip-relay").value = networkObject.getAttribute("ip-enp0s3");
     $form.querySelector("#netmask-relay").value = networkObject.getAttribute("netmask-enp0s3");
     $form.querySelector("#gateway-relay").value = networkObject.getAttribute("data-gateway");;
-    $form.querySelector("#main-server").value = networkObject.getAttribute("data-main-server");;
+    $form.querySelector("#main-server").value = networkObject.getAttribute("dhcrelay-main-server");;
+    $form.querySelector("#listen-on-interfaces").value = networkObject.getAttribute("dhcrelay-listen-on-interfaces");
     $form.querySelector("#form-dhcp-relay-item-id").innerHTML = networkObject.id;
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
 
@@ -78,15 +88,15 @@ function saveDhcpRelayMenu(event) {
 
     const $networkObject = document.getElementById(document.getElementById("form-dhcp-relay-item-id").innerHTML);
     const $form = document.querySelector(".dhcp-relay-form");
+    const networkObjectInterfaces = getInterfaces($networkObject.id);
     const newIp = $form.querySelector("#ip-relay").value;
     const newNetmask = $form.querySelector("#netmask-relay").value;
     const newGateway = $form.querySelector("#gateway-relay").value;
     const newMainServer = $form.querySelector("#main-server").value;
+    const newListenOnInterfaces = ($form.querySelector("#listen-on-interfaces").value).split(",").map(item => item.trim()).filter(item => item !== "");
     const isDhcpRelay = $networkObject.id.startsWith("dhcp-relay-server-");
 
-    if (isDhcpRelay) { //<-- si es un DHCP Relay nativo, se guarda la configuracion de red basica
-
-        //<-- comprobamos los campos
+    if (isDhcpRelay) { 
 
         if (!isValidIp(newIp)) {
             bodyComponent.render(popupMessage(`<span>Error: </span>La IP "${newIp}" no es válida.`));
@@ -115,7 +125,14 @@ function saveDhcpRelayMenu(event) {
         return;
     }
 
-    $networkObject.setAttribute("data-main-server", newMainServer); //<-- se guarda la referencia al servidor DHCP principal
+    if (!newListenOnInterfaces.every(item => networkObjectInterfaces.includes(item))) {
+        bodyComponent.render(popupMessage(`<span>Error: </span>Algunas de las interfaces de escucha no son válidas.`));
+        return;
+    }
+
+    //guardamos los cambios
+    $networkObject.setAttribute("dhcrelay-main-server", newMainServer);
+    $networkObject.setAttribute("dhcrelay-listen-on-interfaces", newListenOnInterfaces.join(","));
 
     bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
 
