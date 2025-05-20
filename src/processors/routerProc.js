@@ -2,6 +2,7 @@ async function generalProcessorRouter(switchId, routerObjectId, packet) {
 
     if (visualToggle) await visualize(switchId, routerObjectId, packet); //<-- animacion del paquete
 
+    const $routerObject = document.getElementById(routerObjectId);
     const [routerObjectIp, routerObjectNetmask, routerObjectMac] = getInterfaceSwitchInfo(routerObjectId, switchId);
     const interface = switchToInterface(routerObjectId, switchId); // <-- obtenemos la interfaz de entrada
     const availableIps = getAvailableIps(routerObjectId); // <-- obtenemos la lista de IPs disponibles
@@ -88,14 +89,18 @@ async function generalProcessorRouter(switchId, routerObjectId, packet) {
 
             if (activeServices.includes("dhcrelay")) {
 
-                replyPacket = await dhcrelay_service(routerObjectId, packet);
+                const listenOnInterfaces = $routerObject.getAttribute("dhcrelay-listen-on-interfaces").split(",");
+                
+                if (!listenOnInterfaces.includes(interface)) return;
+
+                replyPacket = await dhcrelay_service(routerObjectId, packet, interface);
 
                 if (!replyPacket) return;
 
                 if (replyPacket.type === "discover" || replyPacket.type === "request") await routing(routerObjectId, replyPacket);
 
                 if (replyPacket.type === "offer" || replyPacket.type === "ack") { 
-                    let switchOut = getInfoFromIp(routerObjectId, replyPacket.giaddr)[1];
+                    const switchOut = getInfoFromIp(routerObjectId, replyPacket.giaddr)[1];
                     if (!switchOut) return;
                     addPacketTraffic(replyPacket);
                     await switchProcessor(switchOut, routerObjectId, replyPacket); // <-- como debe ir por broadcast se lanza directamente a la red

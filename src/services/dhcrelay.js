@@ -1,55 +1,58 @@
-async function dhcrelay_service(agentObjectId, packet) {
+async function dhcrelay_service(agentObjectId, packet, interface = "enp0s3") {
+
+    //atributos del agente de retransmision
     const $agentObject = document.getElementById(agentObjectId);
-    const agentObjectMac = $agentObject.getAttribute("mac-enp0s3");
-    const agentObjectIp = $agentObject.getAttribute("ip-enp0s3");
-    const mainServer = $agentObject.getAttribute("data-main-server");
-    const defaultGateway = $agentObject.getAttribute("data-gateway");
+    const agentObjectMac = $agentObject.getAttribute(`mac-${interface}`);
+    const agentObjectIp = $agentObject.getAttribute(`ip-${interface}`);
+    const availableIps = getAvailableIps(agentObjectId);
+
+    //atributos del servicio de retransmision
+    const mainServer = $agentObject.getAttribute("dhcrelay-main-server");
+    const listenOnInterfaces = $agentObject.getAttribute("dhcrelay-listen-on-interfaces").split(",");
     const isDhcpRelayOn = $agentObject.getAttribute("dhcrelay") === "true";
 
-    if (!isDhcpRelayOn) return;
+    if (!isDhcpRelayOn) return; //<-- si el DHCP Relay no esta activo, no se procesa nada
 
-    if (packet.destination_ip === agentObjectIp) { /** PAQUETE VIENE DEL SERVIDOR PRINCIPAL **/
+    if (packet.destination_ip === "255.255.255.255") { //paquete viene de un cliente 
+
+        if (packet.type === "discover") {
+            packet.origin_ip = agentObjectIp;
+            packet.destination_ip = mainServer;
+            packet.origin_mac = agentObjectMac;
+            packet.giaddr = agentObjectIp;
+        }
+
+        if (packet.type === "request") {
+            if (packet.giaddr !== agentObjectIp) return;
+            packet.origin_ip = agentObjectIp;
+            packet.destination_ip = mainServer;
+            packet.origin_mac = agentObjectMac;
+        }
+
+        packet.destination_mac = ""; //<-- se inicializa vacía, a rellenar por el enrutamiento
+        return packet;
+
+    }
+
+    if (availableIps.includes(packet.destination_ip)) { //paquete viene de un servidor
+
+        if (!availableIps.includes(packet.giaddr)) return;
 
         if (packet.type === "offer") {
-            if (packet.giaddr !== agentObjectIp) return;
             packet.destination_mac = packet.ciaddr;
             packet.destination_ip = "255.255.255.255";
             packet.origin_mac = agentObjectMac;
             packet.destination_mac = packet.chaddr;
-            return packet;
         }
 
         if (packet.type === "ack") {
-            if (packet.giaddr === agentObjectMac) return;
             packet.origin_ip = agentObjectIp;
             packet.destination_ip = "255.255.255.255";
             packet.origin_mac = agentObjectMac;
             packet.destination_mac = packet.chaddr;
-            return packet;
         }
 
-    }
-
-    if (packet.destination_ip = "255.255.255.255") { /** PAQUETE VIENE DE UN CLIENTE DHCP **/
-        
-        if (packet.type === "discover") {
-            packet.chaddr = packet.origin_mac;
-            packet.destination_ip = mainServer;
-            packet.origin_mac = agentObjectMac;
-            packet.giaddr = agentObjectIp;
-            packet.destination_mac = "";
-            packet.origin_ip = agentObjectIp;
-            return packet;
-        }
-
-        if (packet.type === "request") {           
-            if (packet.giaddr !== agentObjectIp) return;
-            packet.origin_ip = agentObjectIp;
-            packet.destination_ip = mainServer;
-            packet.origin_mac = agentObjectMac;
-            packet.destination_mac = isIpInARPTable(agentObjectId, defaultGateway);
-            return packet;
-        }
+        return packet;
 
     }
 
