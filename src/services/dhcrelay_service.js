@@ -1,4 +1,4 @@
-async function dhcrelay_service(agentObjectId, packet, interface = "enp0s3") {
+async function dhcrelay_service(agentObjectId, packet, interface) {
 
     //atributos del agente de retransmision
     const $agentObject = document.getElementById(agentObjectId);
@@ -13,6 +13,8 @@ async function dhcrelay_service(agentObjectId, packet, interface = "enp0s3") {
 
     if (!isDhcpRelayOn) return; //<-- si el DHCP Relay no esta activo, no se procesa nada
 
+    if (!listenOnInterfaces.includes(interface)) return; //<-- si el DHCP Relay no esta configurado para el interfaz, no se procesa nada
+    
     if (packet.destination_ip === "255.255.255.255") { //paquete viene de un cliente 
 
         if (packet.type === "discover") {
