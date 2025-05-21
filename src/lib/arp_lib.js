@@ -1,3 +1,4 @@
+/**ESTA FUNCIOÓN DEVUELVE LA TABLA DE ARP DE UN OBJETO DE RED COMO ARRAY DE ARRAYS*/
 function getARPTable(networkObjectId) {
 
     let tabla = document.getElementById(networkObjectId).querySelector(".arp-table").querySelector("table");
@@ -15,6 +16,7 @@ function getARPTable(networkObjectId) {
 
 }
 
+/**ESTA FUNCIÓN AÑADE UNA ENTRADA A LA TABLA DE ARP DE UN OBJETO DE RED*/
 function addARPEntry(networkObjectId, ip, mac) {
 
     let tabla = document.getElementById(networkObjectId).querySelector(".arp-table").querySelector("table");
@@ -44,6 +46,7 @@ function addARPEntry(networkObjectId, ip, mac) {
 
 }
 
+/**ESTA FUNCIÓN ELIMINA UNA ENTRADA DE LA TABLA DE ARP DE UN OBJETO DE RED*/
 function delARPEntry(networkObjectId, targetip) {
     let tabla = document.getElementById(networkObjectId).querySelector(".arp-table").querySelector("table");
     let rows = tabla.querySelectorAll("tr");
@@ -58,6 +61,7 @@ function delARPEntry(networkObjectId, targetip) {
     }
 }
 
+/**ESTA FUNCIÓN DEVUELVE LA DIRECCIÓN MAC DE UNA IP EN LA TABLA DE ARP DE UN OBJETO DE RED*/
 function isIpInARPTable(networkObjectId, ipAddress) {
 
     const arpTable = getARPTable(networkObjectId);
@@ -76,11 +80,13 @@ function isIpInARPTable(networkObjectId, ipAddress) {
 
 }
 
+/**ESTA FUNCIÓN DEVUELVE EL HTML DE LA TABLA DE ARP DE UN OBJETO DE RED*/
 function getcurrentARPTable(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
     return $networkObject.querySelector(".arp-table").querySelector("table").outerHTML;
 }
 
+/**ESTA FUNCIÓN ELIMINA TODAS LAS ENTRADAS DE LA TABLA DE ARP DE UN OBJETO DE RED*/
 function clearARPTable(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
     const $arpTable = $networkObject.querySelector(".arp-table").querySelector("table");
