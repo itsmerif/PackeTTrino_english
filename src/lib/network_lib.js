@@ -565,6 +565,6 @@ function parseSearch(input) {
 
     if (!port) port = 80;
 
-    return [protocol, address, port];
+    return [protocol, address, parseInt(port)];
 
 }
