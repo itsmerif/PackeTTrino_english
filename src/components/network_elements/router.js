@@ -14,7 +14,7 @@ function RouterObject(x, y) {
         IconObject("router.svg"),
         arpTable(),
         routingTable(),
-        advancedOptionsObject("terminal", "routing", "arp", "delete")
+        advancedOptionsObject("terminal", "routing", "delete")
     );
     
     const filesystem = {

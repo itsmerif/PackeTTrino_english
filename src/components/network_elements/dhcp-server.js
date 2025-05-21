@@ -14,7 +14,7 @@ function DhcpServerObject(x, y) {
         IconObject("dhcp.svg"),
         arpTable(),
         routingTable(),
-        advancedOptionsObject("terminal", "arp", "delete")
+        advancedOptionsObject("terminal", "delete")
     );
 
     const filesystem = {
