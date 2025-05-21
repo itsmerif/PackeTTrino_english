@@ -30,28 +30,24 @@ async function dhcpd_service(serverObjectId, packet, interface) {
         let offerIP = getReservedIp(serverObjectId, packet.chaddr) || getRandomIPfromDhcp(serverObjectId);
         
         let newPacket = new dhcpOffer(
-            serverObjectIp,
-            serverObjectMac,
-            serverObjectIp,
-            offerIP,
-            packet.origin_mac,
-            packet.chaddr,
-            gatewayOffer,
-            netmaskOffer,
-            dnsOffer,
-            leaseTime
+            serverObjectIp, //ip de origen
+            serverObjectMac, //mac de origen
+            serverObjectIp, //siaddr
+            offerIP, //yiaddr
+            packet.origin_mac, //mac de destino
+            packet.chaddr, //chaddr
+            gatewayOffer, //oferta gateway
+            netmaskOffer, //oferta mascara
+            dnsOffer, //oferta dns
+            leaseTime //oferta tiempo de alquiler
         );
 
-
-        if (packet.giaddr !== "0.0.0.0") { //servir a redes remotas
-
+        if (packet.giaddr === "0.0.0.0") {
+            if (networkOffer !== serverObjectNetwork ) return; //<-- comprobamos si se sirve a ese segmento de red
+        } else {
+            if (networkOffer !== getNetwork(packet.giaddr, netmaskOffer)) return; //<-- comprobamos si se sirve a ese segmento de red
             newPacket.destination_ip = packet.giaddr;
             newPacket.giaddr = packet.giaddr;
-
-        } else { //servir a redes locales
-
-            if ( getNetwork(rangeStart, netmaskOffer) !== serverObjectNetwork ) return;
-
         }
 
         return newPacket;
@@ -60,17 +56,17 @@ async function dhcpd_service(serverObjectId, packet, interface) {
 
     if (packet.type === "request" && packet.ciaddr === "0.0.0.0") { //solicitud por un cliente sin ip asignada
 
-        if (packet.siaddr !== serverObjectIp) return;
+        if (packet.siaddr !== serverObjectIp) return; //<--comprobamos si va dirigido al servidor
 
         let newPacket = new dhcpAck(
-            serverObjectMac,
-            packet.yiaddr,
-            serverObjectIp,
-            gatewayOffer,
-            netmaskOffer,
-            dnsOffer,
-            packet.hostname,
-            leaseTime
+            serverObjectMac, //mac de origen
+            packet.yiaddr, //yiaddr
+            serverObjectIp, //siaddr
+            gatewayOffer, //oferta gateway
+            netmaskOffer, //oferta mascara
+            dnsOffer, //oferta dns
+            packet.hostname, //hostname
+            leaseTime //oferta tiempo de alquiler
         );
 
         newPacket.chaddr = packet.chaddr;
@@ -79,7 +75,6 @@ async function dhcpd_service(serverObjectId, packet, interface) {
         if (packet.giaddr !== "0.0.0.0") {
             newPacket.destination_ip = packet.giaddr;
             newPacket.giaddr = packet.giaddr;
-            newPacket.destination_mac = isIpInARPTable(serverObjectId, defaultGateway); //no basta con esto!!!!
         }
 
         addDhcpEntry(serverObjectId, packet.yiaddr, packet.chaddr, packet.hostname);
