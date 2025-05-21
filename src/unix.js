@@ -33,7 +33,7 @@ function unixParser(event) {
             "cd": () => command_cd(networkObjectId, args[1]),
             "cat": () => command_cat(networkObjectId, args[1]),
             "exit": () => closeTerminal(event),
-            "curl": () => command_curl(networkObjectId, args[1]),
+            "curl": () => command_curl(networkObjectId, args),
         }
 
         window.clearInterval(window.pingInterval); //limpiamos todos los procesos de terminal en funcionamiento
