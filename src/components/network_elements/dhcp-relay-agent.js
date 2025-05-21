@@ -14,7 +14,7 @@ function DhcpRelayObject(x, y) {
         IconObject("dhcprelay.svg"),
         arpTable(),
         routingTable(),
-        advancedOptionsObject("terminal", "arp", "firewall", "delete")
+        advancedOptionsObject("terminal", "arp", "delete")
     );
 
     const filesystem = {
