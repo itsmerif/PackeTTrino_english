@@ -11,8 +11,10 @@ function installDhcpd($networkObject) {
     const networkObjectFileSystem = new FileSystem($networkObject);
 
     networkObjectFileSystem.mkdir("dhcp", ["etc"]);
-    networkObjectFileSystem.touch("dhcpd.conf", ["etc", "dhcp"]); 
+    networkObjectFileSystem.touch("dhcpd.conf", ["etc", "dhcp"]);
+
     append(dhcpTable());
+
     attr("dhcpd", "true");
     attr("data-range-start", "");
     attr("data-range-end", "");
@@ -22,6 +24,8 @@ function installDhcpd($networkObject) {
     attr("offer-lease-time", "");
     attr("data-interval", "false");
     attr("ip-reservations", `{}`);
+    attr("dhcp-listen-on-interfaces", "");
+    
     addOption(leasesTableOptionButton(), dhcpServerConfig());
 
     terminalMessage("DHCP Server instalado correctamente.", networkObjectId);
@@ -40,7 +44,19 @@ function uninstallDhcpd(networkObjectId) {
     const networkObjectFileSystem = new FileSystem($networkObject);
 
     networkObjectFileSystem.rmdir("dhcp", ["etc"]);
-    rattr("dhcpd", "data-range-start", "data-range-end", "offer-gateway", "offer-netmask", "offer-dns", "offer-lease-time", "data-interval");
+    
+    rattr(
+        "dhcpd", 
+        "data-range-start", 
+        "data-range-end", 
+        "offer-gateway", 
+        "offer-netmask", 
+        "offer-dns", 
+        "offer-lease-time", 
+        "data-interval",
+        "dhcp-listen-on-interfaces"
+    );
+
     remOption("dhcp-option", "dhcp-server-config");
     remove($dhcpTable);
 

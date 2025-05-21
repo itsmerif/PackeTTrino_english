@@ -38,6 +38,11 @@ function dhcp_server_menu() {
                 <p> Opciones de Servicio DHCP </p>
 
                 <div>
+                    <label for="dhcp-listen-on-interfaces">Interfaces de escucha:</label>
+                    <input type="text" id="dhcp-listen-on-interfaces" name="dhcp-listen-on-interfaces" placeholder="enp0s3,enp0s8">
+                </div>
+
+                <div>
                     <label for="range-start">Rango de IPs:</label>
                     <input type="text" id="range-start" name="range-start" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
                     <input type="text" id="range-end" name="range-end" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
@@ -128,19 +133,23 @@ function showDhcpMenu(event) {
         return;
     }
 
+    //añadimos los atributos del servidor al menú
+
+    $menu.querySelector("#form-dhcp-item-id").innerHTML = networkObjectId;
     $menu.querySelector("#ip-dhcp").value = $networkObject.getAttribute("ip-enp0s3");
     $menu.querySelector("#netmask-dhcp").value = $networkObject.getAttribute("netmask-enp0s3");
-    $menu.querySelector("#gateway-dhcp").value = $networkObject.getAttribute("data-gateway");   
+    $menu.querySelector("#gateway-dhcp").value = $networkObject.getAttribute("data-gateway");
+    $menu.querySelector("#dhcp-listen-on-interfaces").value = $networkObject.getAttribute("dhcp-listen-on-interfaces");
     $menu.querySelector("#range-start").value = $networkObject.getAttribute("data-range-start");
     $menu.querySelector("#range-end").value = $networkObject.getAttribute("data-range-end");
     $menu.querySelector("#offer-gateway").value = $networkObject.getAttribute("offer-gateway");
     $menu.querySelector("#offer-netmask").value = $networkObject.getAttribute("offer-netmask");
     $menu.querySelector("#offer-dns").value = $networkObject.getAttribute("offer-dns");
     $menu.querySelector("#offer-lease-time").value = $networkObject.getAttribute("offer-lease-time");
+    reservations.forEach($reservation => $reservationsTable.appendChild($reservation));
+
     if (!isDhcpServer) $menu.querySelector(".basic-section").classList.add("hidden");
-    reservations.forEach($reservation => $reservationsTable.appendChild($reservation)); 
-    $menu.querySelector("#form-dhcp-item-id").innerHTML = networkObjectId;
-    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
+    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none"; 
     $menu.style.display = "flex";
 
 }
@@ -149,14 +158,21 @@ function saveDhcpMenu(event) {
 
     event.preventDefault();
     const $networkObject = document.getElementById(document.getElementById("form-dhcp-item-id").innerHTML);
-    const isDhcpServer = $networkObject.id.startsWith("dhcp-server-");
     const $menu = document.querySelector(".dhcp-form");
-
+    const networkObjectInterfaces = getInterfaces($networkObject.id);
+    const listenOnInterfaces = $menu.querySelector("#dhcp-listen-on-interfaces").value.split(",").map(item => item.trim()).filter(item => item !== "");
+    const isDhcpServer = $networkObject.id.startsWith("dhcp-server-");
+    
     if (isDhcpServer) {
         configureInterface($networkObject.id, $menu.querySelector("#ip-dhcp").value, $menu.querySelector("#netmask-dhcp").value, "enp0s3");
         setDirectRoutingRule($networkObject.id, $menu.querySelector("#ip-dhcp").value, $menu.querySelector("#netmask-dhcp").value, "enp0s3");
         $networkObject.setAttribute("data-gateway", $menu.querySelector("#gateway-dhcp").value);
         setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", $menu.querySelector("#ip-dhcp").value, "enp0s3", $menu.querySelector("#gateway-dhcp").value);
+    }
+
+    if (!listenOnInterfaces.every(item => networkObjectInterfaces.includes(item))) {
+        bodyComponent.render(popupMessage(`<span>Error: </span> Algunas de las interfaces de escucha no son válidas.</span>`));
+        return;
     }
 
     $networkObject.setAttribute("data-range-start", $menu.querySelector("#range-start").value);
@@ -165,6 +181,7 @@ function saveDhcpMenu(event) {
     $networkObject.setAttribute("offer-netmask", $menu.querySelector("#offer-netmask").value);
     $networkObject.setAttribute("offer-dns", $menu.querySelector("#offer-dns").value);
     $networkObject.setAttribute("offer-lease-time", $menu.querySelector("#offer-lease-time").value);
+    $networkObject.setAttribute("dhcp-listen-on-interfaces", listenOnInterfaces.join(","));
 
     bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
 }
