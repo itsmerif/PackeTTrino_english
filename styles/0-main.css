@@ -1808,7 +1808,7 @@ circle:hover {
     flex-wrap: nowrap;
     gap: 15px;
     min-width: 600px;
-    height: 70dvh;
+    height: 80dvh;
     z-index: 3;
     animation: form-animation 0.25s ease-in-out;
     font-family: var(--inter);

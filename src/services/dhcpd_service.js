@@ -1,20 +1,27 @@
-async function dhcpd_service(serverObjectId, packet) {
+async function dhcpd_service(serverObjectId, packet, interface) {
     
+    //atributos del servidor
     const $serverObject = document.getElementById(serverObjectId);
     const serverObjectMac = $serverObject.getAttribute("mac-enp0s3");
     const serverObjectIp = $serverObject.getAttribute("ip-enp0s3");
     const serverObjectNetmask = $serverObject.getAttribute("netmask-enp0s3");
     const serverObjectNetwork = getNetwork(serverObjectIp, serverObjectNetmask);
+
+    //atributos del servicio DHCP
     const defaultGateway = $serverObject.getAttribute("data-gateway");
     const rangeStart = $serverObject.getAttribute("data-range-start");
     const rangeEnd = $serverObject.getAttribute("data-range-end");
     const netmaskOffer = $serverObject.getAttribute("offer-netmask");
+    const networkOffer = getNetwork(rangeStart, netmaskOffer);
     const leaseTime = $serverObject.getAttribute("offer-lease-time");
     const gatewayOffer = $serverObject.getAttribute("offer-gateway") || "";
     const dnsOffer = $serverObject.getAttribute("offer-dns") || "";
     const isDhcpServerOn = $serverObject.getAttribute("dhcpd") === "true";
+    const listenOnInterfaces = $serverObject.getAttribute("dhcp-listen-on-interfaces").split(",");
 
-    if (!isDhcpServerOn) return;
+    if (!isDhcpServerOn) return; //<-- si el DHCP Server no esta activado, no se procesa nada
+
+    if (!listenOnInterfaces.includes(interface)) return; //<-- si el DHCP Server no esta configurado para el interfaz, no se procesa nada
 
     if (packet.type === "discover") { //descubrimiento por un cliente
 

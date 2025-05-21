@@ -130,17 +130,17 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     if (packet.protocol === "dhcp") {
 
         if (activeServices.includes("dhclient")) {
-            let replyPacket = await dhclient_service(networkObjectId, packet);
+            const replyPacket = await dhclient_service(networkObjectId, packet);
             if (replyPacket) await hostRouting(networkObjectId, replyPacket);
         }
 
         if (activeServices.includes("dhcpd")) {
-            let replyPacket = await dhcpd_service(networkObjectId, packet);
+            const replyPacket = await dhcpd_service(networkObjectId, packet, interface);
             if (replyPacket) await hostRouting(networkObjectId, replyPacket);
         }
 
         if (activeServices.includes("dhcrelay"))  {
-            let replyPacket = await dhcrelay_service(networkObjectId, packet);
+            const replyPacket = await dhcrelay_service(networkObjectId, packet, interface);
             if (replyPacket) await hostRouting(networkObjectId, replyPacket);
         }
 
@@ -163,11 +163,12 @@ async function hostRouting(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const destinationIp = packet.destination_ip;
+    const interface = getInterfaces($networkObject.id)[0];
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
     const $routingRules = $routingTable.querySelectorAll("tr"); 
 
     if (packet.destination_ip === "255.255.255.255" || packet.destination_mac === "ff:ff:ff:ff:ff:ff") { // <--- como es broadcast se envia directamente
-        const switchId = $networkObject.getAttribute(`data-switch-${getInterfaces($networkObject.id)[0]}`);
+        const switchId = $networkObject.getAttribute(`data-switch-${interface}`);
         addPacketTraffic(packet);
         await switchProcessor(switchId, networkObjectId, packet);
         return;

@@ -73,7 +73,7 @@ async function generalProcessorRouter(switchId, routerObjectId, packet) {
 
             if (activeServices.includes("dhcpd")) {
 
-                replyPacket = await dhcpd_service(routerObjectId, packet);
+                replyPacket = await dhcpd_service(routerObjectId, packet, interface);
 
                 if (!replyPacket) return;
 
@@ -88,10 +88,6 @@ async function generalProcessorRouter(switchId, routerObjectId, packet) {
             }
 
             if (activeServices.includes("dhcrelay")) {
-
-                const listenOnInterfaces = $routerObject.getAttribute("dhcrelay-listen-on-interfaces").split(",");
-                
-                if (!listenOnInterfaces.includes(interface)) return;
 
                 replyPacket = await dhcrelay_service(routerObjectId, packet, interface);
 
