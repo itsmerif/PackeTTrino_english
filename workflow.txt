@@ -1,4 +1,0 @@
-1) mejorar el diseño de los formularios y refactorizar logica duplicada
-2) mejorar la UI del panel
-3) implementar el resto de servicios en apt install
-5) asegurarme de usar el garbage collector de js

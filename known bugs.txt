@@ -1,7 +1,0 @@
-modales -> algunos todavian transparentan los eventos del padre
-poder usar ESC para salir del editor de texto
-permitir hacer resize tanto de la terminal como del navegador
-eliminar lease timers setintervals al eliminar un dhcp server
-
-Get-ChildItem -Path . -Filter "*.js" -Recurse -File | Where-Object { $_.FullName -notmatch "node_modules" -and 
-$_.FullName -notmatch "\.git" } | Sort-Object Directory,Name | ForEach-Object { "<script src=""./"+($_.FullName -replace [regex]::Escape((Get-Location).Path + "\"), "" -replace "\\", "/") + """></script>" }
