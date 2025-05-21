@@ -1681,6 +1681,7 @@ circle:hover {
 }
 
 .dhcp-relay-form {
+    
     position: absolute;
     top: 40%;
     left: 50%;
@@ -1786,11 +1787,10 @@ circle:hover {
         color: #fff;
     }
 
-    button {
+    .button-wrapper {
         align-self: center;
-        margin-bottom: 10px;
+        margin-bottom: 30px;
     }
-
 
 }
 
