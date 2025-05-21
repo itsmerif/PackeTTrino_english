@@ -234,6 +234,7 @@ class httpRequest extends packet {
         this.sport = sport;
         this.dport = dport;
         this.method = method;
+        this.keepalive = true;
     }
 }
 
@@ -248,5 +249,6 @@ class httpReply extends packet {
         this.type = "reply";
         this.header = "content-type: text/html";
         this.body = "";
+        this.keepalive = true;
     }
 }
