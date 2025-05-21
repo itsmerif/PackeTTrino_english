@@ -1,6 +1,8 @@
 async function http(networkObjectId, destinationIp, method, port) {
-
+    
     if (isNaN(port) || port < 1 || port > 65535) throw new Error(`Error: Puerto ${port} no válido.`);
+
+    if (!["GET", "POST", "PUT", "DELETE"].includes(method.toUpperCase())) throw new Error(`Error: Método ${method} no válido.`);
 
     if (!isValidIp(destinationIp)) {
         const domainName = destinationIp;
@@ -22,7 +24,7 @@ async function http(networkObjectId, destinationIp, method, port) {
 
     //comprobamos si hay respuesta en el buffer
     const htmlReply = browserBuffer[networkObjectId];
-    if (!htmlReply) throw new Error("Error: No se ha recibido respuesta del servidor web.");
+    if (!htmlReply) throw new Error("Error: Conexión rechazada. No se ha recibido respuesta del servidor web.");
 
     return htmlReply //devolvemos el objeto HTTPReply
     
