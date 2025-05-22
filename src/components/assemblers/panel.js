@@ -142,6 +142,13 @@ async function itemPanel() {
             "draggable": false,
             "size": "100%",
             "tooltip": "Opciones Avanzadas"
+        },
+        {
+            "name": "hide-panel",
+            "image": "./assets/panel/hide-panel.svg",
+            "draggable": false,
+            "size": "100%",
+            "tooltip": "Ocultar el panel"
         }
     ]
 
@@ -173,154 +180,34 @@ async function itemPanel() {
     $panel.querySelector(".load").addEventListener("click", fileInputLoadHandler);
     $panel.querySelector(".download").addEventListener("click", downloadState);
     $panel.querySelector(".animation-controls").addEventListener("click", function () { document.querySelector(".video-controls").classList.toggle("hidden"); });
+    $panel.querySelector(".hide-panel").addEventListener("click", hidePanel);
 
     return $panel;
 
 }
 
-function fileInputChangeHandler(event) {
-    let fileName = event.target.files[0].name;
-    bodyComponent.render(popupMessage(`Archivo <em>${fileName}</em> cargado con éxito. Para mostrar el contenido, haz click en:`, "/assets/panel/load.svg"));
-}
+function hidePanel() {
 
-function fileInputLoadHandler() {
+    const $panel = document.querySelector("#item-panel");
+    const $hideButton = $panel.querySelector(".hide-panel");
+    const $panelItems = $panel.querySelectorAll(".item");
 
-    const archivoInput = document.getElementById("fileInput");
+    if (!$hideButton.classList.contains("active")) {
 
-    if (archivoInput.files.length === 0) {
-        boardComponent.render(popupMessage("Por favor, sube un archivo primero."));
-        return;
-    }
-
-    const fileName = archivoInput.files[0].name;
-
-    bodyComponent.render(confirmPopup(`¿Deseas cargar el archivo ${fileName}?`, loadState));
-
-}
-
-function dragStart(event) {
-    const networkObjectId = event.target.closest("img").alt;
-    const itemType = "item";
-
-    event.dataTransfer.setData("json", JSON.stringify({
-        itemType: itemType,
-        itemId: networkObjectId,
-    }));
-
-}
-
-function icmpTryoutStart() {
-
-    if (icmpTryoutToggle) {
-        icmpTryoutEnd();
-        return;
-    }
-
-    icmpTryoutToggle = true;
-
-    //creamos el cursor
-    const $cursor = document.createElement("article");
-    const $cursorIcon = document.createElement("img");
-    $cursor.classList.add("pack-cursor");
-    $cursorIcon.src = "./assets/board/pack.svg";
-    $cursor.appendChild($cursorIcon);
-    document.body.appendChild($cursor);
-
-    //ocultamos el cursor por defecto
-    document.body.style.cursor = "none";
-
-    //eventos del mouse
-    document.addEventListener("mousemove", moveCursor);
-
-    function moveCursor(event) {
-        $cursor.style.top = `${event.clientY}px`;
-        $cursor.style.left = `${event.clientX}px`;
-    }
-
-    function icmpTryoutEnd() {
-        icmpTryoutToggle = false;
-        const $cursor = document.querySelectorAll(".pack-cursor");
-        $cursor.forEach(cursor => { cursor.removeEventListener("mousemove", moveCursor); });
-        $cursor.forEach(cursor => { cursor.remove(); });
-        document.body.style.cursor = "default";
-    }
-
-}
-
-function downloadState() {
-    const elemento = document.querySelector(".board");
-    const contenidoHTML = (elemento.innerHTML).replace(/\s+/g, " ");
-    const blob = new Blob([contenidoHTML], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const enlace = document.createElement("a");
-    enlace.href = url;
-    enlace.download = "red.ptt";
-    document.body.appendChild(enlace);
-    enlace.click();
-    document.body.removeChild(enlace);
-    URL.revokeObjectURL(url);
-}
-
-function loadState() {
-
-    const archivoInput = document.getElementById("fileInput");
-    const archivo = archivoInput.files[0];
-    const lector = new FileReader();
-
-    lector.onload = function (event) {
-        const contenido = event.target.result;
-        document.querySelector(".board").innerHTML = contenido;
-        setNewIndex();
-        setTextContents();
-        startLeaseTimers();
-    };
-
-    lector.readAsText(archivo);
-
-    function setNewIndex() {
-        
-        const itemsDropped = document.querySelectorAll(".item-dropped");
-        const itemsText = document.querySelectorAll(".text-annotation");
-        let indexes = [];
-    
-        itemsDropped.forEach(item => {
-            let itemid = item.id;
-            let itemindex = parseInt(itemid.split("-")[1]);
-            if (!isNaN(itemindex)) indexes.push(itemindex);
+        $panelItems.forEach($item => {
+            if (!$item.classList.contains("hide-panel")) $item.style.display = "none";
         });
+
+        $panel.querySelector(".hide-panel").classList.add("active");
     
-        itemsText.forEach(item => {
-            let itemid = item.id;
-            let itemindex = parseInt(itemid.split("-")[1]);
-            if (!isNaN(itemindex)) indexes.push(itemindex);
+    } else {
+
+        $panelItems.forEach($item => {
+            if (!$item.classList.contains("hide-panel")) $item.style.display = "flex";
         });
-    
-        itemIndex = (indexes.length > 0) ? Math.max(...indexes) + 1 : 1;
-    
+
+        $panel.querySelector(".hide-panel").classList.remove("active");
+
     }
 
-    function setTextContents() {
-
-        const itemsText = document.querySelectorAll(".text-annotation");
-
-        for (let i = 0; i < itemsText.length; i++) {
-            let text = itemsText[i].getAttribute("data-text");
-            let input = itemsText[i].querySelector("input");
-            input.value = text;
-        }
-    }
-
-}
-
-function showTooltip(name, event) {
-    const $panelItem = event.target.closest(".item");
-    if ($panelItem.querySelector(".tooltip")) return;
-    $panelItem.appendChild(tooltip(name));
-}
-
-function deleteTooltip(event) {
-    const $panelItem = event.target.closest(".item");
-    if ($panelItem.querySelector(".tooltip")) {
-        $panelItem.querySelector(".tooltip").remove();
-    }
 }
