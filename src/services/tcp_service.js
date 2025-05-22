@@ -1,8 +1,9 @@
 async function tcpSynPacketGenerator(networkObjectId, destination, source_port , destination_port) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
+    const networkObjectInterface = getInterfaces(networkObjectId)[0];
+    const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
+    const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
 
     tcpSyncFlag[networkObjectId] = false;
 
