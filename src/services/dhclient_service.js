@@ -1,4 +1,3 @@
-/**ESTA FUNCION GESTIONA EL SERVICIO DHCP DESDE UN EQUIPO CLIENTE, DEVOLVIENDO UNA RESPUESTA SI ES NECESARIO */
 async function dhclient_service(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
@@ -51,7 +50,6 @@ async function dhclient_service(networkObjectId, packet) {
 
 }
 
-/**ESTA FUNCION GENERA UN PAQUETE DHCP DISCOVER DESDE UN EQUIPO CLIENTE, Y LO ENVIA A LA RED */
 async function dhcpDiscoverGenerator(networkObjectId) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
@@ -61,7 +59,6 @@ async function dhcpDiscoverGenerator(networkObjectId) {
     await switchProcessor(switchId, networkObjectId, packet); // <--- pasa directamente a la red sin ser enrrutado ya que es un broadcast a nivel local
 }
 
-/**ESTA FUNCION GENERA UN PAQUETE DHCP REQUEST (RENOVACION) DESDE UN EQUIPO CLIENTE, Y LO ENVIA A ENRRUTAR */
 async function dhcpRequestGenerator(networkObjectId, renewPhase = "T1") {
 
     const $networkObject = document.getElementById(networkObjectId);
@@ -98,23 +95,25 @@ async function dhcpRequestGenerator(networkObjectId, renewPhase = "T1") {
 
 }
 
-/**ESTA FUNCION GENERA UN PAQUETE DHCP RELEASE DESDE UN EQUIPO CLIENTE, Y LO ENVIA A ENRRUTAR */
-async function dhcpReleaseGenerator(networkObjectId) {
+async function dhcpReleaseGenerator(networkObjectId, networkObjectInterface = "enp0s3") {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
-    const isDHCPon = $networkObject.getAttribute("dhclient");
+    const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
+    const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
+    const isDHCPOn = $networkObject.getAttribute("dhclient") === "true";
     const dhcpServerIp = $networkObject.getAttribute("data-dhcp-server");
 
-    let packet = new dhcpRelease(networkObjectIp, dhcpServerIp, networkObjectMac, "");
+    if (!isDHCPOn) return;
 
-    if (isDHCPon === "false" || !dhcpServerIp) {
-        terminalMessage(networkObjectId + " : No se ha definido el servidor DHCP", networkObjectId);
-        return;
-    }
+    let packet = new dhcpRelease(
+        networkObjectIp, //ip de origen
+        dhcpServerIp, //ip de destino
+        networkObjectMac, //mac de origen
+        "" //mac de destino
+    );
 
     await hostRouting(networkObjectId, packet);
+
     deleteDhcpInfo(networkObjectId);
 
 }
