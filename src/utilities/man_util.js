@@ -19,7 +19,8 @@ function command_man(networkObjectId, topic) {
         "iptables": () => manual_Iptables(),
         "ping": () => manual_ping(),
         "systemctl": () => manual_systemctl(),
-        "traceroute": () => manual_traceroute()
+        "traceroute": () => manual_traceroute(),
+        "visual": () => manual_visual(),
     }
 
     topicsMapper[topic] ? terminalMessage(topicsMapper[topic](), networkObjectId) : terminalMessage(`Error: comando ${topic} desconocido.`, networkObjectId);
@@ -661,4 +662,46 @@ function manual_man() {
     message += "    man traceroute - Muestra el manual para el comando 'traceroute'.\n";
 
     return message;
+}
+
+function manual_visual() {
+
+    let message = "";
+    message += "NOMBRE\n";
+    message += "    visual - Gestión de la animación visual del simulador de red.\n";
+    message += "\n";
+    message += "SINOPSIS\n";
+    message += "    visual [opciones]\n";
+    message += "\n";
+    message += "DESCRIPCIÓN\n";
+    message += "    El comando visual permite gestionar la animación visual del simulador de red.\n";
+    message += "    Puede configurar la velocidad de animación y el modo de animación.\n";
+    message += "\n";
+    message += "OPCIONES\n";
+    message += "    speed <velocidad>\n";
+    message += "        Especifica la velocidad de animación en milisegundos.\n";
+    message += "\n";
+    message += "    off\n";
+    message += "        Desactiva la animación visual.\n";
+    message += "\n";
+    message += "    on\n";
+    message += "        Activa la animación visual.\n";
+    message += "\n";
+    message += "    config\n";
+    message += "        Muestra la configuración actual de la animación visual.\n";
+    message += "\n";
+    message += "EJEMPLOS\n";
+    message += "    visual speed 1000\n";
+    message += "        Configura la velocidad de animación a 1000 ms.\n";
+    message += "\n";
+    message += "    visual off\n";
+    message += "        Desactiva la animación visual.\n";
+    message += "\n";
+    message += "    visual on\n";
+    message += "        Activa la animación visual.\n";
+    message += "\n";
+    message += "    visual config\n";
+    message += "        Muestra la configuración actual de la animación visual.\n";
+    return message;
+
 }
