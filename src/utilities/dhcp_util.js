@@ -17,6 +17,8 @@ async function dhcpDiscoverHandler(networkObjectId) {
 
     try {
 
+        if (visualToggle) await minimizeTerminal();
+
         dhcpDiscoverFlag[networkObjectId] = false;
         dhcpRequestFlag[networkObjectId] = false;
 
@@ -34,6 +36,7 @@ async function dhcpDiscoverHandler(networkObjectId) {
 
     }
 
+    if (visualToggle) await maximizeTerminal();
 }
 
 /**ESTA FUNCION GESTIONA LA UTILIDAD DHCP RENEW DE UN EQUIPO CLIENTE */
@@ -75,5 +78,14 @@ async function dhcpReleaseHandler(networkObjectId) {
     }
 
     terminalMessage(`DHCPRELEASE of ${networkObjectIp} on enp0s3 to ${networkObjectDhcpServer} port 67`, networkObjectId);
-    await dhcpReleaseGenerator(networkObjectId);
+    
+    try {
+        if (visualToggle) await minimizeTerminal();
+        await dhcpReleaseGenerator(networkObjectId);
+    } catch (error) {
+        terminalMessage("Error: " + error, networkObjectId);
+    }
+
+    if (visualToggle) await maximizeTerminal();
+
 }
