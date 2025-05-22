@@ -3011,8 +3011,8 @@ circle:hover {
         left: 50%;
         right: 50%;
         bottom: 50%;
-        width: 82%;
-        height: 82%;
+        width: 96%;
+        height: 90%;
         transform: translate(-50%, -50%);
         border-radius: 9px;
         background-image:

@@ -304,3 +304,158 @@ function splitLast(text, separator) {
     if (index === -1) return [text];
     return [text.substring(0, index), text.substring(index + separator.length)];
 }
+
+/**ESTA FUNCION GESTIONA LA SUBIDA DE UN ARCHIVO EN EL PANEL */
+function fileInputChangeHandler(event) {
+    let fileName = event.target.files[0].name;
+    bodyComponent.render(popupMessage(`Archivo <em>${fileName}</em> cargado con éxito. Para mostrar el contenido, haz click en:`, "/assets/panel/load.svg"));
+}
+
+/**ESTA FUNCION GESTIONA LA CARGA DE UN ARCHIVO EN EL PANEL */
+function fileInputLoadHandler() {
+
+    const archivoInput = document.getElementById("fileInput");
+
+    if (archivoInput.files.length === 0) {
+        boardComponent.render(popupMessage("Por favor, sube un archivo primero."));
+        return;
+    }
+
+    const fileName = archivoInput.files[0].name;
+
+    bodyComponent.render(confirmPopup(`¿Deseas cargar el archivo ${fileName}?`, loadState));
+
+}
+
+/**ESTA FUNCION GESTIONA LA DESCARGA DE UN ARCHIVO EN EL PANEL */
+function downloadState() {
+    const elemento = document.querySelector(".board");
+    const contenidoHTML = (elemento.innerHTML).replace(/\s+/g, " ");
+    const blob = new Blob([contenidoHTML], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const enlace = document.createElement("a");
+    enlace.href = url;
+    enlace.download = "red.ptt";
+    document.body.appendChild(enlace);
+    enlace.click();
+    document.body.removeChild(enlace);
+    URL.revokeObjectURL(url);
+}
+
+/**ESTA FUNCION GESTIONA LA CARGA DE UN ARCHIVO EN LA APLICACION */
+function loadState() {
+
+    const archivoInput = document.getElementById("fileInput");
+    const archivo = archivoInput.files[0];
+    const lector = new FileReader();
+
+    lector.onload = function (event) {
+        const contenido = event.target.result;
+        document.querySelector(".board").innerHTML = contenido;
+        setNewIndex();
+        setTextContents();
+        startLeaseTimers();
+    };
+
+    lector.readAsText(archivo);
+
+    function setNewIndex() {
+        
+        const itemsDropped = document.querySelectorAll(".item-dropped");
+        const itemsText = document.querySelectorAll(".text-annotation");
+        let indexes = [];
+    
+        itemsDropped.forEach(item => {
+            let itemid = item.id;
+            let itemindex = parseInt(itemid.split("-")[1]);
+            if (!isNaN(itemindex)) indexes.push(itemindex);
+        });
+    
+        itemsText.forEach(item => {
+            let itemid = item.id;
+            let itemindex = parseInt(itemid.split("-")[1]);
+            if (!isNaN(itemindex)) indexes.push(itemindex);
+        });
+    
+        itemIndex = (indexes.length > 0) ? Math.max(...indexes) + 1 : 1;
+    
+    }
+
+    function setTextContents() {
+
+        const itemsText = document.querySelectorAll(".text-annotation");
+
+        for (let i = 0; i < itemsText.length; i++) {
+            let text = itemsText[i].getAttribute("data-text");
+            let input = itemsText[i].querySelector("input");
+            input.value = text;
+        }
+    }
+
+}
+
+/**ESTA FUNCION GESTIONA EL DRAG START DE UN OBJETO EN EL PANEL */
+function dragStart(event) {
+    const networkObjectId = event.target.closest("img").alt;
+    const itemType = "item";
+
+    event.dataTransfer.setData("json", JSON.stringify({
+        itemType: itemType,
+        itemId: networkObjectId,
+    }));
+
+}
+
+/**ESTA FUNCION GESTIONA LA UTILIDAD DE CONEXIÓN RÁPIDA EN EL PANEL */
+function icmpTryoutStart() {
+
+    if (icmpTryoutToggle) {
+        icmpTryoutEnd();
+        return;
+    }
+
+    icmpTryoutToggle = true;
+
+    //creamos el cursor
+    const $cursor = document.createElement("article");
+    const $cursorIcon = document.createElement("img");
+    $cursor.classList.add("pack-cursor");
+    $cursorIcon.src = "./assets/board/pack.svg";
+    $cursor.appendChild($cursorIcon);
+    document.body.appendChild($cursor);
+
+    //ocultamos el cursor por defecto
+    document.body.style.cursor = "none";
+
+    //eventos del mouse
+    document.addEventListener("mousemove", moveCursor);
+
+    function moveCursor(event) {
+        $cursor.style.top = `${event.clientY}px`;
+        $cursor.style.left = `${event.clientX}px`;
+    }
+
+    function icmpTryoutEnd() {
+        icmpTryoutToggle = false;
+        const $cursor = document.querySelectorAll(".pack-cursor");
+        $cursor.forEach(cursor => { cursor.removeEventListener("mousemove", moveCursor); });
+        $cursor.forEach(cursor => { cursor.remove(); });
+        document.body.style.cursor = "default";
+    }
+
+}
+
+/**ESTA FUNCION MUESTRA EL TOOLTIP DE UN OBJETO EN EL PANEL */
+function showTooltip(name, event) {
+    const $panelItem = event.target.closest(".item");
+    if ($panelItem.querySelector(".tooltip")) return;
+    $panelItem.appendChild(tooltip(name));
+}
+
+/**ESTA FUNCION ELIMINA EL TOOLTIP DE UN OBJETO EN EL PANEL */
+function deleteTooltip(event) {
+    const $panelItem = event.target.closest(".item");
+    if ($panelItem.querySelector(".tooltip")) {
+        $panelItem.querySelector(".tooltip").remove();
+    }
+}
