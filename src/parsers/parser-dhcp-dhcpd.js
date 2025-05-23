@@ -1,8 +1,26 @@
 function dhcpdFileInterpreter(networkObjectId, content)  {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const filteredContent = content.replace(/\n/g, " ").replace(/\s+/g, " ").trim();
-    const sharedNetworkBlocks = filteredContent.split("shared-network").map(line => (`shared-network ${line}`).replace(/\s+/g, " ").trim()).slice(1);
+
+    //eliminamos las lineas comentadas
+    const contentWithoutComments = content
+    .split("\n")
+    .map(line => line.trim())
+    .filter(line => !line.startsWith("#"))
+    .join("\n");
+
+    //quitamos los saltos de línea y los espacios
+    const filteredContent = contentWithoutComments
+    .replace(/\n/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+    //obtenemos los bloques SHARED-NETWORK
+    const sharedNetworkBlocks = filteredContent
+    .split("shared-network")
+    .map(line => (`shared-network ${line}`).replace(/\s+/g, " ")
+    .trim())
+    .slice(1);
     
     sharedNetworkBlocks.forEach(sharedNetworkBlock => {
 
