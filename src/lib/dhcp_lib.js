@@ -118,28 +118,61 @@ function updateDhcpEntry(serverObjectId, renewPacket) {
 
 }
 
-/**ESTA FUNCION INICIA DE NUEVO LA ACTUALIZACION DE LOS TIEMPOS DE ALQUILER DE LOS ALQUILERES DE UN SERVIDOR DHCP */
-function startLeaseTimers() {
+/**ESTA FUNCION INICIA/REINICIA EL TIEMPO DE ALQUILER DHCP DE UN EQUIPO*/
+async function updateClientLeaseTimer(networkObjectId, networkObjectInterface) {
 
-    const $dhcpServers = Array.from(document.querySelectorAll(".item-dropped")).filter($networkObject => $networkObject.getAttribute("dhcpd") !== null);
-    const $dhcpClients = Array.from(document.querySelectorAll(".item-dropped")).filter($networkObject => $networkObject.getAttribute("dhclient") !== null);
+    const $networkObject = document.getElementById(networkObjectId);
 
-    $dhcpServers.forEach(server => {
-        const serverObjectId = server.id;
-        const table = server.querySelector(".dhcp-table table");
-        const leases = table.querySelectorAll("tr");
-        if (leases.length > 1 && !serverLeaseTimers[serverObjectId]) {
-            serverLeaseTimers[serverObjectId] = setInterval(() => updateServerLeaseTimes(serverObjectId), 1000);
-        }
-    });
+    $networkObject.setAttribute("data-dhcp-current-lease-time", 0);
+    $networkObject.setAttribute("data-dhcp-flag-t1", "false");
+    $networkObject.setAttribute("data-dhcp-flag-t2", "false");
 
-    $dhcpClients.forEach(client => {
-        const clientObjectId = client.id;
-        const leaseTime = client.getAttribute("data-dhcp-lease-time");
-        if (leaseTime !== "" && !clientLeaseTimers[clientObjectId]) {
-            clientLeaseTimers[clientObjectId] = setInterval( async () => { await reduceClientLeaseTime(clientObjectId)}, 1000 );
-        }
-    });
+    if (Object.hasOwn(clientLeaseTimers, `${networkObjectId}-${networkObjectInterface}`)) return;
+
+    const clientLeaseTimer = setInterval( async () => { await reduceClientLeaseTime(networkObjectId, networkObjectInterface)}, 1000 );
+
+    clientLeaseTimers[`${networkObjectId}-${networkObjectInterface}`] = clientLeaseTimer;
+  
+}
+
+async function reduceClientLeaseTime(networkObjectId, networkObjectInterface) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const switchId = $networkObject.getAttribute(`data-switch-${networkObjectInterface}`);
+    const leaseTime = parseInt($networkObject.getAttribute("data-dhcp-lease-time"));
+    const flagT1 = $networkObject.getAttribute("data-dhcp-flag-t1");
+    const flagT2 = $networkObject.getAttribute("data-dhcp-flag-t2");
+    const T1 = leaseTime * 0.5;
+    const T2 = leaseTime * 0.875;
+
+    $networkObject.setAttribute(
+        "data-dhcp-current-lease-time", 
+        parseInt($networkObject.getAttribute("data-dhcp-current-lease-time")) + 1 
+    );
+
+    const currentLeaseTime = parseInt($networkObject.getAttribute("data-dhcp-current-lease-time"));
+    
+    if (currentLeaseTime > T1 && flagT1 === "false") {
+        $networkObject.setAttribute("data-dhcp-flag-t1", "true");
+        await dhcpRenewHandler(networkObjectId, "T1", networkObjectInterface);
+        if (dhcpRequestFlag[networkObjectId] === true) $networkObject.setAttribute("data-dhcp-flag-t1", "false");
+        return;
+    }
+
+    if (currentLeaseTime > T2 && flagT2 === "false") {
+        $networkObject.setAttribute("data-dhcp-flag-t2", "true");
+        await dhcpRenewHandler(networkObjectId, "T2", networkObjectInterface);
+        if (dhcpRequestFlag[networkObjectId] === true) $networkObject.setAttribute("data-dhcp-flag-t2", "false");
+        return;
+    }
+
+    if (currentLeaseTime >= leaseTime ) {
+        clearInterval(clientLeaseTimers[`${networkObjectId}-${networkObjectInterface}`]);
+        delete clientLeaseTimers[`${networkObjectId}-${networkObjectInterface}`];
+        deleteDhcpInfo(networkObjectId, networkObjectInterface);
+        await dhcpDiscoverGenerator(networkObjectId, networkObjectInterface);
+        return;
+    }
 
 }
 
@@ -171,7 +204,7 @@ function getReservedIp(serverObjectId, mac) {
 }
 
 /**ESTA FUNCION ACTUALIZA LA INFORMACION DE RED DE UNA INTERFAZ (POR DEFECTO ENP0S3) DE UN EQUIPO EN DHCP */
-function setDhcpInfo(networkObjectId, packet, interface = "enp0s3") {
+function setDhcpInfo(networkObjectId, packet, networkObjectInterface) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const newIp = packet.yiaddr;
@@ -182,10 +215,10 @@ function setDhcpInfo(networkObjectId, packet, interface = "enp0s3") {
     const newLeaseTime = packet.leasetime;
 
     //configuramos la interfaz y la tabla de enrutamiento
-    configureInterface(networkObjectId, newIp, newNetmask, interface);
-    setDirectRoutingRule(networkObjectId, newIp, newNetmask, interface);
+    configureInterface(networkObjectId, newIp, newNetmask, networkObjectInterface);
+    setDirectRoutingRule(networkObjectId, newIp, newNetmask, networkObjectInterface);
     $networkObject.setAttribute("data-gateway", newGateway);
-    setRemoteRoutingRule(networkObjectId, "0.0.0.0", "0.0.0.0", newIp, interface, newGateway);
+    setRemoteRoutingRule(networkObjectId, "0.0.0.0", "0.0.0.0", newIp, networkObjectInterface, newGateway);
 
     //configuramos la informacion DHCP del equipo
     $networkObject.setAttribute("data-dhcp-server", newServer);
@@ -195,14 +228,14 @@ function setDhcpInfo(networkObjectId, packet, interface = "enp0s3") {
 }
 
 /**ESTA FUNCION ELIMINA LA INFORMACION DE RED DE UNA INTERFAZ (POR DEFECTO ENP0S3) DE UN EQUIPO EN DHCP */
-function deleteDhcpInfo(networkObjectId, interface = "enp0s3") {
+function deleteDhcpInfo(networkObjectId, networkObjectInterface) {
 
     const $networkObject = document.getElementById(networkObjectId);
 
     //deconfiguramos la interfaz y eliminamos la entrada de la tabla de enrutamiento
-    deconfigureInterface($networkObject.id, interface);
+    deconfigureInterface($networkObject.id, networkObjectInterface);
     $networkObject.setAttribute("data-gateway", "");
-    removeDirectRoutingRule($networkObject.id, interface);
+    removeDirectRoutingRule($networkObject.id, networkObjectInterface);
     removeRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0");
 
     //eliminamos la informacion DHCP del equipo
@@ -213,55 +246,34 @@ function deleteDhcpInfo(networkObjectId, interface = "enp0s3") {
     $networkObject.setAttribute("data-dhcp-current-lease-time", "");
     $networkObject.setAttribute("data-dhcp-flag-t1", "false");
     $networkObject.setAttribute("data-dhcp-flag-t2", "false");
-    clearInterval(clientLeaseTimers[networkObjectId]);
-    delete clientLeaseTimers[networkObjectId];
+
+    //eliminamos el timer de alquiler de cliente
+    clearInterval(clientLeaseTimers[`${networkObjectId}-${networkObjectInterface}`]);
+    delete clientLeaseTimers[`${networkObjectId}-${networkObjectInterface}`];
 }
 
-/**ESTA FUNCION INICIA/REINICIA EL TIEMPO DE ALQUILER DHCP DE UN EQUIPO*/
-async function updateClientLeaseTimer(networkObjectId) {
-    const $networkObject = document.getElementById(networkObjectId);
-    $networkObject.setAttribute("data-dhcp-current-lease-time", 0);
-    $networkObject.setAttribute("data-dhcp-flag-t1", "false");
-    $networkObject.setAttribute("data-dhcp-flag-t2", "false");
-    if (clientLeaseTimers[networkObjectId]) return;
-    const clientLeaseTimer = setInterval( async () => { await reduceClientLeaseTime(networkObjectId)}, 1000 );
-    clientLeaseTimers[networkObjectId] = clientLeaseTimer;
-}
+/**ESTA FUNCION INICIA DE NUEVO LA ACTUALIZACION DE LOS TIEMPOS DE ALQUILER DE LOS ALQUILERES DE UN SERVIDOR DHCP AL CARGAR UNA NUEVA RED*/
+function startLeaseTimers() {
 
-/**ESTA FUNCION REDUCE EL TIEMPO DE ALQUILER DHCP DE UN EQUIPO*/
-async function reduceClientLeaseTime(networkObjectId) {
+    const $dhcpServers = Array.from(document.querySelectorAll(".item-dropped")).filter($networkObject => $networkObject.getAttribute("dhcpd") !== null);
+    const $dhcpClients = Array.from(document.querySelectorAll(".item-dropped")).filter($networkObject => $networkObject.getAttribute("dhclient") !== null);
 
-    const $networkObject = document.getElementById(networkObjectId);
-    const switchId = $networkObject.getAttribute("data-switch-enp0s3");
-    const leaseTime = parseInt($networkObject.getAttribute("data-dhcp-lease-time"));
-    const flagT1 = $networkObject.getAttribute("data-dhcp-flag-t1");
-    const flagT2 = $networkObject.getAttribute("data-dhcp-flag-t2");
-    const T1 = leaseTime * 0.5;
-    const T2 = leaseTime * 0.875;
+    $dhcpServers.forEach(server => {
+        const serverObjectId = server.id;
+        const table = server.querySelector(".dhcp-table table");
+        const leases = table.querySelectorAll("tr");
+        if (leases.length > 1 && !serverLeaseTimers[serverObjectId]) {
+            serverLeaseTimers[serverObjectId] = setInterval(() => updateServerLeaseTimes(serverObjectId), 1000);
+        }
+    });
 
-    $networkObject.setAttribute("data-dhcp-current-lease-time", parseInt($networkObject.getAttribute("data-dhcp-current-lease-time")) + 1 );
-    const currentLeaseTime = parseInt($networkObject.getAttribute("data-dhcp-current-lease-time"));
-    
-    if (currentLeaseTime > T1 && flagT1 === "false") {
-        $networkObject.setAttribute("data-dhcp-flag-t1", "true");
-        let renewAttempt = await dhcpRenewHandler(networkObjectId, switchId);
-        if (renewAttempt) $networkObject.setAttribute("data-dhcp-flag-t1", "false");
-        return;
-    }
-
-    if (currentLeaseTime > T2 && flagT2 === "false") {
-        $networkObject.setAttribute("data-dhcp-flag-t2", "true");
-        let renewAttempt = await dhcpRenewHandler(networkObjectId, switchId, "T2");
-        if (renewAttempt) $networkObject.setAttribute("data-dhcp-flag-t2", "false");
-        return;
-    }
-
-    if (currentLeaseTime >= leaseTime ) {
-        clearInterval(clientLeaseTimers[networkObjectId]);
-        delete clientLeaseTimers[networkObjectId];
-        deleteDhcpInfo(networkObjectId);
-        await dhcpDiscoverGenerator(networkObjectId, switchId);
-        return;
-    }
+    $dhcpClients.forEach(client => {
+        const clientObjectId = client.id;
+        const leaseTime = client.getAttribute("data-dhcp-lease-time");
+        const interfaces = getInterfaces(clientObjectId);
+        if (leaseTime !== "" && !clientLeaseTimers[`${clientObjectId}-${interfaces[0]}`]) {
+            clientLeaseTimers[`${clientObjectId}-${interfaces[0]}`] = setInterval( async () => { await reduceClientLeaseTime(clientObjectId, interfaces[0])}, 1000 );
+        }
+    });
 
 }

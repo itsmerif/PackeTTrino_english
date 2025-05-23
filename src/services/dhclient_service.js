@@ -1,7 +1,7 @@
-async function dhclient_service(networkObjectId, packet) {
+async function dhclient_service(networkObjectId, packet, networkObjectInterface = "enp0s3") {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
+    const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
     const isDhclientOn = $networkObject.getAttribute("dhclient") === "true";
 
     if (!isDhclientOn) return;
@@ -9,9 +9,7 @@ async function dhclient_service(networkObjectId, packet) {
     if (packet.type === "offer") {
 
         if (dhcpOfferBuffer[networkObjectId]) return;
-
-        if ($networkObject.getAttribute("ip-enp0s3") !== "") return;
-
+        if ($networkObject.getAttribute(`ip-${networkObjectInterface}`) !== "") return;
         if (packet.chaddr !== networkObjectMac) return;
 
         dhcpDiscoverFlag[networkObjectId] = true;
@@ -32,39 +30,51 @@ async function dhclient_service(networkObjectId, packet) {
         newPacket.giaddr = packet.giaddr;
         newPacket.chaddr = packet.chaddr;
 
-        terminalMessage(`DHCPREQUEST for ${packet.yiaddr} on enp0s3 to ${packet.siaddr} port 67`, networkObjectId);
+        terminalMessage(`DHCPREQUEST for ${packet.yiaddr} on ${networkObjectInterface} to ${packet.siaddr} port 67`, networkObjectId);
 
         return newPacket;
 
     }
 
     if (packet.type === "ack") {
+
         if (packet.chaddr !== networkObjectMac) return;
+
         terminalMessage(`DHCPACK of ${packet.yiaddr} from ${packet.siaddr}`, networkObjectId);
-        dhcpRequestFlag[networkObjectId] = true;
-        delete dhcpOfferBuffer[networkObjectId];
-        setDhcpInfo(networkObjectId, packet);      
-        updateClientLeaseTimer(networkObjectId);      
+
+        dhcpRequestFlag[networkObjectId] = true; //<-- se notifica a la utilidad de dhcp cliente que se ha recibido un DHCPACK
+
+        delete dhcpOfferBuffer[networkObjectId]; //<-- se elimina el buffer de ofertas
+
+        setDhcpInfo(networkObjectId, packet, networkObjectInterface); //<-- se configura la interfaz
+
+        updateClientLeaseTimer(networkObjectId, networkObjectInterface); //<-- se inicia el timer de alquiler de cliente
+
         terminalMessage(`Bound to ${packet.yiaddr} -- renewal in ${packet.leasetime} seconds.`, networkObjectId);
+
     }
 
 }
 
-async function dhcpDiscoverGenerator(networkObjectId) {
+async function dhcpDiscoverGenerator(networkObjectId, networkObjectInterface) {
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
-    const switchId = $networkObject.getAttribute("data-switch-enp0s3");
-    let packet = new dhcpDiscover(networkObjectMac);
+    const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
+    const switchId = $networkObject.getAttribute(`data-switch-${networkObjectInterface}`);
+    if (!switchId || !networkObjectMac) return;
+    const packet = new dhcpDiscover(networkObjectMac);
     addPacketTraffic(packet);
-    await switchProcessor(switchId, networkObjectId, packet); // <--- pasa directamente a la red sin ser enrrutado ya que es un broadcast a nivel local
+    await switchProcessor(switchId, networkObjectId, packet);
 }
 
-async function dhcpRequestGenerator(networkObjectId, renewPhase = "T1") {
+async function dhcpRequestGenerator(networkObjectId, renewPhase, networkObjectInterface) {
 
+    //atributos de dispositivo
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
-    const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
+    const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
+    const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
+    const networkObjectNetmask = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
+
+    //atributos de cliente DHCP
     const networkObjectGateway = $networkObject.getAttribute("data-gateway");
     const networkObjectDns = $networkObject.getAttribute("data-dns-server");
     const networkObjectLeaseTime = $networkObject.getAttribute("data-dhcp-lease-time");
@@ -95,7 +105,7 @@ async function dhcpRequestGenerator(networkObjectId, renewPhase = "T1") {
 
 }
 
-async function dhcpReleaseGenerator(networkObjectId, networkObjectInterface = "enp0s3") {
+async function dhcpReleaseGenerator(networkObjectId, networkObjectInterface) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
@@ -114,6 +124,7 @@ async function dhcpReleaseGenerator(networkObjectId, networkObjectInterface = "e
 
     await hostRouting(networkObjectId, packet);
 
-    deleteDhcpInfo(networkObjectId);
+    deleteDhcpInfo(networkObjectId, networkObjectInterface);
 
 }
+
