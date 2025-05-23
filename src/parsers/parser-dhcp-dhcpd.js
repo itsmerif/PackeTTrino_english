@@ -69,10 +69,10 @@ function dhcpdFileInterpreter(networkObjectId, content)  {
 
             $networkObject.setAttribute("data-range-start", subnetObject["rangeStart"]);
             $networkObject.setAttribute("data-range-end", subnetObject["rangeEnd"]);
-            $networkObject.setAttribute("offer-netmask", subnetObject["netmask"]);
-            $networkObject.setAttribute("offer-gateway", subnetObject["routers"]);
-            $networkObject.setAttribute("offer-dns", subnetObject["domain-name-servers"]);
-            $networkObject.setAttribute("offer-lease-time", subnetObject["lease-time"]);
+            $networkObject.setAttribute("dhcp-offer-netmask", subnetObject["netmask"]);
+            $networkObject.setAttribute("dhcp-offer-gateway", subnetObject["routers"]);
+            $networkObject.setAttribute("dhcp-offer-dns", subnetObject["domain-name-servers"]);
+            $networkObject.setAttribute("dhcp-offer-lease-time", subnetObject["lease-time"]);
 
         });
 

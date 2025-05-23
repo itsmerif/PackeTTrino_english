@@ -5,7 +5,7 @@ function getRandomIPfromDhcp(serverObjectId) {
     const rangeStart = $serverObject.getAttribute("data-range-start");
 
     const rangeEnd = $serverObject.getAttribute("data-range-end");
-    const offerNetmask = $serverObject.getAttribute("offer-netmask");
+    const offerNetmask = $serverObject.getAttribute("dhcp-offer-netmask");
 
     let startInt = parseInt(ipToBinary(rangeStart), 2);
     let endInt = parseInt(ipToBinary(rangeEnd), 2);
@@ -30,7 +30,7 @@ function checkIpinDhcp(serverObjectId, newip) {
 
     const $serverObject = document.getElementById(serverObjectId);
     const $leasesTable = $serverObject.querySelector(".dhcp-table").querySelector("table");
-    const $reservations = JSON.parse($serverObject.getAttribute("ip-reservations"));
+    const $reservations = JSON.parse($serverObject.getAttribute("dhcp-reservations"));
     const $leases = $leasesTable.querySelectorAll("tr");
     let response = true;
 
@@ -52,7 +52,7 @@ function checkIpinDhcp(serverObjectId, newip) {
 function addDhcpEntry(serverObjectId, newip, newmac, newhostname) {
 
     const $serverObject = document.getElementById(serverObjectId);
-    const leaseTime = $serverObject.getAttribute("offer-lease-time");
+    const leaseTime = $serverObject.getAttribute("dhcp-offer-lease-time");
     const $leasesTable = $serverObject.querySelector(".dhcp-table").querySelector("table");
     const $newLease = document.createElement("tr");
 
@@ -92,7 +92,7 @@ function deleteDhcpEntry(serverObjectId, targetip) {
 function updateDhcpEntry(serverObjectId, renewPacket) {
 
     const $serverObject = document.getElementById(serverObjectId);
-    const leaseTimeOffer = $serverObject.getAttribute("offer-lease-time");
+    const leaseTimeOffer = $serverObject.getAttribute("dhcp-offer-lease-time");
     const $leasesTable = $serverObject.querySelector(".dhcp-table").querySelector("table");
     const $leases = $leasesTable.querySelectorAll("tr");
     let response = false;
@@ -179,25 +179,25 @@ async function reduceClientLeaseTime(networkObjectId, networkObjectInterface) {
 /**ESTA FUNCION AÑADE UNA NUEVA RESERVA DE ALQUILER A LA BASE DE DATOS DE UN SERVIDOR DHCP */
 function addDhcpReservation(networkObjectId, mac, ip) {
     const $networkObject = document.getElementById(networkObjectId);
-    const reservations = JSON.parse($networkObject.getAttribute("ip-reservations"));
+    const reservations = JSON.parse($networkObject.getAttribute("dhcp-reservations"));
     if (!isValidIp(ip)) throw new Error("Error: La IP introducida no es valida.");
     if (!isValidMac(mac)) throw new Error("Error: La MAC introducida no es valida.");
     reservations[mac] = ip;
-    $networkObject.setAttribute("ip-reservations", JSON.stringify(reservations));
+    $networkObject.setAttribute("dhcp-reservations", JSON.stringify(reservations));
 }
 
 /**ESTA FUNCION ELIMINA UNA RESERVA DE ALQUILER DE LA BASE DE DATOS DE UN SERVIDOR DHCP */
 function removeDhcpReservation(networkObjectId, mac) {
     const $networkObject = document.getElementById(networkObjectId);
-    const reservations = JSON.parse($networkObject.getAttribute("ip-reservations"));
+    const reservations = JSON.parse($networkObject.getAttribute("dhcp-reservations"));
     delete reservations[mac];
-    $networkObject.setAttribute("ip-reservations", JSON.stringify(reservations));
+    $networkObject.setAttribute("dhcp-reservations", JSON.stringify(reservations));
 }
 
 /**ESTA FUNCION DEVUELVE LA IP RESERVADA DE UN DISPOSITIVO PARA UNA DIRECCION MAC */
 function getReservedIp(serverObjectId, mac) {
     const $serverObject = document.getElementById(serverObjectId);
-    const reservations = JSON.parse($serverObject.getAttribute("ip-reservations"));
+    const reservations = JSON.parse($serverObject.getAttribute("dhcp-reservations"));
     let filteredMac = mac.trim().toUpperCase();
     if (reservations[filteredMac]) return reservations[filteredMac];
     return false;

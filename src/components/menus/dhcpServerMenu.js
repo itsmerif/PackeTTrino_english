@@ -49,23 +49,23 @@ function dhcp_server_menu() {
                 </div>
 
                 <div>
-                    <label for="offer-netmask">Máscara de Red:</label>	
-                    <input type="text" id="offer-netmask" name="offer-netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                    <label for="dhcp-offer-netmask">Máscara de Red:</label>	
+                    <input type="text" id="dhcp-offer-netmask" name="dhcp-offer-netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
                 </div>
 
                 <div>
-                    <label for="offer-gateway">Puerta de Enlace:</label>
-                    <input type="text" id="offer-gateway" name="offer-gateway" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                    <label for="dhcp-offer-gateway">Puerta de Enlace:</label>
+                    <input type="text" id="dhcp-offer-gateway" name="dhcp-offer-gateway" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
                 </div>
 
                 <div>
-                    <label for="offer-dns">Servidor DNS:</label>
-                    <input type="text" id="offer-dns" name="offer-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                    <label for="dhcp-offer-dns">Servidor DNS:</label>
+                    <input type="text" id="dhcp-offer-dns" name="dhcp-offer-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
                 </div>
 
                 <div>
-                    <label for="offer-lease-time">Tiempo de Alquiler:</label>
-                    <input type="text" id="offer-lease-time" name="offer-lease-time" pattern="^[0-9]+$">
+                    <label for="dhcp-offer-lease-time">Tiempo de Alquiler:</label>
+                    <input type="text" id="dhcp-offer-lease-time" name="dhcp-offer-lease-time" pattern="^[0-9]+$">
                 </div>
 
             </section>
@@ -142,10 +142,10 @@ function showDhcpMenu(event) {
     $menu.querySelector("#dhcp-listen-on-interfaces").value = $networkObject.getAttribute("dhcp-listen-on-interfaces");
     $menu.querySelector("#range-start").value = $networkObject.getAttribute("data-range-start");
     $menu.querySelector("#range-end").value = $networkObject.getAttribute("data-range-end");
-    $menu.querySelector("#offer-gateway").value = $networkObject.getAttribute("offer-gateway");
-    $menu.querySelector("#offer-netmask").value = $networkObject.getAttribute("offer-netmask");
-    $menu.querySelector("#offer-dns").value = $networkObject.getAttribute("offer-dns");
-    $menu.querySelector("#offer-lease-time").value = $networkObject.getAttribute("offer-lease-time");
+    $menu.querySelector("#dhcp-offer-gateway").value = $networkObject.getAttribute("dhcp-offer-gateway");
+    $menu.querySelector("#dhcp-offer-netmask").value = $networkObject.getAttribute("dhcp-offer-netmask");
+    $menu.querySelector("#dhcp-offer-dns").value = $networkObject.getAttribute("dhcp-offer-dns");
+    $menu.querySelector("#dhcp-offer-lease-time").value = $networkObject.getAttribute("dhcp-offer-lease-time");
     reservations.forEach($reservation => $reservationsTable.appendChild($reservation));
 
     if (!isDhcpServer) $menu.querySelector(".basic-section").classList.add("hidden");
@@ -177,10 +177,10 @@ function saveDhcpMenu(event) {
 
     $networkObject.setAttribute("data-range-start", $menu.querySelector("#range-start").value);
     $networkObject.setAttribute("data-range-end", $menu.querySelector("#range-end").value);
-    $networkObject.setAttribute("offer-gateway", $menu.querySelector("#offer-gateway").value);
-    $networkObject.setAttribute("offer-netmask", $menu.querySelector("#offer-netmask").value);
-    $networkObject.setAttribute("offer-dns", $menu.querySelector("#offer-dns").value);
-    $networkObject.setAttribute("offer-lease-time", $menu.querySelector("#offer-lease-time").value);
+    $networkObject.setAttribute("dhcp-offer-gateway", $menu.querySelector("#dhcp-offer-gateway").value);
+    $networkObject.setAttribute("dhcp-offer-netmask", $menu.querySelector("#dhcp-offer-netmask").value);
+    $networkObject.setAttribute("dhcp-offer-dns", $menu.querySelector("#dhcp-offer-dns").value);
+    $networkObject.setAttribute("dhcp-offer-lease-time", $menu.querySelector("#dhcp-offer-lease-time").value);
     $networkObject.setAttribute("dhcp-listen-on-interfaces", listenOnInterfaces.join(","));
 
     bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
@@ -260,7 +260,7 @@ function restoreDhcpReservationTable() {
 function genDhcpReservationsRows(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const reservations = JSON.parse($networkObject.getAttribute("ip-reservations"));
+    const reservations = JSON.parse($networkObject.getAttribute("dhcp-reservations"));
     const rows = [];
 
     for (let reservation in reservations) {

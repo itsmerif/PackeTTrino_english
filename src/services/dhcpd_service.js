@@ -11,11 +11,11 @@ async function dhcpd_service(serverObjectId, packet, interface) {
     const defaultGateway = $serverObject.getAttribute("data-gateway");
     const rangeStart = $serverObject.getAttribute("data-range-start");
     const rangeEnd = $serverObject.getAttribute("data-range-end");
-    const netmaskOffer = $serverObject.getAttribute("offer-netmask");
+    const netmaskOffer = $serverObject.getAttribute("dhcp-offer-netmask");
     const networkOffer = getNetwork(rangeStart, netmaskOffer);
-    const leaseTime = $serverObject.getAttribute("offer-lease-time");
-    const gatewayOffer = $serverObject.getAttribute("offer-gateway") || "";
-    const dnsOffer = $serverObject.getAttribute("offer-dns") || "";
+    const leaseTime = $serverObject.getAttribute("dhcp-offer-lease-time");
+    const gatewayOffer = $serverObject.getAttribute("dhcp-offer-gateway") || "";
+    const dnsOffer = $serverObject.getAttribute("dhcp-offer-dns") || "";
     const isDhcpServerOn = $serverObject.getAttribute("dhcpd") === "true";
     const listenOnInterfaces = $serverObject.getAttribute("dhcp-listen-on-interfaces").split(",");
 
