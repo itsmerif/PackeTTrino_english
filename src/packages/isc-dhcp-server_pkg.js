@@ -9,9 +9,29 @@ function installDhcpd($networkObject) {
 
     terminalMessage("Instalando DHCP Server...", networkObjectId);
 
+    const dhcpdConfDefaultContent = `
+    #Ejemplo de archivo de configuración para DHCP
+    #
+    #   shared-network 192.168.0.0 255.255.255.0 {
+    #        subnet 192.168.0.0 netmask 255.255.255.0 {
+    #            range 192.168.0.10 192.168.0.200;
+    #            option routers 192.168.0.1;
+    #            option subnet-mask 255.255.255.0;
+    #            option domain-name-servers 192.168.0.1;
+    #            lease-time 600;
+    #        }
+    #    }
+    #
+    #    host 192.168.0.10 {
+    #        hardware ethernet 00:00:00:00:00:00;
+    #        fixed-address 192.168.0.10;
+    #    }
+    `;
+
     //directorios y archivos
     networkObjectFileSystem.mkdir("dhcp", ["etc"]);
     networkObjectFileSystem.touch("dhcpd.conf", ["etc", "dhcp"]);
+    networkObjectFileSystem.write("dhcpd.conf", ["etc", "dhcp"], dhcpdConfDefaultContent.split('\n').map(line => line.trimStart()).join('\n'));
     networkObjectFileSystem.mkdir("default", ["etc"]);
     networkObjectFileSystem.touch("isc-dhcp-server", ["etc", "default"]);
 
