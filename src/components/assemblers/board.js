@@ -90,6 +90,7 @@ function deleteItem(event) {
 
     event.stopPropagation();
     const $networkObject = event.target.closest(".item-dropped") || event.target.closest(".text-annotation");
+    const interfaces = getInterfaces($networkObject.id);
 
     if (!isConnected($networkObject.id)) {
         //eliminamos la informacion del dispositivo guardada en los buffers
@@ -100,9 +101,9 @@ function deleteItem(event) {
         delete traceBuffer[$networkObject.id];
         //eliminamos los procesos en segundo plano asociados al dispositivo
         clearInterval(serverLeaseTimers[$networkObject.id]);
-        clearInterval(clientLeaseTimers[$networkObject.id]);
+        clearInterval(clientLeaseTimers[`${$networkObject.id}-${interfaces[0]}`]);
         delete serverLeaseTimers[$networkObject.id];
-        delete clientLeaseTimers[$networkObject.id];
+        delete clientLeaseTimers[`${$networkObject.id}-${interfaces[0]}`];
         $networkObject.remove();
     }else {
         boardComponent.render(popupMessage(`<span>Error: </span>No se puede eliminar un dispositivo con conexiones.`));
