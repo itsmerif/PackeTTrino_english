@@ -1,4 +1,4 @@
-function dhcpdFileInterpreter(networkObjectId, content)  {
+function dhcpdConfInterpreter(networkObjectId, content)  {
 
     const $networkObject = document.getElementById(networkObjectId);
 

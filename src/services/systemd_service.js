@@ -81,8 +81,8 @@ function startService(networkObjectId, service) {
 
         "dhcpd": () => {
             $networkObject.setAttribute("dhcpd", "true");
-            let dhcpdContent = networkElementFileSystem.read("dhcpd.conf", ["etc", "dhcp"]);
-            dhcpdFileInterpreter(networkObjectId, dhcpdContent);
+            dhcpdConfInterpreter(networkObjectId, networkElementFileSystem.read("dhcpd.conf", ["etc", "dhcp"]));
+            iscDhcpServerInterpreter(networkObjectId, networkElementFileSystem.read("isc-dhcp-server", ["etc", "default"]));
         },
 
         "dhclient": () => {
@@ -104,6 +104,7 @@ function startService(networkObjectId, service) {
         "resolved": () => {
             $networkObject.setAttribute("resolved", "true");
         },
+        
     }
 
     startFunctions[service]();
