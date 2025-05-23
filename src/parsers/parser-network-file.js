@@ -89,7 +89,7 @@ function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
         if (interfaceObject["inet"] === "dhcp") { //<-- configuramos la interfaz si el metodo es dhcp
             if ($networkObject.getAttribute("dhclient") === null) throw new Error(`Error: el equipo no tiene instalado el servicio dhcp cliente`);
             $networkObject.setAttribute("dhclient", "true"); //<-- habilitamos el servicio dhcp cliente
-            dhcpDiscoverHandler(networkObjectId); //<-- iniciamos el servicio dhcp cliente
+            dhcpDiscoverHandler(networkObjectId, interfaceObject["iface"]); //<-- iniciamos el servicio dhcp cliente
             return; //<-- no se evaluan reglas de enrutamiento
         }
 
