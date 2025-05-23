@@ -156,17 +156,17 @@ async function pcMenuButtonsHandler(event) {
 
         "get-btn": async () => { 
             if (visualToggle) document.querySelector(".pc-form").style.display = "none";
-            await dhcpDiscoverHandler($networkObject.id); //<-- iniciamos el proceso de DHCP discover
+            await dhcpDiscoverHandler($networkObject.id, networkInterface); //<-- iniciamos el proceso de DHCP discover
         },
 
         "renew-btn": async () => {
             if (visualToggle) document.querySelector(".pc-form").style.display = "none";
-            await dhcpRenewHandler($networkObject.id); //<-- iniciamos el proceso de dhcp renew
+            await dhcpRenewHandler($networkObject.id, "T1", networkInterface); //<-- iniciamos el proceso de dhcp renew
         },
 
         "release-btn": async () => {
             if (visualToggle) document.querySelector(".pc-form").style.display = "none";
-            await dhcpReleaseHandler($networkObject.id); //<-- iniciamos el proceso de dhcp release
+            await dhcpReleaseHandler($networkObject.id, networkInterface); //<-- iniciamos el proceso de dhcp release
         }
 
     }
