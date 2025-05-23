@@ -137,7 +137,7 @@ async function pcMenuButtonsHandler(event) {
     var $menu = document.querySelector(".pc-form");
     var $modules = $menu.querySelector(".modes-wrapper").querySelectorAll(".form-item");
     var $buttons = $menu.querySelector(".button-container").querySelectorAll("button");
-    var networkInterface = getInterfaces($networkObject.id)[0]; 
+    var networkInterface = getInterfaces($networkObject.id)[0]; //TODO: hacer que sea cualquier interfaz
     var newIp = $menu.querySelector("#ip").value;
     var newNetmask = $menu.querySelector("#netmask").value;
     var newGateway = $menu.querySelector("#gateway").value;
