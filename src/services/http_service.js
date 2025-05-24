@@ -12,7 +12,7 @@ async function http(networkObjectId, destinationIp, method, port) {
 
     if (isLocalIp(networkObjectId,destinationIp)) return getApacheWebContent(networkObjectId); 
 
-    delete browserBuffer[networkObjectId]; //<-- borramos el buffer de respuesta anterior
+    delete httpBuffer[networkObjectId]; //<-- borramos el buffer de respuesta anterior
 
     //iniciamos la sincronización TCP
     const source_port = Math.floor(Math.random() * (65535 - 49152 + 1)) + 49152; // <--- generamos un puerto efímero aleatorio para el origen
@@ -23,7 +23,7 @@ async function http(networkObjectId, destinationIp, method, port) {
     await httpRequestPacketGenerator(networkObjectId, destinationIp, source_port, port, method);
 
     //comprobamos si hay respuesta en el buffer
-    const htmlReply = browserBuffer[networkObjectId];
+    const htmlReply = httpBuffer[networkObjectId];
     if (!htmlReply) throw new Error("Error: Conexión rechazada. No se ha recibido respuesta del servidor web.");
 
     return htmlReply //devolvemos el objeto HTTPReply

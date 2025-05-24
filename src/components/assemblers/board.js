@@ -95,7 +95,7 @@ function deleteItem(event) {
     if (!isConnected($networkObject.id)) {
         //eliminamos la informacion del dispositivo guardada en los buffers
         delete buffer[$networkObject.id];
-        delete browserBuffer[$networkObject.id];
+        delete httpBuffer[$networkObject.id];
         delete dhcpOfferBuffer[$networkObject.id];
         delete tcpBuffer[$networkObject.id];
         delete traceBuffer[$networkObject.id];

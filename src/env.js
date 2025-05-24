@@ -38,7 +38,7 @@ let defaultNetwork = "";
 
 //buffers
 let buffer = {};
-let browserBuffer = {};
+let httpBuffer = {};
 let dhcpOfferBuffer = {};
 let tcpBuffer = {};
 let traceBuffer = {};

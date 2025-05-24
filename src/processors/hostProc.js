@@ -116,7 +116,7 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
 
     if (packet.protocol === "http" && packet.type === "reply") {
         if (packet.destination_ip !== networkObjectIp) return;
-        browserBuffer[networkObjectId] = packet;
+        httpBuffer[networkObjectId] = packet;
         return;
     }
 
