@@ -2,8 +2,8 @@ async function apache_service(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectInterface = getInterfaces($networkObject.id)[0];
-    const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectIp}`);
-    const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectIp}`);
+    const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
+    const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
     const apacheContent = getApacheWebContent(networkObjectId, packet.dport, packet.destination_ip);
 
     let newPacket = new httpReply(
