@@ -23,7 +23,7 @@ function GeneralOptions() {
             <input type="checkbox" class="btn-toggle" id="dark-mode" name="dark-mode">
         </div>
         
-        <button class="btn-modern-blue">Cerrar</button>
+        <button class="btn-modern-blue" id="close-btn">Cerrar</button>
     `;
 
     $generalOptions.querySelector("#ignore-arp-traffic").addEventListener("change", function () { ignoreArpTraffic = this.checked; });

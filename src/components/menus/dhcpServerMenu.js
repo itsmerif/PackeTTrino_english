@@ -72,7 +72,7 @@ function dhcp_server_menu() {
             
             <div class="button-wrapper">
                 <button class="btn-modern-blue dark" type="submit" id="btn-save-form">Guardar</button>
-                <button class="btn-modern-red dark" id="btn-close">Cerrar</button>
+                <button class="btn-modern-red dark" id="close-btn">Cerrar</button>
             </div>
 
         </section>
@@ -111,7 +111,7 @@ function dhcp_server_menu() {
     $menu.querySelector("#btn-reservations").addEventListener("click", showReservTab);
     $menu.querySelector("#add-reservation").addEventListener("click", addDhcpReservationHandler);
     $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
-    $menu.querySelector("#btn-close").addEventListener("click", closeDhcpMenu);
+    $menu.querySelector("#close-btn").addEventListener("click", closeDhcpMenu);
 
     return $menu;
     

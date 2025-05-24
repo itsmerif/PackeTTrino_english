@@ -1,7 +1,8 @@
 function DynamicRoutingMenu() {
 
     const $menu = document.createElement("div");
-    $menu.classList.add("dynamic-routing-modal-container");
+    $menu.classList.add("dynamic-routing-modal-container", "modal");
+    
 
     $menu.innerHTML = `
 
@@ -18,7 +19,7 @@ function DynamicRoutingMenu() {
 
             <button class="btn-accept btn-modern-blue dark no-animation">Sí, quiero enrutar de forma automática</button>
 
-            <button class="btn-reject btn-modern-red no-animation">No, volver al panel</button>
+            <button class="btn-reject btn-modern-red no-animation" id="close-btn">No, volver al panel</button>
 
         </div>
     `;

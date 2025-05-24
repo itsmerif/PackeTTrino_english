@@ -50,7 +50,7 @@ function dns_server_menu() {
 
             <div class="button-wrapper">
                 <button class="btn-modern-blue dark" type="submit">Guardar</button>
-                <button class="btn-modern-red dark" id="btn-close">Cerrar</button>
+                <button class="btn-modern-red dark" id="close-btn">Cerrar</button>
             </div>
 
         </section>
@@ -92,7 +92,7 @@ function dns_server_menu() {
 
     $menu.addEventListener("submit", saveDnsServerMenu);
     $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
-    $menu.querySelector("#btn-close").addEventListener("click", closeDnsMenu);
+    $menu.querySelector("#close-btn").addEventListener("click", closeDnsMenu);
     $menu.querySelector(".nav-panel").querySelectorAll("button").forEach(button => button.addEventListener("click", showDnsGraphicTab));
     $menu.querySelector("#btn-add-record").addEventListener("click", addDnsRecordHandler);
     $menu.querySelector("#btn-del-record").addEventListener("click", removeDnsRecordHandler);

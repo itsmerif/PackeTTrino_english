@@ -41,12 +41,12 @@ function dhcp_agent_menu() {
         
         <div class="button-wrapper">
             <button class="btn-modern-blue" type="submit">Guardar</button>
-            <button class="btn-modern-red"  id="btn-close">Cerrar</button>
+            <button class="btn-modern-red"  id="close-btn">Cerrar</button>
         </div>
     `;
 
     $menu.addEventListener("submit", saveDhcpRelayMenu);
-    $menu.querySelector("#btn-close").addEventListener("click", closeDhcpRelayMenu);
+    $menu.querySelector("#close-btn").addEventListener("click", closeDhcpRelayMenu);
     $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
 
 

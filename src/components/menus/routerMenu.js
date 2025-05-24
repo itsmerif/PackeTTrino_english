@@ -33,7 +33,7 @@ function router_menu() {
             
             <div class="form-item">
                 <button class="btn-modern-blue dark" style="padding: 10px;">Guardar</button>
-                <button class="btn-modern-red dark" style="padding: 10px;" id="btn-close-form">Cerrar</button>
+                <button class="btn-modern-red dark" style="padding: 10px;" id="close-btn">Cerrar</button>
             </div>
 
         </section>
@@ -75,7 +75,7 @@ function router_menu() {
     $menu.querySelector("#btn-add-rule").addEventListener("click", addRoutingRuleGraphicHandler);
     $menu.querySelector("#btn-del-rule").addEventListener("click", removeRoutingRuleGraphicHandler);
     $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
-    $menu.querySelector("#btn-close-form").addEventListener("click", closeRouterMenu);
+    $menu.querySelector("#close-btn").addEventListener("click", closeRouterMenu);
 
     return $menu;
 
