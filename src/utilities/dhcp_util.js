@@ -80,7 +80,7 @@ async function dhcpReleaseHandler(networkObjectId, networkObjectInterface) {
         return;
     }
 
-    terminalMessage(`DHCPRELEASE of ${networkObjectIp} on enp0s3 to ${networkObjectDhcpServer} port 67`, networkObjectId);
+    terminalMessage(`DHCPRELEASE of ${networkObjectIp} on ${networkObjectInterface} to ${networkObjectDhcpServer} port 67`, networkObjectId);
 
     if (visualToggle) await minimizeTerminal();
 

@@ -1,8 +1,11 @@
 async function ping(networkObjectId, destination) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectNetmask = $networkObject.getAttribute("netmask-enp0s3");
+    const networkObjectInterface = getInterfaces(networkObjectId)[0];
+    const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
+    const networkObjectNetmask = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
+
+    if (!networkObjectIp || !networkObjectNetmask) return 4;
 
     if (!isValidIp(destination)) {
         destination = await domainNameResolution(networkObjectId, destination);
@@ -19,7 +22,7 @@ async function ping(networkObjectId, destination) {
     icmpFlag[networkObjectId] = false;
 
     try {       
-        await icmpRequestPacketGenerator(networkObjectId, networkObjectIp, destination);
+        await icmpRequestPacketGenerator(networkObjectId, networkObjectIp, destination, networkObjectInterface);
     } catch (error) {
         return 3;
     }
@@ -32,8 +35,10 @@ async function ping(networkObjectId, destination) {
 async function traceroute(networkObjectId, destination, numeric = false) {
     
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
-    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
+    const networkObjectInterface = getInterfaces(networkObjectId)[0];
+    const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
+    const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
+
     let hops = numeric ? 1 : "";
 
     if (!isValidIp(destination)) {
@@ -104,9 +109,9 @@ async function traceroute(networkObjectId, destination, numeric = false) {
 
 }
 
-async function icmpRequestPacketGenerator(networkObjectId, originIp, destinationIp) {
+async function icmpRequestPacketGenerator(networkObjectId, originIp, destinationIp, interface = "enp0s3") {
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3"); 
+    const networkObjectMac = $networkObject.getAttribute(`mac-${interface}`);
     let packet = new IcmpEchoRequest(originIp, destinationIp, networkObjectMac, "");
     await hostRouting(networkObjectId, packet);
 }

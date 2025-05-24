@@ -108,6 +108,8 @@ function showDnsServerMenu(event) {
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
 
     const $serverObject = event.target.closest(".item-dropped");
+    const availableInterfaces = getInterfaces($serverObject.id);
+    const networkObjectInterface = availableInterfaces[0];
 
     if (icmpTryoutToggle) { //<-- comprobamos si estamos en modo icmptryout
         icmpTryoutProcess($serverObject.id);
@@ -121,8 +123,8 @@ function showDnsServerMenu(event) {
     
     //<-- seccion basica de red (solo para servidores dns nativos)
     if (isDnsServer) {
-        $menu.querySelector("#ip-dns").value = $serverObject.getAttribute("ip-enp0s3");
-        $menu.querySelector("#netmask-dns").value = $serverObject.getAttribute("netmask-enp0s3");
+        $menu.querySelector("#ip-dns").value = $serverObject.getAttribute(`ip-${networkObjectInterface}`);
+        $menu.querySelector("#netmask-dns").value = $serverObject.getAttribute(`netmask-${networkObjectInterface}`);
         $menu.querySelector("#gateway-dns").value = $serverObject.getAttribute("data-gateway");
         $menu.querySelector("#network-section").classList.remove("hidden");
     }
@@ -137,6 +139,7 @@ function showDnsServerMenu(event) {
     document.getElementById("form-dns-item-id").innerHTML = $serverObject.id;
     $menu.style.display = "flex";
 }
+
 /**ESTA FUNCION ACTUALIZA LA INFORMACION DE UN SERVIDOR DNS*/
 function saveDnsServerMenu(event) {
 
@@ -145,6 +148,8 @@ function saveDnsServerMenu(event) {
 
     const $menu = document.querySelector(".dns-form");
     const $serverObject = document.getElementById($menu.querySelector("#form-dns-item-id").innerHTML);
+    const availableInterfaces = getInterfaces($serverObject.id);
+    const networkObjectInterface = availableInterfaces[0];
     const isRecursive = $menu.querySelector("#dns-recursive").checked;
     const isCache = $menu.querySelector("#dns-cache").checked;
 
@@ -169,10 +174,10 @@ function saveDnsServerMenu(event) {
             return;
         }
 
-        configureInterface($serverObject.id, ip, netmask, "enp0s3");
-        setDirectRoutingRule($serverObject.id, ip, netmask, "enp0s3");
+        configureInterface($serverObject.id, ip, netmask, networkObjectInterface);
+        setDirectRoutingRule($serverObject.id, ip, netmask, networkObjectInterface);
         $serverObject.setAttribute("data-gateway", gateway);
-        setRemoteRoutingRule($serverObject.id, "0.0.0.0", "0.0.0.0", ip, "enp0s3", gateway);
+        setRemoteRoutingRule($serverObject.id, "0.0.0.0", "0.0.0.0", ip, networkObjectInterface, gateway);
     }
 
     $serverObject.setAttribute("recursion", isRecursive);

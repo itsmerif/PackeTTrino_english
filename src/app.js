@@ -35,10 +35,10 @@ function startApp() {
         loadingScreen.style.display = 'none';
     }, 500);
 
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    /*if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
         document.querySelector(".settings-modal").querySelector("#dark-mode").checked = true;
         activateDarkMode();
-    }
+    }*/
     
     document.querySelector("#item-panel").classList.remove("hidden");
 

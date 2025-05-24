@@ -1,8 +1,9 @@
 async function named_service(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
-    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
+    const networkObjectInterface = getInterfaces(networkObjectId)[0];
+    const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
+    const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
     const isRecursiveOn = $networkObject.getAttribute("recursion") === "true"; //<-- comprobamos si estamos activado el modo recursion
     const isCacheOn = $networkObject.getAttribute("resolved") === "true"; //<-- comprobamos si estamos activado el modo cache dns
 

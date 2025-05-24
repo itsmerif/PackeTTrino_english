@@ -58,27 +58,31 @@ function showDhcpRelayMenu(event) {
 
     event.stopPropagation();
 
-    const networkObject = event.target.closest(".item-dropped");
-    const itemId = networkObject.id; //obtenemos el id del elemento
-    const $form = document.querySelector(".dhcp-relay-form");
-    const isDhcpRelay = itemId.startsWith("dhcp-relay-server-");
+    const $networkObject = event.target.closest(".item-dropped");
+    const $menu = document.querySelector(".dhcp-relay-form");
+    const networkObjectInterface = getInterfaces($networkObject.id)[0];
+    const isDhcpRelay = $networkObject.id.startsWith("dhcp-relay-server-");
 
-    if (icmpTryoutToggle) { //comprobamos si estamos en modo icmptryout
-        icmpTryoutProcess(networkObject.id);
+    if (icmpTryoutToggle) {
+        icmpTryoutProcess($networkObject.id);
         return;
     }
 
-    $form.querySelector("#ip-relay").value = networkObject.getAttribute("ip-enp0s3");
-    $form.querySelector("#netmask-relay").value = networkObject.getAttribute("netmask-enp0s3");
-    $form.querySelector("#gateway-relay").value = networkObject.getAttribute("data-gateway");;
-    $form.querySelector("#main-server").value = networkObject.getAttribute("dhcrelay-main-server");;
-    $form.querySelector("#listen-on-interfaces").value = networkObject.getAttribute("dhcrelay-listen-on-interfaces");
-    $form.querySelector("#form-dhcp-relay-item-id").innerHTML = networkObject.id;
+    //atributos del agente
+    $menu.querySelector("#ip-relay").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
+    $menu.querySelector("#netmask-relay").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
+    $menu.querySelector("#gateway-relay").value = $networkObject.getAttribute("data-gateway");
+
+    //atributos del servicio
+    $menu.querySelector("#main-server").value = $networkObject.getAttribute("dhcrelay-main-server");;
+    $menu.querySelector("#listen-on-interfaces").value = $networkObject.getAttribute("dhcrelay-listen-on-interfaces");
+    $menu.querySelector("#form-dhcp-relay-item-id").innerHTML = $networkObject.id;
+
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
 
-    if (!isDhcpRelay) $form.querySelector(".basic-section").classList.add("hidden");
+    if (!isDhcpRelay) $menu.querySelector(".basic-section").classList.add("hidden");
 
-    $form.style.display = "flex";
+    $menu.style.display = "flex";
 }
 
 function saveDhcpRelayMenu(event) {
@@ -88,7 +92,8 @@ function saveDhcpRelayMenu(event) {
 
     const $networkObject = document.getElementById(document.getElementById("form-dhcp-relay-item-id").innerHTML);
     const $form = document.querySelector(".dhcp-relay-form");
-    const networkObjectInterfaces = getInterfaces($networkObject.id);
+    const availableInterfaces = getInterfaces($networkObject.id);
+    const networkObjectInterface = availableInterfaces[0];
     const newIp = $form.querySelector("#ip-relay").value;
     const newNetmask = $form.querySelector("#netmask-relay").value;
     const newGateway = $form.querySelector("#gateway-relay").value;
@@ -113,10 +118,10 @@ function saveDhcpRelayMenu(event) {
             return;
         }
 
-        configureInterface($networkObject.id, newIp, newNetmask, "enp0s3");
-        setDirectRoutingRule($networkObject.id, newIp, newNetmask, "enp0s3");
+        configureInterface($networkObject.id, newIp, newNetmask, networkObjectInterface);
+        setDirectRoutingRule($networkObject.id, newIp, newNetmask, networkObjectInterface);
         $networkObject.setAttribute("data-gateway", newGateway);
-        setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, "enp0s3", newGateway);
+        setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, networkObjectInterface, newGateway);
 
     }
 
@@ -125,7 +130,7 @@ function saveDhcpRelayMenu(event) {
         return;
     }
 
-    if (!newListenOnInterfaces.every(item => networkObjectInterfaces.includes(item))) {
+    if (!newListenOnInterfaces.every(item => availableInterfaces.includes(item))) {
         bodyComponent.render(popupMessage(`<span>Error: </span>Algunas de las interfaces de escucha no son válidas.`));
         return;
     }

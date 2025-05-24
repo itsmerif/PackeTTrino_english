@@ -2,9 +2,9 @@ async function dhcpd_service(serverObjectId, packet, interface) {
     
     //atributos del servidor
     const $serverObject = document.getElementById(serverObjectId);
-    const serverObjectMac = $serverObject.getAttribute("mac-enp0s3");
-    const serverObjectIp = $serverObject.getAttribute("ip-enp0s3");
-    const serverObjectNetmask = $serverObject.getAttribute("netmask-enp0s3");
+    const serverObjectMac = $serverObject.getAttribute(`mac-${interface}`);
+    const serverObjectIp = $serverObject.getAttribute(`ip-${interface}`);
+    const serverObjectNetmask = $serverObject.getAttribute(`netmask-${interface}`);
     const serverObjectNetwork = getNetwork(serverObjectIp, serverObjectNetmask);
 
     //atributos del servicio DHCP

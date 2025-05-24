@@ -121,10 +121,15 @@ function showDhcpMenu(event) {
 
     event.stopPropagation();
     
+    //atributos del equipo
     const $networkObject = event.target.closest(".item-dropped");
+    const networkObjectId = $networkObject.id;
+    const availableInterfaces = getInterfaces(networkObjectId);
+    const networkObjectInterface = availableInterfaces[0];
+
+    //atributos del servicio
     const $menu = document.querySelector(".dhcp-form");
     const $reservationsTable = $menu.querySelector("#reservations-table");
-    const networkObjectId = $networkObject.id;
     const isDhcpServer = networkObjectId.startsWith("dhcp-server-");
     const reservations = genDhcpReservationsRows(networkObjectId);
 
@@ -136,8 +141,8 @@ function showDhcpMenu(event) {
     //añadimos los atributos del servidor al menú
 
     $menu.querySelector("#form-dhcp-item-id").innerHTML = networkObjectId;
-    $menu.querySelector("#ip-dhcp").value = $networkObject.getAttribute("ip-enp0s3");
-    $menu.querySelector("#netmask-dhcp").value = $networkObject.getAttribute("netmask-enp0s3");
+    $menu.querySelector("#ip-dhcp").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
+    $menu.querySelector("#netmask-dhcp").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
     $menu.querySelector("#gateway-dhcp").value = $networkObject.getAttribute("data-gateway");
     $menu.querySelector("#dhcp-listen-on-interfaces").value = $networkObject.getAttribute("dhcp-listen-on-interfaces");
     $menu.querySelector("#range-start").value = $networkObject.getAttribute("data-range-start");
@@ -159,18 +164,19 @@ function saveDhcpMenu(event) {
     event.preventDefault();
     const $networkObject = document.getElementById(document.getElementById("form-dhcp-item-id").innerHTML);
     const $menu = document.querySelector(".dhcp-form");
-    const networkObjectInterfaces = getInterfaces($networkObject.id);
+    const availableInterfaces = getInterfaces($networkObject.id);
+    const networkObjectInterface = availableInterfaces[0];
     const listenOnInterfaces = $menu.querySelector("#dhcp-listen-on-interfaces").value.split(",").map(item => item.trim()).filter(item => item !== "");
     const isDhcpServer = $networkObject.id.startsWith("dhcp-server-");
     
     if (isDhcpServer) {
-        configureInterface($networkObject.id, $menu.querySelector("#ip-dhcp").value, $menu.querySelector("#netmask-dhcp").value, "enp0s3");
-        setDirectRoutingRule($networkObject.id, $menu.querySelector("#ip-dhcp").value, $menu.querySelector("#netmask-dhcp").value, "enp0s3");
+        configureInterface($networkObject.id, $menu.querySelector("#ip-dhcp").value, $menu.querySelector("#netmask-dhcp").value, networkObjectInterface);
+        setDirectRoutingRule($networkObject.id, $menu.querySelector("#ip-dhcp").value, $menu.querySelector("#netmask-dhcp").value, networkObjectInterface);
         $networkObject.setAttribute("data-gateway", $menu.querySelector("#gateway-dhcp").value);
-        setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", $menu.querySelector("#ip-dhcp").value, "enp0s3", $menu.querySelector("#gateway-dhcp").value);
+        setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", $menu.querySelector("#ip-dhcp").value, networkObjectInterface, $menu.querySelector("#gateway-dhcp").value);
     }
 
-    if (!listenOnInterfaces.every(item => networkObjectInterfaces.includes(item))) {
+    if (!listenOnInterfaces.every(item => availableInterfaces.includes(item))) {
         bodyComponent.render(popupMessage(`<span>Error: </span> Algunas de las interfaces de escucha no son válidas.</span>`));
         return;
     }

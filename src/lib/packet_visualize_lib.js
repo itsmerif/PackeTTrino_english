@@ -1,14 +1,10 @@
-async function visualize(originObject, destinationObject, packet) {
+async function visualize(originObject, destinationObjectId, packet) {
+
+    if (getAvailableIps(destinationObjectId).includes(packet.origin_ip)) return; //el paquete es generado por el mismo equipo
 
     const $originObject = document.getElementById(originObject);
-    const $destinationObject = document.getElementById(destinationObject);
-    const destinationIp = $destinationObject.getAttribute("ip-enp0s3") 
-    || $destinationObject.getAttribute("ip-enp0s3") 
-    || $destinationObject.getAttribute("ip-enp0s8") 
-    || $destinationObject.getAttribute("ip-enp0s9");
+    const $destinationObject = document.getElementById(destinationObjectId);
     
-    if (destinationIp === packet.origin_ip) return; //el paquete es generado por el mismo equipo
-
     const packetTypeMap = {
         "arp-request": "broadcast",
         "arp-reply": "unicast",
@@ -23,9 +19,7 @@ async function visualize(originObject, destinationObject, packet) {
         "dns-reply": "dns",
     };
 
-    if (ignoreArpTraffic) {
-        if (packet.protocol === "arp") return;
-    }
+    if (ignoreArpTraffic && packet.protocol === "arp") return;
 
     const type = packetTypeMap[`${packet.protocol}-${packet.type}`] || "unicast";
 

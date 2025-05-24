@@ -70,8 +70,9 @@ async function getDomainFromServer(networkObjectId, domain, verbose, dnsServer =
 
 async function dnsRequestPacketGenerator(networkObjectId, domain, dnsServer, query_type) {
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute("mac-enp0s3");
-    const networkObjectIp = $networkObject.getAttribute("ip-enp0s3");
+    const networkObjectInterface = getInterfaces(networkObjectId)[0];
+    const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
+    const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
     if (!dnsServer) return;
     let packet = new dnsRequest(networkObjectIp, dnsServer, networkObjectMac, "", domain);
     packet.answer_type = query_type;
