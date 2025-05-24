@@ -18,8 +18,15 @@ function documentKeyboardHandler(event) {
 
 /**ESTA FUNCION OCULTA TODOS LOS MODALES */
 function closeEveryThing(event) {
-    document.querySelectorAll(".modal").forEach(modal => { modal.style.display = "none"; });
-    closeBrowser(event);
+
+    //cerramos todos los modales
+    document.querySelectorAll(".modal").forEach($modal => {
+        if (window.getComputedStyle($modal).display === "none") return; //parche, lo mejor es usar clases
+        const $closeBtn = $modal.querySelector("#close-btn");
+        if ($closeBtn) $closeBtn.click();
+    });
+
+    closeBrowser(event); 
     closeTraffic();
     closeTerminal(event);
 }

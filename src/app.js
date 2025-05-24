@@ -21,7 +21,7 @@ bodyComponent.render(
     GeneralOptions(),
 );
 
-//htmlComponent.event("keydown", documentKeyboardHandler);
+htmlComponent.event("keydown", documentKeyboardHandler);
 
 setTimeout(startApp, 1000);
 
