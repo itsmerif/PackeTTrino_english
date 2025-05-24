@@ -44,33 +44,40 @@ function closeEveryThing(event) {
 function activateDarkMode() {
 
     const $checkbox = document.querySelector(".settings-modal").querySelector("#dark-mode");
+    const $board = document.querySelector(".board");
+    const $panel = document.querySelector("#item-panel");
+    const $modals = document.querySelectorAll(".modal");
+    const $innerTables = document.querySelectorAll(".inner-table");
+    const $svgBoard = document.querySelector("#svg-board");
+    const $packetTraffic = document.querySelector(".packet-traffic");
 
     if ($checkbox.checked) {
+
         darkMode = true;
-        document.querySelector(".board").classList.add("dark-mode");
-        document.querySelector("#item-panel").classList.add("dark-mode");
-        document.querySelectorAll(".modal").forEach(modal => modal.classList.add("modal-dark-mode"));
-        document.querySelector("#svg-board").querySelectorAll("line").forEach(line => line.setAttribute("stroke", "white"));
-        document.querySelector(".board").querySelectorAll(".modal-table").forEach(modal => modal.classList.add("dark-mode"));
-        document.querySelector(".packet-traffic").classList.add("dark-mode");
-        document.querySelectorAll(".inner-table").forEach(table => table.classList.add("dark-mode"));
+        $board.classList.add("dark-mode");
+        $panel.classList.add("dark-mode");
+        $modals.forEach(modal => modal.classList.add("modal-dark-mode"));
+        $svgBoard.querySelectorAll("line").forEach(line => line.setAttribute("stroke", "white"));
+        $board.querySelectorAll(".modal-table").forEach(modal => modal.classList.add("dark-mode"));
+        $packetTraffic.classList.add("dark-mode");
+        $innerTables.forEach(table => table.classList.add("dark-mode"));
         changePanelIcons("dark");
-        return;
+
+    }else {
+
+        darkMode = false;
+        $board.classList.remove("dark-mode");
+        $panel.classList.remove("dark-mode");
+        $modals.forEach(modal => modal.classList.remove("modal-dark-mode"));
+        $svgBoard.querySelectorAll("line").forEach(line => line.setAttribute("stroke", "black"));
+        $board.querySelectorAll(".modal-table").forEach(modal => modal.classList.remove("dark-mode"));
+        $packetTraffic.classList.remove("dark-mode");
+        $innerTables.forEach(table => table.classList.remove("dark-mode"));
+        changePanelIcons("light");
+        
     }
 
-    darkMode = false;
-    document.querySelector(".board").classList.remove("dark-mode");
-    document.querySelector("#item-panel").classList.remove("dark-mode");
-    document.querySelectorAll(".modal").forEach(modal => modal.classList.remove("modal-dark-mode"));
-    document.querySelector("#svg-board").querySelectorAll("line").forEach(line => line.setAttribute("stroke", "black"));
-    document.querySelector(".board").querySelectorAll(".modal-table").forEach(modal => modal.classList.remove("dark-mode"));
-    document.querySelector(".packet-traffic").classList.remove("dark-mode");
-    document.querySelectorAll(".inner-table").forEach(table => table.classList.remove("dark-mode"));
-    changePanelIcons("light");
-
     function changePanelIcons(theme) {
-
-        const $panel = document.querySelector("#item-panel");
 
         const $items = $panel.querySelectorAll(".item");
     
