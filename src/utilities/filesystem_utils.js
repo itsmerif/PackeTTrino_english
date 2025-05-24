@@ -74,7 +74,7 @@ function command_cat(networkObjectId, file) {
 
     try {
         let fileContent = fileSystem.read(fileName, directoryPath);
-        terminalMessage(fileContent, networkObjectId);
+        terminalMessage(fileContent, networkObjectId, false);
     } catch (e) {
         terminalMessage(e.message, networkObjectId);
     }

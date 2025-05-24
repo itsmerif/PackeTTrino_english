@@ -91,6 +91,7 @@ function startService(networkObjectId, service) {
 
         "apache2": () => {
             $networkObject.setAttribute("apache2", "true");
+            apacheConfInterpreter(networkObjectId, networkElementFileSystem.read("000-default.conf", ["etc", "apache2", "sites"]));
         },
 
         "dhcrelay": () => {

@@ -1,5 +1,7 @@
 async function http(networkObjectId, destinationIp, method, port) {
     
+    const $networkObject = document.getElementById(networkObjectId);
+
     if (isNaN(port) || port < 1 || port > 65535) throw new Error(`Error: Puerto ${port} no válido.`);
 
     if (!["GET", "POST", "PUT", "DELETE"].includes(method.toUpperCase())) throw new Error(`Error: Método ${method} no válido.`);
@@ -10,7 +12,22 @@ async function http(networkObjectId, destinationIp, method, port) {
         if (!destinationIp) throw new Error(`Error: No se pudo resolver el dominio "${domainName}".`);
     }
 
-    if (isLocalIp(networkObjectId,destinationIp)) return getApacheWebContent(networkObjectId); 
+    if (isLocalIp(networkObjectId,destinationIp)) {
+    
+        const newPacket = new httpReply(
+            getAvailableIps(networkObjectId)[0], //ip del origen
+            destinationIp, //ip del destino
+            $networkObject.getAttribute(`mac-${getInterfaces(networkObjectId)[0]}`), //mac del origen
+            "", //mac del destino
+            port, //puerto del origen
+            port //puerto del destino
+        );
+
+        newPacket.body = getApacheWebContent(networkObjectId, port, "*");
+
+        return newPacket;
+
+    }
 
     delete httpBuffer[networkObjectId]; //<-- borramos el buffer de respuesta anterior
 
@@ -23,10 +40,10 @@ async function http(networkObjectId, destinationIp, method, port) {
     await httpRequestPacketGenerator(networkObjectId, destinationIp, source_port, port, method);
 
     //comprobamos si hay respuesta en el buffer
-    const htmlReply = httpBuffer[networkObjectId];
-    if (!htmlReply) throw new Error("Error: Conexión rechazada. No se ha recibido respuesta del servidor web.");
+    const newPacket = httpBuffer[networkObjectId];
+    if (!newPacket) throw new Error("Error: Conexión rechazada. No se ha recibido respuesta del servidor web.");
 
-    return htmlReply //devolvemos el objeto HTTPReply
+    return newPacket //devolvemos el objeto HTTPReply
     
 }
 

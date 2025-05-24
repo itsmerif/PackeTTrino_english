@@ -57,12 +57,12 @@ function browser() {
 
 //constantes de navegador
 
-var $homepage = `
+const $BROWSERHOMEPAGE = `
     <title>Amin Search</title><meta charset=UTF-8><meta content="width=device-width,initial-scale=1"name=viewport>
     <style>body{margin:0;display:grid;place-items:center;height:70vh}</style><img alt=logo src=./assets/browser/aminsearch.png>
 `;
 
-var $error404 = `
+const $BROWSERERRORPAGE = `
     <!DOCTYPE html>
     <html lang="es">
     <head>
@@ -165,19 +165,12 @@ var $error404 = `
     </html>
 `;
 
-var $forbidden403 = `
-    <!doctypehtml><html style=height:100%><title>403 Forbidden</title><style>@media (prefers-color-scheme:dark){body{background-color:#000!important}}</style>
-    <body style="color:#444;margin:0;font:normal 14px/20px Arial,Helvetica,sans-serif;height:100%;background-color:#fff"><div style=height:auto;min-height:100%>
-    <div style=text-align:center;width:800px;margin-left:-400px;position:absolute;top:30%;left:50%><h1 style=margin:0;font-size:150px;line-height:150px;font-weight:700>
-    403</h1><h2 style=margin-top:20px;font-size:30px>Forbidden</h2><p>Access to this resource on the server is denied!</div></div>
-`;
-
 function openBrowser(event) {
     event.stopPropagation();
     event.preventDefault();
     const $networkObject = event.target.closest(".item-dropped"); //obtengo el objeto mas cercano
     $networkObject.querySelector(".advanced-options-modal").style.display = "none"; //ocultamos el modal de opciones avanzadas
-    document.querySelector(".browser-content").srcdoc = $homepage //recuperamos el contenido original del navegador
+    document.querySelector(".browser-content").srcdoc = $BROWSERHOMEPAGE //recuperamos el contenido original del navegador
     document.querySelector(".browser-component").style.display = "flex"; //mostramos el navegador
     document.querySelector(".browser-component").setAttribute("data-id", $networkObject.id); //establecemos el id del navegador
 }

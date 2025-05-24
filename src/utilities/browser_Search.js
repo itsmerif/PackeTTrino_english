@@ -7,21 +7,21 @@ async function browserSearch() {
 
     if (visualToggle) await minimizeBrowser();
 
-    try {
+        try {
 
-        const [protocol, address, port] = parseSearch($addressInput.value.trim());
+            const [protocol, address, port] = parseSearch($addressInput.value.trim());
 
-        $browser.querySelector(".address-input").value = `http://${address}${(port === 80) ? "" : `:${port}`}`; //<-- actualizamos la entrada
+            $browser.querySelector(".address-input").value = `http://${address}${(port === 80) ? "" : `:${port}`}`;
 
-        const httpReply = await http($networkObject.id, address, "GET", port);
+            const httpReply = await http($networkObject.id, address, "GET", port);
 
-        $browserContent.srcdoc = httpReply.body;
+            $browserContent.srcdoc = httpReply.body;
 
-    } catch (error) {
+        } catch (error) {
 
-        $browserContent.srcdoc = $error404;
-        
-    }
+            $browserContent.srcdoc = $BROWSERERRORPAGE;
+            
+        }
 
     if (visualToggle) await maximizeBrowser();
 
