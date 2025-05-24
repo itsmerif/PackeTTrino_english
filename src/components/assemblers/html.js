@@ -26,6 +26,15 @@ function closeEveryThing(event) {
         if ($closeBtn) $closeBtn.click();
     });
 
+    //cerramos todos los mensajes emergentes
+    document.querySelectorAll(".popup-content").forEach($popup => {
+        const $closeBtn = $popup.querySelector("#btn-close");
+        const $cancelBtn = $popup.querySelector("#btn-cancel");
+        if ($closeBtn) $closeBtn.click();
+        if ($cancelBtn) $cancelBtn.click();
+    });
+
+    //cerramos las herramientas
     closeBrowser(event); 
     closeTraffic();
     closeTerminal(event);
