@@ -459,3 +459,8 @@ function deleteTooltip(event) {
         $panelItem.querySelector(".tooltip").remove();
     }
 }
+
+/**ESTA FUCNÓN DEVUELVE TRUE SI EL OBJETO ES UN OBJETO VACIO*/
+function isEmptyObject(obj) {
+  return obj && typeof obj === 'object' && !Array.isArray(obj) && Object.keys(obj).length === 0;
+}
