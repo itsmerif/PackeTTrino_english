@@ -67,5 +67,5 @@ async function httpRequestPacketGenerator(networkObjectId, destinationIp, source
         method //método
     );
 
-    await hostRouting(networkObjectId, packet);
+    await routing(networkObjectId, packet, true);
 }

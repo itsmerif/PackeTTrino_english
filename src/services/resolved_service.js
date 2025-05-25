@@ -104,5 +104,5 @@ async function dnsRequestPacketGenerator(networkObjectId, domain, dnsServer, que
     if (!dnsServer) return;
     let packet = new dnsRequest(networkObjectIp, dnsServer, networkObjectMac, "", domain);
     packet.answer_type = query_type;
-    await hostRouting(networkObjectId, packet);
+    await routing(networkObjectId, packet, true);
 }

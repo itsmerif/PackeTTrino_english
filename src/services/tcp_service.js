@@ -18,6 +18,6 @@ async function tcpSynPacketGenerator(networkObjectId, destination, source_port ,
 
     tcpBuffer[networkObjectId] = packet.sequence_number; // <--- almacenamos el número de secuencia en el buffer TCP del equipo
 
-    await hostRouting(networkObjectId, packet);
+    await routing(networkObjectId, packet, true);
 
 }

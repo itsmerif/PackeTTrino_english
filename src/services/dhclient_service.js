@@ -101,7 +101,7 @@ async function dhcpRequestGenerator(networkObjectId, renewPhase, networkObjectIn
         packet.destination_mac = "ff:ff:ff:ff:ff:ff"; // <-- en el segundo intento se hacer por broadcast
     }
 
-    await hostRouting(networkObjectId, packet);
+    await routing(networkObjectId, packet, true);
 
 }
 
@@ -122,7 +122,7 @@ async function dhcpReleaseGenerator(networkObjectId, networkObjectInterface) {
         "" //mac de destino
     );
 
-    await hostRouting(networkObjectId, packet);
+    await routing(networkObjectId, packet, true);
 
     deleteDhcpInfo(networkObjectId, networkObjectInterface);
 

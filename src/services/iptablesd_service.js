@@ -89,3 +89,33 @@ function firewallProcessorNat(networkObjectId, packet, inputInterface, outputInt
     return natFilteredPacket;
 
 }
+
+/**ESTA FUNCION GESTIONA EL FIREWALL DE UN DISPOSITIVO ENRUTADOR */
+async function firewallProc(networkObjectId, packet, outputInterface) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const availableIps = getAvailableIps(networkObjectId);
+    const nextSwitch = $networkObject.getAttribute("data-switch-" + outputInterface);
+
+    //<-- si el origen es el propio router, se procesa por OUTPUT
+
+    if (availableIps.includes(packet.origin_ip) && !firewallProcessorFilter(networkObjectId, packet, "OUTPUT", "", outputInterface)) {
+        if (visualToggle) igniteFire(networkObjectId);
+        return;
+    }
+
+    //<-- si el origen no es el propio router, se procesa por FORWARD
+
+    if (!availableIps.includes(packet.origin_ip) && !firewallProcessorFilter(networkObjectId, packet, "FORWARD", "", outputInterface)) {
+        if (visualToggle) igniteFire(networkObjectId);
+        return;
+    }
+
+    //<-- se procesa el POSTROUTING (SNAT)
+
+    packet = firewallProcessorNat(networkObjectId, packet, "", outputInterface, "POSTROUTING");
+
+    addPacketTraffic(packet);
+    await switchProcessor(nextSwitch, networkObjectId, packet);
+    return;
+}

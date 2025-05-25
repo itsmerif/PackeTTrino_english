@@ -1,9 +1,9 @@
-async function dhcrelay_service(agentObjectId, packet, interface) {
+async function dhcrelay_service(agentObjectId, packet, networkObjectInterface) {
 
     //atributos del agente de retransmision
     const $agentObject = document.getElementById(agentObjectId);
-    const agentObjectMac = $agentObject.getAttribute(`mac-${interface}`);
-    const agentObjectIp = $agentObject.getAttribute(`ip-${interface}`);
+    const agentObjectMac = $agentObject.getAttribute(`mac-${networkObjectInterface}`);
+    const agentObjectIp = $agentObject.getAttribute(`ip-${networkObjectInterface}`);
     const availableIps = getAvailableIps(agentObjectId);
 
     //atributos del servicio de retransmision
@@ -13,7 +13,7 @@ async function dhcrelay_service(agentObjectId, packet, interface) {
 
     if (!isDhcpRelayOn) return; //<-- si el DHCP Relay no esta activo, no se procesa nada
 
-    if (!listenOnInterfaces.includes(interface)) return; //<-- si el DHCP Relay no esta configurado para el interfaz, no se procesa nada
+    if (!listenOnInterfaces.includes(networkObjectInterface)) return; //<-- si el DHCP Relay no esta configurado para el interfaz, no se procesa nada
     
     if (packet.destination_ip === "255.255.255.255") { //paquete viene de un cliente 
 

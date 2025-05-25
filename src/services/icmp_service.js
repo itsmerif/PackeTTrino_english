@@ -70,7 +70,7 @@ async function traceroute(networkObjectId, destination, numeric = false) {
     traceBuffer[networkObjectId] = [networkObjectIp]; //el punto de partida es la IP del objeto
     traceReturn[networkObjectId] = false;
 
-    await hostRouting(networkObjectId, packet);
+    await routing(networkObjectId, packet, true);
 
     while (traceReturn[networkObjectId] === true) {
         //construimos y mostramos el mensaje de salida
@@ -83,7 +83,7 @@ async function traceroute(networkObjectId, destination, numeric = false) {
         //aumentamos el TTL y enviamos el paquete de nuevo
         packet.ttl++;
         hops = (numeric) ? hops + 1 : "";
-        await hostRouting(networkObjectId, packet);
+        await routing(networkObjectId, packet, true);
     }
 
     if (traceFlag[networkObjectId] === true) {
@@ -113,5 +113,5 @@ async function icmpRequestPacketGenerator(networkObjectId, originIp, destination
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute(`mac-${interface}`);
     let packet = new IcmpEchoRequest(originIp, destinationIp, networkObjectMac, "");
-    await hostRouting(networkObjectId, packet);
+    await routing(networkObjectId, packet, true);
 }
