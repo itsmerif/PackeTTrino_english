@@ -4,10 +4,11 @@ async function named_service(networkObjectId, packet) {
     const networkObjectInterface = getInterfaces(networkObjectId)[0];
     const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
     const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
+    const isNamedOn = $networkObject.getAttribute("named") === "true";
     const isRecursiveOn = $networkObject.getAttribute("recursion") === "true"; //<-- comprobamos si estamos activado el modo recursion
     const isCacheOn = $networkObject.getAttribute("resolved") === "true"; //<-- comprobamos si estamos activado el modo cache dns
 
-    if (packet.destination_mac !== networkObjectMac || packet.destination_ip !== networkObjectIp) return;
+    if (!isNamedOn) return;
 
     let newPacket = new dnsReply( // <--inicializamos el paquete sin respuesta
         networkObjectIp, // <--ip de origen
@@ -16,7 +17,9 @@ async function named_service(networkObjectId, packet) {
         packet.origin_mac, // <--mac de destino
         packet.query, // <--nombre de dominio
         "" // <--respuesta
-    ); 
+    );
+
+    newPacket.dport = packet.sport;
 
     if (packet.answer_type === "A") {
         let answer = iterativeDnsQuery(networkObjectId, packet.query); //<-- consulta iterativa

@@ -222,7 +222,7 @@ function setDhcpInfo(networkObjectId, packet, networkObjectInterface) {
 
     //configuramos la informacion DHCP del equipo
     $networkObject.setAttribute("data-dhcp-server", newServer);
-    $networkObject.setAttribute("data-dns-server", newDns);
+    setDnsServers(networkObjectId, [newDns]);
     $networkObject.setAttribute("data-dhcp-lease-time", newLeaseTime);
 
 }
@@ -240,7 +240,6 @@ function deleteDhcpInfo(networkObjectId, networkObjectInterface) {
 
     //eliminamos la informacion DHCP del equipo
     $networkObject.setAttribute("data-dhcp-server", "");
-    $networkObject.setAttribute("data-dns-server", "");
     $networkObject.setAttribute("data-dhcp-server", "");
     $networkObject.setAttribute("data-dhcp-lease-time", "");
     $networkObject.setAttribute("data-dhcp-current-lease-time", "");

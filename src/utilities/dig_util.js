@@ -49,24 +49,24 @@ async function command_dig(networkObjectId, args) {
 
     if (visualToggle) await minimizeTerminal();
 
-    try {
+        try {
 
-        await getDomainFromServer(
-            networkObjectId,
-            domain, //dominio
-            true, // verbose
-            dnsServer, //ip del servidor
-            query_type, //tipo de registro
-            true, //eliminar despues de usar
-            false //no generar cache
-        );
+            await getDomainFromServer(
+                networkObjectId,
+                domain, //dominio
+                true, // verbose
+                dnsServer, //ip del servidor
+                query_type, //tipo de registro
+                true, //eliminar despues de usar
+                false //no generar cache
+            );
 
 
-    } catch (error) {
+        } catch (error) {
 
-        console.log(error);
-        
-    }
+            console.log(error);
+            
+        }
 
     if (visualToggle) await maximizeTerminal();
 

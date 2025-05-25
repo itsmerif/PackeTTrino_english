@@ -42,7 +42,6 @@ function PcObject(x, y) {
     attr("data-switch-enp0s3", "");
     attr("data-gateway", "");
     attr("filesystem", JSON.stringify(filesystem));
-    attr("data-dns-server", "");
 
     //añadimos el resolver
     attr("resolved", "true");

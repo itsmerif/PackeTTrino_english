@@ -364,3 +364,24 @@ function getSoaRecord(serverObjectId, targetDomain) {
     return [authorityNameServer, authorityDomain];
 
 }
+
+/**ESTA FUNCION DEVUELVE LA LISTA DE SERVIDORES DNS COMO ARRAY DEL ARCHIVO /etc/resolv.conf*/
+function getDnsServers(networkObjectId) {
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectFileSystem = new FileSystem($networkObject);
+    const fileContent = networkObjectFileSystem.read("resolv.conf", ["etc"]);
+    return fileContent.split("\n")
+                .map(line => line.trim().replace(/\s+/g, " "))
+                .filter(line => line !== "" && !line.startsWith("#") && line.startsWith("nameserver"))
+                .map(line => line.split(" ")[1])
+                .filter(line => isValidIp(line));
+}
+
+/**ESTA FUNCION CONFIGURA LOS SERVIDORES DNS DE UN EQUIPO */
+function setDnsServers(networkObjectId, dnsServers) {
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectFileSystem = new FileSystem($networkObject);
+    let fileContent = "";
+    dnsServers.forEach(dnsServer => fileContent += `nameserver ${dnsServer}\n`);
+    networkObjectFileSystem.write("resolv.conf", ["etc"], fileContent);
+}

@@ -157,7 +157,7 @@ class dnsRequest extends packet {
         this.protocol = "dns";
         this.ttl = 64;
         this.type = "request";
-        this.sport = "";
+        this.sport = Math.floor(Math.random() * (65535 - 49152 + 1)) + 49152;
         this.dport = "53";
         this.query = query;
         this.answer_type = "";

@@ -24,7 +24,7 @@ function RouterObject(x, y) {
             "dev" : {},
             "etc": {
                 "hosts": "" ,
-                "resolv.conf": "",
+                "resolv.conf": "127.0.0.1 localhost",
                 "network": {
                     "interfaces": ""
                 }
@@ -34,7 +34,7 @@ function RouterObject(x, y) {
         }
     };
 
-    //<-- por defecto tiene tres interfaces de red
+    //por defecto tiene tres interfaces de red
     attr("ip-enp0s3", "");
     attr("netmask-enp0s3", "");
     attr("mac-enp0s3", getRandomMac());
@@ -48,10 +48,10 @@ function RouterObject(x, y) {
     attr("mac-enp0s9", getRandomMac());
     attr("data-switch-enp0s9", "");
 
-    //<-- añadimos el sistema de archivos
+    //añadimos el sistema de archivos
     attr("filesystem", JSON.stringify(filesystem));
 
-    //<-- añadimos eventos
+    //añadimos eventos
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showRouterMenu(event)");

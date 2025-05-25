@@ -4,15 +4,21 @@ async function domainNameResolution(networkObjectId, domain) {
     const useCache = $networkObject.getAttribute("resolved") === "true";
     let response = false; //<-- inicializamos la respuesta a falso
 
-    response = getDomainFromEtcHosts(networkObjectId, domain); //<--comprobamos si el dominio esta en el archivo /etc/hosts
+    //comprobamos si el dominio esta en el archivo /etc/hosts
 
-    if (!response && useCache) response = isDomainInCacheDns(networkObjectId, domain)[1]; //<--comprobamos si el dominio esta en la cache dns (si la cache esta activa)
+    response = getDomainFromEtcHosts(networkObjectId, domain);
 
-    if (!response) { //<-- intentamos resolver el dominio desde el servidor dns
+    //comprobamos si el dominio esta en la cache dns (si la cache esta activa)
+
+    if (!response && useCache) response = isDomainInCacheDns(networkObjectId, domain)[1];
+
+    //intentamos resolver el dominio desde el servidor dns
+
+    if (!response) {
 
         try {
 
-            await getDomainFromServer( 
+            await getDomainFromServer(
                 networkObjectId, //id del objeto
                 domain, //dominio
                 false, //verbose
@@ -27,15 +33,15 @@ async function domainNameResolution(networkObjectId, domain) {
             response = dnsReply.answer; //<-- respuesta obtenida
 
         } catch (error) {
-            
+
             response = false; //<-- falso si no se pudo resolver
-            
+
         }
 
     }
 
     return response;
-    
+
 }
 
 async function getDomainFromServer(networkObjectId, domain, verbose, dnsServer = "", query_type, deleteAfterUse, genCache) {
@@ -43,26 +49,48 @@ async function getDomainFromServer(networkObjectId, domain, verbose, dnsServer =
     const $networkObject = document.getElementById(networkObjectId);
     const isResolvedOn = $networkObject.getAttribute("resolved") === "true"; //<-- comprobamos si el equipo tiene una cache dns
 
-    if (!isValidIp(domain) && !domain.endsWith(".")) domain = domain + "."; //<-- si se trata de un dominio, nos aseguramos de que este termine en punto (FQDN)
+    if (!isValidIp(domain) && !domain.endsWith(".")) domain = domain + ".";
 
     dnsRequestFlag[networkObjectId] = false; // <-- reseteamos el flag de comunicaciones
 
-    dnsServer = (dnsServer === "") ? $networkObject.getAttribute("data-dns-server") : dnsServer; // <-- si no se especifica un servidor dns se usa el del equipo
+    dnsServer = (dnsServer === "") ? getDnsServers(networkObjectId)[0] : dnsServer; // <-- si no se especifica un servidor dns se usa el del equipo
 
-    await dnsRequestPacketGenerator(networkObjectId, domain, dnsServer, query_type); //<-- realizamos la solicitud dns
+    if (!dnsServer) throw new Error("Error: No hay servidores DNS configurados.");
 
-    if (dnsRequestFlag[networkObjectId] === false) { //<-- comprobamos si se ha obtenido una respuesta
-        if (verbose) terminalMessage(`communications error to ${dnsServer}#53: timed out`, networkObjectId); //<-- en modo verboso se muestra este mensaje en la consola
-        throw new Error("Error: No se pudo resolver el nombre de dominio."); //<-- en modo no verboso se lanza una excepcion
+    if (isLocalIp(networkObjectId, dnsServer)) { //si el servidor es local, se llama directamente al servicio named en el dispositivo
+
+        const newDnsRequest = new dnsRequest(
+            $networkObject.getAttribute(`ip-${getInterfaces(networkObjectId)[0]}`),
+            dnsServer,
+            $networkObject.getAttribute(`mac-${getInterfaces(networkObjectId)[0]}`),
+            $networkObject.getAttribute(`mac-${getInterfaces(networkObjectId)[0]}`),
+            domain
+        );
+
+        newDnsRequest.answer_type = query_type;
+        
+        buffer[networkObjectId] = await named_service(networkObjectId, newDnsRequest);
+
+    } else {
+
+        await dnsRequestPacketGenerator(networkObjectId, domain, dnsServer, query_type); //<-- realizamos la solicitud dns al servidor remoto
+
+        if (dnsRequestFlag[networkObjectId] === false) { //<-- comprobamos si se ha obtenido una respuesta
+            if (verbose) terminalMessage(`communications error to ${dnsServer}#53: timed out`, networkObjectId); //<-- en modo verboso se muestra este mensaje en la consola
+            throw new Error("Error: No se pudo resolver el nombre de dominio."); //<-- en modo no verboso se lanza una excepcion
+        }
+
     }
 
-    let dnsReply = buffer[networkObjectId]; //<-- recuperamos el paquete de respuesta
+    const dnsReplyPacket = buffer[networkObjectId]; //<-- recuperamos el paquete de respuesta
 
-    if (verbose) generateDnsOuput(dnsReply, networkObjectId); //<-- en modo verboso se genera este mensaje en la consola
+    console.log(dnsReplyPacket);
 
-    if (!dnsReply.answer) throw new Error("Error: No se pudo resolver el nombre de dominio."); //se lanza una excepcion si no hay respuesta
+    if (verbose) generateDnsOuput(dnsReplyPacket, networkObjectId); //<-- en modo verboso se genera este mensaje en la consola
 
-    if (isResolvedOn && genCache) addDnsCacheEntry(networkObjectId, dnsReply.query, dnsReply.answer_type, dnsReply.answer, dnsReply.origin_ip);
+    if (!dnsReplyPacket.answer) throw new Error("Error: No se pudo resolver el nombre de dominio."); //se lanza una excepcion si no hay respuesta
+
+    if (isResolvedOn && genCache) addDnsCacheEntry(networkObjectId, dnsReplyPacket.query, dnsReplyPacket.answer_type, dnsReplyPacket.answer, dnsReplyPacket.origin_ip);
 
     if (deleteAfterUse) delete buffer[networkObjectId];
 

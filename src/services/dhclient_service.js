@@ -76,7 +76,7 @@ async function dhcpRequestGenerator(networkObjectId, renewPhase, networkObjectIn
 
     //atributos de cliente DHCP
     const networkObjectGateway = $networkObject.getAttribute("data-gateway");
-    const networkObjectDns = $networkObject.getAttribute("data-dns-server");
+    const networkObjectDns = getDnsServers(networkObjectId)[0];
     const networkObjectLeaseTime = $networkObject.getAttribute("data-dhcp-lease-time");
     const dhcpServerIp = $networkObject.getAttribute("data-dhcp-server");
 
