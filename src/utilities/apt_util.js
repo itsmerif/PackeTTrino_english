@@ -17,9 +17,13 @@ function command_apt(networkObjectId, args) {
     terminalMessage(`Leyendo lista de paquetes... Hecho\nCreando árbol de dependencias... Hecho\nLeyendo la información de estado... Hecho`,networkObjectId);
 
     try {
+
         dpkg(networkObjectId, option, package);
+
     }catch(error) {
+
         terminalMessage(error.message, networkObjectId);
+        
     }
     
 }

@@ -15,7 +15,7 @@ function PcObject(x, y) {
         arpTable(),
         cacheDnsTable(),
         routingTable(),
-        advancedOptionsObject("terminal", "arp", "cacheDns", "browser", "delete")
+        advancedOptionsObject("terminal", "arp", "cacheDns", "delete")
     );
 
     const filesystem = {
@@ -50,6 +50,7 @@ function PcObject(x, y) {
     //instalamos paquetes
     installDhclient($networkObject);
     installIptables($networkObject);
+    installBrowser($networkObject);
 
     //añadimos eventos
     attr("onclick", "showPcMenu('" + $networkObject.id + "')");
