@@ -27,21 +27,25 @@ async function command_curl(networkObjectId, args) {
 
     const [protocol, address, port] = parseSearch(url);
 
-    try {
+    if (visualToggle) await minimizeTerminal();
 
-        const httpReply = await http(networkObjectId, address, method, port); 
-        
-        let message = `URL:\n ${protocol}://${address}:${port}\n\n`;
-        message += `Method:\n ${method.toUpperCase()}\n\n`;
-        message += `Headers:\n ${httpReply.header}\n\n`;
-        message += `Body:\n ${httpReply.body}`;
+        try {
 
-        terminalMessage(message, networkObjectId, false);
+            const httpReply = await http(networkObjectId, address, method, port); 
+            
+            let message = `URL:\n ${protocol}://${address}:${port}\n\n`;
+            message += `Method:\n ${method.toUpperCase()}\n\n`;
+            message += `Headers:\n ${httpReply.header}\n\n`;
+            message += `Body:\n ${httpReply.body}`;
 
-    } catch (error) {
+            terminalMessage(message, networkObjectId, false);
 
-        terminalMessage(`curl: ${error.message}`, networkObjectId);
+        } catch (error) {
 
-    }
+            terminalMessage(`curl: ${error.message}`, networkObjectId);
+
+        }
+
+    if (visualToggle) await maximizeTerminal();
 
 }
