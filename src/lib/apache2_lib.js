@@ -588,24 +588,10 @@ margin-bottom: 0;
 </html>`;
 
 /**ESTA FUNCION DEVUELVE EL CONTENIDO DEL ARCHIVO INDEX.HTML DE UN DISPOSITIVO EN EL DIRECTORIO POR DEFECTO */
-function getApacheWebContent(networkObjectId, requestedPort, requestedIp) {
-
+function getApacheWebContent(networkObjectId, requestedPort, requestedIp) {                                                             
     const $networkObject = document.getElementById(networkObjectId);
-
-    if ($networkObject.getAttribute("apache2") !== "true") return $BROWSERERRORPAGE;
-
     const networkObjectFileSystem = new FileSystem($networkObject);
-    const listenOnPort = parseInt($networkObject.getAttribute("apachePort"));
-    const listenOnIp = $networkObject.getAttribute("apacheIp");
     const documentRoot = $networkObject.getAttribute("apacheDocumentRoot");
-    const directoryIndex = $networkObject.getAttribute("apacheDirectoryIndex");
-
-    let htmlContent;
-
-    //el servidor NO está levantado para esa ip o puerto
-    if (listenOnIp !== "*" && requestedIp !== "*" && listenOnIp !== requestedIp) return $BROWSERERRORPAGE;
-    if (listenOnPort !== requestedPort) return $BROWSERERRORPAGE;
-
+    const directoryIndex = $networkObject.getAttribute("apacheDirectoryIndex");     
     return networkObjectFileSystem.read(directoryIndex, documentRoot.split("/").slice(1));
-
 }

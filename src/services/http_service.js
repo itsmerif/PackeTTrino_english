@@ -2,9 +2,13 @@ async function http(networkObjectId, destinationIp, method, port) {
     
     const $networkObject = document.getElementById(networkObjectId);
 
+    //comprobamos que el puerto y método sean válidos
+
     if (isNaN(port) || port < 1 || port > 65535) throw new Error(`Error: Puerto ${port} no válido.`);
 
     if (!["GET", "POST", "PUT", "DELETE"].includes(method.toUpperCase())) throw new Error(`Error: Método ${method} no válido.`);
+
+    //comprobamos si es una IP o un dominio
 
     if (!isValidIp(destinationIp)) {
         const domainName = destinationIp;
@@ -12,18 +16,18 @@ async function http(networkObjectId, destinationIp, method, port) {
         if (!destinationIp) throw new Error(`Error: No se pudo resolver el dominio "${domainName}".`);
     }
 
+    //comprobamos si es un servidor web local
+    
     if (isLocalIp(networkObjectId,destinationIp)) {
     
-        const newPacket = new httpReply(
-            getAvailableIps(networkObjectId)[0], //ip del origen
+        const newPacket = await apache_service(networkObjectId, new httpRequest(
+            $networkObject.getAttribute(`ip-${getInterfaces(networkObjectId)[0]}`), //ip del origen
             destinationIp, //ip del destino
             $networkObject.getAttribute(`mac-${getInterfaces(networkObjectId)[0]}`), //mac del origen
             "", //mac del destino
-            port, //puerto del origen
+            Math.floor(Math.random() * (65535 - 49152 + 1)) + 49152, // <--- generamos un puerto aleatorio para el origen
             port //puerto del destino
-        );
-
-        newPacket.body = getApacheWebContent(networkObjectId, port, "*");
+        ));
 
         return newPacket;
 
