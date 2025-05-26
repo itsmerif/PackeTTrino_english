@@ -7,10 +7,6 @@ function installApache2($networkObject) {
     //atributos de apache
 
     attr("apache2", "true");
-    attr("apacheDocumentRoot", "/var/www/html");
-    attr("apacheDirectoryIndex", "index.html");
-    attr("apacheIp", "*");
-    attr("apachePort", "80");
     
     //directorios y archivos
 
@@ -44,7 +40,7 @@ function uninstallApache2(networkObjectId) {
     networkObjectFileSystem.rmdir("www", ["var"]);
     networkObjectFileSystem.rmdir("apache2", ["etc"]);
 
-    rattr("apache2", "apacheDocumentRoot", "apacheDirectoryIndex", "apacheIp", "apachePort");
+    rattr("apache2");
     
     if ($networkObject.id.startsWith("pc-")) $networkObject.querySelector("img").src = "./assets/board/pc.svg";
 

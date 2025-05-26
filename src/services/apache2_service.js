@@ -5,14 +5,12 @@ async function apache_service(networkObjectId, packet) {
     const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
     const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
     const isApacheOn = $networkObject.getAttribute("apache2") === "true";
-    const listenOnPort = parseInt($networkObject.getAttribute("apachePort"));
-    const listenOnIp = $networkObject.getAttribute("apacheIp");
 
     if (!isApacheOn) return;
-    if (listenOnIp !== "*" && listenOnIp !== packet.destination_ip) return;
-    if (listenOnPort !== packet.dport) return;
 
     const apacheContent = getApacheWebContent(networkObjectId, packet.dport, packet.destination_ip);
+
+    if (!apacheContent) return;
 
     let newPacket = new httpReply(
         networkObjectIp, //ip del origen
@@ -27,4 +25,37 @@ async function apache_service(networkObjectId, packet) {
 
     return newPacket;
 
+}
+
+/**ESTA FUNCION DEVUELVE EL CONTENIDO DEL ARCHIVO INDEX.HTML DE UN DISPOSITIVO EN EL DIRECTORIO POR DEFECTO */
+
+function getApacheWebContent(networkObjectId, requestedPort, requestedIp) {   
+                                                              
+    const $networkObject = document.getElementById(networkObjectId);
+    const networkObjectFileSystem = new FileSystem($networkObject);
+
+    try {
+
+        const fileResponse = apacheSitesParser(networkObjectId);
+
+        for (let site in fileResponse) {
+
+            const isValidPort = parseInt(fileResponse[site].port) === parseInt(requestedPort);
+            const isValidIp = fileResponse[site].ip === "*" || fileResponse[site].ip === requestedIp;
+            const indexFile = fileResponse[site].directoryIndex;
+            const documentRoot = fileResponse[site].documentRoot;
+
+            if (isValidPort && isValidIp) {
+                const directoryIndexContent = networkObjectFileSystem.read(indexFile, documentRoot.split("/").slice(1));
+                return directoryIndexContent;
+            }
+
+        }
+
+    }catch (e) {
+
+        return; //TODO: crear un log en el sistema de ficheros para los errores
+
+    }
+ 
 }

@@ -569,23 +569,4 @@ margin-bottom: 0;
 </body>
 </html>`;
 
-/**ESTA FUNCION DEVUELVE EL CONTENIDO DEL ARCHIVO INDEX.HTML DE UN DISPOSITIVO EN EL DIRECTORIO POR DEFECTO */
-function getApacheWebContent(networkObjectId, requestedPort, requestedIp) {                                                             
-    const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectFileSystem = new FileSystem($networkObject);
-    const documentRoot = $networkObject.getAttribute("apacheDocumentRoot");
-    const directoryIndex = $networkObject.getAttribute("apacheDirectoryIndex");
 
-    try {
-
-        const directoryIndexContent = networkObjectFileSystem.read(directoryIndex, documentRoot.split("/").slice(1));
-        
-        return directoryIndexContent;
-
-    }catch (e) {
-
-        return $DEVICEREJECTIONCONTENT;
-
-    }
-    
-}
