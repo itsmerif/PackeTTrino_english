@@ -55,8 +55,19 @@ function command_cp(networkObjectId, args) {
 function command_ls(networkObjectId, args) {
 
     const $networkObject = document.getElementById(networkObjectId);
+
     let fileSystem = new FileSystem($networkObject);
-    fileSystem.ls(...args);
+
+    try {
+        
+        const output = fileSystem.ls(...args);
+        terminalMessage(output, networkObjectId);
+
+    } catch (e) {
+        terminalMessage(`ls: ${e.message}`, networkObjectId);
+
+    }
+
 }
 
 function command_rm(networkObjectId, inputPath) {

@@ -57,7 +57,7 @@ class FileSystem {
         if (!options.includes("-l")) output = output.join(" ");
         else output = output.join("\n");
 
-        terminalMessage(output, (this.item).id);
+        return output;
 
     }
 
