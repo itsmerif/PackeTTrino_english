@@ -16,8 +16,7 @@ function command_nano(networkObjectId, file) {
         fileEditorContainer.style.display = "block"; //<-- mostramos el editor
         editorArea.focus();
     } catch (e) {
-        terminalMessage(e.message, networkObjectId);
-        console.log(e);
+        terminalMessage(`nano: ${e.message}`, networkObjectId);
     }
 
 }

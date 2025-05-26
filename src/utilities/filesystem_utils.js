@@ -28,6 +28,30 @@ function command_touch(networkObjectId, pathInput) {
 
 }
 
+function command_cp(networkObjectId, args) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const originInput = args[0];
+    const destinationInput = args[1];
+
+    let fileSystem = new FileSystem($networkObject);
+    let directoryPath = pathBuilder(originInput);
+    let destinationPath = pathBuilder(destinationInput);
+    let fileName = directoryPath.pop();
+    let destinationFileName = destinationPath.pop();
+
+    try {
+
+        fileSystem.cp(fileName, destinationFileName, directoryPath, destinationPath);
+
+    }catch(e) {
+
+        terminalMessage(`cp: ${e.message}`, networkObjectId);
+
+    }
+    
+}
+
 function command_ls(networkObjectId, args) {
 
     const $networkObject = document.getElementById(networkObjectId);
