@@ -67,8 +67,10 @@ function getApacheWebContent(networkObjectId, requestedPort, requestedIp) {
 
             //si no se pudo obtener el index.html, intentamos mostrar el índice del directorio
 
+            const directoryIndexFiles = networkObjectFileSystem.ls("-R").split(" ").filter(el => el.startsWith(`${documentRoot}/`)).map(el => el.split(`${documentRoot}/`)[1]);
+
             return (indexesAllowed === true) 
-                    ? $DIRECTORYINDEXCONTENT(documentRoot) 
+                    ? $DIRECTORYINDEXCONTENT(documentRoot, directoryIndexFiles) 
                     : $FORBIDDENCONTENT;
 
         }

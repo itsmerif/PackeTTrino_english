@@ -768,7 +768,7 @@ margin-bottom: 0;
 </body>
 </html>`;
 
-const $DIRECTORYINDEXCONTENT = (documentRoot) => {
+const $DIRECTORYINDEXCONTENT = (documentRoot, directoryIndexFiles) => {
 return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -1020,54 +1020,14 @@ return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://w
                     📂 ${documentRoot}
                 </div>
                 <div class="directory-list">
-                    <div class="directory-header">
-                        <span></span>
-                        <span>Nombre</span>
-                        <span>Tamaño</span>
-                        <span>Modificado</span>
-                    </div>
-                    <div class="directory-item">
-                        <div class="file-icon folder-icon">📁</div>
-                        <a href="../" class="file-name">../</a>
-                        <span class="file-size">-</span>
-                        <span class="file-date">-</span>
-                    </div>
-                    <div class="directory-item">
-                        <div class="file-icon folder-icon">📁</div>
-                        <a href="assets/" class="file-name">assets/</a>
-                        <span class="file-size">-</span>
-                        <span class="file-date">2025-05-25 14:30</span>
-                    </div>
-                    <div class="directory-item">
-                        <div class="file-icon folder-icon">📁</div>
-                        <a href="images/" class="file-name">images/</a>
-                        <span class="file-size">-</span>
-                        <span class="file-date">2025-05-24 09:15</span>
-                    </div>
-                    <div class="directory-item">
-                        <div class="file-icon file-icon-regular">📄</div>
-                        <a href="about.html" class="file-name">about.html</a>
-                        <span class="file-size">12.4 KB</span>
-                        <span class="file-date">2025-05-25 16:20</span>
-                    </div>
-                    <div class="directory-item">
-                        <div class="file-icon file-icon-regular">🎨</div>
-                        <a href="styles.css" class="file-name">styles.css</a>
-                        <span class="file-size">8.7 KB</span>
-                        <span class="file-date">2025-05-25 15:45</span>
-                    </div>
-                    <div class="directory-item">
-                        <div class="file-icon file-icon-regular">⚡</div>
-                        <a href="script.js" class="file-name">script.js</a>
-                        <span class="file-size">15.2 KB</span>
-                        <span class="file-date">2025-05-25 14:12</span>
-                    </div>
-                    <div class="directory-item">
-                        <div class="file-icon file-icon-regular">📄</div>
-                        <a href="readme.txt" class="file-name">readme.txt</a>
-                        <span class="file-size">2.1 KB</span>
-                        <span class="file-date">2025-05-20 11:30</span>
-                    </div>
+                    ${directoryIndexFiles.map(file => `
+                        <div class="directory-item">
+                            <div class="file-icon file-icon-regular">📄</div>
+                            <a href="${file}" class="file-name">${file}</a>
+                            <span class="file-size">12.4 KB</span>
+                            <span class="file-date">2025-05-25 16:20</span>
+                        </div>
+                    `).join("")}
                 </div>
             </div>
         </div>
