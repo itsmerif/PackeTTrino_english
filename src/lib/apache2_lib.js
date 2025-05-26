@@ -564,24 +564,6 @@ margin-bottom: 0;
             intervención técnica.
         </p>
     </div>
-    
-    <div class="info-box">
-        <h3>Posibles causas del rechazo:</h3>
-        <ul>
-            <li>Servidor sobrecargado con demasiadas conexiones simultáneas</li>
-            <li>Mantenimiento programado o actualizaciones en curso</li>
-            <li>Problemas de conectividad de red o infraestructura</li>
-            <li>Límites de recursos del servidor alcanzados</li>
-            <li>Configuración de seguridad que bloquea conexiones</li>
-            <li>Fallas temporales en servicios dependientes</li>
-        </ul>
-    </div>
-
-    <div class="retry-section">
-        <p>
-            Por favor, <b>recarga la página</b> o intenta acceder nuevamente en unos minutos.
-        </p>
-    </div>
 </div>
 </div>
 </body>
@@ -592,6 +574,18 @@ function getApacheWebContent(networkObjectId, requestedPort, requestedIp) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectFileSystem = new FileSystem($networkObject);
     const documentRoot = $networkObject.getAttribute("apacheDocumentRoot");
-    const directoryIndex = $networkObject.getAttribute("apacheDirectoryIndex");     
-    return networkObjectFileSystem.read(directoryIndex, documentRoot.split("/").slice(1));
+    const directoryIndex = $networkObject.getAttribute("apacheDirectoryIndex");
+
+    try {
+
+        const directoryIndexContent = networkObjectFileSystem.read(directoryIndex, documentRoot.split("/").slice(1));
+        
+        return directoryIndexContent;
+
+    }catch (e) {
+
+        return $DEVICEREJECTIONCONTENT;
+
+    }
+    
 }
