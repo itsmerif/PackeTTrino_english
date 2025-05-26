@@ -2,12 +2,9 @@ async function serviceProcessor(networkObjectId, packet, networkObjectInterface)
 
     const $networkObject = document.getElementById(networkObjectId);
     const availableServices = getAvailableServices(networkObjectId);
-    
-    const response = {
-        packet: {},
-        outInterface: ""
-    }
+    const responses = [];
 
+    //servicio DHCP
     if (packet.protocol === "dhcp") {
 
         if (availableServices.includes("dhclient")) {
@@ -15,8 +12,12 @@ async function serviceProcessor(networkObjectId, packet, networkObjectInterface)
             const replyPacket = await dhclient_service(networkObjectId, packet);
 
             if (replyPacket) {
-                response.packet = replyPacket;
-                response.outInterface = networkObjectInterface;
+
+                responses.push({
+                    packet: replyPacket,
+                    outInterface: networkObjectInterface
+                });
+
             }
 
         }
@@ -26,8 +27,12 @@ async function serviceProcessor(networkObjectId, packet, networkObjectInterface)
             const replyPacket = await dhcpd_service(networkObjectId, packet, networkObjectInterface);
 
             if (replyPacket) {
-                response.packet = replyPacket;
-                response.outInterface = networkObjectInterface;
+
+                responses.push({
+                    packet: replyPacket,
+                    outInterface: networkObjectInterface
+                })
+
             }
 
         }
@@ -38,11 +43,10 @@ async function serviceProcessor(networkObjectId, packet, networkObjectInterface)
 
             if (replyPacket) {
 
-                response.packet = replyPacket;
-
-                if (replyPacket.type === "offer" || replyPacket.type === "ack") {
-                    response.outInterface = getInfoFromIp(networkObjectId, replyPacket.giaddr)[0];
-                }
+                responses.push({
+                    packet: replyPacket,
+                    outInterface: (replyPacket.type === "offer" || replyPacket.type === "ack") ? getInfoFromIp(networkObjectId, replyPacket.giaddr)[0] : ""
+                });
 
             }
 
@@ -50,16 +54,38 @@ async function serviceProcessor(networkObjectId, packet, networkObjectInterface)
 
     }
 
+    //servicio DNS
     if (packet.protocol === "dns" && packet.type === "request" && availableServices.includes("named")) {
+
         const replyPacket = await named_service(networkObjectId, packet);
-        if (replyPacket) response.packet = replyPacket;
+
+        if (replyPacket) {
+
+            responses.push({
+                packet: replyPacket,
+                outInterface: ""
+            });
+
+        }
+
     }
 
+    //servicio HTTP
     if (packet.protocol === "http" && packet.type === "request" && availableServices.includes("apache2")) {
+
         const replyPacket = await apache_service(networkObjectId, packet);
-        if (replyPacket) response.packet = replyPacket;
+
+        if (replyPacket) {
+
+            responses.push({
+                packet: replyPacket,
+                outInterface: ""
+            });
+
+        }
+
     }
 
-    return response;
+    return responses.filter(Boolean);
 
 }

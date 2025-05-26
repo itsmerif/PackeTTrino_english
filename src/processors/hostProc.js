@@ -28,12 +28,18 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
 
     //procesamiento por parte de SERVICIOS
 
-    const response = await serviceProcessor(networkObjectId, packet, networkObjectInterface);
+    const responses = await serviceProcessor(networkObjectId, packet, networkObjectInterface);
 
-    if (!isEmptyObject(response.packet)) {
-        const replyPacket = response.packet;
-        addPacketTraffic(replyPacket);
-        await routing(networkObjectId, replyPacket, true)
+    if (responses.length > 0) {
+
+        const promises = responses.map(response => {
+            const replyPacket = response.packet;
+            addPacketTraffic(replyPacket);
+            return routing(networkObjectId, replyPacket, true);
+        });
+
+        await Promise.all(promises);
+        
     }
 
 }

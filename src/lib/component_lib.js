@@ -460,7 +460,12 @@ function deleteTooltip(event) {
     }
 }
 
-/**ESTA FUCNÓN DEVUELVE TRUE SI EL OBJETO ES UN OBJETO VACIO*/
+/**ESTA FUNCIÓN DEVUELVE TRUE SI EL OBJETO ES UN OBJETO VACIO*/
 function isEmptyObject(obj) {
   return obj && typeof obj === 'object' && !Array.isArray(obj) && Object.keys(obj).length === 0;
+}
+
+/**ESTA FUNCIÓN GENERA UN DELAY COMO PROMESA*/
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

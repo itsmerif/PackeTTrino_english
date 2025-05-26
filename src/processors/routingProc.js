@@ -1,4 +1,4 @@
-async function routing(networkObjectId, packet, isHost = false) {
+async function routing(networkObjectId, packet, isNotForward = false) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
@@ -6,7 +6,7 @@ async function routing(networkObjectId, packet, isHost = false) {
 
     if (packet.destination_ip === "255.255.255.255" || packet.destination_mac === "ff:ff:ff:ff:ff:ff") {
 
-        if (isHost) {
+        if (isNotForward) {
             const iface = getInterfaces($networkObject.id)[0];
             const switchId = $networkObject.getAttribute(`data-switch-${iface}`);
             addPacketTraffic(packet);
@@ -19,12 +19,12 @@ async function routing(networkObjectId, packet, isHost = false) {
 
     for (let i = 1; i < $routingRules.length; i++) {
 
-        let $rule = $routingRules[i];
-        let $fields = $rule.querySelectorAll("td");
-        let ruleNetwork = $fields[0].innerHTML;
-        let ruleNetmask = $fields[1].innerHTML;
-        let ruleInterface = $fields[3].innerHTML;
-        let rulenexthop = $fields[4].innerHTML;
+        const $rule = $routingRules[i];
+        const $fields = $rule.querySelectorAll("td");
+        const ruleNetwork = $fields[0].innerHTML;
+        const ruleNetmask = $fields[1].innerHTML;
+        const ruleInterface = $fields[3].innerHTML;
+        const rulenexthop = $fields[4].innerHTML;
 
         if (ruleNetwork === getNetwork(packet.destination_ip, ruleNetmask)) {
 
@@ -35,17 +35,17 @@ async function routing(networkObjectId, packet, isHost = false) {
 
             if (rulenexthop === "0.0.0.0") {
                 nexthopMac = isIpInARPTable(networkObjectId, packet.destination_ip) || 
-                await arpResolve(networkObjectId, packet.destination_ip, isHost ? undefined : ruleInterface);
+                await arpResolve(networkObjectId, packet.destination_ip, isNotForward ? undefined : ruleInterface);
             } else {
                 nexthopMac = isIpInARPTable(networkObjectId, rulenexthop) || 
-                await arpResolve(networkObjectId, rulenexthop, isHost ? undefined : ruleInterface);
+                await arpResolve(networkObjectId, rulenexthop, isNotForward ? undefined : ruleInterface);
             }
 
             if (!nexthopMac) return;
             
             packet.destination_mac = nexthopMac;
 
-            if (isHost) { // Procesamiento específico para hosts
+            if (isNotForward) {
                 
                 if (!firewallProcessorFilter(networkObjectId, packet, "OUTPUT", "", ruleInterface)) {
                     if (visualToggle) igniteFire(networkObjectId);
@@ -56,9 +56,10 @@ async function routing(networkObjectId, packet, isHost = false) {
                 addPacketTraffic(packet);
                 await switchProcessor(nextSwitch, networkObjectId, packet);
 
-            } else { // Procesamiento específico para routers
+            } else {
                 
                 await firewallProc(networkObjectId, packet, ruleInterface);
+                
             }
 
             return;

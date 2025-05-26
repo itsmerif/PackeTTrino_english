@@ -53,22 +53,25 @@ async function packetProcessor_Router(switchId, networkObjectId, packet) {
 
         //procesamos el paquete por parte de SERVICIOS
 
-        const response = await serviceProcessor(networkObjectId, packet, networkObjectInterface);
+        const responses = await serviceProcessor(networkObjectId, packet, networkObjectInterface);
 
-        console.log(response);
+        if (responses.length > 0) {
 
-        if (!isEmptyObject(response.packet)) {
-            
-            const replyPacket = response.packet;
-            const outputInterface = response.outInterface;
-            
-            if (outputInterface !== "") {
-                addPacketTraffic(replyPacket);
-                await switchProcessor($networkObject.getAttribute(`data-switch-${outputInterface}`), networkObjectId, replyPacket);
-                return;
-            }
-            
-            await routing(networkObjectId, replyPacket);
+            const promises = responses.map(async (response) => {
+
+                const replyPacket = response.packet;
+                const outputInterface = response.outInterface;
+
+                if (outputInterface !== "") {
+                    addPacketTraffic(replyPacket);
+                    await switchProcessor($networkObject.getAttribute(`data-switch-${outputInterface}`), networkObjectId, replyPacket);
+                }
+
+                await routing(networkObjectId, replyPacket);
+                
+            });
+
+            await Promise.all(promises);
 
         }
 
