@@ -104,6 +104,7 @@ function startService(networkObjectId, service) {
 
         "resolved": () => {
             $networkObject.setAttribute("resolved", "true");
+            flushDnsCache(networkObjectId);
         },
         
     }

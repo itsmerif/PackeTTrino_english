@@ -101,8 +101,8 @@ function getDomainFromEtcHosts(networkObjectId, inputDomain) {
     let response = false; //<-- inicializamos la respuesta a falso
     let fileSystem = new FileSystem($networkObject); //<-- creamos un objeto de sistema de archivos
     let directoryPath = pathBuilder("/etc/hosts");
-    let fileName = directoryPath.pop(); 
-    
+    let fileName = directoryPath.pop();
+
     try {
 
         const etcHostsContent = fileSystem.read(fileName, directoryPath); //<-- obtenemos el contenido del archivo
@@ -141,7 +141,7 @@ function addDnsEntry(serverObjectId, newrecord) {
         <td>${(newrecord.type).toUpperCase()}</td>
         <td>${newrecord.value}</td>
     `;
-    
+
     newRow.classList.add(newrecord.type.toUpperCase()); //<-- añadimos el tipo de registro a la fila
     dnsTable.appendChild(newRow);
 
@@ -301,7 +301,7 @@ function addDnsCacheEntry(networkObjectId, domain, recordType, value, server) {
     `;
 
     newRow.setAttribute("data-server", server); //<-- se añade el servidor al que se hizo la consulta
-    
+
     dnsTable.appendChild(newRow);
 
 }
@@ -314,16 +314,16 @@ function iterativeDnsQuery(serverObjectId, targetDomain) {
     const $records = $dnsTable.querySelectorAll("tr");
     let response = false;
 
-    $records.forEach($record => {       
-        const $fields = $record.querySelectorAll("td");       
-        if ($fields.length === 0) return;    
+    $records.forEach($record => {
+        const $fields = $record.querySelectorAll("td");
+        if ($fields.length === 0) return;
         const domain = $fields[0].innerHTML;
         const recordType = $fields[1].innerHTML;
         const value = $fields[2].innerHTML;
         if (domain === targetDomain && (recordType === "A" || recordType === "PTR")) response = value;
         if (domain === targetDomain && recordType === "CNAME") response = iterativeDnsQuery(serverObjectId, value); //<-- si es un CNAME, se busca en el dominio que apunta
     });
-    
+
     return response;
 }
 
@@ -331,7 +331,7 @@ function iterativeDnsQuery(serverObjectId, targetDomain) {
 function dropDnsZone(serverObjectId, domain) {
 
     const $serverObject = document.getElementById(serverObjectId);
-    const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");  
+    const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
     const $dnsRecords = $dnsTable.querySelectorAll("tr");
 
     $dnsRecords.forEach($record => {
@@ -349,7 +349,7 @@ function getSoaRecord(serverObjectId, targetDomain) {
     const $serverObject = document.getElementById(serverObjectId);
     const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
     const $soaRecords = $dnsTable.querySelectorAll(".SOA");
-    
+
     let [authorityNameServer, authorityDomain] = [false, false];
 
     $soaRecords.forEach($record => {
@@ -371,10 +371,10 @@ function getDnsServers(networkObjectId) {
     const networkObjectFileSystem = new FileSystem($networkObject);
     const fileContent = networkObjectFileSystem.read("resolv.conf", ["etc"]);
     return fileContent.split("\n")
-                .map(line => line.trim().replace(/\s+/g, " "))
-                .filter(line => line !== "" && !line.startsWith("#") && line.startsWith("nameserver"))
-                .map(line => line.split(" ")[1])
-                .filter(line => isValidIp(line));
+        .map(line => line.trim().replace(/\s+/g, " "))
+        .filter(line => line !== "" && !line.startsWith("#") && line.startsWith("nameserver"))
+        .map(line => line.split(" ")[1])
+        .filter(line => isValidIp(line));
 }
 
 /**ESTA FUNCION CONFIGURA LOS SERVIDORES DNS DE UN EQUIPO */
@@ -384,4 +384,17 @@ function setDnsServers(networkObjectId, dnsServers) {
     let fileContent = "";
     dnsServers.forEach(dnsServer => fileContent += `nameserver ${dnsServer}\n`);
     networkObjectFileSystem.write("resolv.conf", ["etc"], fileContent);
+}
+
+/**ESTA FUNCION FLUSHEA LA CACHE DNS DE UN EQUIPO */
+function flushDnsCache(networkObjectId) {
+    const $networkObject = document.getElementById(networkObjectId);
+    const $cacheDnsTable = $networkObject.querySelector(".cache-dns-table").querySelector("table");
+    $cacheDnsTable.innerHTML = `
+        <tr>
+            <th>Dominio</th>
+            <th>Tipo de Registro</th>
+            <th>Valor</th>
+        </tr>
+    `;
 }
