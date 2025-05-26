@@ -109,9 +109,9 @@ async function traceroute(networkObjectId, destination, numeric = false) {
 
 }
 
-async function icmpRequestPacketGenerator(networkObjectId, originIp, destinationIp, interface = "enp0s3") {
+async function icmpRequestPacketGenerator(networkObjectId, originIp, destinationIp, iface = "enp0s3") {
     const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectMac = $networkObject.getAttribute(`mac-${interface}`);
+    const networkObjectMac = $networkObject.getAttribute(`mac-${iface}`);
     let packet = new IcmpEchoRequest(originIp, destinationIp, networkObjectMac, "");
     await routing(networkObjectId, packet, true);
 }

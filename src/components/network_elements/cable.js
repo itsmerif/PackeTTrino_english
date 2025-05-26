@@ -1,4 +1,4 @@
-function CableObject(x1, y1, x2, y2, start, end, interface = "enp0s3") {
+function CableObject(x1, y1, x2, y2, start, end, networkObjectInterface = "enp0s3") {
 
     const svg = document.getElementById("svg-board");
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -30,7 +30,7 @@ function CableObject(x1, y1, x2, y2, start, end, interface = "enp0s3") {
     circle.setAttribute("r", "10");
     circle.setAttribute("fill", "red");
 
-    title.textContent = interface;
+    title.textContent = networkObjectInterface;
 
     circle.appendChild(title);
     svg.appendChild(line);
@@ -45,9 +45,9 @@ function deleteCable(event) {
     const $networkObject = document.getElementById(cableObject.getAttribute("end-start"));
     const $switchObject = document.getElementById(cableObject.getAttribute("end-end"));
     
-    getInterfaces($networkObject.id).forEach(interface => {
-        if ( $networkObject.getAttribute(`data-switch-${interface}`) === $switchObject.id) {
-            $networkObject.setAttribute(`data-switch-${interface}`, "");
+    getInterfaces($networkObject.id).forEach(iface => {
+        if ( $networkObject.getAttribute(`data-switch-${iface}`) === $switchObject.id) {
+            $networkObject.setAttribute(`data-switch-${iface}`, "");
         }
     });
 

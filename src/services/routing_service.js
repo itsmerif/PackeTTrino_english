@@ -1,7 +1,7 @@
 /**ESTA FUNCION INSERTA UN REGLA DE CONEXION DIRECTA A LA TABLA DE ENRUTAMIENTO DE UN EQUIPO */
-function setDirectRoutingRule(routerObjectId, gateway, netmask, interface) {
+function setDirectRoutingRule(routerObjectId, gateway, netmask, iface) {
 
-    if (!netmask || !gateway || !interface) return;
+    if (!netmask || !gateway || !iface) return;
 
     const $networkObject = document.getElementById(routerObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
@@ -14,7 +14,7 @@ function setDirectRoutingRule(routerObjectId, gateway, netmask, interface) {
 
         if ($fields.length === 0) return;
 
-        if ($fields[3].innerHTML === interface && $fields[4].innerHTML === "0.0.0.0") {
+        if ($fields[3].innerHTML === iface && $fields[4].innerHTML === "0.0.0.0") {
             $fields[0].innerHTML = getNetwork(gateway, netmask);
             $fields[1].innerHTML = netmask;
             $fields[2].innerHTML = gateway;
@@ -35,7 +35,7 @@ function setDirectRoutingRule(routerObjectId, gateway, netmask, interface) {
             <td>${getNetwork(gateway, netmask)}</td>
             <td>${netmask}</td>
             <td>${gateway}</td>
-            <td>${interface}</td>
+            <td>${iface}</td>
             <td>0.0.0.0</td>
         `;
 
@@ -47,9 +47,9 @@ function setDirectRoutingRule(routerObjectId, gateway, netmask, interface) {
 }
 
 /**ESTA FUNCION INSERTA UN REGLA REMOTA A LA TABLA DE ENRUTAMIENTO DE UN EQUIPO */
-function setRemoteRoutingRule(routerObjectId, destination, netmask, gateway, interface, nexthop) {
+function setRemoteRoutingRule(routerObjectId, destination, netmask, gateway, iface, nexthop) {
 
-    if (!destination || !netmask || !gateway || !interface || !nexthop) return;
+    if (!destination || !netmask || !gateway || !iface || !nexthop) return;
 
     const $networkObject = document.getElementById(routerObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
@@ -61,8 +61,8 @@ function setRemoteRoutingRule(routerObjectId, destination, netmask, gateway, int
         if ($fields.length === 0) return;
         if ($fields[0].innerHTML === destination && $fields[1].innerHTML === netmask) {
             found = true;
-            $fields[2].innerHTML = (gateway === "0.0.0.0") ? getInfoFromInterface(routerObjectId, interface)[0] : gateway;
-            $fields[3].innerHTML = interface;
+            $fields[2].innerHTML = (gateway === "0.0.0.0") ? getInfoFromInterface(routerObjectId, iface)[0] : gateway;
+            $fields[3].innerHTML = iface;
             $fields[4].innerHTML = nexthop;
         }
     });
@@ -80,8 +80,8 @@ function setRemoteRoutingRule(routerObjectId, destination, netmask, gateway, int
         $newRow.innerHTML = `
             <td>${destination}</td>
             <td>${netmask}</td>
-            <td>${(gateway === "0.0.0.0") ? getInfoFromInterface(routerObjectId, interface)[0] : gateway}</td>
-            <td>${interface}</td>
+            <td>${(gateway === "0.0.0.0") ? getInfoFromInterface(routerObjectId, iface)[0] : gateway}</td>
+            <td>${iface}</td>
             <td>${nexthop}</td>
         `;
 
@@ -93,14 +93,14 @@ function setRemoteRoutingRule(routerObjectId, destination, netmask, gateway, int
 }
 
 /**ESTA FUNCION ELIMINA UNA REGLA DE CONEXION DIRECTA DE LA TABLA DE ENRUTAMIENTO DE UN EQUIPO */
-function removeDirectRoutingRule(routerObjectId, interface) {
+function removeDirectRoutingRule(routerObjectId, iface) {
     const $networkObject = document.getElementById(routerObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
     const $rules = $routingTable.querySelectorAll("tr");
     $rules.forEach($rule => {
         const $fields = $rule.querySelectorAll("td");
         if ($fields.length === 0) return;
-        if ($fields[3].innerHTML === interface && $fields[4].innerHTML === "0.0.0.0") $rule.remove();
+        if ($fields[3].innerHTML === iface && $fields[4].innerHTML === "0.0.0.0") $rule.remove();
     });
 }
 
@@ -137,9 +137,9 @@ function printRouting(networkObjectId) {
         let $fields = $rule.querySelectorAll("td");
         let destination = $fields[0].innerHTML;
         let netmask = $fields[1].innerHTML;
-        let interface = $fields[3].innerHTML;
+        let iface = $fields[3].innerHTML;
         let nextHop = $fields[4].innerHTML;
-        terminalMessage(`${destination}/${netmaskToCidr(netmask)} via ${nextHop} dev ${interface}`, networkObjectId);
+        terminalMessage(`${destination}/${netmaskToCidr(netmask)} via ${nextHop} dev ${iface}`, networkObjectId);
     });
 
     $directRoutingRules.forEach($rule => {
@@ -147,8 +147,8 @@ function printRouting(networkObjectId) {
         let destination = $fields[0].innerHTML;
         let netmask = $fields[1].innerHTML;
         let gateway = $fields[2].innerHTML;
-        let interface = $fields[3].innerHTML;
-        terminalMessage(`${destination}/${netmaskToCidr(netmask)} dev ${interface} proto kernel scope link src ${gateway}`, networkObjectId);
+        let iface = $fields[3].innerHTML;
+        terminalMessage(`${destination}/${netmaskToCidr(netmask)} dev ${iface} proto kernel scope link src ${gateway}`, networkObjectId);
     });
 
 }
@@ -234,16 +234,16 @@ function getRoutingRules(routerObjectid, targetinterface) {
         let $cells = $row.querySelectorAll("td");
         let destination = $cells[0].innerHTML.trim();
         let netmask = $cells[1].innerHTML.trim();
-        let interface = $cells[3].innerHTML.trim();
+        let iface = $cells[3].innerHTML.trim();
         let nextHop = $cells[4].innerHTML.trim();
-        if (interface === targetinterface && nextHop !== "0.0.0.0") rules.push(`ip route add ${destination}/${netmaskToCidr(netmask)} via ${nextHop}`);
+        if (iface === targetinterface && nextHop !== "0.0.0.0") rules.push(`ip route add ${destination}/${netmaskToCidr(netmask)} via ${nextHop}`);
     }
 
     return rules;
 }
 
 /**ESTA FUNCION ELIMINA LAS REGLAS REMOTAS ASOCIADAS A UNA INTERFAZ DE UN EQUIPO */
-function removeInterfaceRoutingRules(routerObjectId, interface) {
+function removeInterfaceRoutingRules(routerObjectId, iface) {
 
     const $networkObject = document.getElementById(routerObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
@@ -252,7 +252,7 @@ function removeInterfaceRoutingRules(routerObjectId, interface) {
     $routingRules.forEach($rule => {
         const $fields = $rule.querySelectorAll("td");
         if ($fields.length === 0) return;
-        if ($fields[3].innerHTML === interface) $rule.remove();
+        if ($fields[3].innerHTML === iface) $rule.remove();
     });
     
 }

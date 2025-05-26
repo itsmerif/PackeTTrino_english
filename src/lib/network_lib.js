@@ -349,9 +349,9 @@ function getAvailableInterface(networkObjectId) {
 }
 
 /**ESTA FUNCION DEVUELVE LA INFORMACION DE UNA INTERFAZ COMO ARRAY [IP, NETMASK, MAC] */
-function getInfoFromInterface(networkObjectId, interface) {
+function getInfoFromInterface(networkObjectId, iface) {
     const $networkObject = document.getElementById(networkObjectId);
-    return [$networkObject.getAttribute("ip-" + interface), $networkObject.getAttribute("netmask-" + interface), $networkObject.getAttribute("mac-" + interface)];
+    return [$networkObject.getAttribute("ip-" + iface), $networkObject.getAttribute("netmask-" + iface), $networkObject.getAttribute("mac-" + iface)];
 }
 
 /**ESTA FUNCION DEVUELVE LA INFORMACION DE UNA INTERFAZ QUE ESTE CONECTADA A UN SWITCH EN CONCRETO */
@@ -385,7 +385,7 @@ function switchToInterface(networkObjectId, switchId) {
     const $networkObject = document.getElementById(networkObjectId);
     const interfaces = getInterfaces(networkObjectId);
     let response = false;
-    interfaces.forEach(interface => { if ($networkObject.getAttribute(`data-switch-${interface}`) === switchId) response = interface; });
+    interfaces.forEach(iface => { if ($networkObject.getAttribute(`data-switch-${iface}`) === switchId) response = iface; });
     return response;
 }
 
@@ -462,7 +462,7 @@ function isLocalIp(networkObjectId, ip)  {
     let response = false;
 
     //si forma parte de alguna interfaz
-    for (let interface of interfaces) if ($networkObject.getAttribute(`ip-${interface}`) === ip) response = true;
+    for (let iface of interfaces) if ($networkObject.getAttribute(`ip-${iface}`) === ip) response = true;
 
     //si forma parte del bucle local
     if (getNetwork(ip,"255.0.0.0") === "127.0.0.0") response = true;
@@ -525,13 +525,13 @@ function setRouterIps($router, ip1, ip2 = "", ip3 = "") {
     const routingTable = $router.querySelector(".routing-table").querySelector("table");
     const rows = routingTable.querySelectorAll("tr");
 
-    const interfaces = [
+    const ifaces = [
         { ip: newIpEnp0s3, netmask: newNetmaskEnp0s3, interface: "enp0s3" },
         { ip: newIpEnp0s8, netmask: newNetmaskEnp0s8, interface: "enp0s8" },
         { ip: newIpEnp0s9, netmask: newNetmaskEnp0s9, interface: "enp0s9" }
     ];
 
-    interfaces.forEach((iface, index) => {
+    ifaces.forEach((iface, index) => {
         const row = rows[index + 1];
         const cells = row.querySelectorAll("td");
         if (getNetwork(iface.ip, iface.netmask) !== "0.0.0.0") cells[0].innerHTML = getNetwork(iface.ip, iface.netmask);

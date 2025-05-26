@@ -11,14 +11,14 @@ function getNodes() {
         const $router = $routerElements[i];
         const interfaces = getInterfaces($router.id);
 
-        interfaces.forEach((interface) => {
+        interfaces.forEach((iface) => {
 
             if (!nodes[$router.id]) nodes[$router.id] = [];
             if (!nodesIp[$router.id]) nodesIp[$router.id] = [];
             if (!nodesNetmask[$router.id]) nodesNetmask[$router.id] = [];
 
-            let ip = $router.getAttribute("ip-" + interface);
-            let netmask = $router.getAttribute("netmask-" + interface);
+            let ip = $router.getAttribute("ip-" + iface);
+            let netmask = $router.getAttribute("netmask-" + iface);
             let network = getNetwork(ip, netmask);
 
             if (ip) {
@@ -235,9 +235,9 @@ function getRoutes(routerId) {
         const $fields = $routingRule.querySelectorAll('td');
         const destination = $fields[0].innerText;
         const netmask = $fields[1].innerText;
-        const interface = $fields[3].innerText;
+        const iface = $fields[3].innerText;
         const gateway = $fields[2].innerText;
-        validNetworks.push([destination, netmask, gateway, interface]); //guardamos las redes a las que el router está conectado de forma directa
+        validNetworks.push([destination, netmask, gateway, iface]); //guardamos las redes a las que el router está conectado de forma directa
         matrix.push(getNextHop(destination));
     });
 
@@ -302,8 +302,8 @@ function autoInputRules($routerObjectId) {
         let netmask = matrix[i][1];
         let nexthop = matrix[i][2];
         let gateway = matrix[i][3];
-        let interface = matrix[i][4];
-        setRemoteRoutingRule($routerObjectId, destination, netmask, gateway, interface, nexthop);
+        let iface = matrix[i][4];
+        setRemoteRoutingRule($routerObjectId, destination, netmask, gateway, iface, nexthop);
     }
 
 }

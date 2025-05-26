@@ -140,10 +140,10 @@ function saveRouterMenu(event) {
     const $menu = document.querySelector(".router-form");
     const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
 
-    for (let interface in routerChangesBuffer){
+    for (let networkObjectInterface in routerChangesBuffer){
 
-        let ip = routerChangesBuffer[interface].ip;
-        let netmask = routerChangesBuffer[interface].netmask;
+        let ip = routerChangesBuffer[networkObjectInterface].ip;
+        let netmask = routerChangesBuffer[networkObjectInterface].netmask;
 
         if (!isValidIp(ip) && ip !== "") {
             bodyComponent.render(popupMessage(`<span>Error: </span>La IP "${ip}" no es válida.`));
@@ -156,11 +156,11 @@ function saveRouterMenu(event) {
         }
 
         if (ip === "") {
-            deconfigureInterface($networkObject.id, interface);
-            removeDirectRoutingRule($networkObject.id, interface);
+            deconfigureInterface($networkObject.id, networkObjectInterface);
+            removeDirectRoutingRule($networkObject.id, networkObjectInterface);
         } else {
-            configureInterface($networkObject.id, ip, netmask, interface);
-            setDirectRoutingRule($networkObject.id, ip, netmask, interface);
+            configureInterface($networkObject.id, ip, netmask, networkObjectInterface);
+            setDirectRoutingRule($networkObject.id, ip, netmask, networkObjectInterface);
         }
 
     }

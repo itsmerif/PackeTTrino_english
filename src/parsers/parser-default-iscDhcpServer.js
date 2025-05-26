@@ -21,8 +21,8 @@ function iscDhcpServerInterpreter(networkObjectId, content)  {
 
             const fileInterfaces = (splitLast(splitFirst(splitFirst(line, "=")[1], '"')[1], '"')[0])
             .split(" ")
-            .map(interface => interface.trim())
-            .filter(interface => interface !== "");
+            .map(iface => iface.trim())
+            .filter(iface => iface !== "");
 
             const availableInterfaces = getInterfaces(networkObjectId);
 

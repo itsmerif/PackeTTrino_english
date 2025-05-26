@@ -7,8 +7,8 @@ async function routing(networkObjectId, packet, isHost = false) {
     if (packet.destination_ip === "255.255.255.255" || packet.destination_mac === "ff:ff:ff:ff:ff:ff") {
 
         if (isHost) {
-            const interface = getInterfaces($networkObject.id)[0];
-            const switchId = $networkObject.getAttribute(`data-switch-${interface}`);
+            const iface = getInterfaces($networkObject.id)[0];
+            const switchId = $networkObject.getAttribute(`data-switch-${iface}`);
             addPacketTraffic(packet);
             await switchProcessor(switchId, networkObjectId, packet);
         }
