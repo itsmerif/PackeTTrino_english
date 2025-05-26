@@ -12,7 +12,7 @@ function installApache2($networkObject) {
 
     const defaultApacheContent = $APACHEDEFAULTCONTENT.replace(/\s+/g, " ");
 
-    const defaultApacheConf=$APACHECONFIGCONTENT.split("\n").map(line => line.trim()).filter(line => line !== "").join("\n");
+    const defaultApacheConf = $APACHECONFIGCONTENT.split("\n").map(line => line.trim()).filter(line => line !== "").join("\n");
 
     const networkObjectFileSystem = new FileSystem($networkObject);
     networkObjectFileSystem.mkdir("html", ["var", "www"]); 

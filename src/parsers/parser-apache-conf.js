@@ -16,24 +16,29 @@ function apacheSitesParser(networkObjectId) {
         if ($apacheDOM.querySelector("parsererror")) throw new Error("Error al analizar la configuración XML de Apache.");
 
         const $apacheVirtualHost = $apacheDOM.querySelector("VirtualHost");
-        const ip = $apacheVirtualHost.getAttribute("ip");
-        const port = $apacheVirtualHost.getAttribute("port");
         const $documentRoot = $apacheVirtualHost.querySelector("DocumentRoot");
         const $directoryIndex = $apacheVirtualHost.querySelector("DirectoryIndex");
+        const $options = $apacheVirtualHost.querySelector("Options");
+
+        const ip = $apacheVirtualHost.getAttribute("ip");
+        const port = $apacheVirtualHost.getAttribute("port");
         const directoryValue = $documentRoot?.getAttribute("value");
         const directoryIndexValue = $directoryIndex?.getAttribute("value");
+        const indexesAllowed = $options?.getAttribute("Indexes") === "true";
+        const followSymLinks = $options?.getAttribute("FollowSymLinks") === "true";
 
         if (!ip) throw new Error("Error: No se ha especificado la dirección IP del servidor.");
         if (!port) throw new Error("Error: No se ha especificado el puerto del servidor.");
         if (!directoryValue) throw new Error("Error: No se ha especificado el directorio del servidor.");
         if (!directoryIndexValue) throw new Error("Error: No se ha especificado el index del servidor.");
 
-
         response[siteFile] = {
             ip: ip,
             port: port,
             documentRoot: directoryValue,
-            directoryIndex: directoryIndexValue
+            directoryIndex: directoryIndexValue,
+            indexesAllowed: indexesAllowed,
+            followSymLinks: followSymLinks
         }
 
     });

@@ -29,33 +29,50 @@ async function apache_service(networkObjectId, packet) {
 
 /**ESTA FUNCION DEVUELVE EL CONTENIDO DEL ARCHIVO INDEX.HTML DE UN DISPOSITIVO EN EL DIRECTORIO POR DEFECTO */
 
-function getApacheWebContent(networkObjectId, requestedPort, requestedIp) {   
-                                                              
+function getApacheWebContent(networkObjectId, requestedPort, requestedIp) {
+
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectFileSystem = new FileSystem($networkObject);
+    let fileResponse;
+
+    //parseamos el fichero de configuración de apache y obtenemos la información
 
     try {
+        fileResponse = apacheSitesParser(networkObjectId);
+    } catch (e) {
+        return; //TODO: crear un log en el sistema de ficheros para los errores
+    }
 
-        const fileResponse = apacheSitesParser(networkObjectId);
+    //interpretamos la información obtenida
 
-        for (let site in fileResponse) {
+    for (let site in fileResponse) {
 
-            const isValidPort = parseInt(fileResponse[site].port) === parseInt(requestedPort);
-            const isValidIp = fileResponse[site].ip === "*" || fileResponse[site].ip === requestedIp;
+        const isValidPort = parseInt(fileResponse[site].port) === parseInt(requestedPort);
+        const isValidIp = fileResponse[site].ip === "*" || fileResponse[site].ip === requestedIp;
+
+        if (isValidPort && isValidIp) {
+
             const indexFile = fileResponse[site].directoryIndex;
             const documentRoot = fileResponse[site].documentRoot;
+            const indexesAllowed = fileResponse[site].indexesAllowed;
 
-            if (isValidPort && isValidIp) {
+            //intentamos obtener el contenido del index.html
+
+            try {
                 const directoryIndexContent = networkObjectFileSystem.read(indexFile, documentRoot.split("/").slice(1));
                 return directoryIndexContent;
+            }catch (e) {
+                //TODO: crear un log en el sistema de ficheros para los errores
             }
+
+            //si no se pudo obtener el index.html, intentamos mostrar el índice del directorio
+
+            return (indexesAllowed === true) 
+                    ? $DIRECTORYINDEXCONTENT(documentRoot) 
+                    : $FORBIDDENCONTENT;
 
         }
 
-    }catch (e) {
-
-        return; //TODO: crear un log en el sistema de ficheros para los errores
-
     }
- 
+
 }
