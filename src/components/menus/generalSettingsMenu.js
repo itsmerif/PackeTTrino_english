@@ -9,20 +9,32 @@ function GeneralOptions() {
         <div class="window-frame"> <p> Opciones Generales </p> </div>
 
         <div class="options-group">
-            <label for="visual-toggle"> Modo Visual</label>
+            <label for="dark-mode"> Modo Oscuro </label>
+            <input type="checkbox" class="btn-toggle" id="dark-mode" name="dark-mode">
+        </div>
+
+        <div class="options-group">
+            <label for="visual-toggle"> Modo Visual </label>
             <input type="checkbox" class="btn-toggle" id="visual-toggle" name="visual-toggle">
         </div>
 
         <div class="options-group">
-            <label for="ignore-arp-traffic"> No Mostrar Tráfico ARP </label>
+            <label for="ignore-arp-traffic"> Ocultar Tráfico ARP </label>
             <input type="checkbox" class="btn-toggle" id="ignore-arp-traffic" name="ignore-arp-traffic">
         </div>
 
         <div class="options-group">
-            <label for="dark-mode"> Modo Oscuro </label>
-            <input type="checkbox" class="btn-toggle" id="dark-mode" name="dark-mode">
+            <label for="arp-ttl"> ARP TTL </label>
+            <input type="range" class="btn-input" id="arp-ttl" name="arp-ttl" min="0" max="120" value="120">
+            <span id="arp-ttl-value">120</span><span>s</span>
         </div>
-        
+
+        <div class="options-group">
+            <label for="mac-ttl"> MAC TTL </label>
+            <input type="range" class="btn-input" id="mac-ttl" name="mac-ttl" min="0" max="300" value="300">
+            <span id="mac-ttl-value">300</span><span>s</span>
+        </div>
+      
         <button class="btn-modern-blue" id="close-btn">Cerrar</button>
     `;
 
@@ -31,6 +43,16 @@ function GeneralOptions() {
     $generalOptions.querySelector("#dark-mode").addEventListener("change", activateDarkMode);
     $generalOptions.querySelector(".btn-modern-blue").addEventListener("click", generalOptionsHandler);
     $generalOptions.querySelector(".window-frame").addEventListener("mousedown", dragModal);
+    
+    $generalOptions.querySelector("#arp-ttl").addEventListener("input", function () { 
+        $MACENTRYTTL = this.value;
+        $generalOptions.querySelector("#arp-ttl-value").innerHTML = this.value;
+    });
+    
+    $generalOptions.querySelector("#mac-ttl").addEventListener("input", function () { 
+        $ARPENTRYTTL = this.value;
+        $generalOptions.querySelector("#mac-ttl-value").innerHTML = this.value
+    });
 
     return $generalOptions;
 

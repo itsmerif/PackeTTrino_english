@@ -800,7 +800,7 @@ img {
     background-color: var(--dark-mode-black) !important;
     box-shadow: 0px 0px 10px rgb(255, 255, 255) !important;
 
-    label {
+    label,span {
         color: var(--dark-mode-white) !important;
     }
 
@@ -2216,6 +2216,7 @@ circle:hover {
     z-index: 1000;
     font-family: var(--inter);
     animation: form-animation 0.2s ease-in-out;
+    min-width: 450px;
 
     .window-frame {
 
@@ -2240,19 +2241,15 @@ circle:hover {
     }
 
     .options-group {
-
         display: flex;
         flex-direction: row;
-        align-items: center;
-        gap: 10px;
-        padding: 0px;
-        padding-left: 20px;
-        padding-right: 20px;
-
+        align-items: flex-start;
+        padding-left: 10px;
+        padding-right: 10px;
+        
         label {
             flex-grow: 0;
-            width: 200px;
-            text-align: left;
+            width: 240px;
         }
 
     }
