@@ -44,10 +44,10 @@ function addARPEntry(networkObjectId, ip, mac) {
         newRow.insertCell().innerText = ip;
         newRow.insertCell().innerText = mac;
         
-        console.log(`ARP ENTRY ADDED FOR ${ip} + IN ${networkObjectId} FOR ${$ARPENTRYTTL * 1000} MS`);
+        console.log(`Se ha añadido el registro ARP de ${ip} a ${networkObjectId} durante ${$ARPENTRYTTL * 1000} MS`);
         
         arpEntryTimers[`${networkObjectId}-${ip}`] = setTimeout(() => { 
-            console.log(`ARP ENTRY TIMEOUT FOR ${ip} IN ${networkObjectId}`);
+            console.log(`Se ha agotado el registro ARP de ${ip} IN ${networkObjectId}`);
             delARPEntry(networkObjectId, ip);
         }, $ARPENTRYTTL * 1000);
 
