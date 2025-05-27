@@ -19,11 +19,13 @@ function apacheSitesParser(networkObjectId) {
         const $documentRoot = $apacheVirtualHost.querySelector("DocumentRoot");
         const $directoryIndex = $apacheVirtualHost.querySelector("DirectoryIndex");
         const $options = $apacheVirtualHost.querySelector("Options");
+        const $serverName = $apacheVirtualHost.querySelector("ServerName");
 
         const ip = $apacheVirtualHost.getAttribute("ip");
         const port = $apacheVirtualHost.getAttribute("port");
         const directoryValue = $documentRoot?.getAttribute("value");
         const directoryIndexValue = $directoryIndex?.getAttribute("value");
+        const serverNameValue = $serverName?.getAttribute("value");
         const indexesAllowed = $options?.getAttribute("Indexes") === "true";
         const followSymLinks = $options?.getAttribute("FollowSymLinks") === "true";
 
@@ -37,6 +39,7 @@ function apacheSitesParser(networkObjectId) {
             port: port,
             documentRoot: directoryValue,
             directoryIndex: directoryIndexValue,
+            serverName: serverNameValue,
             indexesAllowed: indexesAllowed,
             followSymLinks: followSymLinks
         }

@@ -42,6 +42,7 @@ async function command_curl(networkObjectId, args) {
 
         } catch (error) {
 
+            console.log(error);
             terminalMessage(`curl: ${error.message}`, networkObjectId);
 
         }

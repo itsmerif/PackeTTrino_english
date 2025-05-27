@@ -148,6 +148,7 @@ const $APACHECONFIGCONTENT = `
    <DocumentRoot value="/var/www/html"/>
    <DirectoryIndex value="index.html"/>
    <Options Indexes="true" FollowSymLinks="false"/>
+   <ServerName value="localhost"/>
 </VirtualHost>`;
 
 const $APACHEREJECTCONTENT = `

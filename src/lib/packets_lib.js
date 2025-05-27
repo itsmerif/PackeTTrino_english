@@ -225,7 +225,7 @@ class Ack extends packet {
 }
 
 class httpRequest extends packet {
-    constructor(origin_ip, destination_ip, origin_mac, destination_mac, sport, dport, method) {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, sport, dport, method, host) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
         this.transport_protocol = "tcp";
         this.protocol = "http";
@@ -233,13 +233,18 @@ class httpRequest extends packet {
         this.type = "request";
         this.sport = sport;
         this.dport = dport;
+        //cabeceras
         this.method = method;
+        this.host = host;
+        this.contentType = "text/html";
         this.keepalive = true;
+        this.userAgent = "Amin-Search 1.0 - 2025";
+        this.body = "";
     }
 }
 
 class httpReply extends packet {
-    constructor(origin_ip, destination_ip, origin_mac, destination_mac, sport, dport) {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, sport, dport, method, host) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
         this.transport_protocol = "tcp";
         this.protocol = "http";
@@ -247,8 +252,12 @@ class httpReply extends packet {
         this.sport = sport;
         this.dport = dport;
         this.type = "reply";
-        this.header = "content-type: text/html";
-        this.body = "";
+        //cabeceras
+        this.method = method;
+        this.host = host;
         this.keepalive = true;
+        this.contentType = "text/html";
+        this.userAgent = "Amin-Search 1.0 - 2025";
+        this.body = "";
     }
 }

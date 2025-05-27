@@ -16,7 +16,7 @@ function packetInfo(event) {
     ];
 
     const layer4Fields = [
-        "sequence_number", "ack_number"
+        "sequence_number", "ack_number" //tcp
     ];
 
     const layer5Fields = [];
@@ -24,10 +24,10 @@ function packetInfo(event) {
     const layer6Fields = [];
 
     const layer7Fields = [
-        "method", "header", "body",
-        "ciaddr", "giaddr", "siaddr", "yiaddr", "chaddr",
-        "query", "answer", "answer_type", "answer",
-        "sport", "dport"
+        "method", "contentType", "body", "userAgent", "keepalive", "host", //http
+        "ciaddr", "giaddr", "siaddr", "yiaddr", "chaddr", //dhcp
+        "query", "answer", "answer_type", "answer", //dns
+        "sport", "dport" //puertos
     ];
 
     const layers = [layer1Fields, layer2Fields, layer3Fields, layer4Fields, layer5Fields, layer6Fields, layer7Fields]

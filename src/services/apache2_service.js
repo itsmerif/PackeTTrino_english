@@ -8,7 +8,7 @@ async function apache_service(networkObjectId, packet) {
 
     if (!isApacheOn) return;
 
-    const apacheContent = getApacheWebContent(networkObjectId, packet.dport, packet.destination_ip);
+    const apacheContent = getApacheWebContent(networkObjectId, packet);
 
     if (!apacheContent) return;
 
@@ -18,7 +18,9 @@ async function apache_service(networkObjectId, packet) {
         networkObjectMac, //mac del origen
         packet.origin_mac, //mac del destino
         packet.dport, //puerto del origen
-        packet.sport //puerto del destino
+        packet.sport, //puerto del destino
+        packet.method, //método
+        packet.host //host
     );
 
     newPacket.body = apacheContent;
@@ -29,11 +31,18 @@ async function apache_service(networkObjectId, packet) {
 
 /**ESTA FUNCION DEVUELVE EL CONTENIDO DEL ARCHIVO INDEX.HTML DE UN DISPOSITIVO EN EL DIRECTORIO POR DEFECTO */
 
-function getApacheWebContent(networkObjectId, requestedPort, requestedIp) {
+function getApacheWebContent(networkObjectId, packet) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectFileSystem = new FileSystem($networkObject);
     let fileResponse;
+
+    //desglosamos el paquete
+
+    const requestedPort = packet.dport;
+    const requestedIp = packet.destination_ip;
+    const method = packet.method;
+    const host = packet.host;
 
     //parseamos el fichero de configuración de apache y obtenemos la información
 
@@ -49,11 +58,13 @@ function getApacheWebContent(networkObjectId, requestedPort, requestedIp) {
 
         const isValidPort = parseInt(fileResponse[site].port) === parseInt(requestedPort);
         const isValidIp = fileResponse[site].ip === "*" || fileResponse[site].ip === requestedIp;
+        const isValidServerName = fileResponse[site].serverName === host || fileResponse[site].serverName === undefined;
 
-        if (isValidPort && isValidIp) {
+        if (isValidPort && isValidIp && isValidServerName) {
 
             const indexFile = fileResponse[site].directoryIndex;
             const documentRoot = fileResponse[site].documentRoot;
+            const serverName = fileResponse[site].serverName;
             const indexesAllowed = fileResponse[site].indexesAllowed;
 
             //intentamos obtener el contenido del index.html
@@ -69,9 +80,7 @@ function getApacheWebContent(networkObjectId, requestedPort, requestedIp) {
 
             const directoryIndexFiles = networkObjectFileSystem.ls("-R").split(" ").filter(el => el.startsWith(`${documentRoot}/`)).map(el => el.split(`${documentRoot}/`)[1]);
 
-            return (indexesAllowed === true) 
-                    ? $DIRECTORYINDEXCONTENT(documentRoot, directoryIndexFiles) 
-                    : $FORBIDDENCONTENT;
+            return (indexesAllowed === true) ? $DIRECTORYINDEXCONTENT(documentRoot, directoryIndexFiles) : $FORBIDDENCONTENT;
 
         }
 
