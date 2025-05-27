@@ -46,6 +46,7 @@ let httpBuffer = {};
 let dhcpOfferBuffer = {};
 let tcpBuffer = {};
 let traceBuffer = {};
+let trafficBuffer = [];
 let routerChangesBuffer = {}; //este buffer guarda informacion por INTERFAZ, NO POR DISPOSITIVO
 
 //variables de procesos en segundo plano

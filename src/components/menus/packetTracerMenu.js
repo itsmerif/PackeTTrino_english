@@ -1,5 +1,3 @@
-let trafficBuffer = [];
-
 function packetTracer() {
 
     const $packetTracer = document.createElement("article");
