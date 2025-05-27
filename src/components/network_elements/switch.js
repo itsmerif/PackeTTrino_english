@@ -102,38 +102,6 @@ function saveConn(switchId, itemdId) {
     macTable.appendChild(newMac);
 }
 
-function deleteMacEntry(switchId, networkObjectId) {
-    const switchObject = document.getElementById(switchId);
-    const table = switchObject.querySelector("table");
-    const tds = table.querySelectorAll("td");
-
-    for (let i = 0; i < tds.length; i++) {
-        const td = tds[i];
-        if (td.innerHTML === networkObjectId) {
-            const tr = td.parentElement; 
-            tr.remove(); 
-            break;
-        }
-    }
-}
-
-function saveMac(switchObjectId, networkObjectId, newMac) {
-
-    const switchObject = document.getElementById(switchObjectId);
-    const macTable = switchObject.querySelector("table");
-    const rows = macTable.querySelectorAll("tr");
-
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
-        const cells = row.querySelectorAll("td");
-        if (cells[0].innerHTML === networkObjectId) {
-            cells[1].innerHTML = newMac;
-            break;
-        }
-    }
-
-}
-
 function clusterizeSwitch(event) {
     event.preventDefault();
     event.stopPropagation();

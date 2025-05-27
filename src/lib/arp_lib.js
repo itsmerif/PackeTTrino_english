@@ -19,19 +19,19 @@ function getARPTable(networkObjectId) {
 /**ESTA FUNCIÓN AÑADE UNA ENTRADA A LA TABLA DE ARP DE UN OBJETO DE RED*/
 function addARPEntry(networkObjectId, ip, mac) {
 
-    let tabla = document.getElementById(networkObjectId).querySelector(".arp-table").querySelector("table");
-    let rows = tabla.querySelectorAll("tr");
+    const $arpTable = document.getElementById(networkObjectId).querySelector(".arp-table").querySelector("table");
+    const $records = $arpTable.querySelectorAll("tr");
     let found = false;
 
-    for (let i = 1; i < rows.length; i++) {
+    for (let i = 1; i < $records.length; i++) {
 
-        let row = rows[i]; 
-        let cells = row.querySelectorAll("td");
-        let targetip = cells[0].innerText.trim();
-        let targetMac = cells[1].innerText.trim();
+        const $record = $records[i]; 
+        const $fields = $record.querySelectorAll("td");
+        const $recordIp = $fields[0];
+        const $recordMac = $fields[1];
 
-        if (targetip === ip) {
-            targetMac = mac;
+        if ($recordIp.innerText.trim() === ip) {
+            $recordMac.innerText = mac;
             found = true;
             break;
         }
@@ -39,26 +39,43 @@ function addARPEntry(networkObjectId, ip, mac) {
     }
 
     if (!found) {
-        let newRow = tabla.insertRow();
+        
+        const newRow = $arpTable.insertRow();
         newRow.insertCell().innerText = ip;
         newRow.insertCell().innerText = mac;
+        
+        console.log(`ARP ENTRY ADDED FOR ${ip} + IN ${networkObjectId} FOR ${$ARPENTRYTTL * 1000} MS`);
+        
+        arpEntryTimers[`${networkObjectId}-${ip}`] = setTimeout(() => { 
+            console.log(`ARP ENTRY TIMEOUT FOR ${ip} IN ${networkObjectId}`);
+            delARPEntry(networkObjectId, ip);
+        }, $ARPENTRYTTL * 1000);
+
     }
 
 }
 
 /**ESTA FUNCIÓN ELIMINA UNA ENTRADA DE LA TABLA DE ARP DE UN OBJETO DE RED*/
-function delARPEntry(networkObjectId, targetip) {
-    let tabla = document.getElementById(networkObjectId).querySelector(".arp-table").querySelector("table");
-    let rows = tabla.querySelectorAll("tr");
-    for (let i = 1; i < rows.length; i++) {
-        let row = rows[i];
-        let cells = row.querySelectorAll("td");
-        let ip = cells[0].innerText.trim();
-        if (ip === targetip) {
-            row.remove();
+function delARPEntry(networkObjectId, ip) {
+
+    const $arpTable = document.getElementById(networkObjectId).querySelector(".arp-table").querySelector("table");
+    const $records = $arpTable.querySelectorAll("tr");
+
+    for (let i = 1; i < $records.length; i++) {
+
+        const $record = $records[i];
+        const $fields = $record.querySelectorAll("td");
+        const recordIp = $fields[0].innerText.trim();
+
+        if (recordIp === ip) {
+            clearTimeout(arpEntryTimers[`${networkObjectId}-${ip}`]);
+            delete arpEntryTimers[`${networkObjectId}-${ip}`];
+            $record.remove();
             break;
         }
+
     }
+
 }
 
 /**ESTA FUNCIÓN DEVUELVE LA DIRECCIÓN MAC DE UNA IP EN LA TABLA DE ARP DE UN OBJETO DE RED*/
@@ -88,8 +105,18 @@ function getcurrentARPTable(networkObjectId) {
 
 /**ESTA FUNCIÓN ELIMINA TODAS LAS ENTRADAS DE LA TABLA DE ARP DE UN OBJETO DE RED*/
 function clearARPTable(networkObjectId) {
+
     const $networkObject = document.getElementById(networkObjectId);
     const $arpTable = $networkObject.querySelector(".arp-table").querySelector("table");
     const $entries = $arpTable.querySelectorAll("tr");
-    for (let i = 1; i < $entries.length; i++) $entries[i].remove();
+
+    for (let i = 1; i < $entries.length; i++) {
+        const $entry = $entries[i];
+        const $fields = $entry.querySelectorAll("td");
+        const entryIp = $fields[0].innerText.trim();
+        clearTimeout(arpEntryTimers[`${networkObjectId}-${entryIp}`]);
+        delete arpEntryTimers[`${networkObjectId}-${entryIp}`];
+        $entries[i].remove();
+    }
+    
 }

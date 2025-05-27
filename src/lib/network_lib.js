@@ -102,6 +102,40 @@ function isValidIp(ip) {
     return /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(ip);
 }
 
+/**ESTA FUNCION AÑADE UNA ENTRADA A LA TABLA DE MACS DE UN SWITCH*/
+function saveMac(switchObjectId, networkObjectId, newMac) {
+
+    const switchObject = document.getElementById(switchObjectId);
+    const macTable = switchObject.querySelector("table");
+    const rows = macTable.querySelectorAll("tr");
+
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.querySelectorAll("td");
+        if (cells[0].innerHTML === networkObjectId) {
+            cells[1].innerHTML = newMac;
+            break;
+        }
+    }
+    
+}
+
+/**ESTA FUNCION ELIMINA UNA ENTRADA DE LA TABLA DE MACS DE UN SWITCH*/
+function deleteMacEntry(switchId, networkObjectId) {
+    const switchObject = document.getElementById(switchId);
+    const table = switchObject.querySelector("table");
+    const tds = table.querySelectorAll("td");
+
+    for (let i = 0; i < tds.length; i++) {
+        const td = tds[i];
+        if (td.innerHTML === networkObjectId) {
+            const tr = td.parentElement; 
+            tr.remove(); 
+            break;
+        }
+    }
+}
+
 /**ESTA FUNCION DEVUELVE TRUE SI LA DIRECCION IP EN NOTACION CIDR ES VALIDA. TAMBIEN VALIDA SI LA DIRECCION IP ES VALIDA */
 function isValidCidrIp(cidr) {
     let ip = cidr.split("/")[0];
