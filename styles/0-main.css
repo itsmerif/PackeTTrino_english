@@ -371,6 +371,18 @@ img {
     }
 }
 
+@keyframes modalIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
 @keyframes form-animation {
     0% {
         opacity: 0;
@@ -1681,7 +1693,7 @@ circle:hover {
 }
 
 .dhcp-relay-form {
-    
+
     position: absolute;
     top: 40%;
     left: 50%;
@@ -2430,111 +2442,146 @@ circle:hover {
 }
 
 .packet-fields-modal {
-    position: absolute;
-    top: 40%;
+    position: fixed;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1000;
-    background-color: white;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-width: 300px;
-    height: fit-content;
-    border-radius: 8px;
-    padding: 15px;
-    max-height: 80vh;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 24px;
+    min-width: 320px;
+    max-width: 90vw;
+    max-height: 85vh;
     overflow-y: auto;
+    box-shadow:
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    animation: modalIn 0.2s ease-out;
 
     table {
-
+        
         width: 100%;
-        border-collapse: collapse;
-        text-transform: uppercase;
-        text-align: center;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
-        th,
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            letter-spacing: 0.025em;
+            padding: 16px 12px;
+            text-transform: uppercase;
+            border: none;
+            transition: all 0.2s ease;
+
+            &:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+            }
+        }
+
         td {
-            border: 1px solid #000;
-            margin: 0;
-            padding: 8px;
-            min-width: 200px;
-            max-width: 300px;
+            background: white;
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            max-width: 250px;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
-        }
+            text-transform: uppercase;
 
+            &:hover {
+                background: #f8fafc;
+                transform: scale(1.02);
+            }
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
     }
 
     .btn-close {
-        width: 10%;
-        margin: auto;
-        margin-top: 12px;
-        padding: 8px 16px;
+        margin: 20px auto 0;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
         border: none;
-        border-radius: 6px;
-        background-color: rgb(223, 191, 12);
-        color: #333;
+        border-radius: 25px;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        display: block;
 
         &:hover {
-            background-color: rgb(203, 171, 0);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        &:active {
+            transform: translateY(0);
         }
     }
 
     &.dark-mode {
-
-        background-color: var(--dark-mode-black);
-        box-shadow: 0px 0px 10px var(--dark-mode-white);
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
 
         table {
-
-            width: 100%;
-            border-collapse: collapse;
-            text-transform: uppercase;
-            text-align: center;
-
-            * {
-                border: 1px solid var(--dark-mode-white);
-                background-color: var(--dark-mode-black);
-                color: var(--dark-mode-white);
-            }
-
             th {
-                background-color: var(--darkblue);
-                color: var(--dark-mode-white);
+                background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
 
                 &:hover {
-                    background-color: var(--dark-mode-white);
-                    color: var(--darkblue);
+                    box-shadow: 0 4px 8px rgba(148, 163, 184, 0.3);
                 }
             }
 
-            td:hover {
-                background-color: var(--dark-mode-white);
-                color: var(--dark-mode-black);
-            }
+            td {
+                background: #1e293b;
+                color: #e2e8f0;
+                border-bottom-color: #334155;
 
+                &:hover {
+                    background: #334155;
+                }
+            }
         }
 
         .btn-close {
-            background-color: var(--darkblue);
-            color: var(--dark-mode-white);
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
 
             &:hover {
-                background-color: var(--dark-mode-white);
-                color: var(--darkblue);
-                box-shadow: 0 2px 8px #ddd;
+                box-shadow: 0 8px 25px rgba(148, 163, 184, 0.2);
             }
         }
-
     }
+}
+
+.packet-fields-modal::-webkit-scrollbar {
+    width: 6px;
+}
+
+.packet-fields-modal::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.packet-fields-modal::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.5);
+    border-radius: 3px;
+}
+
+.packet-fields-modal::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.7);
 }
 
 .dynamic-routing-modal {
