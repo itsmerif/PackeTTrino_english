@@ -25,8 +25,8 @@ function GeneralOptions() {
 
         <div class="options-group">
             <label for="arp-ttl"> ARP TTL </label>
-            <input type="range" class="btn-input" id="arp-ttl" name="arp-ttl" min="0" max="120" value="120">
-            <span id="arp-ttl-value">120</span><span>s</span>
+            <input type="range" class="btn-input" id="arp-ttl" name="arp-ttl" min="120" max="600" value="400">
+            <span id="arp-ttl-value">400</span><span>s</span>
         </div>
 
         <div class="options-group">
