@@ -1,3 +1,5 @@
+//PACKETTRINO DESARROLLADO POR AMÍN PÉREZ (2025)
+
 var htmlComponent = new componentToken("html");
 var bodyComponent = new componentToken("body");
 var rootComponent = new componentToken("#root");
@@ -51,5 +53,8 @@ function startApp() {
         }, time);
         time += 10;
     });
+
+
+    setTimeout(startTutorial,1000);
 
 }
