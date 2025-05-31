@@ -487,6 +487,25 @@ img {
     }
 }
 
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(100vw);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0%);
+    }
+}
+
+@keyframes slideOutLeft {
+    to {
+        transform: translateX(-100vw);
+        opacity: 0;
+    }
+}
+
 @keyframes terminal-glitch {
     0% {
         transform: translate(0);
@@ -793,6 +812,7 @@ img {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
     display: none;
+    animation: fadeIn 0.3s ease-out;
 }
 
 .modal-dark-mode {
@@ -800,7 +820,8 @@ img {
     background-color: var(--dark-mode-black) !important;
     box-shadow: 0px 0px 10px rgb(255, 255, 255) !important;
 
-    label,span {
+    label,
+    span {
         color: var(--dark-mode-white) !important;
     }
 
@@ -2246,7 +2267,7 @@ circle:hover {
         align-items: flex-start;
         padding-left: 10px;
         padding-right: 10px;
-        
+
         label {
             flex-grow: 0;
             width: 240px;
@@ -2459,7 +2480,7 @@ circle:hover {
     animation: modalIn 0.2s ease-out;
 
     table {
-        
+
         width: 100%;
         border-collapse: separate;
         border-spacing: 0;
@@ -3292,62 +3313,128 @@ circle:hover {
 
 /*ESTILOS PARA EL TUTORIAL*/
 
-.slide {
-
+.slide-presentation {
     position: fixed;
-    top: 40%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
-    box-shadow: 0px 0px 10px black;
-    border-radius: 5px;
+    background: whitesmoke;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
     z-index: 1000;
-    animation: fadeInPopup 0.3s ease-out;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 20px;
-    margin: 0;
-    gap: 40px;
+    justify-content: space-between;
+    padding: 40px;
+    width: 90vw;
+    max-width: 900px;
+    max-height: 700px;
+    animation: slideInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    height: 70vh;
 
-    * {
-        padding: 0;
-        margin: 0;
-    }
-
-    p {
-        font-size: 1rem;
-        font-weight: 500;
-    }
-
-    img {
-        height: 300px;
-    }
-
-    .main-content {
+    .slide {
         display: flex;
-        flex-direction: row;
-        gap: 20px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        width: 100%;
+        flex-grow: 1;
+        animation: fadeInSlide 0.2s ease-out;
+
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            height: 10%;
+            padding-top: 15px;
+        }
 
         p {
-            margin: auto;
-            text-align: justify;
+            font-size: 1.1rem;
+            font-weight: 400;
+            line-height: 1.6;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        img {
+            width: auto;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+
+            &:hover {
+                transform: scale(1.05);
+            }
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: row;
+            gap: 40px;
+            align-items: center;
+            width: 100%;
+            height: 90%;
+            padding: 20px;
+
+            p {
+                flex: 1;
+                text-align: justify;
+                font-size: 1.1rem;
+            }
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.3);
+            color: #ffd700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        &.hidden {
+            display: none;
+        }
+
+        &.hiding {
+            animation: slideOutLeft 0.2s ease-out forwards;
         }
     }
 
     .page-selector {
         display: flex;
         flex-direction: row;
-        gap: 10px;
-        margin-top: 20px;
+        gap: 12px;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        gap: 20px;
 
         .page-selector__btn {
             padding: 5px 10px;
             border: none;
             border-radius: 5px;
-            background-color: #f5f5f5;
+            background-color:
+                #f5f5f5;
             color: #333;
             font-size: 14px;
             cursor: pointer;
@@ -3355,24 +3442,182 @@ circle:hover {
             box-sizing: border-box;
 
             &:hover {
-                background-color: #e8e8e8;
+                background-color:
+                    #e8e8e8;
             }
-            
+
             &.active {
                 background-color: #fff;
-                color: #4361ee;
+                color:
+                    #4361ee;
                 box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
             }
-            
         }
 
         .btn-modern-blue {
-            padding: 10px;
+            padding: 14px 24px;
+        }
+
+        img {
+            width: 40px;
+            transition: transform 0.3s ease;
+            &:hover {
+                cursor: pointer;
+                transform: scale(1.1);
+            }
         }
     }
 
-    &.hidden {
-        display: none;
+    .links {
+        position: absolute;
+        top: 90%;
+        right: 10%;
+        transform: translate(50%, -50%);
+        width: fit-content;
+        padding: 10px 20px;
+        color: #333;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+
+        img {
+            transition: transform 0.3s ease;
+            width: 60px;
+
+            &:hover {
+                transform: scale(1.10);
+            }
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
     }
-    
+
+    &.hiding {
+        animation: vanishIntoCenter 0.2s ease-out forwards;
+    }
+
+    .next-slide-btn {
+        font-size: 2rem;
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes slideOutDown {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+}
+
+@keyframes vanishIntoCenter {
+    to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOutLeft {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+}
+
+@media (max-width: 768px) {
+
+    .slide-presentation {
+        width: 95vw;
+        height: 90vh;
+        padding: 20px;
+
+        .slide {
+            padding: 20px;
+            gap: 20px;
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .main-content {
+                flex-direction: column;
+                gap: 20px;
+
+                img {
+                    height: 150px;
+                }
+            }
+        }
+
+        .page-selector {
+            padding: 15px;
+            gap: 8px;
+
+            .page-selector__btn {
+                padding: 10px 12px;
+                min-width: 40px;
+                height: 40px;
+                font-size: 13px;
+            }
+
+            .btn-modern-blue {
+                padding: 12px 18px;
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .slide-presentation {
+        .slide h1 {
+            font-size: 1.7rem;
+        }
+
+        .page-selector {
+            .btn-modern-blue {
+                margin-left: 0;
+                margin-top: 8px;
+                width: 100%;
+            }
+        }
+    }
 }

@@ -1,8 +1,11 @@
 class slide { 
     constructor(title, media, text ) {
-        this.title = title;
-        this.media = media;
-        this.content = text;
+        this.title = title || "";
+        this.media = media || "";
+        this.content = text || "";
+        this.mediaHeight = "200px";
+        this.mediaBackgroundColor = "transparent";
+        this.mediaShadow = "0 15px 35px rgba(0, 0, 0, 0.2)";
     }
 }
 
@@ -18,115 +21,169 @@ class slidePresentation {
         this.slides.push(...slides);
     }
 
-    render(slideNumber) {
+    startPresentation() {
 
         const $slidePresentationHTML = document.createElement('div');
+        
+        $slidePresentationHTML.classList.add('slide-presentation');
 
-        if (!this.isRendered) {
+        $slidePresentationHTML.innerHTML = `
+            ${
+                this.slides.map((slide, index) => {
+                    
+                    const slideStyle = `
+                        height: ${slide.mediaHeight};
+                        background-color: ${slide.mediaBackgroundColor};
+                        box-shadow: ${slide.mediaShadow};
+                    `;
 
-            $slidePresentationHTML.classList.add('slide-presentation');
-
-            this.slides.forEach((slide, index) => {
-                $slidePresentationHTML.innerHTML += `
-                    <div class="slide" id="slide-${index}">
+                    return `<div class="slide" id="slide-${index}">
                         <h1 class="slide__title">${slide.title}</h1>
                         <div class="main-content">
-                            <img class="slide__media" src="${slide.media}" alt="media">
+                            <img class="slide__media" src="${slide.media}" style="${slideStyle}" alt="media">
                             <p class="slide__content">${slide.content}</p>
                         </div>
-                        <div class="page-selector">
-                            ${
-                                this.slides.map((slide, index) => {
-                                    return `<button class="page-selector__btn ${index === slideNumber ? 'active' : ''}" 
-                                            onclick="
-                                            tutorial.render(${index});
-                                            document.querySelector('.slide').querySelectorAll('.page-selector__btn').forEach(btn => btn.classList.remove('active'));
-                                            this.classList.add('active');">${index + 1}</button>`;
-                                }).join('')
-                            }
-                            <button class="end-presentation btn-modern-blue" onclick="tutorial.endPresentation();">Ya sé usar PackeTTrino!</button>
-                        </div>
                     </div>`;
-            });
 
-            $slidePresentationHTML.querySelectorAll('.slide').forEach( $slide => $slide.classList.add('hidden') );
-            $slidePresentationHTML.querySelectorAll('.slide')[slideNumber].classList.remove('hidden');
-            bodyComponent.render($slidePresentationHTML);
+                }).join('')
+            }
 
-            this.isRendered = true;
+            <div class="page-selector">
+                ${
+                    this.slides.map((slide, index) => {
+                        return `<button class="page-selector__btn" onclick="tutorial.render(${index});">${index + 1}</button>`;
+                    }).join('')
+                }
+                <img class="next-slide-btn" src="./assets/tutorial/next.svg" alt="next" onclick="tutorial.render(tutorial.currentSlide + 1);">
+                <button class="end-presentation btn-modern-blue" onclick="tutorial.endPresentation();">Listo!</button>
+            </div>
+            <div class="links">
+                <a href="https://github.com/EvilPrime98/PackeTTrino" target="_blank">
+                    <img src="./assets/github.svg" alt="github">
+                </a>
+                <a href="https://www.linkedin.com/in/josé-amín-pérez-alconchel-2191b430b" target="_blank">
+                    <img src="./assets/linkedin.svg" alt="linkedin">
+                </a>
+            </div>
+        `;
 
-        }else {
+        $slidePresentationHTML.querySelectorAll('.slide').forEach( $slide => $slide.classList.add('hidden') );
+        $slidePresentationHTML.querySelectorAll('.slide')[0].classList.remove('hidden');
+        $slidePresentationHTML.querySelectorAll('.page-selector__btn')[0].classList.add('active');
+        document.querySelector(".modal-overlay").style.display = "block";
+        bodyComponent.render($slidePresentationHTML);
 
-            $slidePresentationHTML.querySelectorAll('.slide').forEach( $slide => $slide.classList.add('hidden') );
-            $slidePresentationHTML.querySelectorAll('.slide')[slideNumber].classList.remove('hidden');
-            
-        }
+        this.isRendered = true;
+    }
+
+    render(slideNumber) {
+
+        if (!this.isRendered) return;
+        if (this.currentSlide === slideNumber) return;
+        if (slideNumber >= this.slides.length) return;
+
+        const $currentButton = document.querySelector('.slide-presentation').querySelectorAll('.page-selector__btn')[this.currentSlide];
+        const $nextButton = document.querySelector('.slide-presentation').querySelectorAll('.page-selector__btn')[slideNumber];
+        const $currentSlide = document.querySelector('.slide-presentation').querySelectorAll('.slide')[this.currentSlide];
+        const $nextSlide = document.querySelector('.slide-presentation').querySelectorAll('.slide')[slideNumber];
+
+        $currentSlide.classList.add('hiding');
+
+        setTimeout(() => {
+            $currentSlide.classList.remove('hiding');
+            $currentSlide.classList.add('hidden');
+            $nextSlide.classList.remove('hidden');
+            $currentButton.classList.remove('active');
+            $nextButton.classList.add('active');
+        }, 200);
 
         this.currentSlide = slideNumber;
-
     }
 
-    renderNext() {
-        this.render(this.currentSlide + 1);
-    }
-
-    renderPrevious() {
-        this.render(this.currentSlide - 1);
+    highlight(element) {
+        
     }
 
     endPresentation() {
-        document.querySelector(".slide-presentation").remove();
+        document.querySelector(".slide-presentation").classList.add('hiding');
+        document.querySelector(".modal-overlay").style.display = "none";
+        setTimeout(() => {
+            document.querySelector(".slide-presentation").remove();
+        }, 200);
     }
 
 }
 
 
-const page_1 = new slide(
-    'Bienvenido a PackeTTrino pagina 1',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Anthonis_Mor_001.jpg/800px-Anthonis_Mor_001.jpg',
-    `Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-    totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-    Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
-    qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
-    adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
-    Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi
-    consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur,
-    vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?`
+const introductionSlide = new slide(
+  'Bienvenido a PackeTTrino 🥳',
+  './assets/favicon.svg',
+  `PackeTTrino es una herramienta gráfica e interactiva para aprender redes de forma intuitiva.
+    En este tutorial, aprenderás a crear dispositivos, conectarlos y simular una red completa. ¡Empecemos!`
 );
 
-const page_2 = new slide(
-    'Bienvenido a PackeTTrino pagina 2',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/HDols06.jpg/800px-HDols06.jpg',
-    `Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-    totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-    Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
-    qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
-    adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
-    Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi
-    consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur,
-    vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?`
+introductionSlide.mediaShadow = "none";
+
+const createAndConnectDevicesSlide = new slide(
+  'Crear y conectar dispositivos 💻',
+  './assets/tutorial/slide1.gif',
+  `Para crear un dispositivo, arrástralo desde el panel inferior a la mesa de trabajo. 
+  Puedes soltar ordenadores, switches, routers, y más. Cada uno tiene un menú propio para configurarlo.
+  Prueba a conectar PCs a switches, switches a routers, etc. Los cables aparecerán visualmente sobre la mesa.`
 );
 
-const page_3 = new slide(
-    'Bienvenido a PackeTTrino pagina 3',
-    'https://upload.wikimedia.org/wikipedia/commons/6/61/Kepa_Amuchastegui_2023.jpg',
-    `Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-    totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-    Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
-    qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
-    adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
-    Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi
-    consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur,
-    vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?`  
+const configureDevicesSlide = new slide(
+  'Opciones de dispositivos ⚙️',
+  './assets/tutorial/slideDeviceSettings.gif',
+  `Haz clic derecho sobre un dispositivo para acceder a sus opciones de configuración.
+  Verás distintas opciones dependiendo del dispositivo y de los paquetes instalados.`
 );
 
+const testNetworkSlide = new slide(
+  'Prueba de Conectividad 📡',
+  './assets/tutorial/slidePing.gif',
+  `Una vez conectados y configurados los dispositivos, 
+  prueba la red con <code>ping</code> entre equipos. Si todo está bien configurado, verás respuestas exitosas y sabrás que la red funciona.`
+);
+
+const nowItsYourTurnSlide = new slide(
+  '¡Ahora te toca a ti! 🚀',
+  './assets/tutorial/lastSlide.jpg',
+  `Cierra este tutorial y prueba crear 
+  tu propia topología de red. Explora las opciones, experimenta y si te pierdes… siempre puedes volver a este tutorial 
+  o consultar la documentación oficial en GitHub. ¡Buena suerte, futuro experto en redes!`
+);
+
+const terminalSlide = new slide(
+  'Terminal Integrada 🗔',
+  './assets/tutorial/slideTerminal.gif',
+  `La terminal integrada es una herramienta de comandos para interactuar con tu dispositivo. 
+  Puedes usar comandos como <code>ping</code>, <code>curl</code>, <code>ifup</code> o configurar IPs y máscaras.
+  Puedes hacer operaciones sobre el sistema de ficheros con comandos como <code>ls</code>, <code>cat</code> o <code>nano</code>.`
+);
+
+terminalSlide.mediaHeight = "250px";
+
+const installPackagesSlide = new slide(
+  'Instalar paquetes 📦',
+  './assets/tutorial/slidePaquetes.gif',
+  `Para instalar paquetes, puedes usar el comando <code>apt</code> desde la terminal integrada o arrastrar y soltar el paquete sobre el dispositivo.`
+);
+
+installPackagesSlide.mediaHeight = "250px";
 
 const tutorial = new slidePresentation();
 
-tutorial.addSlide(page_1, page_2, page_3,page_1, page_2);
+tutorial.addSlide(
+    introductionSlide,
+    createAndConnectDevicesSlide,
+    configureDevicesSlide, 
+    terminalSlide,
+    testNetworkSlide,
+    installPackagesSlide, 
+    nowItsYourTurnSlide
+);
 
 function startTutorial() {
-
-    tutorial.render(0);
-
+    tutorial.startPresentation();
 }
