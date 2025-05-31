@@ -58,7 +58,7 @@ function getApacheWebContent(networkObjectId, packet) {
 
         const isValidPort = parseInt(fileResponse[site].port) === parseInt(requestedPort);
         const isValidIp = fileResponse[site].ip === "*" || fileResponse[site].ip === requestedIp;
-        const isValidServerName = fileResponse[site].serverName === host || fileResponse[site].serverName === undefined;
+        const isValidServerName = fileResponse[site].serverName === host || !fileResponse[site].serverName;
 
         if (isValidPort && isValidIp && isValidServerName) {
 
