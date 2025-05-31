@@ -54,6 +54,6 @@ function startApp() {
         time += 10;
     });
 
-    setTimeout(startTutorial, 400);
+    //setTimeout(startTutorial, 400);
 
 }

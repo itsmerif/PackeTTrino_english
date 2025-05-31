@@ -109,9 +109,6 @@ function findShortestPath(startNetwork, endNetwork) {
         current = previous[current];
     }
 
-    //return pathNodes;
-
-
     // Convertir el camino de nodos a IPs
     const pathIPs = mapPathToIPs(pathNodes);
 

@@ -1079,6 +1079,7 @@ img {
     width: 19ch;
     transition: width 0.2s ease;
     z-index: 1;
+    user-select: none;
 
     input {
         width: 100%;
@@ -2919,6 +2920,7 @@ circle:hover {
         width: fit-content;
         padding: 0px;
         white-space: nowrap;
+        user-select: none;
     }
 
     .terminal-output {
