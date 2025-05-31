@@ -26,7 +26,7 @@ function GeneralOptions() {
         <div class="options-group">
             <label for="arp-ttl"> ARP TTL </label>
             <input type="range" class="btn-input" id="arp-ttl" name="arp-ttl" min="120" max="600" value="400">
-            <span id="arp-ttl-value">400</span><span>s</span>
+            <span id="arp-ttl-value">400s</span>
         </div>
 
         <div class="options-group">
@@ -45,12 +45,11 @@ function GeneralOptions() {
     
     $generalOptions.querySelector("#arp-ttl").addEventListener("input", function () { 
         $ARPENTRYTTL= this.value;
-        $generalOptions.querySelector("#arp-ttl-value").innerHTML = this.value;
+        $generalOptions.querySelector("#arp-ttl-value").innerHTML = `${this.value}s`;
     });
     
     $generalOptions.querySelector("#start-tutorial").addEventListener("click", function (event) {
         event.preventDefault();
-        $generalOptions.style.display = "none";
         startTutorial(); 
     });
 

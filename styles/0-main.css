@@ -2232,7 +2232,8 @@ circle:hover {
     border-radius: 5px;
     display: none;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     gap: 15px;
     z-index: 1000;
     font-family: var(--inter);
@@ -2267,10 +2268,15 @@ circle:hover {
         flex-direction: row;
         align-items: flex-start;
         padding-left: 10px;
+        gap: 10px;
         padding-right: 10px;
+        width: 80%;
+
+        * {
+            margin: auto 0 auto 0;
+        }
 
         label {
-            flex-grow: 0;
             width: 240px;
         }
 
