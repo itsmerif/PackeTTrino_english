@@ -30,28 +30,28 @@ function GeneralOptions() {
         </div>
 
         <div class="options-group">
-            <label for="mac-ttl"> MAC TTL </label>
-            <input type="range" class="btn-input" id="mac-ttl" name="mac-ttl" min="0" max="300" value="300">
-            <span id="mac-ttl-value">300</span><span>s</span>
+            <label for="start-tutorial"> Tutorial </label>
+            <button class="btn-modern-blue" id="start-tutorial">Empezar</button>
         </div>
-      
+
         <button class="btn-modern-blue" id="close-btn">Cerrar</button>
     `;
 
     $generalOptions.querySelector("#ignore-arp-traffic").addEventListener("change", function () { ignoreArpTraffic = this.checked; });
     $generalOptions.querySelector("#visual-toggle").addEventListener("change", function () { visualToggle = this.checked; });
     $generalOptions.querySelector("#dark-mode").addEventListener("change", activateDarkMode);
-    $generalOptions.querySelector(".btn-modern-blue").addEventListener("click", generalOptionsHandler);
+    $generalOptions.querySelector("#close-btn").addEventListener("click", generalOptionsHandler);
     $generalOptions.querySelector(".window-frame").addEventListener("mousedown", dragModal);
     
     $generalOptions.querySelector("#arp-ttl").addEventListener("input", function () { 
-        $MACENTRYTTL = this.value;
+        $ARPENTRYTTL= this.value;
         $generalOptions.querySelector("#arp-ttl-value").innerHTML = this.value;
     });
     
-    $generalOptions.querySelector("#mac-ttl").addEventListener("input", function () { 
-        $ARPENTRYTTL = this.value;
-        $generalOptions.querySelector("#mac-ttl-value").innerHTML = this.value
+    $generalOptions.querySelector("#start-tutorial").addEventListener("click", function (event) {
+        event.preventDefault();
+        $generalOptions.style.display = "none";
+        startTutorial(); 
     });
 
     return $generalOptions;

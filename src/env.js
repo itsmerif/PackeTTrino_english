@@ -11,7 +11,6 @@ let pcs = {};
 let routers = {};
 let switches = {};
 let servers = {};
-let $MACENTRYTTL = 300;
 let $ARPENTRYTTL = 120;
 let macEntryTimers = {};
 let arpEntryTimers = {};
