@@ -43,6 +43,7 @@ function getApacheWebContent(networkObjectId, packet) {
     const requestedIp = packet.destination_ip;
     const method = packet.method;
     const host = packet.host;
+    const resource = packet.resource;
 
     //parseamos el fichero de configuración de apache y obtenemos la información
 
@@ -62,7 +63,7 @@ function getApacheWebContent(networkObjectId, packet) {
 
         if (isValidPort && isValidIp && isValidServerName) {
 
-            const indexFile = fileResponse[site].directoryIndex;
+            const defaultFile = fileResponse[site].directoryIndex;
             const documentRoot = fileResponse[site].documentRoot;
             const serverName = fileResponse[site].serverName;
             const indexesAllowed = fileResponse[site].indexesAllowed;
@@ -70,10 +71,14 @@ function getApacheWebContent(networkObjectId, packet) {
             //intentamos obtener el contenido del index.html
 
             try {
-                const directoryIndexContent = networkObjectFileSystem.read(indexFile, documentRoot.split("/").slice(1));
+
+                const directoryIndexContent = networkObjectFileSystem.read(defaultFile, documentRoot.split("/").slice(1));
                 return directoryIndexContent;
+
             }catch (e) {
+
                 //TODO: crear un log en el sistema de ficheros para los errores
+
             }
 
             //si no se pudo obtener el index.html, intentamos mostrar el índice del directorio

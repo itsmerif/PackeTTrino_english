@@ -1,44 +1,40 @@
-async function http(networkObjectId, destinationIp, method, port) {
+async function http(networkObjectId, headers) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    let domainName; //<-- nos lo quedamos para usarlo como host
+    let domainName;
 
     //comprobamos que el puerto y método sean válidos
 
-    if (isNaN(port) || port < 1 || port > 65535) throw new Error(`Error: Puerto ${port} no válido.`);
+    if (isNaN(headers["dport"]) || headers["dport"] < 1 || headers["dport"] > 65535) throw new Error(`Error: Puerto ${headers["dport"]} no válido.`);
 
-    if (!["GET", "POST", "PUT", "DELETE"].includes(method.toUpperCase())) throw new Error(`Error: Método ${method} no válido.`);
+    if (!["GET", "POST", "PUT", "DELETE"].includes(headers.method.toUpperCase())) throw new Error(`Error: Método ${headers.method} no válido.`);
 
     //comprobamos si es una IP o un dominio
 
-    if (!isValidIp(destinationIp)) {
-        domainName = destinationIp;
-        destinationIp = await domainNameResolution(networkObjectId, destinationIp);
-        if (!destinationIp) throw new Error(`Error: No se pudo resolver el dominio "${domainName}".`);
+    if (!isValidIp(headers["address"])) {
+        domainName = headers["address"];
+        headers["address"] = await domainNameResolution(networkObjectId, headers["address"]);
+        if (!headers["address"]) throw new Error(`Error: No se pudo resolver el dominio "${domainName}".`);
     }
 
-    //creamos los headers
-
-    const headers = {
-        "method": method,
-        "host": domainName || destinationIp
-    }
+    headers["host"] = domainName || headers["address"]; //guardamos el nombre de dominio que se utilizó
+    headers["sport"] = Math.floor(Math.random() * (65535 - 49152 + 1)) + 49152; // <--- generamos un puerto aleatorio para el origen
 
     //comprobamos si es un servidor web local
-
-    if (isLocalIp(networkObjectId, destinationIp)) {
+    if (isLocalIp(networkObjectId, headers["address"])) {
 
         const newPacket = await apache_service(networkObjectId,
 
             new httpRequest(
                 $networkObject.getAttribute(`ip-${getInterfaces(networkObjectId)[0]}`), //ip del origen
-                destinationIp, //ip del destino
+                headers["address"], //ip del destino
                 $networkObject.getAttribute(`mac-${getInterfaces(networkObjectId)[0]}`), //mac del origen
                 "", //mac del destino
-                Math.floor(Math.random() * (65535 - 49152 + 1)) + 49152, // <--- generamos un puerto aleatorio para el origen
-                port, //puerto del destino
+                headers["sport"], //puerto del origen
+                headers["port"], //puerto del destino
                 headers["method"], //método
-                headers["host"] //host
+                headers["host"], //host
+                headers["resource"] //resource
             )
 
         );
@@ -51,15 +47,13 @@ async function http(networkObjectId, destinationIp, method, port) {
 
     //iniciamos la sincronización TCP
 
-    const source_port = Math.floor(Math.random() * (65535 - 49152 + 1)) + 49152; // <--- generamos un puerto efímero aleatorio para el origen
-
-    await tcpSynPacketGenerator(networkObjectId, destinationIp, source_port, port);
+    await tcpSynPacketGenerator(networkObjectId, headers["address"], headers["sport"], headers["dport"]);
 
     if (tcpSyncFlag[networkObjectId] === false) throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
 
     //realizamos la petición HTTP
 
-    await httpRequestPacketGenerator(networkObjectId, destinationIp, source_port, port, headers);
+    await httpRequestPacketGenerator(networkObjectId, headers);
 
     //comprobamos si hay respuesta en el buffer
 
@@ -71,26 +65,23 @@ async function http(networkObjectId, destinationIp, method, port) {
 
 }
 
-async function httpRequestPacketGenerator(networkObjectId, destinationIp, source_port, destination_port, headers) {
+async function httpRequestPacketGenerator(networkObjectId, headers) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkjObjectInterface = getInterfaces(networkObjectId)[0];
     const networkObjectMac = $networkObject.getAttribute(`mac-${networkjObjectInterface}`);
     const networkObjectIp = $networkObject.getAttribute(`ip-${networkjObjectInterface}`);
 
-    //extraemos los headers que usaremos
-    const methodHeader = headers["method"];
-    const hostHeader = headers["host"];
-
     let packet = new httpRequest(
         networkObjectIp, //ip del origen
-        destinationIp, //ip del destino
+        headers["address"], //ip del destino
         networkObjectMac, //mac del origen
         "", //mac del destino
-        source_port, //puerto del origen
-        destination_port, //puerto del destino
-        methodHeader, //método,
-        hostHeader //host
+        headers["sport"], //puerto del origen
+        headers["dport"], //puerto del destino
+        headers["method"], //método,
+        headers["host"], //host
+        headers["resource"] //resource
     );
 
     await routing(networkObjectId, packet, true);

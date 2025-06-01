@@ -28,15 +28,15 @@ async function command_curl(networkObjectId, args) {
         return;
     }
 
-    const [protocol, address, port] = parseSearch(url);
+    const search = parseSearch(url);
 
     if (visualToggle) await minimizeTerminal();
 
         try {
 
-            const httpReply = await http(networkObjectId, address, method, port); 
+            const httpReply = await http(networkObjectId, search.address, method, search.port); 
             
-            let message = `URL:\n ${protocol}://${address}:${port}\n\n`;
+            let message = `URL:\n ${search.protocol}://${search.address}:${search.port}\n\n`;
 
             if (showHeaders) {
                 message += `Method:\n ${httpReply.method}\n\n`;

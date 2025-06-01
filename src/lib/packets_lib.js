@@ -225,7 +225,7 @@ class Ack extends packet {
 }
 
 class httpRequest extends packet {
-    constructor(origin_ip, destination_ip, origin_mac, destination_mac, sport, dport, method, host) {
+    constructor(origin_ip, destination_ip, origin_mac, destination_mac, sport, dport, method, host, resource) {
         super(origin_ip, destination_ip, origin_mac, destination_mac);
         this.transport_protocol = "tcp";
         this.protocol = "http";
@@ -240,6 +240,7 @@ class httpRequest extends packet {
         this.keepalive = true;
         this.userAgent = "Amin-Search 1.0 - 2025";
         this.body = "";
+        this.resource = resource;
     }
 }
 

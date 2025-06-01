@@ -3,25 +3,36 @@ async function browserSearch() {
     const $networkObject = document.getElementById(document.querySelector(".browser-component").getAttribute("data-id"));
     const $browser = document.querySelector(".browser-component");
     const $browserContent = $browser.querySelector(".browser-content");
-    const $addressInput =  $browser.querySelector(".address-input");
+    const $addressInput = $browser.querySelector(".address-input");
 
     if (visualToggle) await minimizeBrowser();
 
-        try {
+    try {
 
-            const [protocol, address, port] = parseSearch($addressInput.value.trim());
+        const search = parseSearch($addressInput.value.trim());
 
-            $browser.querySelector(".address-input").value = `http://${address}${(port === 80) ? "" : `:${port}`}`;
+        //cambiamos la url del navegador
 
-            const httpReply = await http($networkObject.id, address, "GET", port);
+        $browser.querySelector(".address-input").value = [
+            `http://${search.address}`,
+            (search.port === 80 ? "" : `:${search.port}`),
+            (search.resource === "index.html" ? "" : `/${search.resource}`)
+        ].join('');
 
-            $browserContent.srcdoc = httpReply.body;
+        const httpReply = await http($networkObject.id, {
+            address: search.address,
+            method: "GET",
+            dport: search.port,
+            resource: search.resource
+        });
 
-        } catch (error) {
+        $browserContent.srcdoc = httpReply.body;
 
-            $browserContent.srcdoc = $BROWSERERRORPAGE;
-            
-        }
+    } catch (error) {
+
+        $browserContent.srcdoc = $BROWSERERRORPAGE;
+
+    }
 
     if (visualToggle) await maximizeBrowser();
 

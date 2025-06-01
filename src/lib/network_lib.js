@@ -580,25 +580,47 @@ function setRouterIps($router, ip1, ip2 = "", ip3 = "") {
 function parseSearch(input) {
     
     let protocol;
+    let addressPortResource;
+    let addressPort;
     let address;
     let port;
+    let resource;
 
-    const parsebyProtocol = splitFirst(input, "://");
+    const dividebyProtocol = splitFirst(input, "://");
 
-    if (parsebyProtocol.length < 2)  {
-
+    if (dividebyProtocol.length < 2) {
         protocol = "http";
-        [address, port] = splitFirst(input, ":");
-
-    } else {
-
-        protocol = parsebyProtocol[0];
-        [address, port] = splitFirst(parsebyProtocol[1], ":");
-
+        addressPortResource = dividebyProtocol[0];
+    }else {
+        protocol = dividebyProtocol[0];
+        addressPortResource = dividebyProtocol[1];
     }
 
-    if (!port) port = 80;
+    const dividebyResource = splitFirst(addressPortResource, "/");
 
-    return [protocol, address, parseInt(port)];
+    if (dividebyResource.length < 2) {
+        addressPort = dividebyResource[0];
+        resource = "";
+    }else {
+        addressPort = dividebyResource[0];
+        resource = dividebyResource[1];
+    }
+
+    const dividebyAddressPort = splitFirst(addressPort, ":");
+    
+    if (dividebyAddressPort.length < 2) {
+        address = dividebyAddressPort[0];
+        port = 80;
+    }else {
+        address = dividebyAddressPort[0];
+        port = parseInt(dividebyAddressPort[1]);
+    }
+    
+    return {
+        protocol: protocol,
+        address: address,
+        port: port,
+        resource: resource
+    }
 
 }
