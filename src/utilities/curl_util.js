@@ -4,13 +4,16 @@ async function command_curl(networkObjectId, args) {
 
     const $OPTS = catchopts([
         "-m:",
+        "-h",
     ], args);
 
     const optionHandlers = {
         "-m": () => { method = ($OPTS["-m"]).trim(); },
+        "-h": () => { showHeaders = true; }
     }
 
-    let method = "GET"; 
+    let method = "GET";
+    let showHeaders = false;
 
     for (option in $OPTS) if (optionHandlers[option]) optionHandlers[option]();
 
@@ -34,8 +37,15 @@ async function command_curl(networkObjectId, args) {
             const httpReply = await http(networkObjectId, address, method, port); 
             
             let message = `URL:\n ${protocol}://${address}:${port}\n\n`;
-            message += `Method:\n ${method.toUpperCase()}\n\n`;
-            message += `Headers:\n ${httpReply.header}\n\n`;
+
+            if (showHeaders) {
+                message += `Method:\n ${httpReply.method}\n\n`;
+                message += `Host:\n ${httpReply.host}\n\n`;
+                message += `Content-Type:\n ${httpReply.contentType}\n\n`;
+                message += `Keep-Alive:\n ${httpReply.keepalive}\n\n`;
+                message += `User-Agent:\n ${httpReply.userAgent}\n\n`;
+            }
+
             message += `Body:\n ${httpReply.body}`;
 
             terminalMessage(message, networkObjectId, false);
