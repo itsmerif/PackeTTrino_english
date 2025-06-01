@@ -3415,6 +3415,22 @@ circle:hover {
             font-size: 0.95em;
         }
 
+        a {
+            color: #4facfe;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: rgba(79, 172, 254, 0.1);
+            transition: all 0.2s ease;
+
+            &:hover {
+                color: white;
+                background: #4facfe;
+                transform: translateY(-1px);
+            }
+        }
+
         &.hidden {
             display: none;
         }
@@ -3470,6 +3486,7 @@ circle:hover {
         img {
             width: 40px;
             transition: transform 0.3s ease;
+
             &:hover {
                 cursor: pointer;
                 transform: scale(1.1);
