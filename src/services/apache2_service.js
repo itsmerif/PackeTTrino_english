@@ -137,6 +137,7 @@ async function apache_service(networkObjectId, packet) {
 
     }
 
+    if (!apacheContent) apacheContent = $404ERRORCONTENT;
     newPacket.body = apacheContent;
     newPacket.statusCode = codeError;
 
