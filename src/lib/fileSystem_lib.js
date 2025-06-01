@@ -221,5 +221,41 @@ class FileSystem {
 
     }
 
+
+    isDirectory(fileName, directoryPath) {
+
+        let currentDirectory = this.structure["/"];
+
+        for (let i = 0; i < directoryPath.length; i++) {
+            if (!currentDirectory[directoryPath[i]]) return false;
+            if (!(currentDirectory[directoryPath[i]] instanceof Object)) return false;
+            currentDirectory = currentDirectory[directoryPath[i]];
+        }
+
+        if (!Object.hasOwn(currentDirectory, fileName)) return false;
+        if (!(currentDirectory[fileName] instanceof Object)) return false;
+
+
+        return true;
+
+    }
+
+    isFile(fileName, directoryPath) {
+
+        let currentDirectory = this.structure["/"];
+
+        for (let i = 0; i < directoryPath.length; i++) {
+            if (!currentDirectory[directoryPath[i]]) return false;
+            if (!(currentDirectory[directoryPath[i]] instanceof Object)) return false;
+            currentDirectory = currentDirectory[directoryPath[i]];
+        }
+
+        if (!Object.hasOwn(currentDirectory, fileName)) return false;
+        if (currentDirectory[fileName] instanceof Object) return false;
+
+        return true;
+
+    }
+    
 }
 

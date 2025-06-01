@@ -48,66 +48,92 @@ async function apache_service(networkObjectId, packet) {
         const isValidIp = fileResponse[site].ip === "*" || fileResponse[site].ip === requestedIp;
         const isValidServerName = fileResponse[site].serverName === host || !fileResponse[site].serverName;
 
-        if (isValidPort && isValidIp && isValidServerName) {
+        if (!isValidPort || !isValidIp || !isValidServerName) continue;
 
-            const directoryIndex = fileResponse[site].directoryIndex;
-            const documentRoot = fileResponse[site].documentRoot;
-            const serverName = fileResponse[site].serverName;
-            const indexesAllowed = fileResponse[site].indexesAllowed;
+        const directoryIndex = fileResponse[site].directoryIndex;
+        const documentRoot = fileResponse[site].documentRoot;
+        const serverName = fileResponse[site].serverName;
+        const indexesAllowed = fileResponse[site].indexesAllowed;
 
-            //intentamos obtener el contenido solicitado o el contenido del index
+        //intentamos obtener el contenido solicitado o el contenido del index
 
-            try {
+        try {
 
-                if (requestedResource !== "") {
+            if (requestedResource !== "") {
 
-                    const dividedResource = splitLast(requestedResource, "/");
-                    let requestedFile;
-                    let requestedDir;
+                const dividedResource = splitLast(requestedResource, "/");
+                let requestedFile;
+                let requestedDir;
 
-                    if (dividedResource.length < 2) {
-                        requestedFile = dividedResource[0];
-                        requestedDir = [];
-                    } else {
-                        requestedFile = dividedResource[1];
-                        requestedDir = dividedResource[0].split("/");
+                if (dividedResource.length < 2) {
+                    requestedFile = dividedResource[0];
+                    requestedDir = [];
+                } else {
+                    requestedFile = dividedResource[1];
+                    requestedDir = dividedResource[0].split("/");
+                }
+
+                const newFullPath = [...documentRoot.split("/").slice(1), ...requestedDir];
+
+                if (networkObjectFileSystem.isDirectory(requestedFile, newFullPath)) {
+
+                    if (indexesAllowed === true) {
+
+                        const directoryIndexFiles = networkObjectFileSystem.ls("-R", newFullPath)
+                        .split(" ").filter(el => el.startsWith(`${documentRoot}/${requestedFile}/`)).map(el => el.split(`${documentRoot}/${requestedFile}/`)[1]);
+
+                        apacheContent = $DIRECTORYINDEXCONTENT(documentRoot, directoryIndexFiles);
+                        codeError = 200;
+
+                    }else {
+
+                        apacheContent = $FORBIDDENCONTENT;
+                        codeError = 403;
+
                     }
 
-                    const newFullPath = [...documentRoot.split("/").slice(1), ...requestedDir];
+                }else if (networkObjectFileSystem.isFile(requestedFile, newFullPath)) {
+
                     apacheContent = networkObjectFileSystem.read(requestedFile, newFullPath);
                     codeError = 200;
 
-                } else {
-
-                    apacheContent = networkObjectFileSystem.read(directoryIndex, documentRoot.split("/").slice(1));
-                    codeError = 200;
-
-                }
-
-            } catch (e) {
-
-                if (requestedResource === "") {
-
-                    const directoryIndexFiles = networkObjectFileSystem.ls("-R").split(" ").filter(el => el.startsWith(`${documentRoot}/`)).map(el => el.split(`${documentRoot}/`)[1]);
-
-                    if (indexesAllowed === true) {
-                        apacheContent = $DIRECTORYINDEXCONTENT(documentRoot, directoryIndexFiles);
-                        codeError = 200;
-                    } else {
-                        apacheContent = $FORBIDDENCONTENT;
-                        codeError = 403;
-                    }
-
-                } else {
+                }else {
 
                     apacheContent = $404ERRORCONTENT;
                     codeError = 404;
 
                 }
 
+            }else {
+
+                apacheContent = networkObjectFileSystem.read(directoryIndex, documentRoot.split("/").slice(1));
+                codeError = 200;
+
+            }
+
+        } catch (e) {
+
+            if (requestedResource === "") {
+
+                const directoryIndexFiles = networkObjectFileSystem.ls("-R").split(" ").filter(el => el.startsWith(`${documentRoot}/`)).map(el => el.split(`${documentRoot}/`)[1]);
+
+                if (indexesAllowed === true) {
+                    apacheContent = $DIRECTORYINDEXCONTENT(documentRoot, directoryIndexFiles);
+                    codeError = 200;
+                } else {
+                    apacheContent = $FORBIDDENCONTENT;
+                    codeError = 403;
+                }
+
+            } else {
+
+                apacheContent = $404ERRORCONTENT;
+                codeError = 404;
+
             }
 
         }
+
 
     }
 
