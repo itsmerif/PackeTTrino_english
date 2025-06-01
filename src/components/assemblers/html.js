@@ -54,6 +54,7 @@ function activateDarkMode() {
     if ($checkbox.checked) {
 
         darkMode = true;
+        localStorage.setItem("dark-mode", "true");
         $board.classList.add("dark-mode");
         $panel.classList.add("dark-mode");
         $modals.forEach(modal => modal.classList.add("modal-dark-mode"));
@@ -66,6 +67,7 @@ function activateDarkMode() {
     }else {
 
         darkMode = false;
+        localStorage.setItem("dark-mode", "false");
         $board.classList.remove("dark-mode");
         $panel.classList.remove("dark-mode");
         $modals.forEach(modal => modal.classList.remove("modal-dark-mode"));

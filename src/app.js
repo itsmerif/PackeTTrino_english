@@ -37,10 +37,21 @@ function startApp() {
         loadingScreen.style.display = 'none';
     }, 500);
 
-    /*if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.querySelector(".settings-modal").querySelector("#dark-mode").checked = true;
-        activateDarkMode();
-    }*/
+    if (localStorage.getItem("dark-mode") === null) {
+
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.querySelector(".settings-modal").querySelector("#dark-mode").checked = true;
+            activateDarkMode();
+        }
+
+    }else {
+
+        if (localStorage.getItem("dark-mode") === "true") {
+            document.querySelector(".settings-modal").querySelector("#dark-mode").checked = true;
+            activateDarkMode();
+        }
+        
+    }
     
     document.querySelector("#item-panel").classList.remove("hidden");
 
@@ -54,6 +65,6 @@ function startApp() {
         time += 10;
     });
 
-    //setTimeout(startTutorial, 400);
+    if (localStorage.getItem("tutorial-seen") !== "true") setTimeout(startTutorial, 400);
 
 }

@@ -110,6 +110,8 @@ class slidePresentation {
         setTimeout(() => {
             document.querySelector(".slide-presentation").remove();
         }, 200);
+
+        localStorage.setItem("tutorial-seen", "true");
     }
 
 }
@@ -154,6 +156,18 @@ const nowItsYourTurnSlide = new slide(
   o consultar la documentación oficial en GitHub. ¡Buena suerte, futuro experto en redes!`
 );
 
+const creditsSlide = new slide(
+  'Créditos 👨‍💻',
+  './assets/tutorial/ies.png',
+  `Este aplicación fue desarrollada íntegramente por <br><a href="https://www.linkedin.com/in/josé-amín-pérez-alconchel-2191b430b" target="_blank">José Amín Pérez Alconchel</a> 
+  como Proyecto de Fin de Grado en Administración de Sistemas Informáticos en Red en IES Mar de Cádiz.
+  <br><br>
+  Si te gusta el mundo de las redes también puedes encontrar información sobre los distintos protocolos y herramientas
+  en <a href="https://www.fpgenred.es" target="_blank">www.fpgenred.es</a>`
+);
+
+creditsSlide.mediaShadow = "none";
+
 const terminalSlide = new slide(
   'Terminal Integrada 🗔',
   './assets/tutorial/slideTerminal.gif',
@@ -181,7 +195,8 @@ tutorial.addSlide(
     terminalSlide,
     testNetworkSlide,
     installPackagesSlide, 
-    nowItsYourTurnSlide
+    nowItsYourTurnSlide,
+    creditsSlide
 );
 
 function startTutorial() {
