@@ -24,7 +24,7 @@ function packetInfo(event) {
     const layer6Fields = [];
 
     const layer7Fields = [
-        "method", "contentType", "body", "userAgent", "keepalive", "host", "resource", //http
+        "method", "contentType", "body", "userAgent", "keepalive", "host", "resource", "statusCode", //http
         "ciaddr", "giaddr", "siaddr", "yiaddr", "chaddr", //dhcp
         "query", "answer", "answer_type", "answer", //dns
         "sport", "dport" //puertos

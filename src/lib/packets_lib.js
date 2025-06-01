@@ -260,5 +260,6 @@ class httpReply extends packet {
         this.contentType = "text/html";
         this.userAgent = "Amin-Search 1.0 - 2025";
         this.body = "";
+        this.statusCode = "";
     }
 }

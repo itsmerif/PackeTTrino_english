@@ -16,7 +16,7 @@ async function browserSearch() {
         $browser.querySelector(".address-input").value = [
             `http://${search.address}`,
             (search.port === 80 ? "" : `:${search.port}`),
-            (search.resource === "index.html" ? "" : `/${search.resource}`)
+            `/${search.resource}`
         ].join('');
 
         const httpReply = await http($networkObject.id, {

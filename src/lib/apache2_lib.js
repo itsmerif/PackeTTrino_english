@@ -769,6 +769,196 @@ margin-bottom: 0;
 </body>
 </html>`;
 
+const $404ERRORCONTENT = `
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Error 404 - No Encontrado</title>
+<style type="text/css" media="screen">
+:root {
+--primary-color:rgb(0, 0, 0);
+--accent-color:rgb(255, 255, 255);
+--text-color: rgb(0, 0, 0);
+--light-bg:rgb(255, 255, 255);
+--dark-bg:rgb(0, 0, 0);
+--shadow:rgb(0, 0, 0);
+--shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+line-height: 1.6;
+color: var(--text-color);
+background-color: var(--light-bg);
+padding: 0 20px;
+}
+
+.main_page {
+max-width: 900px;
+margin: 40px auto;
+background-color: white;
+border-radius: 12px;
+overflow: hidden;
+box-shadow: var(--shadow);
+border: 2px solid #fecaca;
+}
+
+.page_header {
+display: flex;
+align-items: center;
+padding: 24px;
+background-color: var(--dark-bg);
+color: white;
+}
+
+.page_header img {
+height: 40px;
+margin-right: 16px;
+}
+
+.page_header .floating_element {
+font-size: 24px;
+font-weight: 600;
+}
+
+.warning-icon {
+width: 40px;
+height: 40px;
+margin-right: 16px;
+background-color: var(--primary-color);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 24px;
+color: white;
+}
+
+.content_section {
+padding: 24px;
+}
+
+.section_header_red {
+color: var(--primary-color);
+font-size: 32px;
+font-weight: 700;
+margin-bottom: 24px;
+position: relative;
+padding-bottom: 10px;
+}
+
+.section_header_red::after {
+content: "";
+position: absolute;
+bottom: 0;
+left: 0;
+width: 60px;
+height: 4px;
+background-color: var(--primary-color);
+border-radius: 2px;
+}
+
+.content_section_text p {
+margin-bottom: 16px;
+font-size: 16px;
+}
+
+.error-code {
+background-color: #fee2e2;
+padding: 12px 16px;
+border-radius: 8px;
+border-left: 4px solid var(--primary-color);
+margin: 20px 0;
+font-weight: 600;
+}
+
+b {
+color: var(--primary-color);
+font-weight: 600;
+}
+
+tt {
+background-color: #fee2e2;
+padding: 2px 6px;
+border-radius: 4px;
+font-family: 'Courier New', monospace;
+font-size: 14px;
+color: var(--primary-color);
+}
+
+.recommendations {
+background-color: #fef3c7;
+padding: 16px;
+border-radius: 8px;
+border-left: 4px solid var(--accent-color);
+margin-top: 20px;
+}
+
+.recommendations h3 {
+color: #d97706;
+margin-bottom: 12px;
+font-size: 18px;
+}
+
+.recommendations ul {
+margin-left: 20px;
+}
+
+.recommendations li {
+margin-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+.main_page {
+margin: 20px auto;
+}
+
+.page_header {
+flex-direction: column;
+text-align: center;
+}
+
+.warning-icon {
+margin-right: 0;
+margin-bottom: 12px;
+}
+}
+</style>
+</head>
+<body>
+<div class="main_page">
+<div class="page_header floating_element">
+<div class="warning-icon">⚠</div>
+<span class="floating_element">
+Servidor Apache2 PackeTTrino
+</span>
+</div>
+<div class="content_section floating_element">
+<div class="section_header section_header_red">
+<div id="error"></div>
+Error 404
+</div>
+<div class="error-code">
+El recurso solicitado no se encuentra en este servidor.
+</div>
+<div class="content_section_text">
+<p>
+Lo sentimos, pero el recurso solicitado no se encuentra en este servidor.
+<tt>Apache2 PackeTTrino</tt>.
+</p>
+</div>
+</div>
+</div>
+</body>
+</html>`;
+
 const $DIRECTORYINDEXCONTENT = (documentRoot, directoryIndexFiles) => {
 return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
@@ -1025,8 +1215,6 @@ return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://w
                         <div class="directory-item">
                             <div class="file-icon file-icon-regular">📄</div>
                             <a href="${file}" class="file-name">${file}</a>
-                            <span class="file-size">12.4 KB</span>
-                            <span class="file-date">2025-05-25 16:20</span>
                         </div>
                     `).join("")}
                 </div>

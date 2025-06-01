@@ -8,10 +8,6 @@ async function apache_service(networkObjectId, packet) {
 
     if (!isApacheOn) return;
 
-    const apacheContent = getApacheWebContent(networkObjectId, packet);
-
-    if (!apacheContent) return;
-
     let newPacket = new httpReply(
         networkObjectIp, //ip del origen
         packet.origin_ip, //ip del destino
@@ -23,33 +19,24 @@ async function apache_service(networkObjectId, packet) {
         packet.host //host
     );
 
-    newPacket.body = apacheContent;
-
-    return newPacket;
-
-}
-
-/**ESTA FUNCION DEVUELVE EL CONTENIDO DEL ARCHIVO INDEX.HTML DE UN DISPOSITIVO EN EL DIRECTORIO POR DEFECTO */
-
-function getApacheWebContent(networkObjectId, packet) {
-
-    const $networkObject = document.getElementById(networkObjectId);
-    const networkObjectFileSystem = new FileSystem($networkObject);
-    let fileResponse;
-
     //desglosamos el paquete
 
+    const networkObjectFileSystem = new FileSystem($networkObject);
     const requestedPort = packet.dport;
     const requestedIp = packet.destination_ip;
+    const requestedResource = packet.resource;
     const method = packet.method;
     const host = packet.host;
-    const resource = packet.resource;
+    let codeError;
+    let fileResponse;
+    let apacheContent;
 
     //parseamos el fichero de configuración de apache y obtenemos la información
 
     try {
         fileResponse = apacheSitesParser(networkObjectId);
     } catch (e) {
+        codeError = 500;
         return; //TODO: crear un log en el sistema de ficheros para los errores
     }
 
@@ -63,32 +50,70 @@ function getApacheWebContent(networkObjectId, packet) {
 
         if (isValidPort && isValidIp && isValidServerName) {
 
-            const defaultFile = fileResponse[site].directoryIndex;
+            const directoryIndex = fileResponse[site].directoryIndex;
             const documentRoot = fileResponse[site].documentRoot;
             const serverName = fileResponse[site].serverName;
             const indexesAllowed = fileResponse[site].indexesAllowed;
 
-            //intentamos obtener el contenido del index.html
+            //intentamos obtener el contenido solicitado o el contenido del index
 
             try {
 
-                const directoryIndexContent = networkObjectFileSystem.read(defaultFile, documentRoot.split("/").slice(1));
-                return directoryIndexContent;
+                if (requestedResource !== "") {
 
-            }catch (e) {
+                    const dividedResource = splitLast(requestedResource, "/");
+                    let requestedFile;
+                    let requestedDir;
 
-                //TODO: crear un log en el sistema de ficheros para los errores
+                    if (dividedResource.length < 2) {
+                        requestedFile = dividedResource[0];
+                        requestedDir = [];
+                    } else {
+                        requestedFile = dividedResource[1];
+                        requestedDir = dividedResource[0].split("/");
+                    }
+
+                    const newFullPath = [...documentRoot.split("/").slice(1), ...requestedDir];
+                    apacheContent = networkObjectFileSystem.read(requestedFile, newFullPath);
+                    codeError = 200;
+
+                } else {
+
+                    apacheContent = networkObjectFileSystem.read(directoryIndex, documentRoot.split("/").slice(1));
+                    codeError = 200;
+
+                }
+
+            } catch (e) {
+
+                if (requestedResource === "") {
+
+                    const directoryIndexFiles = networkObjectFileSystem.ls("-R").split(" ").filter(el => el.startsWith(`${documentRoot}/`)).map(el => el.split(`${documentRoot}/`)[1]);
+
+                    if (indexesAllowed === true) {
+                        apacheContent = $DIRECTORYINDEXCONTENT(documentRoot, directoryIndexFiles);
+                        codeError = 200;
+                    } else {
+                        apacheContent = $FORBIDDENCONTENT;
+                        codeError = 403;
+                    }
+
+                } else {
+
+                    apacheContent = $404ERRORCONTENT;
+                    codeError = 404;
+
+                }
 
             }
-
-            //si no se pudo obtener el index.html, intentamos mostrar el índice del directorio
-
-            const directoryIndexFiles = networkObjectFileSystem.ls("-R").split(" ").filter(el => el.startsWith(`${documentRoot}/`)).map(el => el.split(`${documentRoot}/`)[1]);
-
-            return (indexesAllowed === true) ? $DIRECTORYINDEXCONTENT(documentRoot, directoryIndexFiles) : $FORBIDDENCONTENT;
 
         }
 
     }
+
+    newPacket.body = apacheContent;
+    newPacket.statusCode = codeError;
+
+    return newPacket;
 
 }
