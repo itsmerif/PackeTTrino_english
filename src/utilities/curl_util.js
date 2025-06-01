@@ -34,11 +34,17 @@ async function command_curl(networkObjectId, args) {
 
         try {
 
-            const httpReply = await http(networkObjectId, search.address, method, search.port); 
+            const httpReply = await http(networkObjectId, {
+                address: search.address,
+                method: method,
+                dport: search.port,
+                resource: search.resource
+            }); 
             
             let message = `URL:\n ${search.protocol}://${search.address}:${search.port}\n\n`;
 
             if (showHeaders) {
+                message += `Status Code:\n ${httpReply.statusCode}\n\n`;
                 message += `Method:\n ${httpReply.method}\n\n`;
                 message += `Host:\n ${httpReply.host}\n\n`;
                 message += `Content-Type:\n ${httpReply.contentType}\n\n`;
