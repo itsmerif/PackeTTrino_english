@@ -82,7 +82,7 @@ async function apache_service(networkObjectId, packet) {
                         const directoryIndexFiles = networkObjectFileSystem.ls("-R", newFullPath)
                         .split(" ").filter(el => el.startsWith(`${documentRoot}/${requestedFile}/`)).map(el => el.split(`${documentRoot}/${requestedFile}/`)[1]);
 
-                        apacheContent = $DIRECTORYINDEXCONTENT(documentRoot, directoryIndexFiles);
+                        apacheContent = $DIRECTORYINDEXCONTENT(`${newFullPath.join("/")}/${requestedFile}`, directoryIndexFiles);
                         codeError = 200;
 
                     }else {
