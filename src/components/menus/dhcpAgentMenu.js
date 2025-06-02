@@ -101,44 +101,27 @@ function saveDhcpRelayMenu(event) {
     const newListenOnInterfaces = ($form.querySelector("#listen-on-interfaces").value).split(",").map(item => item.trim()).filter(item => item !== "");
     const isDhcpRelay = $networkObject.id.startsWith("dhcp-relay-server-");
 
-    if (isDhcpRelay) { 
-
-        if (!isValidIp(newIp)) {
-            bodyComponent.render(popupMessage(`<span>Error: </span>La IP "${newIp}" no es válida.`));
-            return;
+    try {
+        if (isDhcpRelay) { 
+            if (!isValidIp(newIp)) throw new Error(`Error: La IP "${newIp}" no es válida.`);
+            if (!isValidIp(newNetmask)) throw new Error(`Error: La máscara de red "${newNetmask}" no es válida.`);
+            if (!isValidIp(newGateway)) throw new Error(`Error: La puerta de enlace "${newGateway}" no es válida.`);
         }
+        if (newMainServer !== "" && !isValidIp(newMainServer)) throw new Error(`Error: La IP del Servidor DHCP principal "${newMainServer}" no es válida.`);
+        if (newListenOnInterfaces.length !== 0 && !newListenOnInterfaces.every(item => availableInterfaces.includes(item))) 
+            throw new Error(`Error: Algunas de las interfaces de escucha no son válidas.`);
+    }catch(error) {
 
-        if (!isValidIp(newNetmask)) {
-            bodyComponent.render(popupMessage(`<span>Error: </span>La máscara de red "${newNetmask}" no es válida.`));
-            return;
-        }
-
-        if (!isValidIp(newGateway)) {
-            bodyComponent.render(popupMessage(`<span>Error: </span>El puerta de enlace "${newGateway}" no es válida.`));
-            return;
-        }
-
-        configureInterface($networkObject.id, newIp, newNetmask, networkObjectInterface);
-        setDirectRoutingRule($networkObject.id, newIp, newNetmask, networkObjectInterface);
-        $networkObject.setAttribute("data-gateway", newGateway);
-        setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, networkObjectInterface, newGateway);
-
-    }
-
-    if (!isValidIp(newMainServer)) {
-        bodyComponent.render(popupMessage(`<span>Error: </span>La IP del Servidor DHCP principal "${newMainServer}" no es válido.`));
+        bodyComponent.render(popupMessage(error.message));
         return;
     }
 
-    if (!newListenOnInterfaces.every(item => availableInterfaces.includes(item))) {
-        bodyComponent.render(popupMessage(`<span>Error: </span>Algunas de las interfaces de escucha no son válidas.`));
-        return;
-    }
-
-    //guardamos los cambios
+    configureInterface($networkObject.id, newIp, newNetmask, networkObjectInterface);
+    setDirectRoutingRule($networkObject.id, newIp, newNetmask, networkObjectInterface);
+    $networkObject.setAttribute("data-gateway", newGateway);
+    setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, networkObjectInterface, newGateway)
     $networkObject.setAttribute("dhcrelay-main-server", newMainServer);
-    $networkObject.setAttribute("dhcrelay-listen-on-interfaces", newListenOnInterfaces.join(","));
-
+    $networkObject.setAttribute("dhcrelay-listen-on-interfaces", newListenOnInterfaces?.join(","));
     bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
 
 }
