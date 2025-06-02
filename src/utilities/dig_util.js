@@ -62,11 +62,7 @@ async function command_dig(networkObjectId, args) {
             );
 
 
-        } catch (error) {
-
-            console.log(error);
-            
-        }
+        } catch (error) {}
 
     if (visualToggle) await maximizeTerminal();
 
