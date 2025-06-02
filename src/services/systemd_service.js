@@ -96,6 +96,7 @@ function startService(networkObjectId, service) {
 
         "dhcrelay": () => {
             $networkObject.setAttribute("dhcrelay", "true");
+            iscDhcpRelayInterpreter(networkObjectId, networkElementFileSystem.read("isc-dhcp-relay", ["etc", "default"]));
         },
 
         "named": () => {

@@ -9,10 +9,24 @@ function installDhcprelay($networkObject) {
     const append = (...nodes) => nodes.forEach(node => $networkObject.appendChild(node));
     const addOption = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));
 
+    //atributos
     attr("dhcrelay", "true");
     attr("dhcrelay-main-server", "");
     attr("dhcrelay-listen-on-interfaces", "");
     addOption(dhcpRelayConfig());
+
+    //directorios y archivos
+
+    const iscDhcpRelayDefaultContent = `
+    #Este archivo configura los servidores e interfaces disponibles para el servidor DHCP Relay
+    SERVERS=""
+    INTERFACES=""
+    `;
+
+    const networkObjectFileSystem = new FileSystem($networkObject);
+    networkObjectFileSystem.mkdir("default", ["etc"]);
+    networkObjectFileSystem.touch("isc-dhcp-relay", ["etc", "default"]);
+    networkObjectFileSystem.write("isc-dhcp-relay", ["etc", "default"], iscDhcpRelayDefaultContent.split('\n').map(line => line.trimStart()).join('\n'));
 
     terminalMessage("DHCP Relay instalado correctamente.", networkObjectId);
 }
@@ -29,6 +43,10 @@ function uninstallDhcprelay(networkObjectId) {
 
     rattr("dhcrelay", "dhcrelay-main-server", "dhcrelay-listen-on-interfaces");
     remOption("dhcp-relay-config");
+
+    //eliminar directorios y archivos
+    const networkObjectFileSystem = new FileSystem($networkObject);
+    networkObjectFileSystem.rmdir("default", ["etc"]);
 
     terminalMessage("DHCP Relay desinstalado correctamente.", networkObjectId);
 
