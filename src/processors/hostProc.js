@@ -34,7 +34,6 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
 
         const promises = responses.map(response => {
             const replyPacket = response.packet;
-            addPacketTraffic(replyPacket);
             return routing(networkObjectId, replyPacket, true);
         });
 
