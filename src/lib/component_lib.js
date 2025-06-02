@@ -407,14 +407,14 @@ function dragStart(event) {
 }
 
 /**ESTA FUNCION GESTIONA LA UTILIDAD DE CONEXIÓN RÁPIDA EN EL PANEL */
-function icmpTryoutStart() {
+function quickPingStart() {
 
-    if (icmpTryoutToggle) {
-        icmpTryoutEnd();
+    if (quickPingToggle) {
+        quickPingEnd();
         return;
     }
 
-    icmpTryoutToggle = true;
+    quickPingToggle = true;
 
     //creamos el cursor
     const $cursor = document.createElement("article");
@@ -435,8 +435,8 @@ function icmpTryoutStart() {
         $cursor.style.left = `${event.clientX}px`;
     }
 
-    function icmpTryoutEnd() {
-        icmpTryoutToggle = false;
+    function quickPingEnd() {
+        quickPingToggle = false;
         const $cursor = document.querySelectorAll(".pack-cursor");
         $cursor.forEach(cursor => { cursor.removeEventListener("mousemove", moveCursor); });
         $cursor.forEach(cursor => { cursor.remove(); });

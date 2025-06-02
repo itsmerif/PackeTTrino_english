@@ -159,7 +159,7 @@ class FileSystem {
             currentDirectory = currentDirectory[directoryPath[i]];
         }
 
-        if (Object.hasOwn(currentDirectory, folderName)) throw new Error(`El directorio ${folderName} ya existe`);
+        if (Object.hasOwn(currentDirectory, folderName)) return;
         currentDirectory[folderName] = {};
         this.compile();
 

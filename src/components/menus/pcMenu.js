@@ -74,8 +74,8 @@ function pc_menu() {
 
 function showPcMenu(networkObjectId) {
 
-    if (icmpTryoutToggle) { //esto controla si está usando la utilidad de ping visual
-        icmpTryoutProcess(networkObjectId);
+    if (quickPingToggle) { //esto controla si está usando la utilidad de ping visual
+        quickPing(networkObjectId);
         return;
     }
 

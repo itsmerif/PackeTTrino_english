@@ -111,8 +111,8 @@ function showDnsServerMenu(event) {
     const availableInterfaces = getInterfaces($serverObject.id);
     const networkObjectInterface = availableInterfaces[0];
 
-    if (icmpTryoutToggle) { //<-- comprobamos si estamos en modo icmptryout
-        icmpTryoutProcess($serverObject.id);
+    if (quickPingToggle) { //<-- comprobamos si estamos en modo icmptryout
+        quickPing($serverObject.id);
         return;
     }
 

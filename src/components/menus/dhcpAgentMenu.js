@@ -63,8 +63,8 @@ function showDhcpRelayMenu(event) {
     const networkObjectInterface = getInterfaces($networkObject.id)[0];
     const isDhcpRelay = $networkObject.id.startsWith("dhcp-relay-server-");
 
-    if (icmpTryoutToggle) {
-        icmpTryoutProcess($networkObject.id);
+    if (quickPingToggle) {
+        quickPing($networkObject.id);
         return;
     }
 

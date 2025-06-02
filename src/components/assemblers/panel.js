@@ -172,7 +172,7 @@ async function itemPanel() {
 
     //agregamos eventos
     $panel.querySelector("#fileInput").addEventListener("change", fileInputChangeHandler);
-    $panel.querySelector(".ping").addEventListener("click", icmpTryoutStart);
+    $panel.querySelector(".ping").addEventListener("click", quickPingStart);
     $panel.querySelector(".dynrouting").addEventListener("click", () => bodyComponent.render(DynamicRoutingMenu()));
     $panel.querySelector(".settings").addEventListener("click", generalOptionsHandler);
     $panel.querySelector(".traffic").addEventListener("click", showPacketTraffic);

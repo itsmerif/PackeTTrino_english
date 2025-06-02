@@ -21,20 +21,19 @@ async function command_ping(networkObjectId, destination) {
 
 }
 
-async function icmpTryoutProcess(id) {
+async function quickPing(id) {
 
     const $networkObject = document.getElementById(id);
-    const $board = document.querySelector(".board");
-    
-    const objectIp = getAvailableIps($networkObject.id)[0];
+    const $board = document.querySelector(".board");    
+    const networkObjectIp = getAvailableIps($networkObject.id)[0];
 
-    if (!objectIp) {
+    if (!networkObjectIp) {
         bodyComponent.render(popupMessage("<span>Error: </span> No se ha encontrado la IP del objeto " + id));
         return;
     }
 
-    if (icmpTryoutObject === "") {        
-        icmpTryoutObject = id;
+    if (quickPingObject === "") {        
+        quickPingObject = id;
         createPacketIndicator(id);
         return;
     }
@@ -43,10 +42,11 @@ async function icmpTryoutProcess(id) {
 
     visualToggle =  true;
 
-    await ping(icmpTryoutObject, objectIp);
-    
-    $board.querySelectorAll(".pack-cursor").forEach(cursor => {cursor.remove();});
+        await ping(quickPingObject, networkObjectIp);     
+        $board.querySelectorAll(".pack-cursor").forEach(cursor => {cursor.remove();});
+        quickPingObject = "";
 
-    icmpTryoutObject = "";
+    visualToggle = false;
+
 
 }

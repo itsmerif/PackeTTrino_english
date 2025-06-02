@@ -26,8 +26,8 @@ let dhcpRequestFlag = {};
 let dnsRequestFlag = {};
 let tcpSyncFlag = {};
 let traceFlag = {};
-let icmpTryoutToggle = false;
-let icmpTryoutObject =  "";
+let quickPingToggle = false;
+let quickPingObject =  "";
 
 //control de la traza de paquetes
 let trace = {}; 

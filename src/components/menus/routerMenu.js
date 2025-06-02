@@ -90,8 +90,8 @@ function showRouterMenu(event) {
     const $menu = document.querySelector(".router-form");
     const $interfacesContainer = $menu.querySelector(".interfaces-container");
 
-    if (icmpTryoutToggle) { //<-- si estamos en modo de simulacion de ping visual
-        icmpTryoutProcess($networkObject.id);
+    if (quickPingToggle) { //<-- si estamos en modo de simulacion de ping visual
+        quickPing($networkObject.id);
         return;
     }
     

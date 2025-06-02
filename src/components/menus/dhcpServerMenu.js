@@ -133,8 +133,8 @@ function showDhcpMenu(event) {
     const isDhcpServer = networkObjectId.startsWith("dhcp-server-");
     const reservations = genDhcpReservationsRows(networkObjectId);
 
-    if (icmpTryoutToggle) {
-        icmpTryoutProcess(networkObjectId);
+    if (quickPingToggle) {
+        quickPing(networkObjectId);
         return;
     }
 
