@@ -31,7 +31,7 @@ async function http(networkObjectId, headers) {
                 $networkObject.getAttribute(`mac-${getInterfaces(networkObjectId)[0]}`), //mac del origen
                 "", //mac del destino
                 headers["sport"], //puerto del origen
-                headers["port"], //puerto del destino
+                headers["dport"], //puerto del destino
                 headers["method"], //método
                 headers["host"], //host
                 headers["resource"] //resource
