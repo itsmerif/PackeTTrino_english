@@ -132,6 +132,11 @@ function dhcpdConfInterpreter(networkObjectId, content)  {
         if (!isValidMac(hostObject["mac"])) throw new Error(`Error: La mac "${hostObject["mac"]}" no es válida`);
         if (!isValidIp(hostObject["reservedIp"])) throw new Error(`Error: La IP "${hostObject["reservedIp"]}" no es válida`);
 
+        const offerNetmask = $networkObject.getAttribute("dhcp-offer-netmask");
+        const rangeStart = $networkObject.getAttribute("data-range-start");
+        
+        if (getNetwork(hostObject["reservedIp"], offerNetmask) !== getNetwork(rangeStart, offerNetmask)) 
+            throw new Error(`Error: La IP "${hostObject["reservedIp"]}" no pertenece al rango de servicio del servidor DHCP.`);
         addDhcpReservation(networkObjectId, hostObject["mac"], hostObject["reservedIp"]);
 
     });

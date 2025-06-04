@@ -178,12 +178,23 @@ async function reduceClientLeaseTime(networkObjectId, networkObjectInterface) {
 
 /**ESTA FUNCION AÑADE UNA NUEVA RESERVA DE ALQUILER A LA BASE DE DATOS DE UN SERVIDOR DHCP */
 function addDhcpReservation(networkObjectId, mac, ip) {
+    
     const $networkObject = document.getElementById(networkObjectId);
+    const rangeStart = $networkObject.getAttribute("data-range-start");
+    const offerNetmask = $networkObject.getAttribute("dhcp-offer-netmask");
     const reservations = JSON.parse($networkObject.getAttribute("dhcp-reservations"));
+
     if (!isValidIp(ip)) throw new Error("Error: La IP introducida no es valida.");
+
+    if (getNetwork(ip, offerNetmask) !== getNetwork(rangeStart, offerNetmask)) 
+        throw new Error("Error: La IP introducida no pertenece al rango de servicio del servidor DHCP.");
+
     if (!isValidMac(mac)) throw new Error("Error: La MAC introducida no es valida.");
+
     reservations[mac] = ip;
+
     $networkObject.setAttribute("dhcp-reservations", JSON.stringify(reservations));
+
 }
 
 /**ESTA FUNCION ELIMINA UNA RESERVA DE ALQUILER DE LA BASE DE DATOS DE UN SERVIDOR DHCP */
