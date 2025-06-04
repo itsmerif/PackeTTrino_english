@@ -237,6 +237,7 @@ function deleteDhcpInfo(networkObjectId, networkObjectInterface) {
     $networkObject.setAttribute("data-gateway", "");
     removeDirectRoutingRule($networkObject.id, networkObjectInterface);
     removeRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0");
+    setDnsServers($networkObject.id, [""]);
 
     //eliminamos la informacion DHCP del equipo
     $networkObject.setAttribute("data-dhcp-server", "");
