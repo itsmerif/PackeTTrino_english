@@ -1,4 +1,4 @@
-async function arpResolve(networkObjectId, destinationIp, iface = "enp0s3")  {
+async function arpResolve(networkObjectId, destinationIp, iface)  {
     const $networkObject = document.getElementById(networkObjectId);
     const switchId = $networkObject.getAttribute("data-switch-" + iface);
     const originIp = $networkObject.getAttribute("ip-" + iface);

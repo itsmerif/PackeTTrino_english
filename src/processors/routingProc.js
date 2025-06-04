@@ -30,16 +30,9 @@ async function routing(networkObjectId, packet, isNotForward = false) {
 
             packet.origin_mac = $networkObject.getAttribute("mac-" + ruleInterface);
             packet.destination_mac = "";
-
-            let nexthopMac;
-
-            if (rulenexthop === "0.0.0.0") {
-                nexthopMac = isIpInARPTable(networkObjectId, packet.destination_ip) || 
-                await arpResolve(networkObjectId, packet.destination_ip, isNotForward ? undefined : ruleInterface);
-            } else {
-                nexthopMac = isIpInARPTable(networkObjectId, rulenexthop) || 
-                await arpResolve(networkObjectId, rulenexthop, isNotForward ? undefined : ruleInterface);
-            }
+                        
+            const nextHop = (rulenexthop === "0.0.0.0") ? packet.destination_ip : rulenexthop;
+            const nexthopMac = isIpInARPTable(networkObjectId, nextHop) || await arpResolve(networkObjectId, nextHop, ruleInterface);
 
             if (!nexthopMac) return;
             
@@ -58,6 +51,7 @@ async function routing(networkObjectId, packet, isNotForward = false) {
 
             } else {
                 
+            
                 await firewallProc(networkObjectId, packet, ruleInterface);
                 
             }
