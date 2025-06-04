@@ -76,7 +76,7 @@ async function dhcpReleaseHandler(networkObjectId, networkObjectInterface) {
     const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
 
     if (!networkObjectIp || !networkObjectNetmask || !networkObjectDhcpServer) {
-        terminalMessage("Error en la configuración de red.", networkObjectId);
+        terminalMessage("dhcprelease: Error en la configuración de red.", networkObjectId);
         return;
     }
 

@@ -33,7 +33,7 @@ function command_ifdown(networkObjectId, interfaceInput)  {
 
             if ($networkObject.getAttribute("dhclient") === "true") {
                 const networkObjectIp = $networkObject.getAttribute(`ip-${availableInterface}`);
-                if (networkObjectIp) dhcpReleaseHandler(networkObjectId); //<-- en modo dhcp, se hace un release de la ip asignada
+                if (networkObjectIp) dhcpReleaseHandler(networkObjectId, availableInterface); //<-- en modo dhcp, se hace un release de la ip asignada
                 return;
             }
 
