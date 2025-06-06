@@ -36,12 +36,12 @@ function getFirewallDefaultPolicy(networkObjectId) {
 
 /**ESTA FUNCION DEVUELVE LAS REGLAS DE FIREWALL DE UN DISPOSITIVO COMO ARRAY DE STRINGS*/
 function getFirewallTable(networkObjectId) {
-    const $networkObject = document.getElementById(networkObjectId); //node
-    const firewallRules = JSON.parse($networkObject.getAttribute("firewall-rules"));  //firewallRules object
+    const $networkObject = document.getElementById(networkObjectId);
+    const firewallRules = JSON.parse($networkObject.getAttribute("firewall-rules"));
     let response = [];
     for (let table in firewallRules) {
-        const rules = firewallRules[table]; //array of rule objects
-        rules.forEach(rule => { //rule object
+        const rules = firewallRules[table];
+        rules.forEach(rule => {
             let ruleString = "";
             for (let key in rule) if (rule[key] !== "*") ruleString += `-${key} ${rule[key]} `;
             response.push(ruleString);

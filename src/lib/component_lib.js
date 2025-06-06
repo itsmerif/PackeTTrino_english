@@ -329,35 +329,35 @@ function fileInputLoadHandler() {
 
 /**ESTA FUNCION GESTIONA LA DESCARGA DE UN ARCHIVO EN EL PANEL */
 function downloadState() {
-    const elemento = document.querySelector(".board");
-    const contenidoHTML = (elemento.innerHTML).replace(/\s+/g, " ");
-    const blob = new Blob([contenidoHTML], { type: "text/html" });
+    const $workspace = document.querySelector(".board");
+    const workspaceHTML = ($workspace.innerHTML).replace(/\s+/g, " ");
+    const blob = new Blob([workspaceHTML], { type: "text/html" });
     const url = URL.createObjectURL(blob);
-    const enlace = document.createElement("a");
-    enlace.href = url;
-    enlace.download = "red.ptt";
-    document.body.appendChild(enlace);
-    enlace.click();
-    document.body.removeChild(enlace);
+    const $link = document.createElement("a");
+    $link.href = url;
+    $link.download = "red.ptt";
+    document.body.appendChild($link);
+    $link.click();
+    document.body.removeChild($link);
     URL.revokeObjectURL(url);
 }
 
 /**ESTA FUNCION GESTIONA LA CARGA DE UN ARCHIVO EN LA APLICACION */
 function loadState() {
 
-    const archivoInput = document.getElementById("fileInput");
-    const archivo = archivoInput.files[0];
-    const lector = new FileReader();
+    const $inputFiles = document.getElementById("fileInput");
+    const $inputFile = $inputFiles.files[0];
+    const reader = new FileReader();
 
-    lector.onload = function (event) {
-        const contenido = event.target.result;
-        document.querySelector(".board").innerHTML = contenido;
+    reader.onload = function (event) {
+        const content = event.target.result;
+        document.querySelector(".board").innerHTML = content;
         setNewIndex();
         setTextContents();
         startLeaseTimers();
     };
 
-    lector.readAsText(archivo);
+    reader.readAsText($inputFile);
 
     function setNewIndex() {
         

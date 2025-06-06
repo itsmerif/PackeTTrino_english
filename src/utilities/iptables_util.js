@@ -4,7 +4,7 @@ function command_Iptables(networkObjectId, args) {
         let defaultPolicies = getFirewallDefaultPolicy(networkObjectId);
         let firewallRules = getFirewallTable(networkObjectId);
         for (let policy in defaultPolicies) terminalMessage(`-P ${policy} ${defaultPolicies[policy]}`, networkObjectId);
-        firewallRules.forEach(rule => terminalMessage(rule, networkObjectId));
+        firewallRules.forEach(rule => terminalMessage(rule.replace(/_/g, "-"), networkObjectId));
         return;
     }
 
