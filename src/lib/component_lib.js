@@ -354,6 +354,7 @@ function loadState(files = undefined) {
     reader.onload = function (event) {
         const content = event.target.result;
         document.querySelector(".board").innerHTML = content;
+        cleanUpWorkspace();
         setNewIndex();
         setTextContents();
         startLeaseTimers();
@@ -470,4 +471,24 @@ function isEmptyObject(obj) {
 /**ESTA FUNCIÓN GENERA UN DELAY COMO PROMESA*/
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**ESTA FUNCIÓN LIMPIA TODOS LOS BUFFERS Y TEMPORIZADORES*/
+function cleanUpWorkspace() {
+
+    for (let serverLeaseTime in serverLeaseTimers) {
+        clearInterval(serverLeaseTimers[serverLeaseTime]);
+        delete serverLeaseTimers[serverLeaseTime];
+    }
+
+    for (let clientLeaseTime in clientLeaseTimers) {
+        clearInterval(clientLeaseTimers[clientLeaseTime]);
+        delete clientLeaseTimers[clientLeaseTime];
+    }
+
+    for (let arpEntryTime in arpEntryTimers) {
+        clearInterval(arpEntryTimers[arpEntryTime]);
+        delete arpEntryTimers[arpEntryTime];
+    }
+
 }
