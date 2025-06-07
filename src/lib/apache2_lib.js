@@ -1214,7 +1214,7 @@ return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://w
                     ${directoryIndexFiles.map(file => `
                         <div class="directory-item">
                             <div class="file-icon file-icon-regular">📄</div>
-                            <a href="${file}" class="file-name">${file}</a>
+                            <p class="file-name">${file}</p>
                         </div>
                     `).join("")}
                 </div>

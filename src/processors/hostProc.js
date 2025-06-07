@@ -21,7 +21,6 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     const replyPacket = await kernelProcessor(networkObjectId, packet, networkObjectInterface);
 
     if (replyPacket) {
-        addPacketTraffic(replyPacket);
         await routing(networkObjectId, replyPacket, true);
         return;
     }

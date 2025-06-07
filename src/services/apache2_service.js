@@ -19,28 +19,55 @@ async function apache_service(networkObjectId, packet) {
         packet.host //host
     );
 
-    //desglosamos el paquete
+    //definimos la solicitud
 
+    const requestObject = {
+        requestedPort: packet.dport,
+        requestedIp: packet.destination_ip,
+        requestedResource: packet.resource,
+        requestedMethod: packet.method,
+        requestedHost: packet.host
+    }
+
+    const [apacheContent, codeError] = obtainApacheContent(networkObjectId, requestObject);
+
+    if (!apacheContent) apacheContent = $404ERRORCONTENT;
+    newPacket.body = apacheContent;
+    newPacket.statusCode = codeError;
+
+    return newPacket;
+
+}
+
+
+function obtainApacheContent(networkObjectId, requestObject) {
+
+    const $networkObject = document.getElementById(networkObjectId);
     const networkObjectFileSystem = new FileSystem($networkObject);
-    const requestedPort = packet.dport;
-    const requestedIp = packet.destination_ip;
-    const requestedResource = packet.resource;
-    const method = packet.method;
-    const host = packet.host;
-    let codeError;
-    let fileResponse;
-    let apacheContent;
+
+    //desglosamos la solicitud
+
+    const requestedPort = requestObject.requestedPort;
+    const requestedIp = requestObject.requestedIp;
+    const requestedResource = (requestObject.requestedResource).endsWith("/") 
+    ? (requestObject.requestedResource).slice(0, -1) 
+    : requestObject.requestedResource;
+    const requestedMethod = requestObject.requestedMethod;
+    const host = requestObject.requestedHost;
 
     //parseamos el fichero de configuración de apache y obtenemos la información
+
+    let fileResponse;
 
     try {
         fileResponse = apacheSitesParser(networkObjectId);
     } catch (e) {
-        codeError = 500;
-        return; //TODO: crear un log en el sistema de ficheros para los errores
+        return [$404ERRORCONTENT, 500]; //TODO: crear un log en el sistema de ficheros para los errores
     }
 
     //interpretamos la información obtenida
+
+    let apacheContent;
 
     for (let site in fileResponse) {
 
@@ -59,88 +86,88 @@ async function apache_service(networkObjectId, packet) {
 
         try {
 
-            if (requestedResource !== "") {
+            //si no se ha especificado el recurso, se devuelve el index
+            if (requestedResource === "") {
 
-                const dividedResource = splitLast(requestedResource, "/");
-                let requestedFile;
-                let requestedDir;
-
-                if (dividedResource.length < 2) {
-                    requestedFile = dividedResource[0];
-                    requestedDir = [];
-                } else {
-                    requestedFile = dividedResource[1];
-                    requestedDir = dividedResource[0].split("/");
+                if (networkObjectFileSystem.isFile(directoryIndex, documentRoot.split("/").slice(1))) {
+                    apacheContent = networkObjectFileSystem.read(directoryIndex, documentRoot.split("/").slice(1));
+                    return [apacheContent, 200];
                 }
 
-                const newFullPath = [...documentRoot.split("/").slice(1), ...requestedDir];
+                //si no existe el archivo index, se devuelve el index del directorio
+                if (indexesAllowed === true) {
 
-                if (networkObjectFileSystem.isDirectory(requestedFile, newFullPath)) {
+                    const directoryIndexFiles = networkObjectFileSystem.ls("-R")
+                    .split(" ")
+                    .filter(el => el.startsWith(`${documentRoot}/`))
+                    .map(el => el.split(`${documentRoot}/`)[1]);
 
-                    if (indexesAllowed === true) {
-
-                        const directoryIndexFiles = networkObjectFileSystem.ls("-R", newFullPath)
-                        .split(" ").filter(el => el.startsWith(`${documentRoot}/${requestedFile}/`)).map(el => el.split(`${documentRoot}/${requestedFile}/`)[1]);
-
-                        apacheContent = $DIRECTORYINDEXCONTENT(`${newFullPath.join("/")}/${requestedFile}`, directoryIndexFiles);
-                        codeError = 200;
-
-                    }else {
-
-                        apacheContent = $FORBIDDENCONTENT;
-                        codeError = 403;
-
-                    }
-
-                }else if (networkObjectFileSystem.isFile(requestedFile, newFullPath)) {
-
-                    apacheContent = networkObjectFileSystem.read(requestedFile, newFullPath);
-                    codeError = 200;
-
-                }else {
-
-                    apacheContent = $404ERRORCONTENT;
-                    codeError = 404;
+                    apacheContent = $DIRECTORYINDEXCONTENT(documentRoot, directoryIndexFiles);
+                    return [apacheContent, 200];
 
                 }
 
-            }else {
-
-                apacheContent = networkObjectFileSystem.read(directoryIndex, documentRoot.split("/").slice(1));
-                codeError = 200;
+                return [$FORBIDDENCONTENT, 403];
 
             }
+
+            //se ha especificado el recurso, se devuelve el contenido
+            const dividedResource = splitLast(requestedResource, "/");
+            let requestedFile; //fichero que se solicita
+            let requestedDir; //dir que se solicita
+
+            if (dividedResource.length < 2) {
+                requestedFile = dividedResource[0];
+                requestedDir = [];
+            } else {
+                requestedFile = dividedResource[1];
+                requestedDir = dividedResource[0].split("/");
+            }
+
+            const newFullPath = [...documentRoot.split("/").slice(1), ...requestedDir];
+
+            //el recurso solicitado es un directorio
+            if (networkObjectFileSystem.isDirectory(requestedFile, newFullPath)) {
+
+                if (networkObjectFileSystem.isFile(directoryIndex, [...newFullPath, requestedFile])) {
+                    apacheContent = networkObjectFileSystem.read(directoryIndex, [...newFullPath, requestedFile]);
+                    return [apacheContent, 200];
+                }
+
+                //el index del directorio es permitido               
+                if (indexesAllowed === true) {
+
+                    const directoryIndexFiles = networkObjectFileSystem.ls("-R", newFullPath)
+                    .split(" ")
+                    .filter(el => el.startsWith(`${documentRoot}/${requestedFile}/`))
+                    .map(el => el.split(`${documentRoot}/${requestedFile}/`)[1]);
+
+                    apacheContent = $DIRECTORYINDEXCONTENT(`${newFullPath.join("/")}/${requestedFile}`, directoryIndexFiles);
+                    return [apacheContent, 200];
+
+                }
+
+                return [$FORBIDDENCONTENT, 403];
+            }
+
+            //el recurso solicitado es un fichero
+            if (networkObjectFileSystem.isFile(requestedFile, newFullPath)) {
+                apacheContent = networkObjectFileSystem.read(requestedFile, newFullPath);
+                return [apacheContent, 200];
+            }
+
+            //el recurso solicitado no existe
+            return [$404ERRORCONTENT, 404];
 
         } catch (e) {
 
-            if (requestedResource === "") {
-
-                const directoryIndexFiles = networkObjectFileSystem.ls("-R").split(" ").filter(el => el.startsWith(`${documentRoot}/`)).map(el => el.split(`${documentRoot}/`)[1]);
-
-                if (indexesAllowed === true) {
-                    apacheContent = $DIRECTORYINDEXCONTENT(documentRoot, directoryIndexFiles);
-                    codeError = 200;
-                } else {
-                    apacheContent = $FORBIDDENCONTENT;
-                    codeError = 403;
-                }
-
-            } else {
-
-                apacheContent = $404ERRORCONTENT;
-                codeError = 404;
-
-            }
+            return [$404ERRORCONTENT, 404];
 
         }
 
 
     }
 
-    if (!apacheContent) apacheContent = $404ERRORCONTENT;
-    newPacket.body = apacheContent;
-    newPacket.statusCode = codeError;
-
-    return newPacket;
+    return [$404ERRORCONTENT, 404];
 
 }
