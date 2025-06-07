@@ -343,10 +343,17 @@ function downloadState() {
 }
 
 /**ESTA FUNCION GESTIONA LA CARGA DE UN ARCHIVO EN LA APLICACION */
-function loadState() {
+function loadState(files = undefined) {
 
-    const $inputFiles = document.getElementById("fileInput");
-    const $inputFile = $inputFiles.files[0];
+    let $inputFile;
+
+    if (!files) {
+        const $inputFiles = document.getElementById("fileInput");
+        $inputFile = $inputFiles.files[0];
+    } else {
+        $inputFile = files[0];    
+    }
+
     const reader = new FileReader();
 
     reader.onload = function (event) {

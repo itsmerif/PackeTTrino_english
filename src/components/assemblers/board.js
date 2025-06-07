@@ -20,6 +20,7 @@ function itemBoard() {
 /**ESTA FUNCION GESTIONA EL DRAG OVER DE EL ELEMENTO  */
 function dragOverBoard(event) {
     event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
 }
 
 /**ESTA FUNCION GESTIONA EL DRAG START DE UN ELEMENTO QUE ESTÉ SOBRE EL ELEMENTO TABLERO */
@@ -49,6 +50,15 @@ function BoardItemDragStart(event) {
 
 /**ESTA FUNCION GESTIONA EL DROP DE UN ELEMENTO SOBRE EL ELEMENTO TABLERO */
 function dropItemOverBoard(event) {
+    
+    event.preventDefault();
+
+    //esto solo funciona en algunos navegadores
+    if (event.dataTransfer.files.length > 0) {
+        const files = event.dataTransfer.files;
+        loadState(files);
+        return;
+    }
 
     const item = event.dataTransfer.getData("json");
     const itemType = JSON.parse(item).itemType;
