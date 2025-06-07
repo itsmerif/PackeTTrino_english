@@ -1,29 +1,34 @@
 function command_man(networkObjectId, topic) {
 
     const topicsMapper = {
-        "man": () => manual_man(),
-        "ip": () => manual_ip(),
-        "nano": () => manual_nano(),
-        "apt": () => manual_apt(),
-        "arp": () => manual_arp(),
-        "dig": () => manual_dig(),
-        "dns": () => manual_dns(),
-        "mkdir": () => manual_mkdir(),
-        "touch": () => manual_touch(),
-        "ls": () => manual_ls(),
-        "rm": () => manual_rm(),
-        "cd": () => manual_cd(),
-        "cat": () => manual_cat(),
-        "ifup": () => manual_ifup(),
-        "ifdown": () => manual_ifdown(),
-        "iptables": () => manual_Iptables(),
-        "ping": () => manual_ping(),
-        "systemctl": () => manual_systemctl(),
-        "traceroute": () => manual_traceroute(),
-        "visual": () => manual_visual(),
+        "man": manual_man,
+        "ip": manual_ip,
+        "nano": manual_nano,
+        "apt": manual_apt,
+        "arp": manual_arp,
+        "dig": manual_dig,
+        "dns": manual_dns,
+        "mkdir": manual_mkdir,
+        "touch": manual_touch,
+        "ls": manual_ls,
+        "rm": manual_rm,
+        "cd": manual_cd,
+        "cat": manual_cat,
+        "ifup": manual_ifup,
+        "ifdown": manual_ifdown,
+        "iptables": manual_Iptables,
+        "ping": manual_ping,
+        "systemctl": manual_systemctl,
+        "traceroute": manual_traceroute,
+        "visual": manual_visual,
+        "curl": manual_curl,
+        "realnode": manual_realnode,
+        "cp": manual_cp,
     }
 
-    topicsMapper[topic] ? terminalMessage(topicsMapper[topic](), networkObjectId) : terminalMessage(`Error: comando ${topic} desconocido.`, networkObjectId);
+    topicsMapper[topic] 
+    ? terminalMessage(topicsMapper[topic](), networkObjectId) 
+    : terminalMessage(`Error: comando ${topic} desconocido.`, networkObjectId);
 
 }
 
@@ -637,24 +642,29 @@ function manual_man() {
     message += "    las opciones y ejemplos de uso.\n";
     message += "\n";
     message += "COMANDOS DISPONIBLES\n";
-    message += "    ip          - Configuración y gestión de direcciones IP.\n";
-    message += "    nano        - Editor de texto de terminal.\n";
     message += "    apt         - Herramienta de gestión de paquetes en sistemas basados en Debian.\n";
     message += "    arp         - Manipulación de la tabla ARP.\n";
-    message += "    dig         - Herramienta para consultas DNS.\n";
-    message += "    dns         - Configuración y gestión de registros DNS.\n";
-    message += "    mkdir       - Crea un nuevo directorio.\n";
-    message += "    touch       - Crea un nuevo archivo vacío.\n";
-    message += "    ls          - Lista el contenido de un directorio.\n";
-    message += "    rm          - Elimina archivos o directorios.\n";
     message += "    cd          - Cambia el directorio de trabajo.\n";
     message += "    cat         - Muestra el contenido de un archivo.\n";
+    message += "    cp          - Copia archivos o directorios.\n";
+    message += "    dig         - Herramienta para consultas DNS.\n";
+    message += "    dns         - Configuración y gestión de registros DNS.\n";
+    message += "    exit        - Salir de la terminal interactiva.\n";
+    message += "    ip          - Configuración y gestión de direcciones IP.\n";
     message += "    ifup        - Configura interfaces de red a partir del archivo de configuración.\n";
     message += "    ifdown      - Desconfigura interfaces de red.\n";
     message += "    iptables    - Configuración y gestión de reglas de firewall.\n";
+    message += "    ls          - Lista el contenido de un directorio.\n";
+    message += "    mkdir       - Crea un nuevo directorio.\n";
+    message += "    nano        - Editor de texto de terminal.\n";
     message += "    ping        - Realiza un test de conectividad a una IP o dominio.\n";
+    message += "    realnode    - Muestra las propiedades reales de un objeto de red en el simulador.\n";
+    message += "    rm          - Elimina archivos o directorios.\n";
     message += "    systemctl   - Gestión de servicios del sistema.\n";
+    message += "    touch       - Crea un nuevo archivo vacío.\n";
     message += "    traceroute  - Muestra la ruta de los paquetes hacia un destino.\n";
+    message += "    touch       - Crea un nuevo archivo vacío.\n";
+    message += "    visual      - Gestión de la animación visual del simulador de red.\n";
     message += "\n";
     message += "EJEMPLOS\n";
     message += "    man ip        - Muestra el manual para el comando 'ip'.\n";
@@ -704,4 +714,88 @@ function manual_visual() {
     message += "        Muestra la configuración actual de la animación visual.\n";
     return message;
 
+}
+
+function manual_curl(){
+    let message = '';
+    message += 'NOMBRE\n';
+    message += '    curl - Cliente HTTP para realizar solicitudes a servidores desde objetos de red simulados\n';
+    message += '\n';
+    message += 'SINOPSIS\n';
+    message += '    curl [-m MÉTODO] [-h] URL\n';
+    message += '\n';
+    message += 'DESCRIPCIÓN\n';
+    message += '    Realiza una solicitud HTTP al servidor especificado por la URL. Permite seleccionar\n';
+    message += '    el método HTTP y mostrar las cabeceras de la respuesta. Utilizado para simular\n';
+    message += '    comunicaciones web dentro del entorno del simulador.\n';
+    message += '\n';
+    message += 'OPCIONES\n';
+    message += '    -m MÉTODO\n';
+    message += '        Define el método HTTP a utilizar en la solicitud (por defecto: GET).\n';
+    message += '\n';
+    message += '    -h\n';
+    message += '        Muestra las cabeceras HTTP de la respuesta junto al contenido.\n';
+    message += '\n';
+    message += 'ARGUMENTOS\n';
+    message += '    URL\n';
+    message += '        Dirección completa del recurso HTTP al que se desea acceder\n';
+    message += '        (ej. http://192.168.1.1:80/index.html).\n';
+    message += '\n';
+    message += 'AUTOR\n';
+    message += '    Simulador de redes desarrollado por Amin Pérez (2025).\n';
+
+    return message;
+}
+
+function manual_realnode(){
+    let message = '';
+    message += 'NOMBRE\n';
+    message += '    realnode - Muestra las propiedades reales de un objeto de red en el simulador\n';
+    message += '\n';
+    message += 'SINOPSIS\n';
+    message += '    realnode [propiedad1] [propiedad2] [...]\n';
+    message += '\n';
+    message += 'DESCRIPCIÓN\n';
+    message += '    Recupera y muestra el valor de una o varias propiedades reales del objeto de red\n';
+    message += '    especificado. Se utiliza principalmente para depuración o inspección interna\n';
+    message += '    del estado de un nodo en el simulador.\n';
+    message += '\n';
+    message += 'ARGUMENTOS\n';
+    message += '    propiedad\n';
+    message += '        Nombre de la propiedad que se desea consultar (ej. ip, hostname, mac, etc.).\n';
+    message += '        Si la propiedad no existe, se mostrará "No value found".\n';
+    message += '\n';
+    message += 'AUTOR\n';
+    message += '    Simulador de redes desarrollado por Amin Pérez (2025).\n';
+
+    return message;
+}
+
+function manual_cp(){
+    let message = '';
+    message += 'NOMBRE\n';
+    message += '    cp - Copiar archivos o directorios\n';
+    message += '\n';
+    message += 'SINOPSIS\n';
+    message += '    cp ORIGEN DESTINO\n';
+    message += '\n';
+    message += 'DESCRIPCIÓN\n';
+    message += '    Copia un archivo desde la ruta ORIGEN a la ruta DESTINO dentro del sistema de archivos\n';
+    message += '    del objeto de red. Si el archivo de destino ya existe, será sobrescrito.\n';
+    message += '\n';
+    message += 'ARGUMENTOS\n';
+    message += '    ORIGEN\n';
+    message += '        Ruta relativa o absoluta del archivo que se desea copiar.\n';
+    message += '\n';
+    message += '    DESTINO\n';
+    message += '        Ruta relativa o absoluta del archivo de destino.\n';
+    message += '\n';
+    message += 'ERRORES\n';
+    message += '    En caso de error (por ejemplo, si el archivo no existe o no es accesible), se mostrará\n';
+    message += '    un mensaje informativo en la terminal del objeto de red.\n';
+    message += '\n';
+    message += 'AUTOR\n';
+    message += '    Simulador de redes desarrollado por Amin Pérez (2025).\n';
+
+    return message;
 }
