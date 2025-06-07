@@ -586,6 +586,15 @@ function parseSearch(input) {
     let port;
     let resource;
 
+    //definimos los mapas
+
+    const protocolMap = {
+        http: 80,
+        https: 443,
+        ptt: 80
+    };
+
+    //
     const dividebyProtocol = splitFirst(input, "://");
 
     if (dividebyProtocol.length < 2) {
@@ -610,7 +619,7 @@ function parseSearch(input) {
     
     if (dividebyAddressPort.length < 2) {
         address = dividebyAddressPort[0];
-        port = 80;
+        port = protocolMap[protocol];
     }else {
         address = dividebyAddressPort[0];
         port = parseInt(dividebyAddressPort[1]);

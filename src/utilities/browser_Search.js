@@ -7,32 +7,61 @@ async function browserSearch() {
 
     if (visualToggle) await minimizeBrowser();
 
-    try {
+        try {
 
-        const search = parseSearch($addressInput.value.trim());
+            //variables y mapas
 
-        //cambiamos la url del navegador
+            const search = parseSearch($addressInput.value.trim());
 
-        $browser.querySelector(".address-input").value = [
-            `http://${search.address}`,
-            (search.port === 80 ? "" : `:${search.port}`),
-            `/${search.resource}`
-        ].join('');
+            const portsToHide = [80, 443];
+            
+            const requestFunctions = {
+                "http": async () => {
+                    return http($networkObject.id, {
+                        address: search.address,
+                        method: "GET",
+                        dport: search.port,
+                        resource: search.resource
+                    });
+                },
 
-        const httpReply = await http($networkObject.id, {
-            address: search.address,
-            method: "GET",
-            dport: search.port,
-            resource: search.resource
-        });
+                "ptt": async () => {
+                    return http($networkObject.id, {
+                        address: search.address,
+                        method: "GET",
+                        dport: search.port,
+                        resource: search.resource
+                    });
+                },
+            };
 
-        $browserContent.srcdoc = httpReply.body;
+            const replyFunctions = {
+                "http": (httpReply) => $browserContent.srcdoc = httpReply.body,
+                "https": (httpReply) => $browserContent.srcdoc = httpReply.body,
+                "ptt": (httpReply) => {
+                    $browserContent.removeAttribute("srcdoc");
+                    $browserContent.src = httpReply.body;
+                }
+            }
 
-    } catch (error) {
+            //actualizamos la barra de direcciones
 
-        $browserContent.srcdoc = $BROWSERERRORPAGE;
+            $browser.querySelector(".address-input").value = [
+                `${search.protocol}://${search.address}`,
+                (portsToHide.includes(search.port)) ? "" : `:${search.port}`,
+                `/${search.resource}`
+            ].join('');
 
-    }
+            //realizamos la solicitud
+
+            const httpReply = await requestFunctions[search.protocol]();
+            replyFunctions[search.protocol](httpReply);
+
+        } catch (error) {
+
+            $browserContent.srcdoc = $BROWSERERRORPAGE;
+
+        }
 
     if (visualToggle) await maximizeBrowser();
 
