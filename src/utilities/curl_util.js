@@ -28,18 +28,26 @@ async function command_curl(networkObjectId, args) {
         return;
     }
 
-    const search = parseSearch(url);
-
     if (visualToggle) await minimizeTerminal();
 
         try {
 
-            const httpReply = await http(networkObjectId, {
-                address: search.address,
-                method: method,
-                dport: search.port,
-                resource: search.resource
-            }); 
+            const search = parseSearch(url);
+
+            const requestFunctions = {
+                "http": async () => {
+                    return http(networkObjectId, {
+                        address: search.address,
+                        method: "GET",
+                        dport: search.port,
+                        resource: search.resource
+                    });
+                }
+            };
+
+            if (!requestFunctions[search.protocol]) throw new Error(`Protocolo ${search.protocol} no válido.`); 
+
+            const httpReply = await requestFunctions[search.protocol]();
             
             let message = `URL:\n ${search.protocol}://${search.address}:${search.port}\n\n`;
 
@@ -58,7 +66,6 @@ async function command_curl(networkObjectId, args) {
 
         } catch (error) {
 
-            console.log(error);
             terminalMessage(`curl: ${error.message}`, networkObjectId);
 
         }
