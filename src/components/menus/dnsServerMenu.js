@@ -81,6 +81,20 @@ function dns_server_menu() {
                 <input type="text" id="value" name="value">
             </div>
 
+            <div class="soa-record-wrapper hidden">
+
+                <div class="form-item">
+                    <label for="serial">Número de Serie:</label>
+                    <input type="text" id="serial" name="serial">
+                </div> 
+
+                <div class="form-item">
+                    <label for="cache-ttl">TTL de Caché:</label>
+                    <input type="text" id="cache-ttl" name="cache-ttl">
+                </div>
+
+            </div>
+
             <div class="button-wrapper">
                 <button class="btn-modern-blue dark" id="btn-add-record" style="padding: 5px;">Añadir Registro</button>
                 <button class="btn-modern-red dark" id="btn-del-record" style="padding: 5px;">Eliminar Registro</button>
@@ -100,6 +114,7 @@ function dns_server_menu() {
     $menu.querySelector(".nav-panel").querySelectorAll("button").forEach(button => button.addEventListener("click", showDnsGraphicTab));
     $menu.querySelector("#btn-add-record").addEventListener("click", addDnsRecordHandler);
     $menu.querySelector("#btn-del-record").addEventListener("click", removeDnsRecordHandler);
+    $menu.querySelector("#type").addEventListener("change", recordTypeHandler);
     
     return $menu;
 
@@ -197,6 +212,7 @@ function closeDnsMenu(event) {
     event.preventDefault();
     const $menu = document.querySelector(".dns-form");
     $menu.querySelector("#network-section").classList.add("hidden");
+    $menu.querySelector(".soa-record-wrapper").classList.add("hidden");
     $menu.reset();
     $menu.style.display = "none";
 }
@@ -224,14 +240,15 @@ function addDnsRecordHandler(event) {
 
     const $menu = document.querySelector(".dns-form");
     const serverObjectId = document.getElementById("form-dns-item-id").innerHTML;
-    const $serverObject = document.getElementById(serverObjectId);
-    
+    const $serverObject = document.getElementById(serverObjectId);   
     const domain = $menu.querySelector("#domain").value;
     const recordType = $menu.querySelector("#type").value;
     const value = $menu.querySelector("#value").value;
+    const serial = $menu.querySelector("#serial").value;
+    const cacheTTL = $menu.querySelector("#cache-ttl").value;
 
     const dnsRecordTypes = { //<-- mapeo de los tipos de registros a las funciones de validacion
-        "SOA": () => isValidSOARecord(serverObjectId, domain, value),
+        "SOA": () => isValidSOARecord(serverObjectId, domain, value, serial, cacheTTL),
         "NS": () => isValidNSRecord(serverObjectId, domain, value),
         "A": () => isValidARecord(serverObjectId, domain, value),
         "CNAME": () => isValidCNAMERecord(serverObjectId, domain, value)
@@ -240,8 +257,16 @@ function addDnsRecordHandler(event) {
     try {
 
         dnsRecordTypes[recordType.toUpperCase()](); //<-- validamos el registro
+        
         let record = new dnsRecord(domain, recordType, value);
+
+        if (recordType === "SOA") {
+            record.serial = serial; 
+            record.cacheTTL = cacheTTL;
+        }
+
         addDnsEntry(serverObjectId, record);
+
         $menu.querySelector("#records-table").innerHTML = $serverObject.querySelector(".dns-table").querySelector("table").innerHTML;
 
     } catch (error) {
@@ -263,4 +288,14 @@ function removeDnsRecordHandler(event) {
     const recordType = $menu.querySelector("#type").value;
     delDnsEntry(serverObjectId, recordType, domain);
     $menu.querySelector("#records-table").innerHTML = $serverObject.querySelector(".dns-table").querySelector("table").innerHTML;
+}
+
+function recordTypeHandler(event) {
+    const $menu = document.querySelector(".dns-form");
+    const $recordType = $menu.querySelector("#type");
+    const $serial = $menu.querySelector("#serial");
+    const $soaRecordWrapper = $menu.querySelector(".soa-record-wrapper");
+    $serial.value = (new Date()).getTime(); //generamos un numero de serie 
+    if ($recordType.value === "SOA") $soaRecordWrapper.classList.remove("hidden");
+    else $soaRecordWrapper.classList.add("hidden");
 }

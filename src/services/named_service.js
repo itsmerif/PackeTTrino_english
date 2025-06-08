@@ -22,10 +22,23 @@ async function named_service(networkObjectId, packet) {
     newPacket.dport = packet.sport;
 
     if (packet.answer_type === "A") {
+
         let answer = iterativeDnsQuery(networkObjectId, packet.query); //<-- consulta iterativa
+
         if (!answer && isCacheOn) answer = isDomainInCacheDns(networkObjectId, packet.query)[1]; //<-- consulta cache dns
-        if (!answer && isRecursiveOn) answer = await recursiveDnsQuery(packet.query); // <-- consulta recursiva
-        if (answer && isCacheOn) addDnsCacheEntry(networkObjectId, packet.query, packet.answer_type, answer, packet.origin_ip); // <-- añadimos la respuesta a la cache dns
+
+        if (!answer && isRecursiveOn) {
+            //consulta recursiva
+            answer = await recursiveDnsQuery(packet.query); 
+            //añadimos la respuesta a la cache dns
+            if (answer && isCacheOn) addDnsCacheEntry(networkObjectId, packet.query, packet.answer_type, answer, packet.origin_ip);
+        }
+        
+        if (answer) {
+            const soaData = getSoaRecord(networkObjectId, packet.query);
+            newPacket.cache_ttl = soaData["cacheTTL"];
+        }
+
         newPacket.answer = answer; //<-- se añade la respuesta
         newPacket.answer_type = "A"; //<-- se añade el tipo de registro
     }
@@ -37,11 +50,17 @@ async function named_service(networkObjectId, packet) {
     }
 
     if (packet.answer_type === "SOA" || packet.answer_type === "NS") {
-        let [authorityNameServer, authorityDomain] = getSoaRecord(networkObjectId, packet.query);
-        if (authorityNameServer) newPacket.authority = "1";
+
+        const soaData = getSoaRecord(networkObjectId, packet.query);
+
+        if (soaData["authorityNameServer"]) newPacket.authority = "1";
+
         newPacket.answer_type = "SOA";
-        newPacket.answer = authorityNameServer;
-        newPacket.authority_domain = authorityDomain;
+        newPacket.answer = soaData["authorityNameServer"];
+        newPacket.authority_domain = soaData["authorityDomain"];
+        newPacket.serial = soaData["serial"];
+        newPacket.cache_ttl = soaData["cacheTTL"];
+
     }
 
     return newPacket;

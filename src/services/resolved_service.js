@@ -34,6 +34,7 @@ async function domainNameResolution(networkObjectId, domain) {
 
         } catch (error) {
 
+            console.log(error);
             response = false; //<-- falso si no se pudo resolver
 
         }
@@ -102,7 +103,7 @@ async function getDomainFromServer(networkObjectId, domain, verbose, dnsServer =
 
     if (verbose) generateDnsOuput(dnsReplyPacket, networkObjectId); //<-- en modo verboso se genera este mensaje en la consola
     if (!dnsReplyPacket.answer) throw new Error("Error: No se pudo resolver el nombre de dominio."); //se lanza una excepcion si no hay respuesta
-    if (isResolvedOn && genCache) addDnsCacheEntry(networkObjectId, dnsReplyPacket.query, dnsReplyPacket.answer_type, dnsReplyPacket.answer, dnsReplyPacket.origin_ip);
+    if (isResolvedOn && genCache) addDnsCacheEntry(networkObjectId, dnsReplyPacket); //<-- añadimos la respuesta a la cache dns
     if (deleteAfterUse) delete buffer[networkObjectId];
 
 }

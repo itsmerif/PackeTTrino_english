@@ -47,9 +47,11 @@ let trafficBuffer = [];
 let routerChangesBuffer = {}; //este buffer guarda informacion por INTERFAZ, NO POR DISPOSITIVO
 
 //variables de procesos en segundo plano
+
 let serverLeaseTimers = {};
 let clientLeaseTimers = {};
 let arpEntryTimers = {};
+let dnsCacheTimers = {};
 
 //variables de gestion de SNAT Y DNAT
 

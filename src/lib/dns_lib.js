@@ -58,11 +58,13 @@ function getARecord(dataId, name) {
 }
 
 /**ESTA FUNCION VALIDA UN REGISTRO SOA */
-function isValidSOARecord(dataId, domain, authorityNameServer) {
+function isValidSOARecord(dataId, domain, authorityNameServer, serial, cacheTTL) {
     if (!isValidDomain(domain)) throw new Error(`Error: dominio ${domain} inválido`);
     if (!domain.endsWith(".")) throw new Error(`Error: el dominio ${domain} debe ser un FQDN`);
     if (!isValidDomain(authorityNameServer)) throw new Error(`Error: servidor autoritario ${authorityNameServer} inválido`);
     if (!authorityNameServer.endsWith(".")) throw new Error(`Error: el servidor autoritario ${authorityNameServer} debe ser un FQDN`);
+    if (isNaN(cacheTTL)) throw new Error(`Error: el TTL ${cacheTTL} no es válido.`);
+    if (cacheTTL < 0 || cacheTTL > 86400) throw new Error(`Error: el TTL ${cacheTTL} debe ser un numero entre 0 y 86400.`);
     if (hasSoaRecord(dataId, domain)) throw new Error(`Error: Ya existe un registro de SOA para ${domain}.`);
 }
 
@@ -133,17 +135,22 @@ function getDomainFromEtcHosts(networkObjectId, inputDomain) {
 function addDnsEntry(serverObjectId, newrecord) {
 
     const $serverObject = document.getElementById(serverObjectId);
-    const dnsTable = $serverObject.querySelector(".dns-table").querySelector("table")
-    const newRow = document.createElement("tr");
+    const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table")
+    const $newRecord = document.createElement("tr");
 
-    newRow.innerHTML = `
+    if (newrecord.type === "SOA") {
+        $newRecord.setAttribute("data-serial", newrecord.serial);
+        $newRecord.setAttribute("data-cache-ttl", newrecord.cacheTTL);
+    }
+
+    $newRecord.innerHTML = `
         <td>${newrecord.domain}</td>
         <td>${(newrecord.type).toUpperCase()}</td>
         <td>${newrecord.value}</td>
     `;
 
-    newRow.classList.add(newrecord.type.toUpperCase()); //<-- añadimos el tipo de registro a la fila
-    dnsTable.appendChild(newRow);
+    $newRecord.classList.add(newrecord.type.toUpperCase()); //<-- añadimos el tipo de registro a la fila
+    $dnsTable.appendChild($newRecord);
 
     if (newrecord.type === "A") { //<-- si se trata de un registro de tipo A, se genera automaticamente un registro PTR
         const ptrRecord = document.createElement("tr");
@@ -153,7 +160,7 @@ function addDnsEntry(serverObjectId, newrecord) {
             <td>${newrecord.domain}</td>
         `;
         ptrRecord.classList.add("PTR");
-        dnsTable.appendChild(ptrRecord);
+        $dnsTable.appendChild(ptrRecord);
     }
 
 }
@@ -198,6 +205,8 @@ function generateDnsOuput(packet, networkObjectId) {
     let answer_type = packet.answer_type;
     let authority = packet.authority || "0"; //solo para SOA
     let authority_domain = packet.authority_domain || ""; //solo para SOA
+    let serial = packet.serial || ""; //solo para SOA
+    let cache_ttl = packet.cache_ttl || ""; //solo para SOA
     let server_ip = packet.origin_ip;
     let answerBoolean = (!answer || (authority === "1" && query !== authority_domain)) ? "0" : "1";
 
@@ -231,7 +240,7 @@ function generateDnsOuput(packet, networkObjectId) {
 
     if (authority !== "0") {
         message += `\nAUTHORITY SECTION:\n`;
-        message += `${authority_domain.padEnd(15, " ")} 86400 IN ${answer_type} ${answer}\n`;
+        message += `${authority_domain.padEnd(15, " ")} 86400 IN ${answer_type} ${answer} ${serial} ${cache_ttl}\n`;
     }
 
     //seccion de tiempo
@@ -284,15 +293,25 @@ function isDomainInCacheDns(networkObjectId, targetDomain) {
 }
 
 /**ESTA FUNCIÓN AÑADE UN REGISTRO A LA CACHE DNS*/
-function addDnsCacheEntry(networkObjectId, domain, recordType, value, server) {
+function addDnsCacheEntry(networkObjectId, dnsReplyPacket) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const dnsTable = $networkObject.querySelector(".cache-dns-table").querySelector("table");
     const newRow = document.createElement("tr");
 
-    if (!domain.endsWith(".")) domain = domain + "."; //<-- los nombres se guardan como FQDN
+    //desglosamos el paquete de respuesta
 
-    if (typeof value !== 'string') value = value[0]; //<-- si tenemos un array de ips, nos quedamos con la primera ip
+    const domain = dnsReplyPacket.query;
+    const recordType = dnsReplyPacket.answer_type;
+    const value = dnsReplyPacket.answer;
+    const server = dnsReplyPacket.origin_ip;
+    const ttl = dnsReplyPacket.cache_ttl;
+
+    //los nombres se guardan como FQDN
+    if (!domain.endsWith(".")) domain = domain + "."; 
+
+    //si tenemos un array de ips, nos quedamos con la primera ip
+    if (typeof value !== 'string') value = value[0]; 
 
     newRow.innerHTML = `
         <td>${domain}</td>
@@ -300,10 +319,37 @@ function addDnsCacheEntry(networkObjectId, domain, recordType, value, server) {
         <td>${value}</td>
     `;
 
-    newRow.setAttribute("data-server", server); //<-- se añade el servidor al que se hizo la consulta
-
+    //se añade el registro
+    newRow.setAttribute("data-server", server); 
     dnsTable.appendChild(newRow);
 
+    //generamos un timer para la cache dns
+
+    console.log(`Se ha añadido el registro DNS de ${domain} a ${networkObjectId} durante ${ttl} segundos`);
+
+    dnsCacheTimers[`${server}-${domain}`] = setTimeout(() => {
+        delDnsCacheEntry(networkObjectId, domain);
+    }, ttl * 1000);
+
+}
+
+/**ESTA FUNCION ELIMINA UNA ENTRADA DE LA TABLA DE CACHE DNS DE UN OBJETO DE RED*/
+function delDnsCacheEntry(networkObjectId, domain) {
+    const $networkObject = document.getElementById(networkObjectId);
+    const $cacheDnsTable = $networkObject.querySelector(".cache-dns-table").querySelector("table");
+    const $records = $cacheDnsTable.querySelectorAll("tr");
+
+    for (let i = 1; i < $records.length; i++) {
+        const $record = $records[i];
+        const $fields = $record.querySelectorAll("td");
+        const recordDomain = $fields[0].innerText.trim();
+        if (recordDomain === domain) {
+            clearTimeout(dnsCacheTimers[`${networkObjectId}-${recordDomain}`]);
+            delete dnsCacheTimers[`${networkObjectId}-${recordDomain}`];
+            $record.remove();
+            break;
+        }
+    }
 }
 
 /**ESTA FUNCION DEVUELVE EL VALOR DE UN REGISTRO DE TIPO A EN UN SERVIDOR DNS*/
@@ -343,25 +389,27 @@ function dropDnsZone(serverObjectId, domain) {
 
 }
 
-/**ESTA FUNCION DEVUELVE [SERVIDOR DE AUTORIDAD, DOMINIO DE AUTORIDAD] DE UN REGISTRO EN UN SERVIDOR DNS*/
+/**ESTA FUNCION DEVUELVE UN OBJETO CON LAS INFORMACIONES DE UN REGISTRO SOA DE UN DOMINIO EN UN SERVIDOR DNS*/
 function getSoaRecord(serverObjectId, targetDomain) {
 
     const $serverObject = document.getElementById(serverObjectId);
     const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
     const $soaRecords = $dnsTable.querySelectorAll(".SOA");
 
-    let [authorityNameServer, authorityDomain] = [false, false];
+    const response = {};
 
     $soaRecords.forEach($record => {
         const $fields = $record.querySelectorAll("td");
         const soaDomain = $fields[0].innerHTML;
         if (targetDomain.endsWith(`.${soaDomain}`) || soaDomain === targetDomain) {
-            authorityNameServer = $fields[2].innerHTML;
-            authorityDomain = soaDomain;
+            response["authorityNameServer"] = $fields[2].innerHTML;
+            response["authorityDomain"] = soaDomain;
+            response["serial"] = $record.getAttribute("data-serial");
+            response["cacheTTL"] = $record.getAttribute("data-cache-ttl");
         }
     });
 
-    return [authorityNameServer, authorityDomain];
+    return response;
 
 }
 
