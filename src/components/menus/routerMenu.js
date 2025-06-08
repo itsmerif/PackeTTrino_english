@@ -60,7 +60,7 @@ function router_menu() {
                 <button class="btn-modern-red dark" style="padding: 10px;" id="btn-del-rule">Eliminar Regla</button>
             </div>
 
-            <table id="routing-rules-table" class="inner-table"></table>
+            <div class="table-wrapper"><table id="routing-rules-table" class="inner-table"></table></div>
 
         </section>
 

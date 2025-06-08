@@ -1659,56 +1659,61 @@ circle:hover {
 
     }
 
-    table {
+    .table-wrapper {
 
-        width: 100%;
-        border-collapse: collapse;
-        border: 1px solid #ddd;
-        transition: all 0.2s ease;
-        overflow: auto;
+        height: 300px;
+        overflow-y: auto;
+        scroll-behavior:auto;
+        table {
 
-        * {
-            box-sizing: border-box;
+            width: 100%;
+            border-collapse: collapse;
             border: 1px solid #ddd;
-            padding: 8px;
-            transition: background-color 0.2s ease;
-            text-align: center;
-        }
+            transition: all 0.2s ease;
 
-        td,
-        th {
-            width: 150px;
-        }
-
-        th {
-            background-color: rgb(223, 191, 12);
-            color: #333;
-            font-weight: 600;
-        }
-
-        tr:hover {
-            background-color: #f9f5d7;
-        }
-
-        td {
-            padding: 0px;
-            margin: 0px;
-            height: 40px;
-        }
-
-        .ip-field {
-
-            display: flex;
-            flex-direction: row;
-            gap: 4px;
-            border: none;
-
-            p {
-                font-weight: normal;
-                border: none;
+            * {
+                box-sizing: border-box;
+                border: 1px solid #ddd;
+                padding: 8px;
+                transition: background-color 0.2s ease;
+                text-align: center;
             }
 
+            td,
+            th {
+                width: 150px;
+            }
 
+            th {
+                background-color: rgb(223, 191, 12);
+                color: #333;
+                font-weight: 600;
+            }
+
+            tr:hover {
+                background-color: #f9f5d7;
+            }
+
+            td {
+                padding: 0px;
+                margin: 0px;
+                height: 40px;
+            }
+
+            .ip-field {
+
+                display: flex;
+                flex-direction: row;
+                gap: 4px;
+                border: none;
+
+                p {
+                    font-weight: normal;
+                    border: none;
+                }
+
+
+            }
         }
     }
 
