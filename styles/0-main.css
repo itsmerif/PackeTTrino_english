@@ -3083,7 +3083,7 @@ circle:hover {
         height: 100%;
     }
 
-    &::before {
+    /*&::before {
         content: '';
         position: absolute;
         top: 50%;
@@ -3091,7 +3091,7 @@ circle:hover {
         right: 50%;
         bottom: 50%;
         width: 96%;
-        height: 90%;
+        height: 80%;
         transform: translate(-50%, -50%);
         border-radius: 9px;
         background-image:
@@ -3110,7 +3110,7 @@ circle:hover {
         z-index: 2;
         background-color: rgba(0, 30, 0, 0.7);
         max-height: 100%;
-    }
+    }*/
 
     &:hover {
 
