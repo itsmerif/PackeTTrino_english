@@ -327,7 +327,7 @@ function addDnsCacheEntry(networkObjectId, dnsReplyPacket) {
 
     console.log(`Se ha añadido el registro DNS de ${domain} a ${networkObjectId} durante ${ttl} segundos`);
 
-    dnsCacheTimers[`${server}-${domain}`] = setTimeout(() => {
+    dnsCacheTimers[`${networkObjectId}-${domain}-${value}`] = setTimeout(() => {
         delDnsCacheEntry(networkObjectId, domain);
     }, ttl * 1000);
 

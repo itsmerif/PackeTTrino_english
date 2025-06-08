@@ -487,8 +487,13 @@ function cleanUpWorkspace() {
     }
 
     for (let arpEntryTime in arpEntryTimers) {
-        clearInterval(arpEntryTimers[arpEntryTime]);
+        clearTimeout(arpEntryTimers[arpEntryTime]);
         delete arpEntryTimers[arpEntryTime];
+    }
+
+    for (let dnsCacheTimer in dnsCacheTimers) {
+        clearTimeout(dnsCacheTimers[dnsCacheTimer]);
+        delete dnsCacheTimers[dnsCacheTimer];
     }
 
 }
