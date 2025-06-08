@@ -18,17 +18,17 @@ function dhcp_server_menu() {
 
                 <div>
                     <label for="ip-dhcp">Dirección IP (ipv4):</label>
-                    <input type="text" id="ip-dhcp" name="ip-dhcp" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                    <input type="text" id="ip-dhcp" name="ip-dhcp">
                 </div>
 
                 <div >
                     <label for="netmask-dhcp">Máscara de Red:</label>
-                    <input type="text" id="netmask-dhcp" name="netmask-dhcp" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                    <input type="text" id="netmask-dhcp" name="netmask-dhcp">
                 </div>
 
                 <div >
                     <label for="gateway-dhcp">Puerta de enlace:</label>
-                    <input type="text" id="gateway-dhcp" name="gateway-dhcp" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                    <input type="text" id="gateway-dhcp" name="gateway-dhcp">
                 </div>
 
             </section>
@@ -44,28 +44,28 @@ function dhcp_server_menu() {
 
                 <div>
                     <label for="range-start">Rango de IPs:</label>
-                    <input type="text" id="range-start" name="range-start" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
-                    <input type="text" id="range-end" name="range-end" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                    <input type="text" id="range-start" name="range-start">
+                    <input type="text" id="range-end" name="range-end">
                 </div>
 
                 <div>
                     <label for="dhcp-offer-netmask">Máscara de Red:</label>	
-                    <input type="text" id="dhcp-offer-netmask" name="dhcp-offer-netmask" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                    <input type="text" id="dhcp-offer-netmask" name="dhcp-offer-netmask">
                 </div>
 
                 <div>
                     <label for="dhcp-offer-gateway">Puerta de Enlace:</label>
-                    <input type="text" id="dhcp-offer-gateway" name="dhcp-offer-gateway" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                    <input type="text" id="dhcp-offer-gateway" name="dhcp-offer-gateway">
                 </div>
 
                 <div>
                     <label for="dhcp-offer-dns">Servidor DNS:</label>
-                    <input type="text" id="dhcp-offer-dns" name="dhcp-offer-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
+                    <input type="text" id="dhcp-offer-dns" name="dhcp-offer-dns">
                 </div>
 
                 <div>
                     <label for="dhcp-offer-lease-time">Tiempo de Alquiler:</label>
-                    <input type="text" id="dhcp-offer-lease-time" name="dhcp-offer-lease-time" pattern="^[0-9]+$">
+                    <input type="text" id="dhcp-offer-lease-time" name="dhcp-offer-lease-time">
                 </div>
 
             </section>
@@ -117,6 +117,7 @@ function dhcp_server_menu() {
     
 }
 
+/**ESTA FUNCION MUESTRA EL MENU DE DHCP SERVER */
 function showDhcpMenu(event) {
 
     event.stopPropagation();
@@ -159,26 +160,37 @@ function showDhcpMenu(event) {
 
 }
 
+/**ESTA FUNCION GUARDA LOS CAMBIOS DE CONFIGURACIÓN DE UN SERVIDOR DHCP */
 function saveDhcpMenu(event) {
 
     event.preventDefault();
+
     const $networkObject = document.getElementById(document.getElementById("form-dhcp-item-id").innerHTML);
     const $menu = document.querySelector(".dhcp-form");
     const availableInterfaces = getInterfaces($networkObject.id);
     const networkObjectInterface = availableInterfaces[0];
-    const listenOnInterfaces = $menu.querySelector("#dhcp-listen-on-interfaces").value.split(",").map(item => item.trim()).filter(item => item !== "");
+    const listenOnInterfaces = $menu.querySelector("#dhcp-listen-on-interfaces").value
+    .split(",")
+    .map(item => item.trim())
+    .filter(item => item !== "");
     const isDhcpServer = $networkObject.id.startsWith("dhcp-server-");
     
+    //validamos el formulario
+
+    try {
+        validateDhcpForm();
+    }catch (error) {
+        bodyComponent.render(popupMessage(error.message));
+        return;
+    }
+
+    //aplicamos los cambios
+
     if (isDhcpServer) {
         configureInterface($networkObject.id, $menu.querySelector("#ip-dhcp").value, $menu.querySelector("#netmask-dhcp").value, networkObjectInterface);
         setDirectRoutingRule($networkObject.id, $menu.querySelector("#ip-dhcp").value, $menu.querySelector("#netmask-dhcp").value, networkObjectInterface);
         $networkObject.setAttribute("data-gateway", $menu.querySelector("#gateway-dhcp").value);
         setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", $menu.querySelector("#ip-dhcp").value, networkObjectInterface, $menu.querySelector("#gateway-dhcp").value);
-    }
-
-    if (!listenOnInterfaces.every(item => availableInterfaces.includes(item))) {
-        bodyComponent.render(popupMessage(`<span>Error: </span> Algunas de las interfaces de escucha no son válidas.</span>`));
-        return;
     }
 
     $networkObject.setAttribute("data-range-start", $menu.querySelector("#range-start").value);
@@ -192,6 +204,69 @@ function saveDhcpMenu(event) {
     bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
 }
 
+/**ESTA FUNCION VALIDA LOS CAMPOS DEL FORMULARIO DE CONFIGURACIÓN DE UN SERVIDOR DHCP */
+function validateDhcpForm() {
+
+    const $menu = document.querySelector(".dhcp-form");
+    const $networkObject = document.getElementById(document.getElementById("form-dhcp-item-id").innerHTML);
+    const availableInterfaces = getInterfaces($networkObject.id);
+    const isDhcpServer = $networkObject.id.startsWith("dhcp-server-");
+
+    //obtenemos todos los campos del formulario
+
+    const ip = $menu.querySelector("#ip-dhcp").value;
+   
+    const netmask = $menu.querySelector("#netmask-dhcp").value;
+    
+    const gateway = $menu.querySelector("#gateway-dhcp").value;
+    
+    const dhcpListenOnInterfaces = $menu.querySelector("#dhcp-listen-on-interfaces").value
+    .split(",")
+    .map(item => item.trim())
+    .filter(item => item !== "");
+    
+    const rangeStart = $menu.querySelector("#range-start").value;
+    
+    const rangeEnd = $menu.querySelector("#range-end").value;
+    
+    const dhcpOfferGateway = $menu.querySelector("#dhcp-offer-gateway").value;
+    
+    const dhcpOfferNetmask = $menu.querySelector("#dhcp-offer-netmask").value;
+    
+    const dhcpOfferDnsServers = $menu.querySelector("#dhcp-offer-dns").value
+    .split(",")
+    .map(item => item.trim())
+    .filter(item => item !== "");
+
+    const dhcpOfferLeaseTime = $menu.querySelector("#dhcp-offer-lease-time").value;
+
+    //validamos los campos
+
+    if (isDhcpServer) {
+        if (!isValidIp(ip)) throw new Error(`Error: se esperaba una ip válida en vez de "${ip}".`);
+        if (!isValidIp(netmask)) throw new Error(`Error: se esperaba una máscara de red válida en vez de "${netmask}".`);
+        if (!isValidIp(gateway)) throw new Error(`Error: se esperaba una puerta de enlace válida en vez de "${gateway}".`);
+    }
+
+    if (!isDhcpModuleEmpty()) {
+
+        validateDhpcConfiguration($networkObject.id,
+            {
+                dhcpListenOnInterfaces: dhcpListenOnInterfaces,
+                rangeStart: rangeStart,
+                rangeEnd: rangeEnd,
+                dhcpOfferGateway: dhcpOfferGateway,
+                dhcpOfferNetmask: dhcpOfferNetmask,
+                dhcpOfferDnsServers: dhcpOfferDnsServers,
+                dhcpOfferLeaseTime: dhcpOfferLeaseTime
+            }
+        );
+
+    }
+
+}
+
+/**ESTA FUNCION CERRA EL MENU DE CONFIGURACIÓN DE UN SERVIDOR DHCP */
 function closeDhcpMenu(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -201,6 +276,7 @@ function closeDhcpMenu(event) {
     $menu.style.display = "none";
 }
 
+/**ESTA FUNCION MUESTRA LA PESTAÑA BÁSICA DE CONFIGURACIÓN DE UN SERVIDOR DHCP */
 function showBasicTab(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -211,6 +287,7 @@ function showBasicTab(event) {
     $menu.querySelector(".reservations-section").style.display = "none";
 }
 
+/**ESTA FUNCIÓN MUESTRA LA PESTAÑA DE RESERVAS DE ALQUILERES DE UN SERVIDOR DHCP */
 function showReservTab(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -221,6 +298,7 @@ function showReservTab(event) {
     $menu.querySelector(".reservations-section").style.display = "flex";
 }
 
+/**ESTA FUNCIÓN AÑADE UNA NUEVA RESERVA DE ALQUILER A UN SERVIDOR DHCP */
 function addDhcpReservationHandler(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -242,6 +320,7 @@ function addDhcpReservationHandler(event) {
 
 }
 
+/**ESTA FUNCIÓN ELIMINA UNA RESERVA DE ALQUILER DE UN SERVIDOR DHCP */
 function removeDhcpReservationHandler(networkObjectId, mac, event) {
     event.stopPropagation();
     event.preventDefault();
@@ -252,6 +331,7 @@ function removeDhcpReservationHandler(networkObjectId, mac, event) {
     bodyComponent.render(popupMessage(`La MAC ${mac} ha sido eliminada de la lista de reservas.`));
 }
 
+/**ESTA FUNCIÓN RESTAURA LA TABLA DE RESERVAS DE ALQUILERES DE UN SERVIDOR DHCP */
 function restoreDhcpReservationTable() {
     const $menu = document.querySelector(".dhcp-form");
     const $reservationsTable = $menu.querySelector("#reservations-table");
@@ -263,6 +343,7 @@ function restoreDhcpReservationTable() {
     `;
 }
 
+/**ESTA FUNCIÓN DEVUELVE LA TABLA DE RESERVAS DE ALQUILERES DE UN SERVIDOR DHCP COMO ELEMENTOS ROWS DE HTML*/
 function genDhcpReservationsRows(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
@@ -286,4 +367,12 @@ function genDhcpReservationsRows(networkObjectId) {
     }
 
     return rows;
+}
+
+/**ESTA FUNCION DEVUELVE TRUE SI EL MODULO DE OPCIONES DE CONFIGURACIÓN DE UN SERVIDOR DHCP ESTA VACIO */
+function isDhcpModuleEmpty() {
+    const $dhcpMenu = document.querySelector(".dhcp-form");
+    const $optionsModule = $dhcpMenu.querySelector(".dhcp-options-section");
+    const $optionsModuleInputs = $optionsModule.querySelectorAll("input");
+    return Array.from($optionsModuleInputs).every(input => input.value === "");
 }

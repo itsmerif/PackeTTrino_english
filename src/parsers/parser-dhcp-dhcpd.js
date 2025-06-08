@@ -1,6 +1,7 @@
 function dhcpdConfInterpreter(networkObjectId, content)  {
 
     const $networkObject = document.getElementById(networkObjectId);
+    const dhcpListenOnInterfaces = $networkObject.getAttribute("dhcp-listen-on-interfaces").split(",");
 
     //eliminamos las lineas comentadas
     const contentWithoutComments = content
@@ -61,7 +62,13 @@ function dhcpdConfInterpreter(networkObjectId, content)  {
                     },
 
                     "option domain-name-servers": () => {
-                        subnetObject["domain-name-servers"] = tokens[2];
+                        subnetObject["domain-name-servers"] = instruction
+                        .split(" ")
+                        .slice(2)
+                        .join(" ")
+                        .split(",")
+                        .map(item => item.trim())
+                        .filter(item => item !== "");
                     },
 
                     "lease-time": () => {
@@ -76,12 +83,17 @@ function dhcpdConfInterpreter(networkObjectId, content)  {
 
             //ahora validamos los campos
 
-            if (!isValidIp(subnetObject["rangeStart"])) throw new Error(`Error: La IP inicial "${subnetObject["rangeStart"]}" no es válida`);
-            if (!isValidIp(subnetObject["rangeEnd"])) throw new Error(`Error: La IP final "${subnetObject["rangeEnd"]}" no es válida`);
-            if (!isValidIp(subnetObject["netmask"])) throw new Error(`Error: La mascara de red "${subnetObject["netmask"]}" no es válida`);
-            if (!isValidIp(subnetObject["routers"])) throw new Error(`Error: La IP de enrutamiento "${subnetObject["routers"]}" no es válida`);
-            if (!isValidIp(subnetObject["domain-name-servers"])) throw new Error(`Error: La IP de servidores de dominio "${subnetObject["domain-name-servers"]}" no es válida`);
-            if (isNaN(subnetObject["lease-time"])) throw new Error(`Error: El tiempo de alquiler "${subnetObject["lease-time"]}" no es válido`);
+            validateDhpcConfiguration($networkObject.id,
+                {
+                    dhcpListenOnInterfaces: dhcpListenOnInterfaces,
+                    rangeStart: subnetObject["rangeStart"],
+                    rangeEnd: subnetObject["rangeEnd"],
+                    dhcpOfferGateway: subnetObject["routers"],
+                    dhcpOfferNetmask: subnetObject["netmask"],
+                    dhcpOfferDnsServers: subnetObject["domain-name-servers"],
+                    dhcpOfferLeaseTime: subnetObject["lease-time"]
+                }
+            )
 
             //aplicamos los cambios
 
@@ -89,7 +101,7 @@ function dhcpdConfInterpreter(networkObjectId, content)  {
             $networkObject.setAttribute("data-range-end", subnetObject["rangeEnd"]);
             $networkObject.setAttribute("dhcp-offer-netmask", subnetObject["netmask"]);
             $networkObject.setAttribute("dhcp-offer-gateway", subnetObject["routers"]);
-            $networkObject.setAttribute("dhcp-offer-dns", subnetObject["domain-name-servers"]);
+            $networkObject.setAttribute("dhcp-offer-dns", subnetObject["domain-name-servers"].join(","));
             $networkObject.setAttribute("dhcp-offer-lease-time", subnetObject["lease-time"]);
 
         });

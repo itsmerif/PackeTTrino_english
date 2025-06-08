@@ -24,6 +24,8 @@ function iscDhcpServerInterpreter(networkObjectId, content)  {
             .map(iface => iface.trim())
             .filter(iface => iface !== "");
 
+            if (fileInterfaces.length === 0) throw new Error(`/default/isc-dhcp-server: no se reconocen las interfaces de escucha.`);
+
             const availableInterfaces = getInterfaces(networkObjectId);
 
             if (!fileInterfaces.every(fileInterface => availableInterfaces.includes(fileInterface))) {

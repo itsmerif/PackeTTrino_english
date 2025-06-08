@@ -81,8 +81,8 @@ function startService(networkObjectId, service) {
 
         "dhcpd": () => {
             $networkObject.setAttribute("dhcpd", "true");
-            dhcpdConfInterpreter(networkObjectId, networkElementFileSystem.read("dhcpd.conf", ["etc", "dhcp"]));
             iscDhcpServerInterpreter(networkObjectId, networkElementFileSystem.read("isc-dhcp-server", ["etc", "default"]));
+            dhcpdConfInterpreter(networkObjectId, networkElementFileSystem.read("dhcpd.conf", ["etc", "dhcp"]));
         },
 
         "dhclient": () => {

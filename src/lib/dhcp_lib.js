@@ -222,7 +222,7 @@ function setDhcpInfo(networkObjectId, packet, networkObjectInterface) {
     const newNetmask = packet.netmask;
     const newGateway = packet.gateway;
     const newServer = packet.siaddr;
-    const newDns = packet.dns;
+    const newDnsServers = (packet.dns).split(",").map(item => item.trim()).filter(item => item !== "");
     const newLeaseTime = packet.leasetime;
 
     //configuramos la interfaz y la tabla de enrutamiento
@@ -233,7 +233,7 @@ function setDhcpInfo(networkObjectId, packet, networkObjectInterface) {
 
     //configuramos la informacion DHCP del equipo
     $networkObject.setAttribute("data-dhcp-server", newServer);
-    setDnsServers(networkObjectId, [newDns]);
+    setDnsServers(networkObjectId, newDnsServers);
     $networkObject.setAttribute("data-dhcp-lease-time", newLeaseTime);
 
 }
@@ -286,5 +286,51 @@ function startLeaseTimers() {
             clientLeaseTimers[`${clientObjectId}-${interfaces[0]}`] = setInterval( async () => { await reduceClientLeaseTime(clientObjectId, interfaces[0])}, 1000 );
         }
     });
+
+}
+
+/**ESTA FUNCION VALIDA LA CONFIGURACIÓN DE UN SERVIDOR DHCP */
+function validateDhpcConfiguration(networkObjectId, configObject) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+    const availableInterfaces = getInterfaces($networkObject.id);
+
+    //desglosamos el objeto de configuración
+
+    const dhcpListenOnInterfaces = configObject.dhcpListenOnInterfaces; //interfaces como array
+    const rangeStart = configObject.rangeStart;
+    const rangeEnd = configObject.rangeEnd;
+    const dhcpOfferGateway = configObject.dhcpOfferGateway;
+    const dhcpOfferNetmask = configObject.dhcpOfferNetmask;
+    const dhcpOfferDnsServers = configObject.dhcpOfferDnsServers; //servidores como array
+    const dhcpOfferLeaseTime = configObject.dhcpOfferLeaseTime;
+
+    //validamos los campos
+
+    if (!dhcpListenOnInterfaces.every(item => availableInterfaces.includes(item))) {
+        throw new Error(`Error: alguna de las interfaces de escucha no son válidas.`);
+    }
+
+    if (!isValidIp(rangeStart)) throw new Error(`Error: se esperaba una ip inicial válida en vez de "${rangeStart}".`);
+    
+    if (!isValidIp(rangeEnd)) throw new Error(`Error: se esperaba una ip final válida en vez de "${rangeEnd}".`);
+
+    if (!isValidIp(dhcpOfferNetmask)) throw new Error(`Error: se esperaba una máscara de red válida en vez de "${dhcpOfferNetmask}".`);
+
+    if (getNetwork(rangeStart, dhcpOfferNetmask) !== getNetwork(rangeEnd, dhcpOfferNetmask)) throw new Error(`Error: el rango de IPs no es válido.`);
+
+    if (ipToBinary(rangeStart) >= ipToBinary(rangeEnd)) throw new Error(`Error: el rango de IPs no es válido.`);
+
+    if (dhcpOfferGateway !== "" && !isValidIp(dhcpOfferGateway)) {
+        throw new Error(`Error: se esperaba una puerta de enlace válida en vez de "${dhcpOfferGateway}".`);
+    }
+
+    if (!dhcpOfferDnsServers.every(item => isValidIp(item))) throw new Error(`Error: alguna de los servidores DNS no son válidos.`);
+
+    if (isNaN(dhcpOfferLeaseTime)) throw new Error(`Error: se esperaba un tiempo de alquiler válido en vez de "${dhcpOfferLeaseTime}".`);
+
+    if (dhcpOfferLeaseTime < 120) throw new Error(`Error: el tiempo de alquiler debe ser mayor a 120 segundos.`);
+
+    if (dhcpOfferLeaseTime > 86400) throw new Error(`Error: el tiempo de alquiler debe ser menor a 86400 segundos.`);
 
 }
