@@ -43,7 +43,7 @@ function getFirewallTable(networkObjectId) {
         const rules = firewallRules[table];
         rules.forEach(rule => {
             let ruleString = "";
-            for (let key in rule) if (rule[key] !== "*") ruleString += `-${key} ${rule[key]} `;
+            for (let key in rule) if (rule[key] !== "*" && rule[key] !== "") ruleString += `-${key} ${rule[key]} `;
             response.push(ruleString);
         });
     }
