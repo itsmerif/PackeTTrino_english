@@ -358,7 +358,7 @@ function iterativeDnsQuery(serverObjectId, targetDomain) {
     const $serverObject = document.getElementById(serverObjectId);
     const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table");
     const $records = $dnsTable.querySelectorAll("tr");
-    let response = false;
+    const response = [];
 
     $records.forEach($record => {
         const $fields = $record.querySelectorAll("td");
@@ -366,11 +366,15 @@ function iterativeDnsQuery(serverObjectId, targetDomain) {
         const domain = $fields[0].innerHTML;
         const recordType = $fields[1].innerHTML;
         const value = $fields[2].innerHTML;
-        if (domain === targetDomain && (recordType === "A" || recordType === "PTR")) response = value;
-        if (domain === targetDomain && recordType === "CNAME") response = iterativeDnsQuery(serverObjectId, value); //<-- si es un CNAME, se busca en el dominio que apunta
+        if (domain === targetDomain && (recordType === "A" || recordType === "PTR")) response.push(value);
+        //si es un CNAME, se busca en el dominio que apunta
+        if (domain === targetDomain && recordType === "CNAME") response.push(iterativeDnsQuery(serverObjectId, value));
     });
 
+    if (response.length === 0) return false;
+
     return response;
+    
 }
 
 /**ESTA FUNCION ELIMINA TODOS LOS REGISTROS DE UN DOMINIO*/
