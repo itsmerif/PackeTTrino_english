@@ -23,8 +23,8 @@ function RouterObject(x, y) {
             "boot" : {},
             "dev" : {},
             "etc": {
-                "hosts": "" ,
-                "resolv.conf": "127.0.0.1 localhost",
+                "hosts": "127.0.0.1 localhost" ,
+                "resolv.conf": "",
                 "network": {
                     "interfaces": ""
                 }
