@@ -102,8 +102,8 @@ function isValidIp(ip) {
     return /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(ip);
 }
 
-/**ESTA FUNCION AÑADE UNA ENTRADA A LA TABLA DE MACS DE UN SWITCH*/
-function saveMac(switchObjectId, networkObjectId, newMac) {
+/**ESTA FUNCION ACTUALIZA UNA ENTRADA DE LA TABLA DE MACS DE UN SWITCH*/
+function updateMacEntry(switchObjectId, networkObjectId, newMac) {
 
     const switchObject = document.getElementById(switchObjectId);
     const macTable = switchObject.querySelector("table");
@@ -118,6 +118,19 @@ function saveMac(switchObjectId, networkObjectId, newMac) {
         }
     }
     
+}
+
+/**ESTA FUNCION AÑADE UNA ENTRADA A LA TABLA DE MACS DE UN SWITCH*/
+function addMacEntry(switchId, itemdId) {
+    const switchObject = document.getElementById(switchId);
+    const macTable = switchObject.querySelector("table");
+    const newMac = document.createElement("tr");
+    newMac.innerHTML = `
+        <tr>
+            <td class="device-name">${itemdId}</td>
+            <td class="mac-address"></td>
+        </tr>`;
+    macTable.appendChild(newMac);
 }
 
 /**ESTA FUNCION ELIMINA UNA ENTRADA DE LA TABLA DE MACS DE UN SWITCH*/

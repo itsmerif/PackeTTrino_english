@@ -75,7 +75,7 @@ function switchConn(event) {
 
         if (availableInterface) {
             CableObject(x1, y1, $switchObject.style.left, $switchObject.style.top, itemId, $switchObject.id, availableInterface);
-            saveConn($switchObject.id, itemId);
+            addMacEntry($switchObject.id, itemId);
             $networkObject.setAttribute(`data-switch-${availableInterface}`, $switchObject.id);
             if(!getAvailableInterface(itemId)) $networkObject.querySelector("img").draggable = false;
         }
@@ -88,18 +88,6 @@ function closeMacTable(event) {
     const networkObject = event.target.closest(".item-dropped");
     const table = networkObject.querySelector(".mac-table");
     table.style.display = "none";
-}
-
-function saveConn(switchId, itemdId) {
-    const switchObject = document.getElementById(switchId);
-    const macTable = switchObject.querySelector("table");
-    const newMac = document.createElement("tr");
-    newMac.innerHTML = `
-        <tr>
-            <td class="device-name">${itemdId}</td>
-            <td class="mac-address"></td>
-        </tr>`;
-    macTable.appendChild(newMac);
 }
 
 function clusterizeSwitch(event) {

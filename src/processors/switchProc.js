@@ -4,7 +4,7 @@ async function switchProcessor(switchId, networkObjectId, packet) {
 
     const $switchObject = document.getElementById(switchId);
 
-    saveMac(switchId, networkObjectId, packet.origin_mac); //guardamos la MAC del puerto origen
+    updateMacEntry(switchId, networkObjectId, packet.origin_mac); //guardamos la MAC del puerto origen
 
     if (packet.destination_mac === "ff:ff:ff:ff:ff:ff" || !isMacInMACTable(switchId, packet.destination_mac)) {
 
