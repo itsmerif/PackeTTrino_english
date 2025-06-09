@@ -37,7 +37,9 @@ async function packetProcessor_Router(switchId, networkObjectId, packet) {
 
     if (availableIps.includes(packet.destination_ip) || packet.destination_ip === "255.255.255.255") {
 
-        if (!firewallProcessorFilter(networkObjectId, packet, "INPUT", networkObjectInterface, "")) { //filtramos el paquete por la tabla filter con la cadena INPUT
+        //filtramos el paquete por la tabla filter con la cadena INPUT
+
+        if (!firewallProcessorFilter(networkObjectId, packet, "INPUT", networkObjectInterface, "")) { 
             if (visualToggle) igniteFire(networkObjectId);
             return;
         }
@@ -79,7 +81,12 @@ async function packetProcessor_Router(switchId, networkObjectId, packet) {
 
     }
 
-    //si el paquete no va dirigido a una IP del router y no es broadcast, se enruta directamente
+    //si el paquete no va dirigido a una IP del router y no es broadcast, se filtra por FORWARD y se enruta directamente
+
+    if (!firewallProcessorFilter(networkObjectId, packet, "FORWARD", networkObjectInterface, "")) {
+        if (visualToggle) igniteFire(networkObjectId);
+        return;
+    }
 
     await routing(networkObjectId, packet);
 
