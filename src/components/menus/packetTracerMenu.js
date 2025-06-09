@@ -174,7 +174,14 @@ function removeDevicesFromTraffic() {
 function filterPacketTrafficbyDevice() {
     const $packetTraffic = document.querySelector(".packet-traffic");
     const $packetTrafficTable = $packetTraffic.querySelector("table");
-    const $device = document.getElementById($packetTraffic.querySelector("#filter-by-device").value);
+    const selectValue = $packetTraffic.querySelector("#filter-by-device").value;
+
+    if (selectValue === "all") {
+        $packetTrafficTable.querySelectorAll("tr").forEach($packet => $packet.style.display = "table-row");
+        return;
+    }
+
+    const $device = document.getElementById(selectValue);
     const deviceMacs = getMacAddresses($device.id);
     const $packets = $packetTrafficTable.querySelectorAll("tr");
 
