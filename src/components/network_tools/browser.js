@@ -180,9 +180,14 @@ function closeBrowser(event) {
     event.preventDefault();
     const browser = document.querySelector(".browser-component");
     if (browser.style.left !== "0px" && browser.style.left !== "0%") {
-        document.querySelector(".browser-content").innerHTML = `<img src="./assets/browser/aminsearch.png" alt="logo"></img>`; //recuperamos el contenido original del navegador
-        document.querySelector(".address-input").value = ""; //limpiamos la entrada de direccion
-        document.querySelector(".browser-component").style.display = "none"; //ocultamos el navegador
+        //recuperamos el contenido original del navegador
+        document.querySelector(".browser-content").innerHTML = `<img src="./assets/browser/aminsearch.png" alt="logo"></img>`;
+        //limpiamos la entrada de direccion
+        document.querySelector(".address-input").value = "";
+        //eliminamos la referencia al src
+        document.querySelector(".browser-content").removeAttribute("src");
+        //ocultamos el navegador
+        document.querySelector(".browser-component").style.display = "none";
     }
 }
 

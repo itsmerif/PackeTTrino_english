@@ -8,6 +8,8 @@ async function browserSearch() {
     if (visualToggle) await minimizeBrowser();
 
         try {
+            
+            $browserContent.removeAttribute("src");
 
             //variables y mapas
 
