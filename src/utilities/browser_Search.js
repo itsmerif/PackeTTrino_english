@@ -41,8 +41,11 @@ async function browserSearch() {
                 "http": (httpReply) => $browserContent.srcdoc = httpReply.body,
                 "https": (httpReply) => $browserContent.srcdoc = httpReply.body,
                 "ptt": (httpReply) => {
-                    $browserContent.removeAttribute("srcdoc");
-                    $browserContent.src = httpReply.body;
+                    $browserContent.srcdoc = $LOADERCONTENT(httpReply.body);
+                    setTimeout(() => {
+                        $browserContent.src = httpReply.body;
+                        $browserContent.removeAttribute("srcdoc");
+                    }, 700);
                 }
             }
 

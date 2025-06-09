@@ -959,6 +959,230 @@ Lo sentimos, pero el recurso solicitado no se encuentra en este servidor.
 </body>
 </html>`;
 
+const $LOADERCONTENT = (site) => {
+return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Cargando - PackeTTrino</title>
+<style type="text/css" media="screen">
+:root {
+--primary-color: rgb(59, 130, 246);
+--accent-color: rgb(147, 197, 253);
+--text-color: rgb(55, 65, 81);
+--light-bg: rgb(249, 250, 251);
+--dark-bg: rgb(17, 24, 39);
+--shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+line-height: 1.6;
+color: var(--text-color);
+background: linear-gradient(135deg, var(--light-bg) 0%, #e5e7eb 100%);
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+
+.main_page {
+max-width: 500px;
+width: 100%;
+background-color: white;
+border-radius: 16px;
+overflow: hidden;
+box-shadow: var(--shadow);
+border: 1px solid #e5e7eb;
+text-align: center;
+}
+
+.page_header {
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 32px 24px 24px;
+background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+color: white;
+}
+
+.page_header .server-icon {
+width: 32px;
+height: 32px;
+margin-right: 12px;
+background-color: rgba(255, 255, 255, 0.2);
+border-radius: 8px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 18px;
+}
+
+.page_header .floating_element {
+font-size: 20px;
+font-weight: 600;
+}
+
+.content_section {
+padding: 40px 24px;
+}
+
+.loader-container {
+margin-bottom: 32px;
+}
+
+.spinner {
+width: 64px;
+height: 64px;
+border: 4px solid #e5e7eb;
+border-top: 4px solid var(--primary-color);
+border-radius: 50%;
+margin: 0 auto 24px;
+animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+font-size: 24px;
+font-weight: 600;
+color: var(--primary-color);
+margin-bottom: 16px;
+}
+
+.loading-subtitle {
+font-size: 16px;
+color: var(--text-color);
+opacity: 0.7;
+margin-bottom: 24px;
+}
+
+.progress-bar {
+width: 100%;
+height: 8px;
+background-color: #e5e7eb;
+border-radius: 4px;
+overflow: hidden;
+margin-bottom: 16px;
+}
+
+.progress-fill {
+height: 100%;
+background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+border-radius: 4px;
+animation: progress 2s ease-in-out infinite;
+transform-origin: left;
+}
+
+@keyframes progress {
+0% { transform: scaleX(0.1); }
+50% { transform: scaleX(0.7); }
+100% { transform: scaleX(0.1); }
+}
+
+.loading-dots {
+display: inline-block;
+}
+
+.loading-dots::after {
+content: '';
+animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+0%, 20% { content: ''; }
+40% { content: '.'; }
+60% { content: '..'; }
+80%, 100% { content: '...'; }
+}
+
+.server-info {
+background-color: #f8fafc;
+padding: 16px;
+border-radius: 8px;
+font-size: 14px;
+color: var(--text-color);
+opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+.main_page {
+margin: 20px;
+max-width: none;
+}
+
+.page_header {
+padding: 24px 20px 20px;
+}
+
+.content_section {
+padding: 32px 20px;
+}
+
+.spinner {
+width: 56px;
+height: 56px;
+}
+
+.loading-text {
+font-size: 20px;
+}
+}
+
+/* Animación de pulso para el contenedor principal */
+.main_page {
+animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+0%, 100% { 
+box-shadow: var(--shadow);
+transform: scale(1);
+}
+50% { 
+box-shadow: 0 8px 25px -5px rgba(59, 130, 246, 0.2), 0 4px 10px -3px rgba(59, 130, 246, 0.1);
+transform: scale(1.02);
+}
+}
+</style>
+</head>
+<body>
+
+    <div class="main_page">
+
+        <div class="content_section">
+
+            <div class="loader-container">
+                <div class="spinner"></div>
+                <div class="loading-text">Cargando<span class="loading-dots"></span></div>
+                <div class="loading-subtitle">Por favor espere mientras procesamos su solicitud</div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="server-info">
+                <strong>Estado:</strong> Conectando a ${site}<br>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>`};
+
 const $DIRECTORYINDEXCONTENT = (documentRoot, directoryIndexFiles) => {
 return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
