@@ -44,9 +44,11 @@ function command_dns(networkObjectId, args) {
             let recordType = args[3] || "none";
             let domain = args[4];
             let value = args[5];
+            let serial = args[6];
+            let cacheTTL = args[7];
 
             const dnsRecordTypes = {
-                "SOA": () => isValidSOARecord(networkObjectId, domain, value),
+                "SOA": () => isValidSOARecord(networkObjectId, domain, value, serial, cacheTTL),
                 "NS": () => isValidNSRecord(networkObjectId, domain, value),
                 "A": () => isValidARecord(networkObjectId, domain, value),
                 "CNAME": () => isValidCNAMERecord(networkObjectId, domain, value),

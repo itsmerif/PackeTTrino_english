@@ -138,7 +138,7 @@ function addDnsEntry(serverObjectId, newrecord) {
     const $dnsTable = $serverObject.querySelector(".dns-table").querySelector("table")
     const $newRecord = document.createElement("tr");
 
-    if (newrecord.type === "SOA") {
+    if (newrecord.type.toUpperCase() === "SOA") {
         $newRecord.setAttribute("data-serial", newrecord.serial);
         $newRecord.setAttribute("data-cache-ttl", newrecord.cacheTTL);
     }
@@ -152,7 +152,7 @@ function addDnsEntry(serverObjectId, newrecord) {
     $newRecord.classList.add(newrecord.type.toUpperCase()); //<-- añadimos el tipo de registro a la fila
     $dnsTable.appendChild($newRecord);
 
-    if (newrecord.type === "A") { //<-- si se trata de un registro de tipo A, se genera automaticamente un registro PTR
+    if (newrecord.type.toUpperCase() === "A") { //<-- si se trata de un registro de tipo A, se genera automaticamente un registro PTR
         const ptrRecord = document.createElement("tr");
         ptrRecord.innerHTML = `
             <td>${(newrecord.value).split(".").reverse().join(".") + ".IN-ADDR.ARPA."}</td>
