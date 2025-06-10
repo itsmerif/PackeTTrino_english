@@ -90,6 +90,8 @@ function setRemoteRoutingRule(routerObjectId, destination, netmask, gateway, ifa
 
     }
 
+    if (destination === "0.0.0.0" && netmask === "0.0.0.0") $networkObject.setAttribute("data-gateway", nexthop);
+
 }
 
 /**ESTA FUNCION ELIMINA UNA REGLA DE CONEXION DIRECTA DE LA TABLA DE ENRUTAMIENTO DE UN EQUIPO */
