@@ -51,18 +51,21 @@ async function command_dig(networkObjectId, args) {
 
         try {
 
-            await getDomainFromServer(
+            const dnsReply = await getDomainFromServer(
                 networkObjectId,
                 domain, //dominio
-                true, // verbose
                 dnsServer, //ip del servidor
                 query_type, //tipo de registro
-                true, //eliminar despues de usar
-                false //no generar cache
             );
+            
+            generateDnsOuput(dnsReply, networkObjectId);
 
+        } catch (error) {
 
-        } catch (error) {}
+            console.log(error);
+            terminalMessage(error.message, networkObjectId);
+
+        }
 
     if (visualToggle) await maximizeTerminal();
 

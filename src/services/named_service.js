@@ -23,24 +23,36 @@ async function named_service(networkObjectId, packet) {
 
     if (packet.answer_type === "A") {
 
-        let answer = iterativeDnsQuery(networkObjectId, packet.query); //<-- consulta iterativa
+        //consulta iterativa
 
-        if (!answer && isCacheOn) answer = isDomainInCacheDns(networkObjectId, packet.query)[1]; //<-- consulta cache dns
+        let answer = iterativeDnsQuery(networkObjectId, packet.query); 
+
+        //consulta de la cache dns
+
+        if (!answer && isCacheOn) answer = isDomainInCacheDns(networkObjectId, packet.query)[1];
+
+        //consulta recursiva
 
         if (!answer && isRecursiveOn) {
-            //consulta recursiva
-            answer = await recursiveDnsQuery(packet.query); 
-            //añadimos la respuesta a la cache dns
-            if (answer && isCacheOn) addDnsCacheEntry(networkObjectId, packet.query, packet.answer_type, answer, packet.origin_ip);
+            answer = await recursiveDnsQuery(packet.query);
+            if (answer && isCacheOn) addDnsCacheEntryServer(networkObjectId, packet.query, packet.answer_type, answer[0]);
         }
+        
+        //obtenemos el TTL del registro en caché
         
         if (answer) {
             const soaData = getSoaRecord(networkObjectId, packet.query);
             newPacket.cache_ttl = soaData["cacheTTL"];
         }
 
-        newPacket.answer = answer; //<-- se añade la respuesta
-        newPacket.answer_type = "A"; //<-- se añade el tipo de registro
+        //añadimos los valores de la respuesta
+
+        if (typeof answer === 'string') newPacket.answer = [answer];
+        else newPacket.answer = answer;
+
+        //se añade el tipo de registro
+        
+        newPacket.answer_type = "A"; 
     }
 
     if (packet.answer_type === "PTR") {

@@ -285,7 +285,7 @@ function isDomainInCacheDns(networkObjectId, targetDomain) {
 
 }
 
-/**ESTA FUNCIÓN AÑADE UN REGISTRO A LA CACHE DNS*/
+/**ESTA FUNCIÓN AÑADE UN REGISTRO A LA CACHE DNS DE UN DISPOSITIVO FINAL*/
 function addDnsCacheEntry(networkObjectId, dnsReplyPacket) {
 
     const $networkObject = document.getElementById(networkObjectId);
@@ -296,15 +296,15 @@ function addDnsCacheEntry(networkObjectId, dnsReplyPacket) {
 
     const domain = dnsReplyPacket.query;
     const recordType = dnsReplyPacket.answer_type;
-    const value = dnsReplyPacket.answer[0];
+    const value = dnsReplyPacket.answer[0]; //tomamos el primer valor
     const server = dnsReplyPacket.origin_ip;
     const ttl = dnsReplyPacket.cache_ttl;
 
     //los nombres se guardan como FQDN
+
     if (!domain.endsWith(".")) domain = domain + ".";
 
-    //si tenemos un array de ips, nos quedamos con la primera ip
-    if (typeof value !== 'string') value = value[0];
+    //se añade el registro
 
     newRow.innerHTML = `
         <td>${domain}</td>
@@ -312,7 +312,6 @@ function addDnsCacheEntry(networkObjectId, dnsReplyPacket) {
         <td>${value}</td>
     `;
 
-    //se añade el registro
     newRow.setAttribute("data-server", server);
     dnsTable.appendChild(newRow);
 
@@ -343,6 +342,29 @@ function delDnsCacheEntry(networkObjectId, domain) {
             break;
         }
     }
+}
+
+/**ESTA FUNCIÓN AÑADE UN REGISTRO A LA CACHE DNS DE UN SERVIDOR*/
+function addDnsCacheEntryServer(serverObjectId, domain, recordType, value) {
+
+    const $serverObject = document.getElementById(serverObjectId);
+    const dnsTable = $serverObject.querySelector(".cache-dns-table").querySelector("table");
+    const newRow = document.createElement("tr");
+
+    //los nombres se guardan como FQDN
+
+    if (!domain.endsWith(".")) domain = domain + ".";
+
+    //se añade el registro
+
+    newRow.innerHTML = `
+        <td>${domain}</td>
+        <td>${recordType}</td>
+        <td>${value}</td>
+    `;
+
+    dnsTable.appendChild(newRow);
+
 }
 
 /**ESTA FUNCION DEVUELVE EL VALOR DE UN REGISTRO DE TIPO A EN UN SERVIDOR DNS*/
