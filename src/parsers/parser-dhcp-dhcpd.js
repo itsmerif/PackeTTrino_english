@@ -126,7 +126,7 @@ function dhcpdConfInterpreter(networkObjectId, content)  {
             const optionsMap = {
 
                 "hardware ethernet": () => {
-                    hostObject["mac"] = tokens[2];
+                    hostObject["mac"] = tokens[2].toUpperCase();
                 },
 
                 "fixed-address": () => {
