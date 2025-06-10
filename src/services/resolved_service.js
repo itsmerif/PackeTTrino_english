@@ -30,7 +30,7 @@ async function domainNameResolution(networkObjectId, domain) {
 
             let dnsReply = buffer[networkObjectId];
             delete buffer[networkObjectId];
-            response = dnsReply.answer; //<-- respuesta obtenida
+            response = dnsReply.answer[0]; //se devuelve el primer valor
 
         } catch (error) {
 
@@ -48,16 +48,22 @@ async function domainNameResolution(networkObjectId, domain) {
 async function getDomainFromServer(networkObjectId, domain, verbose, dnsServer = "", query_type, deleteAfterUse, genCache) {
 
     const $networkObject = document.getElementById(networkObjectId);
-    const isResolvedOn = $networkObject.getAttribute("resolved") === "true"; //<-- comprobamos si el equipo tiene una cache dns
+    const isResolvedOn = $networkObject.getAttribute("resolved") === "true"; //comprobamos si el equipo tiene una cache dns
 
     if (!isValidIp(domain) && !domain.endsWith(".")) domain = domain + ".";
 
-    dnsRequestFlag[networkObjectId] = false; // <-- reseteamos el flag de comunicaciones
-    const networkObjectDnsServers = getDnsServers(networkObjectId);
-    const serversToTry = (dnsServer === "") ? networkObjectDnsServers : [dnsServer]; //<-- si no se especifico un servidor dns se usan los del equipo
+    //reseteamos el flag de comunicaciones
+    
+    dnsRequestFlag[networkObjectId] = false; 
 
+    //si no se especifico un servidor dns se usan los del equipo
+    
+    const networkObjectDnsServers = getDnsServers(networkObjectId);
+    const serversToTry = (dnsServer === "") ? networkObjectDnsServers : [dnsServer]; 
     if (serversToTry.length === 0) throw new Error("Error: No hay servidores DNS configurados.");
     
+    //intentamos resolver el dominio con cada uno de los servidores dns
+
     let answered = false;
     let i = 0;
 
@@ -65,7 +71,7 @@ async function getDomainFromServer(networkObjectId, domain, verbose, dnsServer =
         
         const dnsServer = serversToTry[i];
 
-        if (isLocalIp(networkObjectId, dnsServer)) {
+        if (isLocalIp(networkObjectId, dnsServer)) { //servidores DNS locales
 
             const newDnsRequest = new dnsRequest(
                 $networkObject.getAttribute(`ip-${getInterfaces(networkObjectId)[0]}`),
@@ -84,7 +90,7 @@ async function getDomainFromServer(networkObjectId, domain, verbose, dnsServer =
                 buffer[networkObjectId] = dnsReply;
             }
 
-        } else {
+        } else { //servidores DNS remotos
 
             await dnsRequestPacketGenerator(networkObjectId, domain, dnsServer, query_type); 
             if (dnsRequestFlag[networkObjectId] === true) answered = true;
@@ -94,16 +100,25 @@ async function getDomainFromServer(networkObjectId, domain, verbose, dnsServer =
         i++;
     }
 
+    //si no se pudo resolver el dominio se lanza una excepcion
+
     if (!answered) {
         if (verbose) terminalMessage(`communications error to ${serversToTry[i-1]}#53: timed out`, networkObjectId);
         throw new Error("Error: No se pudo resolver el nombre de dominio.");
     }
 
-    const dnsReplyPacket = buffer[networkObjectId]; //<-- recuperamos el paquete de respuesta
+    const dnsReplyPacket = buffer[networkObjectId]; 
 
-    if (verbose) generateDnsOuput(dnsReplyPacket, networkObjectId); //<-- en modo verboso se genera este mensaje en la consola
-    if (!dnsReplyPacket.answer) throw new Error("Error: No se pudo resolver el nombre de dominio."); //se lanza una excepcion si no hay respuesta
-    if (isResolvedOn && genCache) addDnsCacheEntry(networkObjectId, dnsReplyPacket); //<-- añadimos la respuesta a la cache dns
+    //en modo verboso se genera este mensaje en la consola    
+    if (verbose) generateDnsOuput(dnsReplyPacket, networkObjectId);
+
+    //se lanza una excepcion si no hay respuesta
+    if (!dnsReplyPacket.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
+
+    //añadimos la respuesta a la cache dns
+    if (isResolvedOn && genCache) addDnsCacheEntry(networkObjectId, dnsReplyPacket);
+    
+    //elimiamos el paquete del buffer si no se va a usar
     if (deleteAfterUse) delete buffer[networkObjectId];
 
 }

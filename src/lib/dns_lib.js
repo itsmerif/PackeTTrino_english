@@ -223,17 +223,10 @@ function generateDnsOuput(packet, networkObjectId) {
 
         message += `\nANSWER SECTION:\n`;
 
-        if (typeof answer === 'string') {
-
-            message += `${query.padEnd(15, " ")} 86400 IN ${answer_type} ${answer}\n`;
-
-        } else {
-
-            for (let i = 0; i < answer.length; i++) {
-                message += `${query.padEnd(15, " ")} 86400 IN ${answer_type} ${answer[i]}\n`;
-            }
-
+        for (let i = 0; i < answer.length; i++) {
+            message += `${query.padEnd(15, " ")} 86400 IN ${answer_type} ${answer[i]}\n`;
         }
+
     }
 
     //seccion de autoridad
@@ -303,15 +296,15 @@ function addDnsCacheEntry(networkObjectId, dnsReplyPacket) {
 
     const domain = dnsReplyPacket.query;
     const recordType = dnsReplyPacket.answer_type;
-    const value = dnsReplyPacket.answer;
+    const value = dnsReplyPacket.answer[0];
     const server = dnsReplyPacket.origin_ip;
     const ttl = dnsReplyPacket.cache_ttl;
 
     //los nombres se guardan como FQDN
-    if (!domain.endsWith(".")) domain = domain + "."; 
+    if (!domain.endsWith(".")) domain = domain + ".";
 
     //si tenemos un array de ips, nos quedamos con la primera ip
-    if (typeof value !== 'string') value = value[0]; 
+    if (typeof value !== 'string') value = value[0];
 
     newRow.innerHTML = `
         <td>${domain}</td>
@@ -320,7 +313,7 @@ function addDnsCacheEntry(networkObjectId, dnsReplyPacket) {
     `;
 
     //se añade el registro
-    newRow.setAttribute("data-server", server); 
+    newRow.setAttribute("data-server", server);
     dnsTable.appendChild(newRow);
 
     //generamos un timer para la cache dns
@@ -374,7 +367,7 @@ function iterativeDnsQuery(serverObjectId, targetDomain) {
     if (response.length === 0) return false;
 
     return response;
-    
+
 }
 
 /**ESTA FUNCION ELIMINA TODOS LOS REGISTROS DE UN DOMINIO*/

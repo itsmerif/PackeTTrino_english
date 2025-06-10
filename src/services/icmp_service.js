@@ -12,6 +12,8 @@ async function ping(networkObjectId, destination) {
         if (!destination) return 1;
     }
 
+    console.log(destination);
+    
     if (isLocalIp(networkObjectId, destination)) {
         await new Promise(resolve => setTimeout(resolve, 50)); //<-- esta promesa esta aquí para que la terminal visualmente no se "buguee"
         return 0;
