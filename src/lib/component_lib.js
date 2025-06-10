@@ -355,6 +355,8 @@ function loadState(files = undefined) {
         const content = event.target.result;
         document.querySelector(".board").innerHTML = content;
         cleanUpWorkspace();
+        resetArpTables();
+        resetDnsCacheTables();
         setNewIndex();
         setTextContents();
         startLeaseTimers();
@@ -496,4 +498,28 @@ function cleanUpWorkspace() {
         delete dnsCacheTimers[dnsCacheTimer];
     }
 
+}
+
+/**ESTA FUNCION LIMPIA LA TABLA DE ARP DE TODOS LOS OBJETOS DE RED*/
+function resetArpTables() {
+    const $droppedItems = document.querySelectorAll(".item-dropped");
+    $droppedItems.forEach(item => {
+        const $arpTable = item?.querySelector(".arp-table");
+        if ($arpTable) {
+            const $rows = $arpTable.querySelectorAll("tr");
+            for (let i = 1; i < $rows.length; i++) $rows[i].remove();
+        }
+    });
+}
+
+/**ESTA FUNCION LIMPIA LA TABLA DE CACHE DNS DE TODOS LOS OBJETOS DE RED*/
+function resetDnsCacheTables() {
+    const $droppedItems = document.querySelectorAll(".item-dropped");
+    $droppedItems.forEach(item => {
+        const $dnsCacheTable = item?.querySelector(".cache-dns-table");
+        if ($dnsCacheTable) {
+            const $rows = $dnsCacheTable.querySelectorAll("tr");
+            for (let i = 1; i < $rows.length; i++) $rows[i].remove();
+        }
+    });
 }
