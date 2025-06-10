@@ -81,7 +81,11 @@ async function packetProcessor_Router(switchId, networkObjectId, packet) {
 
     }
 
-    //si el paquete no va dirigido a una IP del router y no es broadcast, se filtra por FORWARD y se enruta directamente
+    //no enrutamos trafico broadcast
+
+    if (packet.destination_ip === "255.255.255.255" || packet.destination_mac === "ff:ff:ff:ff:ff:ff") return;
+
+    //se filtra por FORWARD
 
     if (!firewallProcessorFilter(networkObjectId, packet, "FORWARD", networkObjectInterface, "")) {
         if (visualToggle) igniteFire(networkObjectId);
