@@ -16,9 +16,21 @@ function firewallProcessorFilter(networkObjectId, packet, targetChain, inputInte
 
         if (rule.p !== "*" && rule.p !== packet.transport_protocol && rule.p !== packet.protocol) return;
 
-        if (rule.s !== "*" && rule.s !== packet.origin_ip) return;
+        if (rule.s !== "*") {
+            if (isValidIp(rule.s) && rule.s !== packet.origin_ip) return;
+            if (isValidCidrIp(rule.s)) {
+                const [networkIp, netmask] = parseCidr(rule.s);
+                if (getNetwork(packet.origin_ip, netmask) !== networkIp) return;
+            }
+        }
 
-        if (rule.d !== "*" && rule.d !== packet.destination_ip) return;
+        if (rule.d !== "*") {
+            if (isValidIp(rule.d) && rule.d !== packet.destination_ip) return;
+            if (isValidCidrIp(rule.d)) {
+                const [networkIp, netmask] = parseCidr(rule.d);
+                if (getNetwork(packet.destination_ip, netmask) !== networkIp) return;
+            }
+        }
 
         if (inputInterface !== "" && rule.i !== "*" && rule.i !== inputInterface) return;
 

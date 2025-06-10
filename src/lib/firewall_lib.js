@@ -90,9 +90,9 @@ function isValidFirewallRule(rule, networkObjectId) {
 
     if (rule.i !== "*" && !validInterfaces.includes(rule.i)) throw new Error(`Error: interfaz ${rule.i} no reconocida`);
 
-    if (rule.s !== "*" && !isValidIp(rule.s)) throw new Error("Error: ip de origen no válida"); 
+    if (rule.s !== "*" && !isValidIp(rule.s) && !isValidCidrIp(rule.s)) throw new Error("Error: ip de origen no válida"); 
 
-    if (rule.d !== "*" && !isValidIp(rule.d)) throw new Error("Error: ip de destino no válida"); 
+    if (rule.d !== "*" && !isValidIp(rule.d) && !isValidCidrIp(rule.d)) throw new Error("Error: ip de destino no válida"); 
 
     if (rule.sport !== "*" && !rule.sport.match(/^\d+$/)) throw new Error("Error: puerto de origen no válido");
 
