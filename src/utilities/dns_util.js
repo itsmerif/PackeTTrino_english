@@ -64,8 +64,11 @@ function command_dns(networkObjectId, args) {
                     let record = new dnsRecord(
                         domain, 
                         recordType, 
-                        value
+                        value,
                     );
+
+                    record.serial = serial;
+                    record.cacheTTL = cacheTTL;
 
                     addDnsEntry(networkObjectId, record);
                     terminalMessage(`Se ha añadido correctamente el registro ${recordType.toUpperCase()}.`, networkObjectId);
