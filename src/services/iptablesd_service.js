@@ -24,9 +24,9 @@ function firewallProcessorFilter(networkObjectId, packet, targetChain, inputInte
 
         if (outputInterface !== "" && rule.o !== "*" && rule.o !== outputInterface) return;
 
-        if (rule.sport !== "*" && rule.sport !== packet.sport) return;
+        if (rule.sport !== "*" && parseInt(rule.sport) !== parseInt(packet.sport)) return;
 
-        if (rule.dport !== "*" && rule.dport !== packet.dport) return;
+        if (rule.dport !== "*" && parseInt(rule.dport) !== parseInt(packet.dport)) return;
 
         found = true;
 
