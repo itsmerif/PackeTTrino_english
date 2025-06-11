@@ -161,7 +161,7 @@ function dropSwitchOverItem(event) {
 
     if (availableInterface) {
         CableObject(networkObjectX, networkObjectY, switchX, switchY, networkObjectId, switchId, availableInterface);
-        addMacEntry(switchId, networkObjectId);
+        addSwitchPort(switchId, networkObjectId);
         $networkObject.setAttribute(`data-switch-${availableInterface}`, switchId);
         if(!getAvailableInterface(networkObjectId)) $networkObject.querySelector("img").draggable = false;
     }

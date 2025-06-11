@@ -52,7 +52,7 @@ function deleteCable(event) {
     });
 
     $networkObject.querySelector("img").draggable = true;
-    deleteMacEntry($switchObject.id, cableObject.getAttribute("end-start"));
+    deleteSwitchPort($switchObject.id, cableObject.getAttribute("end-start"));
     if (isMacTableEmpty($switchObject.id)) $switchObject.querySelector("img").draggable = true;
     circle.remove();
     cableObject.remove();

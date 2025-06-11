@@ -109,6 +109,8 @@ function updateMacEntry(switchObjectId, networkObjectId, newMac) {
     const macTable = switchObject.querySelector("table");
     const rows = macTable.querySelectorAll("tr");
 
+    //añadimos el registro de la tabla MAC
+
     for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
         const cells = row.querySelectorAll("td");
@@ -118,10 +120,52 @@ function updateMacEntry(switchObjectId, networkObjectId, newMac) {
         }
     }
     
+
+    //reiniciamos o inicamos el temporizador de MAC
+
+    if (!macEntryTimers[`${switchObjectId}-${networkObjectId}`]) {
+
+        macEntryTimers[`${switchObjectId}-${networkObjectId}`] = setTimeout(() => {
+            deleteMacEntry(switchObjectId, networkObjectId);
+        }, $MACENTRYTTL * 1000);
+
+        console.log(`Temporizador de MAC iniciado para ${switchObjectId}-${networkObjectId}`);
+
+    }else {
+
+        clearTimeout(macEntryTimers[`${switchObjectId}-${networkObjectId}`]);
+        macEntryTimers[`${switchObjectId}-${networkObjectId}`] = setTimeout(() => {
+            deleteMacEntry(switchObjectId, networkObjectId);
+        }, $MACENTRYTTL * 1000);
+
+        console.log(`Temporizador de MAC reiniciado para ${switchObjectId}-${networkObjectId}`);
+
+    }
+
+}
+
+/**ESTA FUNCION ELIMINA UNA ENTRADA DE LA TABLA DE MACS DE UN SWITCH*/
+function deleteMacEntry(switchObjectId, networkObjectId) {
+
+    const $switchObject = document.getElementById(switchObjectId);
+    const $macTable = $switchObject.querySelector("table");
+    const $records = $macTable.querySelectorAll("tr");
+
+    for (let i = 1; i < $records.length; i++) {
+        const $record = $records[i];
+        const $fields = $record.querySelectorAll("td");
+        if ($fields[0].innerHTML === networkObjectId) {
+            $fields[1].innerHTML = "";
+            delete macEntryTimers[`${switchObjectId}-${networkObjectId}`];
+            console.log(`Temporizador de MAC eliminado para ${switchObjectId}-${networkObjectId}`);
+            break;
+        }
+    }
+
 }
 
 /**ESTA FUNCION AÑADE UNA ENTRADA A LA TABLA DE MACS DE UN SWITCH*/
-function addMacEntry(switchId, itemdId) {
+function addSwitchPort(switchId, itemdId) {
     const switchObject = document.getElementById(switchId);
     const macTable = switchObject.querySelector("table");
     const newMac = document.createElement("tr");
@@ -134,7 +178,7 @@ function addMacEntry(switchId, itemdId) {
 }
 
 /**ESTA FUNCION ELIMINA UNA ENTRADA DE LA TABLA DE MACS DE UN SWITCH*/
-function deleteMacEntry(switchId, networkObjectId) {
+function deleteSwitchPort(switchId, networkObjectId) {
     const switchObject = document.getElementById(switchId);
     const table = switchObject.querySelector("table");
     const tds = table.querySelectorAll("td");

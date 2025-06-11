@@ -12,6 +12,7 @@ let routers = {};
 let switches = {};
 let servers = {};
 let $ARPENTRYTTL = 120;
+let $MACENTRYTTL = 120;
 
 //variables de la terminal
 let $PWD = [];
@@ -51,6 +52,7 @@ let routerChangesBuffer = {}; //este buffer guarda informacion por INTERFAZ, NO 
 let serverLeaseTimers = {};
 let clientLeaseTimers = {};
 let arpEntryTimers = {};
+let macEntryTimers = {};
 let dnsCacheTimers = {};
 
 //variables de gestion de SNAT Y DNAT

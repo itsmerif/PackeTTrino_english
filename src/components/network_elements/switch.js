@@ -75,7 +75,7 @@ function switchConn(event) {
 
         if (availableInterface) {
             CableObject(x1, y1, $switchObject.style.left, $switchObject.style.top, itemId, $switchObject.id, availableInterface);
-            addMacEntry($switchObject.id, itemId);
+            addSwitchPort($switchObject.id, itemId);
             $networkObject.setAttribute(`data-switch-${availableInterface}`, $switchObject.id);
             if(!getAvailableInterface(itemId)) $networkObject.querySelector("img").draggable = false;
         }
