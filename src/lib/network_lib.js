@@ -166,15 +166,17 @@ function deleteMacEntry(switchObjectId, networkObjectId) {
 
 /**ESTA FUNCION AÑADE UNA ENTRADA A LA TABLA DE MACS DE UN SWITCH*/
 function addSwitchPort(switchId, itemdId) {
-    const switchObject = document.getElementById(switchId);
-    const macTable = switchObject.querySelector("table");
-    const newMac = document.createElement("tr");
-    newMac.innerHTML = `
+    const $switchObject = document.getElementById(switchId);
+    const $macTable = $switchObject.querySelector("table");
+    const $records = $macTable.querySelectorAll("tr");
+    const $newMac = document.createElement("tr");
+    $newMac.innerHTML = `
         <tr>
             <td class="device-name">${itemdId}</td>
             <td class="mac-address"></td>
+            <td class="physical-port">FA0/${$records.length}</td>
         </tr>`;
-    macTable.appendChild(newMac);
+    $macTable.appendChild($newMac);
 }
 
 /**ESTA FUNCION ELIMINA UNA ENTRADA DE LA TABLA DE MACS DE UN SWITCH*/

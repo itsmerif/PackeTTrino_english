@@ -7,8 +7,9 @@ function macTable() {
     $macTable.innerHTML = `
         <table>
             <tr>
-                <th>Puerto</th>
+                <th>Dispositivo</th>
                 <th>MAC</th>
+                <th>Puerto Físico</th>
             </tr>
         </table>
         <button onclick="closeMacTable(event)">Cerrar</button>
