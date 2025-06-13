@@ -692,3 +692,52 @@ function parseSearch(input) {
     }
 
 }
+
+/**DEVUELVE EL INDICE MÁS ALTO DE INTERFAZ DE UN DISPOSITIVO (3, 8, 9, ...) */
+function maxIfaceIndex(networkObjectId) {
+    return getInterfaces(networkObjectId)
+    .map(iface => parseInt(iface.split("enp0s")[1]))
+    .sort((a, b) => a - b)
+    .pop();
+}
+
+/**ESTA FUNCION ELIMINA UNA INTERFAZ DE UN DISPOSITIVO, JUNTO CON LAS CONFIGURACIONES RELACIONADAS */
+function deleteInterface(networkObjectId, iface) {
+
+    const $networkObject = document.getElementById(networkObjectId);
+
+    //si la interfaz está configurada en dhcp, hacemos un release primero
+
+    //TODO -> hacer release de dhcp
+
+    //eliminamos los atributos del elemento de red
+
+    $networkObject.removeAttribute(`ip-${iface}`);
+    $networkObject.removeAttribute(`netmask-${iface}`);
+    $networkObject.removeAttribute(`mac-${iface}`);
+    $networkObject.removeAttribute(`data-switch-${iface}`);
+
+    //eliminamos las reglas de enrutamiento que usen esa interfaz
+
+    const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
+    const $routingRules = $routingTable.querySelectorAll("tr");
+
+    $routingRules.forEach($rule => {
+        const $fields = $rule.querySelectorAll("td");
+        if ($fields.length === 0) return;
+        if ($fields[3].innerHTML === iface) $rule.remove();
+    });
+
+}
+
+/**ESTA FUNCION AÑADE UNA INTERFAZ A UN DISPOSITIVO */
+function addInterface(networkObjectId) {
+    const $networkObject = document.getElementById(networkObjectId);
+    const availableInterfaces = getInterfaces(networkObjectId);
+    const ifaceMaxIndex = maxIfaceIndex(networkObjectId);
+    const newInterface = (ifaceMaxIndex === 3) ? "enp0s8" : `enp0s${ifaceMaxIndex + 1}`;
+    $networkObject.setAttribute(`ip-${newInterface}`, "");
+    $networkObject.setAttribute(`netmask-${newInterface}`, "");
+    $networkObject.setAttribute(`mac-${newInterface}`, getRandomMac());
+    $networkObject.setAttribute(`data-switch-${newInterface}`, "");
+}

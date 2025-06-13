@@ -205,25 +205,16 @@ function addGraphicInterface(event) {
 
     const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
     const $interfacesContainer = document.querySelector(".router-form").querySelector(".interfaces-container");
+    
+    addInterface($networkObject.id);
 
-    let index = 10;
-    let ip = $networkObject.getAttribute("ip-enp0s" + index);
-    let netmask = $networkObject.getAttribute("netmask-enp0s" + index);
+    const index = maxIfaceIndex($networkObject.id);
 
-    while ( ip !== null && netmask !== null ) {
-        index++;
-        ip = $networkObject.getAttribute("ip-enp0s" + index);
-        netmask = $networkObject.getAttribute("netmask-enp0s" + index);
-    }
-
-    $networkObject.setAttribute("ip-enp0s" + index, "");
-    $networkObject.setAttribute("netmask-enp0s" + index, "");
-    $networkObject.setAttribute("mac-enp0s" + index, getRandomMac());
-    $networkObject.setAttribute("data-switch-enp0s" + index, "");
     $networkObject.querySelector("img").draggable = true;
+
     $interfacesContainer.innerHTML += `<option value="enp0s${index}">enp0s${index}</option>`;
     
-    routerChangesBuffer["enp0s" + index] = {
+    routerChangesBuffer[`enp0s${index}`] = {
         ip: "",
         netmask: ""
     }
@@ -239,7 +230,7 @@ function deleteGraphicInterface(event) {
     const $routerForm = document.querySelector(".router-form");
     const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
     const currentInterface = $routerForm.querySelector(".interfaces-container").value;
-    const fixedInterfaces = ["enp0s3", "enp0s8", "enp0s9"];
+    const fixedInterfaces = ["enp0s3"];
 
     if (fixedInterfaces.includes(currentInterface)) {
         bodyComponent.render(popupMessage(`<span>Error: </span>La interfaz ${currentInterface} no se puede eliminar.`));
@@ -251,10 +242,7 @@ function deleteGraphicInterface(event) {
         return;
     }
 
-    $networkObject.removeAttribute("ip-" + currentInterface);
-    $networkObject.removeAttribute("netmask-" + currentInterface);
-    $networkObject.removeAttribute("mac-" + currentInterface);
-    $networkObject.removeAttribute("data-switch-" + currentInterface);
+    deleteInterface($networkObject.id, currentInterface);
     
     removeDirectRoutingRule($networkObject.id, currentInterface);
 

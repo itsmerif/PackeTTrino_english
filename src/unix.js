@@ -35,6 +35,7 @@ function unixParser(event) {
             "visual": () => command_visual(networkObjectId, args),
             "cp": () => command_cp(networkObjectId, args.slice(1)),
             "realnode": () => command_realnode(networkObjectId, args.slice(1)),
+            "iface": () => command_iface(networkObjectId, args),
         }
 
         window.clearInterval(window.pingInterval); //limpiamos todos los procesos de terminal en funcionamiento
