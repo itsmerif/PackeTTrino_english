@@ -2,23 +2,28 @@ function command_iface(networkObjectId, args) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const availableInterfaces = getInterfaces(networkObjectId);
-    
+    const selectedOptions = {};
+
     const $OPTS = catchopts([
         "add",
         "del:",
-        "all",
     ], args);
 
     const optionHandlers = {
 
         "add": () => {
+            selectedOptions["add"] = true;
             addInterface(networkObjectId);
             terminalMessage(`Interfaz enp0s${maxIfaceIndex(networkObjectId)} agregada.`, networkObjectId);
         },
 
         "del": () => {
+            
+            selectedOptions["del"] = true;
 
             const iface = ($OPTS["del"]);
+
+            if (!iface) throw new Error(`Error: Debes especificar una interfaz a eliminar.`);
 
             if (iface === "all") {
                 for (let iface of availableInterfaces.slice(1)) deleteInterface(networkObjectId, iface);
@@ -31,7 +36,7 @@ function command_iface(networkObjectId, args) {
             }
 
             if (!availableInterfaces.includes(iface)) {
-                throw new Error(`Error: La interfaz ${iface} no existe.`);
+                throw new Error(`Error: La interfaz "${iface}" no existe.`);
             }
 
             if ($networkObject.getAttribute(`data-switch-${iface}`) !== "") {
@@ -49,6 +54,8 @@ function command_iface(networkObjectId, args) {
     try {
 
         for (option in $OPTS) if (optionHandlers[option]) optionHandlers[option]();
+
+        if (isEmptyObject(selectedOptions)) throw new Error(`Error: Se debe especificar una opción valida.`);
 
     } catch (error) {
 
