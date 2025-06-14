@@ -14,7 +14,7 @@ function command_iface(networkObjectId, args) {
         "add": () => {
             selectedOptions["add"] = true;
             addInterface(networkObjectId);
-            terminalMessage(`Interfaz enp0s${maxIfaceIndex(networkObjectId)} agregada.`, networkObjectId);
+            terminalMessage(`iface: Interfaz enp0s${maxIfaceIndex(networkObjectId)} agregada.`, networkObjectId);
         },
 
         "del": () => {
@@ -26,9 +26,21 @@ function command_iface(networkObjectId, args) {
             if (!iface) throw new Error(`Error: Debes especificar una interfaz a eliminar.`);
 
             if (iface === "all") {
-                for (let iface of availableInterfaces.slice(1)) deleteInterface(networkObjectId, iface);
-                terminalMessage(`Todas las interfaces eliminadas.`, networkObjectId);
+
+                for (let iface of availableInterfaces.slice(1)) {
+                    
+                    if ($networkObject.getAttribute(`data-switch-${iface}`) !== "") {
+                        terminalMessage(`iface: No se pude eliminar la interfaz ${iface} porque tiene una conexión activa.`, networkObjectId);
+                        continue;
+                    }
+
+                    deleteInterface(networkObjectId, iface);
+                    terminalMessage(`iface: Interfaz ${iface} eliminada.`, networkObjectId);
+
+                }
+
                 return;
+
             }
 
             if (iface === "enp0s3") {
@@ -44,7 +56,7 @@ function command_iface(networkObjectId, args) {
             }
 
             deleteInterface(networkObjectId, iface);
-            terminalMessage(`Interfaz ${iface} eliminada.`, networkObjectId);
+            terminalMessage(`iface: Interfaz ${iface} eliminada.`, networkObjectId);
 
         },
 
