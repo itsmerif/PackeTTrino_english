@@ -732,12 +732,19 @@ function deleteInterface(networkObjectId, iface) {
 
 /**ESTA FUNCION AÑADE UNA INTERFAZ A UN DISPOSITIVO */
 function addInterface(networkObjectId) {
+
     const $networkObject = document.getElementById(networkObjectId);
     const availableInterfaces = getInterfaces(networkObjectId);
     const ifaceMaxIndex = maxIfaceIndex(networkObjectId);
     const newInterface = (ifaceMaxIndex === 3) ? "enp0s8" : `enp0s${ifaceMaxIndex + 1}`;
+
+    //añadimos los atributos de la nueva interfaz
     $networkObject.setAttribute(`ip-${newInterface}`, "");
     $networkObject.setAttribute(`netmask-${newInterface}`, "");
     $networkObject.setAttribute(`mac-${newInterface}`, getRandomMac());
     $networkObject.setAttribute(`data-switch-${newInterface}`, "");
+
+    //habilitamos el drag and drop para la nueva interfaz
+    $networkObject.querySelector("img").draggable = true;
+    
 }

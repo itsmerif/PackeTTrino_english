@@ -209,9 +209,7 @@ function addGraphicInterface(event) {
     addInterface($networkObject.id);
 
     const index = maxIfaceIndex($networkObject.id);
-
-    $networkObject.querySelector("img").draggable = true;
-
+    
     $interfacesContainer.innerHTML += `<option value="enp0s${index}">enp0s${index}</option>`;
     
     routerChangesBuffer[`enp0s${index}`] = {
