@@ -5,23 +5,23 @@ function command_iface(networkObjectId, args) {
     const selectedOptions = {};
 
     const $OPTS = catchopts([
-        "add",
-        "del:",
+        "--add",
+        "--del:",
     ], args);
 
     const optionHandlers = {
 
-        "add": () => {
-            selectedOptions["add"] = true;
+        "--add": () => {
+            selectedOptions["--add"] = true;
             addInterface(networkObjectId);
             terminalMessage(`iface: Interfaz enp0s${maxIfaceIndex(networkObjectId)} agregada.`, networkObjectId);
         },
 
-        "del": () => {
+        "--del": () => {
             
-            selectedOptions["del"] = true;
+            selectedOptions["--del"] = true;
 
-            const iface = ($OPTS["del"]);
+            const iface = ($OPTS["--del"]);
 
             if (!iface) throw new Error(`Error: Debes especificar una interfaz a eliminar.`);
 
