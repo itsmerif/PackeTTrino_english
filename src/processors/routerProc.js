@@ -1,7 +1,5 @@
 async function packetProcessor_Router(switchId, networkObjectId, packet) {
 
-    if (visualToggle) await visualize(switchId, networkObjectId, packet); //<-- animacion del paquete
-
     const $networkObject = document.getElementById(networkObjectId);
     const [networkObjectIp, networkObjectNetmask, networkObjectMac] = getInterfaceSwitchInfo(networkObjectId, switchId);
     const networkObjectInterface = switchToInterface(networkObjectId, switchId); // <-- obtenemos la interfaz de entrada

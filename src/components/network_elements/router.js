@@ -47,6 +47,7 @@ function RouterObject(x, y) {
     attr("netmask-enp0s9", "");
     attr("mac-enp0s9", getRandomMac());
     attr("data-switch-enp0s9", "");
+    attr("ipv4-forwarding", "true");
 
     //añadimos el sistema de archivos
     attr("filesystem", JSON.stringify(filesystem));

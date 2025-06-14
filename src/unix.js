@@ -36,6 +36,7 @@ function unixParser(event) {
             "cp": () => command_cp(networkObjectId, args.slice(1)),
             "realnode": () => command_realnode(networkObjectId, args.slice(1)),
             "iface": () => command_iface(networkObjectId, args),
+            "ipv4-forwarding": () => command_ipv4_forwarding(networkObjectId, args.slice(1)),
         }
 
         window.clearInterval(window.pingInterval); //limpiamos todos los procesos de terminal en funcionamiento

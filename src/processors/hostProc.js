@@ -3,6 +3,16 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
     if (visualToggle) await visualize(switchId, networkObjectId, packet);
 
     const $networkObject = document.getElementById(networkObjectId);
+
+    //redirigimos al procesador de forwarding si lo tiene activado
+
+    if ($networkObject.getAttribute("ipv4-forwarding") === "true") {
+        await packetProcessor_Router(switchId, networkObjectId, packet);
+        return;
+    }
+
+    //procesamos como dispositivo final 
+
     const networkObjectInterface = switchToInterface(networkObjectId, switchId);
     const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
     const networkObjectNetmask = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);

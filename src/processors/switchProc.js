@@ -13,15 +13,8 @@ async function switchProcessor(switchId, networkObjectId, packet) {
         await Promise.all(devices.map(async (device) => {
 
             if (device !== networkObjectId) { //no se reenvía por el puerto origen
-
                 const duplicatePacket = structuredClone(packet);
-
-                if (!device.startsWith("router-")) {
-                    await packetProcessor_Host(switchId, device, duplicatePacket);
-                }else {
-                    await packetProcessor_Router(switchId, device, duplicatePacket);
-                }
-
+                await packetProcessor_Host(switchId, device, duplicatePacket);
             }
 
         }));
@@ -30,15 +23,10 @@ async function switchProcessor(switchId, networkObjectId, packet) {
 
     }
 
+    //la mac es conocida para el switch
+
     const device = getDeviceFromMac(switchId, packet.destination_mac);
     const duplicatePacket = structuredClone(packet);
-
-    if (!device.startsWith("router-")) {
-        await packetProcessor_Host(switchId, device, duplicatePacket);
-    }else {
-        await packetProcessor_Router(switchId, device, duplicatePacket);
-    }
-
-    return;
+    await packetProcessor_Host(switchId, device, duplicatePacket);
 
 }
