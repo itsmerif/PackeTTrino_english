@@ -10,25 +10,38 @@ function pc_menu() {
 
         <section class="basic-section">
 
-            <div class="form-item">
-                <label for="ip">Dirección IP (ipv4):</label>
-                <input type="text" id="ip" name="ip">
-            </div>
+            <section class="iface-section">
 
-            <div class="form-item">
-                <label for="netmask">Máscara de Red:</label>
-                <input type="text" id="netmask" name="netmask">
-            </div>
+                <div class="form-item">
+                    <label for="iface">Interfaz:</label>
+                    <select id="iface" name="iface"></select>
+                </div>
+
+                <div class="form-item">
+                    <label for="ip">Dirección IP (ipv4):</label>
+                    <input type="text" id="ip" name="ip">
+                </div>
+
+                <div class="form-item">
+                    <label for="netmask">Máscara de Red:</label>
+                    <input type="text" id="netmask" name="netmask">
+                </div>
+
+            </section>
             
-            <div class="form-item">
-                <label for="gateway">Puerta de enlace:</label>
-                <input type="text" id="gateway" name="gateway">
-            </div>
-        
-            <div class="form-item">
-                <label for="dns-server">Servidores DNS:</label>
-                <input type="text" id="dns-server" name="dns-server">
-            </div>
+            <section class="general-section">
+
+                <div class="form-item">
+                    <label for="gateway">Puerta de enlace:</label>
+                    <input type="text" id="gateway" name="gateway">
+                </div>
+            
+                <div class="form-item">
+                    <label for="dns-server">Servidores DNS:</label>
+                    <input type="text" id="dns-server" name="dns-server">
+                </div>
+
+            </section>
 
         </section>
 
@@ -67,6 +80,7 @@ function pc_menu() {
     $menu.querySelector("#dhcp-toggle").addEventListener("change", dhcpHandler);
     $menu.querySelector("#web-server-toggle").addEventListener("change", webServerHandler);
     $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
+    $menu.querySelector("#iface").addEventListener("change", interfaceHandler);
 
     return $menu;
 
@@ -84,13 +98,25 @@ function showPcMenu(networkObjectId) {
     const $textInputs = $menu.querySelectorAll("input[type='text']");
     const $buttonSection = $menu.querySelector(".button-container");
     const activeServices = getAvailableServices(networkObjectId);
-    const networkInterface = getInterfaces(networkObjectId)[0];
+    
+    //cargamos las interfaces disponibles
+
+    const availableInterfaces = getInterfaces(networkObjectId);
+
+    availableInterfaces.forEach(iface => {
+        const option = document.createElement("option");
+        option.value = iface;
+        option.innerHTML = iface;
+        $menu.querySelector("#iface").appendChild(option);
+    });
+
+    const networkInterface = availableInterfaces[0]; //<-- se selecciona la primera interfaz
 
     //configuracion basica de red
 
     $menu.querySelector("#ip").value = $networkObject.getAttribute(`ip-${networkInterface}`);
     $menu.querySelector("#netmask").value = $networkObject.getAttribute(`netmask-${networkInterface}`);
-    $menu.querySelector("#gateway").value = $networkObject.getAttribute("data-gateway");
+    $menu.querySelector("#gateway").value = getDefaultGateway($networkObject.id);
     $menu.querySelector("#dns-server").value = (getDnsServers(networkObjectId) ?? "").join(",");
     $menu.querySelector("#form-item-id").innerHTML = networkObjectId;
 
@@ -132,32 +158,31 @@ async function pcMenuButtonsHandler(event) {
 
     const buttonId = event.submitter.id;
     const $networkObject = document.getElementById(document.getElementById("form-item-id").innerHTML);
-    const networkObjectId = $networkObject.id;
     const $menu = document.querySelector(".pc-form");
     const $modules = $menu.querySelector(".modes-wrapper").querySelectorAll(".form-item");
     const $buttons = $menu.querySelector(".button-container").querySelectorAll("button");
-    const networkInterface = getInterfaces($networkObject.id)[0]; //TODO: hacer que sea cualquier interfaz
-
-    //obtenemos los nuevos valores
+    const $ifaceSelector = $menu.querySelector("#iface");
+    const networkInterface = $ifaceSelector.value;
     const newIp = $menu.querySelector("#ip").value;
     const newNetmask = $menu.querySelector("#netmask").value;
     const newGateway = $menu.querySelector("#gateway").value;
     const newDnsServers = ($menu.querySelector("#dns-server").value).split(",").map(ip => ip.trim()).filter(ip => ip !== "");
     const isEmptyForm = newIp === "" && newNetmask === "" && newGateway === "" && newDnsServers.length === 0;
 
+    //funciones del menú
+
     const validateForm = () => {
         if (!isValidIp(newIp)) throw new Error(`Error: La IP "${newIp}" no es valida.`);
         if (!isValidIp(newNetmask)) throw new Error(`Error: La máscara de red "${newNetmask}" no es valida.`);
-        if (!isValidIp(newGateway)) throw new Error(`Error: La puerta de enlace "${newGateway}" no es valida.`);
-        if (getNetwork(newGateway, newNetmask) !== getNetwork(newIp, newNetmask)) throw new Error(`Error: La puerta de enlace "${newGateway}" no es accesible desde "${newIp}".`);
+        if (newGateway !== "" && !isValidIp(newGateway)) throw new Error(`Error: La puerta de enlace "${newGateway}" no es valida.`);
         if (newDnsServers.length !== 0 && !newDnsServers.every(isValidIp)) throw new Error(`Error: Servidores DNS no válidos.`);
     }
 
     const updatePcFormFields = () => {
         $menu.querySelector("#ip").value = $networkObject.getAttribute(`ip-${networkInterface}`);
         $menu.querySelector("#netmask").value = $networkObject.getAttribute(`netmask-${networkInterface}`);
-        $menu.querySelector("#gateway").value = $networkObject.getAttribute("data-gateway");
-        $menu.querySelector("#dns-server").value = (getDnsServers(networkObjectId) ?? "").join(",");
+        $menu.querySelector("#gateway").value = getDefaultGateway($networkObject.id);
+        $menu.querySelector("#dns-server").value = (getDnsServers($networkObject.id) ?? "").join(",");
     }
 
     const updateButtonDisplay = () => {
@@ -171,6 +196,7 @@ async function pcMenuButtonsHandler(event) {
     const restorePcForm = () => {
         const $textInputs = $menu.querySelectorAll("input[type='text']");
         const $checkBoxes = $menu.querySelectorAll("input[type='checkbox']");
+        $ifaceSelector.innerHTML = ""; //<-- se limpia el selector de interfaz
         $modules.forEach($module => $module.classList.add("hidden")); //<-- se ocultan los modulos
         $buttons.forEach(button => button.style.display = "none"); //<-- se ocultan los botones
         $checkBoxes.forEach(input => input.checked = false); //<-- se desmarcan los checkboxes
@@ -182,44 +208,37 @@ async function pcMenuButtonsHandler(event) {
 
         "save-btn": () => {
             if (!isEmptyForm) validateForm();
-            configureInterface($networkObject.id, newIp, newNetmask, networkInterface); //<-- configuramos la interfaz
-            setDirectRoutingRule($networkObject.id, newIp, newNetmask, networkInterface); //<-- añadimos la regla de enrutamiento directo
-            $networkObject.setAttribute("data-gateway", newGateway); //<-- configuramos la puerta de enlace
-            setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, networkInterface, newGateway); //<-- añadimos la regla por defecto
-            setDnsServers($networkObject.id, newDnsServers); //<-- configuramos los servidores DNS
+            configureInterface($networkObject.id, newIp, newNetmask, networkInterface);
+            setDefaultGateway($networkObject.id, newGateway);
+            setDnsServers($networkObject.id, newDnsServers);
             bodyComponent.render(popupMessage("Los cambios se han aplicado correctamente."));
         },
 
         "get-btn": async () => {
             if (visualToggle) restorePcForm();
-            await dhcpDiscoverHandler($networkObject.id, networkInterface); //<-- iniciamos el proceso de DHCP discover
+            await dhcpDiscoverHandler($networkObject.id, networkInterface);
         },
 
         "renew-btn": async () => {
             if (visualToggle) restorePcForm();
-            await dhcpRenewHandler($networkObject.id, "T1", networkInterface); //<-- iniciamos el proceso de dhcp renew
+            await dhcpRenewHandler($networkObject.id, "T1", networkInterface);
         },
 
         "release-btn": async () => {
             if (visualToggle) restorePcForm();
-            await dhcpReleaseHandler($networkObject.id, networkInterface); //<-- iniciamos el proceso de dhcp release
+            await dhcpReleaseHandler($networkObject.id, networkInterface);
         }
 
     }
+    
+    //ejecutamos la función correspondiente
 
-    if (buttonId in buttonFunctions) {
-        
-        try {
-
-            await buttonFunctions[buttonId]();
-
-        }catch(error) {
-
-            bodyComponent.render(popupMessage(error.message));
-            return;
-
-        }
-
+    try {
+        if (buttonId in buttonFunctions) await buttonFunctions[buttonId]();
+    }catch(error) {
+        console.log(error);
+        bodyComponent.render(popupMessage(error.message));
+        return;
     }
 
     if (buttonId === "close-btn") {
@@ -282,3 +301,11 @@ function webServerHandler(event) {
 
 }
 
+function interfaceHandler(event) {
+    const $menu = document.querySelector(".pc-form");
+    const $networkObject = document.getElementById($menu.querySelector("#form-item-id").innerHTML);
+    const $ifaceSelector = $menu.querySelector("#iface");
+    const networkInterface = $ifaceSelector.value;
+    $menu.querySelector("#ip").value = $networkObject.getAttribute(`ip-${networkInterface}`);
+    $menu.querySelector("#netmask").value = $networkObject.getAttribute(`netmask-${networkInterface}`);
+}

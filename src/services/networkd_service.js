@@ -3,6 +3,7 @@ function configureInterface(networkObjectId, ip, netmask, iface) {
     const $networkObject = document.getElementById(networkObjectId);
     $networkObject.setAttribute("ip-" + iface, ip); 
     $networkObject.setAttribute("netmask-" + iface, netmask);
+    setDirectRoutingRule(networkObjectId, ip, netmask, iface);
 }
 
 /**ESTA FUNCION DESCONFIGURA UNA INTERFAZ DE UN EQUIPO */
@@ -10,6 +11,7 @@ function deconfigureInterface(networkObjectId, iface) {
     const $networkObject = document.getElementById(networkObjectId);
     $networkObject.setAttribute("ip-" + iface, "");
     $networkObject.setAttribute("netmask-" + iface, "");
+    removeInterfaceRoutingRules(networkObjectId, iface);
 }
 
 /**ESTA FUNCION MUESTRA POR TERMINAL LA INFORMACION DE LAS INTERFACES DE UN EQUIPO */

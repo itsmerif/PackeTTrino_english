@@ -134,7 +134,7 @@ function command_Ip(networkObjectId, args) {
             setRemoteRoutingRule(networkObjectId,
                 ip, //red de destino
                 netmask, //mascara de red
-                getInfoFromInterface(networkObjectId, val_dev)[0], //gateway
+                getIfaceData(networkObjectId, val_dev)[0], //gateway
                 val_dev, //interfaz
                 val_via //siguiente salto
             );

@@ -1421,11 +1421,12 @@ circle:hover {
 
     section {
 
-        padding: 0 30px 30px 30px;
+        padding: 0 20px 20px 20px;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
+        justify-content: center;
+        gap: 5px;
 
         .form-item {
 
@@ -1433,10 +1434,10 @@ circle:hover {
             flex-direction: row;
             align-items: center;
             gap: 10px;
+            width: 100%;
 
             label {
-                flex-grow: 0;
-                width: 200px;
+                min-width: 40%;
                 text-align: left;
                 white-space: nowrap;
             }
@@ -1449,7 +1450,7 @@ circle:hover {
 
     }
 
-    input[type="text"] {
+    input[type="text"], select {
 
         width: 100%;
         padding: 8px 12px;

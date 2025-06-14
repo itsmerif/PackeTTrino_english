@@ -63,55 +63,55 @@ function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
             "gateway": () => { interfaceObject["gateway"] = $OPTS["gateway"]; }
         }
 
-        for (let option in $OPTS) if (optionsHandler[option]) optionsHandler[option](); //<-- ejecutamos el manejador de las opciones por cada opción
+        for (let option in $OPTS) if (optionsHandler[option]) optionsHandler[option]();
+       
+        if (!availableInterfaces.includes(interfaceObject["iface"])) {
+            throw new Error(`Error: no se reconoce la interfaz ${interfaceObject["iface"]}`);
+        }
 
-        //<-- evaluamos las opciones de la instrucción
-        if (!availableInterfaces.includes(interfaceObject["iface"])) throw new Error(`Error: no se reconoce la interfaz ${interfaceObject["iface"]}`);
-        if (!["static", "dhcp"].includes(interfaceObject["inet"])) throw new Error(`Error: no se reconoce el tipo de red ${interfaceObject["inet"]}`); 
-        if (interfaceInput !== "-a" && interfaceInput !== interfaceObject["iface"]) return;  //<-- si se ha especificado una interfaz, solo evaluamos a esa interfaz
+        if (!["static", "dhcp"].includes(interfaceObject["inet"])) {
+            throw new Error(`Error: no se reconoce el tipo de red ${interfaceObject["inet"]}`); 
+        }
+        
+        if (interfaceInput !== "-a" && interfaceInput !== interfaceObject["iface"]) return; 
 
-        if (interfaceObject["inet"] === "static") { //<-- configuramos la interfaz si el metodo es static
+        if (interfaceObject["inet"] === "static") {
 
-            if (!isValidIp(interfaceObject["address"])) throw new Error(`Error: la ip ${interfaceObject["address"]} no es válida`);
-            if (!isValidIp(interfaceObject["netmask"])) throw new Error(`Error: la mascara de red ${interfaceObject["netmask"]} no es válida`);
-            if ( interfaceObject["gateway"] !== "" && !isValidIp(interfaceObject["gateway"])) throw new Error(`Error: la puerta de enlace ${interfaceObject["gateway"]} no es válida`);
-
-            configureInterface(networkObjectId, //<-- configuramos la interfaz
-                interfaceObject["address"], 
-                interfaceObject["netmask"], 
-                interfaceObject["iface"]
-            );
-
-            setDirectRoutingRule(networkObjectId, //<-- añadimos la regla de enrutamiento directo
-                interfaceObject["address"], 
-                interfaceObject["netmask"], 
-                interfaceObject["iface"]
-            );
-
-            if (interfaceObject["gateway"] !== "") {
-
-                document.getElementById(networkObjectId).setAttribute("data-gateway", interfaceObject["gateway"]); //<-- configuramos la puerta de enlace
-
-                setRemoteRoutingRule(networkObjectId, //<-- añadimos la regla por defecto
-                    "0.0.0.0", 
-                    "0.0.0.0",
-                    interfaceObject["address"], //<-- salida
-                    interfaceObject["iface"],  //<-- interfaz
-                    interfaceObject["gateway"] //<-- siguiente salto
-                );
-
+            if (!isValidIp(interfaceObject["address"])) {
+                throw new Error(`Error: la ip ${interfaceObject["address"]} no es válida`);
             }
 
+            if (!isValidIp(interfaceObject["netmask"])) {
+                throw new Error(`Error: la mascara de red ${interfaceObject["netmask"]} no es válida`);
+            }
+
+            if (interfaceObject["gateway"] !== "" && !isValidIp(interfaceObject["gateway"])) {
+                throw new Error(`Error: la puerta de enlace ${interfaceObject["gateway"]} no es válida`);
+            }
+
+            configureInterface(networkObjectId,
+                interfaceObject["address"], 
+                interfaceObject["netmask"], 
+                interfaceObject["iface"]
+            );
+
+            if (interfaceObject["gateway"] !== "") setDefaultGateway(networkObjectId, interfaceObject["gateway"]);
+
         }
 
-        if (interfaceObject["inet"] === "dhcp") { //<-- configuramos la interfaz si el metodo es dhcp
-            if ($networkObject.getAttribute("dhclient") === null) throw new Error(`Error: el equipo no tiene instalado el servicio dhcp cliente`);
-            $networkObject.setAttribute("dhclient", "true"); //<-- habilitamos el servicio dhcp cliente
-            dhcpDiscoverHandler(networkObjectId, interfaceObject["iface"]); //<-- iniciamos el servicio dhcp cliente
-            return; //<-- no se evaluan reglas de enrutamiento
-        }
+        if (interfaceObject["inet"] === "dhcp") {
 
-        //<-- estudiamos las reglas de enrutamiento de cada bloque iface
+            if ($networkObject.getAttribute("dhclient") === null) {
+                throw new Error(`Error: el equipo no tiene instalado el servicio dhcp cliente`);
+            }
+
+            $networkObject.setAttribute("dhclient", "true"); 
+        
+            dhcpDiscoverHandler(networkObjectId, interfaceObject["iface"]);
+            
+            return;
+
+        }
 
         const routingInstructions = ifaceBlock.split("ip").map(rule => (`ip ${rule}`).replace(/\s+/g, " ").trim()).slice(1);
 
@@ -125,7 +125,9 @@ function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
 
             const [destinationIp, netmaskIp] = parseCidr(destinationCIDR);
 
-            if (getNetwork(destinationIp, netmaskIp) !== destinationIp) throw new Error(`Error: dirección IP ${destinationCIDR} no es una dirección de red`);
+            if (getNetwork(destinationIp, netmaskIp) !== destinationIp) {
+                throw new Error(`Error: dirección IP ${destinationCIDR} no es una dirección de red`);
+            }
 
             if (!isValidIp(nexthop)) throw new Error(`Error: dirección IP ${nexthop} no válida`);
 

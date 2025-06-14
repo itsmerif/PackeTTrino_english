@@ -19,21 +19,17 @@ function dns_server_menu() {
 
                 <div class="form-item">
                     <label for="ip">Dirección IP (IPv4):</label>
-                    <input type="text" id="ip-dns" name="ip-dns" 
-                    pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-                    placeholder="192.168.1.1">
+                    <input type="text" id="ip-dns" name="ip-dns">
                 </div>
 
                 <div class="form-item">
                     <label for="netmask">Máscara de Red:</label>
-                    <input type="text" id="netmask-dns" name="netmask-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-                    placeholder="255.255.255.0">
+                    <input type="text" id="netmask-dns" name="netmask-dns">
                 </div>
 
                 <div class="form-item">
                     <label for="gateway">Puerta de Enlace:</label>
-                    <input type="text" id="gateway-dns" name="gateway-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-                    placeholder="192.168.1.1">
+                    <input type="text" id="gateway-dns" name="gateway-dns">
                 </div>
 
             </section>
@@ -126,36 +122,35 @@ function showDnsServerMenu(event) {
     event.stopPropagation();
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
 
-    const $serverObject = event.target.closest(".item-dropped");
-    const availableInterfaces = getInterfaces($serverObject.id);
-    const networkObjectInterface = availableInterfaces[0];
+    const $networkObject = event.target.closest(".item-dropped");
 
     if (quickPingToggle) { //<-- comprobamos si estamos en modo icmptryout
-        quickPing($serverObject.id);
+        quickPing($networkObject.id);
         return;
     }
 
+    const availableInterfaces = getInterfaces($networkObject.id);
+    const networkObjectInterface = availableInterfaces[0];
     const $menu = document.querySelector(".dns-form");
-    const isDnsServer = $serverObject.id.startsWith("dns-server-");
-    const isRecursive = $serverObject.getAttribute("recursion");
-    const isCache = $serverObject.getAttribute("resolved");
+    const isDnsServer = $networkObject.id.startsWith("dns-server-");
+    const isRecursive = $networkObject.getAttribute("recursion");
+    const isCache = $networkObject.getAttribute("resolved");
     
-    //<-- seccion basica de red (solo para servidores dns nativos)
+    //atributos del equipo
     if (isDnsServer) {
-        $menu.querySelector("#ip-dns").value = $serverObject.getAttribute(`ip-${networkObjectInterface}`);
-        $menu.querySelector("#netmask-dns").value = $serverObject.getAttribute(`netmask-${networkObjectInterface}`);
-        $menu.querySelector("#gateway-dns").value = $serverObject.getAttribute("data-gateway");
+        $menu.querySelector("#ip-dns").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
+        $menu.querySelector("#netmask-dns").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
+        $menu.querySelector("#gateway-dns").value = getDefaultGateway($networkObject.id);
         $menu.querySelector("#network-section").classList.remove("hidden");
     }
 
-    //<-- seccion de dns
+    //atributos del servicio
     $menu.querySelector("#dns-recursive").checked = isRecursive === "true";
     $menu.querySelector("#dns-cache").checked = isCache === "true";
+    $menu.querySelector("#records-table").innerHTML = $networkObject.querySelector(".dns-table").querySelector("table").innerHTML;
 
-    //<-- seccion de registros
-    $menu.querySelector("#records-table").innerHTML = $serverObject.querySelector(".dns-table").querySelector("table").innerHTML;
-
-    document.getElementById("form-dns-item-id").innerHTML = $serverObject.id;
+    //mostramos el menú
+    document.getElementById("form-dns-item-id").innerHTML = $networkObject.id;
     $menu.style.display = "flex";
 }
 
@@ -169,40 +164,40 @@ function saveDnsServerMenu(event) {
     const $serverObject = document.getElementById($menu.querySelector("#form-dns-item-id").innerHTML);
     const availableInterfaces = getInterfaces($serverObject.id);
     const networkObjectInterface = availableInterfaces[0];
+    const ip = $menu.querySelector("#ip-dns").value;
+    const netmask = $menu.querySelector("#netmask-dns").value;
+    const gateway = $menu.querySelector("#gateway-dns").value;
     const isRecursive = $menu.querySelector("#dns-recursive").checked;
     const isCache = $menu.querySelector("#dns-cache").checked;
+    const isEmptyForm = ip === "" && netmask === "";
 
-    if ($serverObject.id.startsWith("dns-server")) { //<-- solo para servidores dns nativos
+    try {
 
-        const ip = $menu.querySelector("#ip-dns").value;
-        const netmask = $menu.querySelector("#netmask-dns").value;
-        const gateway = $menu.querySelector("#gateway-dns").value;
+        if ($serverObject.id.startsWith("dns-server")) {
 
-        if (ip !== "" && !isValidIp(ip)) {
-            bodyComponent.render(popupMessage(`<span>Error: </span>La IP "${ip}" no es válida.`));
-            return;
+            if (!isEmptyForm) {
+                if (!isValidIp(ip)) throw new Error(`Error: La IP "${ip}" no es válida.`);
+                if (!isValidIp(netmask)) throw new Error(`Error: La máscara de red "${netmask}" no es válida.`);
+            }
+
+            if (gateway !== "" && !isValidIp(gateway)) throw new Error(`Error: La puerta de enlace "${gateway}" no es válida.`);
+
+            configureInterface($serverObject.id, ip, netmask, networkObjectInterface);
+            setDefaultGateway($serverObject.id, gateway);
+
         }
 
-        if (netmask !== "" && !isValidIp(netmask)) {
-            bodyComponent.render(popupMessage(`<span>Error: </span>La máscara de red "${netmask}" no es válida.`));
-            return;
-        }
+        $serverObject.setAttribute("recursion", isRecursive);
+        $serverObject.setAttribute("resolved", isCache);
 
-        if (gateway !== "" && !isValidIp(gateway)) {
-            bodyComponent.render(popupMessage(`<span>Error: </span>El puerta de enlace "${gateway}" no es válida.`));
-            return;
-        }
+        bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
 
-        configureInterface($serverObject.id, ip, netmask, networkObjectInterface);
-        setDirectRoutingRule($serverObject.id, ip, netmask, networkObjectInterface);
-        $serverObject.setAttribute("data-gateway", gateway);
-        setRemoteRoutingRule($serverObject.id, "0.0.0.0", "0.0.0.0", ip, networkObjectInterface, gateway);
+    } catch (error) {
+
+        bodyComponent.render(popupMessage(error.message));
+        return;
+
     }
-
-    $serverObject.setAttribute("recursion", isRecursive);
-    $serverObject.setAttribute("resolved", isCache);
-
-    bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
 
 }
 

@@ -31,7 +31,6 @@ function BoardItemDragStart(event) {
     const ip = $networkObject.getAttribute("ip-enp0s3");
     const netmask = $networkObject.getAttribute("netmask-enp0s3");
     const mac = $networkObject.getAttribute("mac-enp0s3");
-    const gateway = $networkObject.getAttribute("data-gateway");
     const itemType = "item-dropped";
     const x = $networkObject.style.left;
     const y = $networkObject.style.top;
@@ -42,7 +41,6 @@ function BoardItemDragStart(event) {
         ip: ip,
         netmask: netmask,
         mac: mac,
-        gateway: gateway,
         originx: x,
         originy: y
     }));

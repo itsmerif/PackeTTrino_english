@@ -330,7 +330,7 @@ function addRoutingRuleGraphic(networkObjectId, destination, gatewayInterface, n
     //<-- validamos la interfaz de salida
     
     if (!(getInterfaces(networkObjectId)).includes(gatewayInterface)) throw new Error(`Error: no se reconoce la interfaz "${gatewayInterface}".`);
-    const [gatewayIp, gatewayNetmask, interfaceMac] = getInfoFromInterface(networkObjectId, gatewayInterface);
+    const [gatewayIp, gatewayNetmask, interfaceMac] = getIfaceData(networkObjectId, gatewayInterface);
     if (!gatewayIp) throw new Error(`Error: la interfaz "${gatewayInterface}" no está configurada.`);
 
     //<-- validamos el siguiente salto

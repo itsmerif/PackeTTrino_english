@@ -225,11 +225,9 @@ function setDhcpInfo(networkObjectId, packet, networkObjectInterface) {
     const newDnsServers = (packet.dns).split(",").map(item => item.trim()).filter(item => item !== "");
     const newLeaseTime = packet.leasetime;
 
-    //configuramos la interfaz y la tabla de enrutamiento
+    //configuramos la interfaz
     configureInterface(networkObjectId, newIp, newNetmask, networkObjectInterface);
-    setDirectRoutingRule(networkObjectId, newIp, newNetmask, networkObjectInterface);
-    $networkObject.setAttribute("data-gateway", newGateway);
-    setRemoteRoutingRule(networkObjectId, "0.0.0.0", "0.0.0.0", newIp, networkObjectInterface, newGateway);
+    setDefaultGateway(networkObjectId, newGateway);
 
     //configuramos la informacion DHCP del equipo
     $networkObject.setAttribute("data-dhcp-server", newServer);
@@ -245,9 +243,6 @@ function deleteDhcpInfo(networkObjectId, networkObjectInterface) {
 
     //deconfiguramos la interfaz y eliminamos la entrada de la tabla de enrutamiento
     deconfigureInterface($networkObject.id, networkObjectInterface);
-    $networkObject.setAttribute("data-gateway", "");
-    removeDirectRoutingRule($networkObject.id, networkObjectInterface);
-    removeRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0");
     setDnsServers($networkObject.id, [""]);
 
     //eliminamos la informacion DHCP del equipo

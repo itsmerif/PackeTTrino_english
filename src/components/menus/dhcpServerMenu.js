@@ -144,7 +144,7 @@ function showDhcpMenu(event) {
     $menu.querySelector("#form-dhcp-item-id").innerHTML = networkObjectId;
     $menu.querySelector("#ip-dhcp").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
     $menu.querySelector("#netmask-dhcp").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
-    $menu.querySelector("#gateway-dhcp").value = $networkObject.getAttribute("data-gateway");
+    $menu.querySelector("#gateway-dhcp").value = getDefaultGateway($networkObject.id);
     $menu.querySelector("#dhcp-listen-on-interfaces").value = $networkObject.getAttribute("dhcp-listen-on-interfaces");
     $menu.querySelector("#range-start").value = $networkObject.getAttribute("data-range-start");
     $menu.querySelector("#range-end").value = $networkObject.getAttribute("data-range-end");
@@ -175,37 +175,43 @@ function saveDhcpMenu(event) {
     .filter(item => item !== "");
     const isDhcpServer = $networkObject.id.startsWith("dhcp-server-");
     
-    //validamos el formulario
-
     try {
-        validateDhcpForm();
+
+        validateDHCPMenu();
+
+        if (isDhcpServer) {
+            
+            configureInterface($networkObject.id,
+                $menu.querySelector("#ip-dhcp").value, 
+                $menu.querySelector("#netmask-dhcp").value, 
+                networkObjectInterface
+            );
+
+            setDefaultGateway($networkObject.id, $menu.querySelector("#gateway-dhcp").value);
+
+        }
+
+        $networkObject.setAttribute("data-range-start", $menu.querySelector("#range-start").value);
+        $networkObject.setAttribute("data-range-end", $menu.querySelector("#range-end").value);
+        $networkObject.setAttribute("dhcp-offer-gateway", $menu.querySelector("#dhcp-offer-gateway").value);
+        $networkObject.setAttribute("dhcp-offer-netmask", $menu.querySelector("#dhcp-offer-netmask").value);
+        $networkObject.setAttribute("dhcp-offer-dns", $menu.querySelector("#dhcp-offer-dns").value);
+        $networkObject.setAttribute("dhcp-offer-lease-time", $menu.querySelector("#dhcp-offer-lease-time").value);
+        $networkObject.setAttribute("dhcp-listen-on-interfaces", listenOnInterfaces.join(","));
+
+        bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
+
     }catch (error) {
+
         bodyComponent.render(popupMessage(error.message));
         return;
+
     }
 
-    //aplicamos los cambios
-
-    if (isDhcpServer) {
-        configureInterface($networkObject.id, $menu.querySelector("#ip-dhcp").value, $menu.querySelector("#netmask-dhcp").value, networkObjectInterface);
-        setDirectRoutingRule($networkObject.id, $menu.querySelector("#ip-dhcp").value, $menu.querySelector("#netmask-dhcp").value, networkObjectInterface);
-        $networkObject.setAttribute("data-gateway", $menu.querySelector("#gateway-dhcp").value);
-        setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", $menu.querySelector("#ip-dhcp").value, networkObjectInterface, $menu.querySelector("#gateway-dhcp").value);
-    }
-
-    $networkObject.setAttribute("data-range-start", $menu.querySelector("#range-start").value);
-    $networkObject.setAttribute("data-range-end", $menu.querySelector("#range-end").value);
-    $networkObject.setAttribute("dhcp-offer-gateway", $menu.querySelector("#dhcp-offer-gateway").value);
-    $networkObject.setAttribute("dhcp-offer-netmask", $menu.querySelector("#dhcp-offer-netmask").value);
-    $networkObject.setAttribute("dhcp-offer-dns", $menu.querySelector("#dhcp-offer-dns").value);
-    $networkObject.setAttribute("dhcp-offer-lease-time", $menu.querySelector("#dhcp-offer-lease-time").value);
-    $networkObject.setAttribute("dhcp-listen-on-interfaces", listenOnInterfaces.join(","));
-
-    bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
 }
 
 /**ESTA FUNCION VALIDA LOS CAMPOS DEL FORMULARIO DE CONFIGURACIÓN DE UN SERVIDOR DHCP */
-function validateDhcpForm() {
+function validateDHCPMenu() {
 
     const $menu = document.querySelector(".dhcp-form");
     const $networkObject = document.getElementById(document.getElementById("form-dhcp-item-id").innerHTML);
@@ -245,7 +251,7 @@ function validateDhcpForm() {
     if (isDhcpServer) {
         if (!isValidIp(ip)) throw new Error(`Error: se esperaba una ip válida en vez de "${ip}".`);
         if (!isValidIp(netmask)) throw new Error(`Error: se esperaba una máscara de red válida en vez de "${netmask}".`);
-        if (!isValidIp(gateway)) throw new Error(`Error: se esperaba una puerta de enlace válida en vez de "${gateway}".`);
+        if (gateway !== "" && !isValidIp(gateway)) throw new Error(`Error: se esperaba una puerta de enlace válida en vez de "${gateway}".`);
     }
 
     if (!isDhcpModuleEmpty()) {

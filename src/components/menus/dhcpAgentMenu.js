@@ -59,21 +59,24 @@ function showDhcpRelayMenu(event) {
     event.stopPropagation();
 
     const $networkObject = event.target.closest(".item-dropped");
-    const $menu = document.querySelector(".dhcp-relay-form");
-    const networkObjectInterface = getInterfaces($networkObject.id)[0];
-    const isDhcpRelay = $networkObject.id.startsWith("dhcp-relay-server-");
 
     if (quickPingToggle) {
         quickPing($networkObject.id);
         return;
     }
 
+    const $menu = document.querySelector(".dhcp-relay-form");
+    const networkObjectInterface = getInterfaces($networkObject.id)[0];
+    const isDhcpRelay = $networkObject.id.startsWith("dhcp-relay-server-");
+
     //atributos del agente
+
     $menu.querySelector("#ip-relay").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
     $menu.querySelector("#netmask-relay").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
-    $menu.querySelector("#gateway-relay").value = $networkObject.getAttribute("data-gateway");
+    $menu.querySelector("#gateway-relay").value = getDefaultGateway($networkObject.id);
 
     //atributos del servicio
+
     $menu.querySelector("#main-server").value = $networkObject.getAttribute("dhcrelay-main-server");;
     $menu.querySelector("#listen-on-interfaces").value = $networkObject.getAttribute("dhcrelay-listen-on-interfaces");
     $menu.querySelector("#form-dhcp-relay-item-id").innerHTML = $networkObject.id;
@@ -98,31 +101,39 @@ function saveDhcpRelayMenu(event) {
     const newNetmask = $form.querySelector("#netmask-relay").value;
     const newGateway = $form.querySelector("#gateway-relay").value;
     const newMainServer = $form.querySelector("#main-server").value;
-    const newListenOnInterfaces = ($form.querySelector("#listen-on-interfaces").value).split(",").map(item => item.trim()).filter(item => item !== "");
+    const newListenOnInterfaces = ($form.querySelector("#listen-on-interfaces").value)
+    .split(",")
+    .map(item => item.trim())
+    .filter(item => item !== "");
     const isDhcpRelay = $networkObject.id.startsWith("dhcp-relay-server-");
 
     try {
+
         if (isDhcpRelay) { 
             if (!isValidIp(newIp)) throw new Error(`Error: La IP "${newIp}" no es válida.`);
             if (!isValidIp(newNetmask)) throw new Error(`Error: La máscara de red "${newNetmask}" no es válida.`);
-            if (!isValidIp(newGateway)) throw new Error(`Error: La puerta de enlace "${newGateway}" no es válida.`);
+            if ( newGateway !== "" && !isValidIp(newGateway)) throw new Error(`Error: La puerta de enlace "${newGateway}" no es válida.`);
         }
-        if (newMainServer !== "" && !isValidIp(newMainServer)) throw new Error(`Error: La IP del Servidor DHCP principal "${newMainServer}" no es válida.`);
-        if (newListenOnInterfaces.length !== 0 && !newListenOnInterfaces.every(item => availableInterfaces.includes(item))) 
+
+        if (newMainServer !== "" && !isValidIp(newMainServer)) {
+            throw new Error(`Error: La IP del Servidor DHCP principal "${newMainServer}" no es válida.`);
+        }
+
+        if (newListenOnInterfaces.length !== 0 && !newListenOnInterfaces.every(item => availableInterfaces.includes(item))) {
             throw new Error(`Error: Algunas de las interfaces de escucha no son válidas.`);
+        }
+
+        configureInterface($networkObject.id, newIp, newNetmask, networkObjectInterface);
+        setDefaultGateway($networkObject.id, newGateway);
+        $networkObject.setAttribute("dhcrelay-main-server", newMainServer);
+        $networkObject.setAttribute("dhcrelay-listen-on-interfaces", newListenOnInterfaces?.join(","));
+        bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
+
     }catch(error) {
 
         bodyComponent.render(popupMessage(error.message));
         return;
     }
-
-    configureInterface($networkObject.id, newIp, newNetmask, networkObjectInterface);
-    setDirectRoutingRule($networkObject.id, newIp, newNetmask, networkObjectInterface);
-    $networkObject.setAttribute("data-gateway", newGateway);
-    setRemoteRoutingRule($networkObject.id, "0.0.0.0", "0.0.0.0", newIp, networkObjectInterface, newGateway)
-    $networkObject.setAttribute("dhcrelay-main-server", newMainServer);
-    $networkObject.setAttribute("dhcrelay-listen-on-interfaces", newListenOnInterfaces?.join(","));
-    bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
 
 }
 

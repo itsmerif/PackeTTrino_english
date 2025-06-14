@@ -8,7 +8,6 @@ async function dhcpd_service(serverObjectId, packet, iface) {
     const serverObjectNetwork = getNetwork(serverObjectIp, serverObjectNetmask);
 
     //atributos del servicio DHCP
-    const defaultGateway = $serverObject.getAttribute("data-gateway");
     const rangeStart = $serverObject.getAttribute("data-range-start");
     const rangeEnd = $serverObject.getAttribute("data-range-end");
     const netmaskOffer = $serverObject.getAttribute("dhcp-offer-netmask");
