@@ -53,6 +53,4 @@ PackeTTrino es un simulador de redes interactivo desarrollado completamente con 
 
 ## Contribuciones y Desarrollo
 
-Este proyecto fue desarrollado como Trabajo de Fin de Grado deAdministración de Sistemas Informáticos en Red. Todas las implementaciones son originales y no utilizan librerías externas para asegurar el aprendizaje profundo de los conceptos de redes.
-
-© 2025 Amín Pérez
+Este proyecto fue desarrollado como Trabajo de Fin de Grado deAdministración de Sistemas Informáticos en Red. Todas las implementaciones son originales y no utilizan librerías externas.
