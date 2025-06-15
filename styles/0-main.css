@@ -2137,7 +2137,7 @@ circle:hover {
                 font-weight: 500;
                 color: #333;
                 white-space: nowrap;
-                width: 80%;
+                width: 50%;
             }
 
             input[type="text"],
@@ -2147,7 +2147,7 @@ circle:hover {
                 border-radius: 4px;
                 font-size: 14px;
                 text-align: center;
-                flex: 1;
+                width: 50%  ;
             }
 
         }

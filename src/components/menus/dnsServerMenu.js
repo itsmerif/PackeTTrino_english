@@ -163,7 +163,6 @@ function showDnsServerMenu(event) {
     $menu.style.display = "flex";
 }
 
-/**ESTA FUNCION ACTUALIZA LA INFORMACION DE UN SERVIDOR DNS*/
 function saveDnsServerMenu(event) {
 
     event.preventDefault();
@@ -171,18 +170,18 @@ function saveDnsServerMenu(event) {
 
     const $menu = document.querySelector(".dns-form");
     const $serverObject = document.getElementById($menu.dataset.id);
-    const availableInterfaces = getInterfaces($serverObject.id);
-    const networkObjectInterface = availableInterfaces[0];
+    const networkObjectInterface = $menu.querySelector("#iface").value;
     const ip = $menu.querySelector("#ip").value;
     const netmask = $menu.querySelector("#netmask").value;
     const gateway = $menu.querySelector("#gateway").value;
+    const isDnsServer = $serverObject.id.startsWith("dns-server");
     const isRecursive = $menu.querySelector("#dns-recursive").checked;
     const isCache = $menu.querySelector("#dns-cache").checked;
     const isEmptyForm = ip === "" && netmask === "";
 
     try {
 
-        if ($serverObject.id.startsWith("dns-server")) {
+        if (isDnsServer) {
 
             if (!isEmptyForm) {
                 if (!isValidIp(ip)) throw new Error(`Error: La IP "${ip}" no es válida.`);
@@ -210,7 +209,6 @@ function saveDnsServerMenu(event) {
 
 }
 
-/**ESTA FUNCION CIERRA EL MENU DE CONFIGURACION DE UN SERVIDOR DNS*/
 function closeDnsMenu(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -221,7 +219,6 @@ function closeDnsMenu(event) {
     $menu.style.display = "none";
 }
 
-/**ESTA FUNCION MUESTRA LA SECCION DE REGISTROS DE UN SERVIDOR DNS*/
 function showDnsGraphicTab(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -236,7 +233,6 @@ function showDnsGraphicTab(event) {
     $targetSection.classList.remove("hidden");
 }
 
-/**ESTA FUNCION GESTIONA EL AÑADIR UN REGISTRO*/
 function addDnsRecordHandler(event) {
 
     event.stopPropagation();
@@ -281,7 +277,6 @@ function addDnsRecordHandler(event) {
 
 }
 
-/**ESTA FUNCION GESTIONA EL ELIMINAR UN REGISTRO*/
 function removeDnsRecordHandler(event) {
     event.stopPropagation();
     event.preventDefault();
