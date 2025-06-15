@@ -2,10 +2,11 @@ function dhcp_server_menu() {
 
     const $menu = document.createElement("form");
     $menu.classList.add("dhcp-form", "modal", "draggable-modal");
+    $menu.setAttribute("data-id", "");
 
     $menu.innerHTML = `
     
-        <div class="window-frame"> <p id="form-dhcp-item-id"> </p> </div>
+        <div class="window-frame"> <p class="frame-title"></p> </div>
 
         <div class="nav-panel">
             <button class="btn-modern-blue dark active" id="btn-basic-tab">Básico</button>
@@ -15,6 +16,12 @@ function dhcp_server_menu() {
         <section class="main-section">
 
             <section class="basic-section">
+                
+                <div>
+                    <label for="iface-dhcp">Interfaz:</label>
+                    <select id="iface-dhcp" name="iface-dhcp">
+                    </select>
+                </div>
 
                 <div>
                     <label for="ip-dhcp">Dirección IP (ipv4):</label>
@@ -117,31 +124,35 @@ function dhcp_server_menu() {
     
 }
 
-/**ESTA FUNCION MUESTRA EL MENU DE DHCP SERVER */
 function showDhcpMenu(event) {
 
     event.stopPropagation();
     
-    //atributos del equipo
     const $networkObject = event.target.closest(".item-dropped");
+
+    if (quickPingToggle) {
+        quickPing($networkObject.id);
+        return;
+    }
+
+    const $menu = document.querySelector(".dhcp-form");
     const networkObjectId = $networkObject.id;
     const availableInterfaces = getInterfaces(networkObjectId);
+
+    //cargamos las interfaces disponibles
+    const $ifaceSelect = $menu.querySelector("#iface-dhcp");
+    $ifaceSelect.innerHTML = "";
+    availableInterfaces.forEach(iface => $ifaceSelect.innerHTML += `<option value="${iface}">${iface}</option>`); 
     const networkObjectInterface = availableInterfaces[0];
 
     //atributos del servicio
-    const $menu = document.querySelector(".dhcp-form");
     const $reservationsTable = $menu.querySelector("#reservations-table");
     const isDhcpServer = networkObjectId.startsWith("dhcp-server-");
     const reservations = genDhcpReservationsRows(networkObjectId);
 
-    if (quickPingToggle) {
-        quickPing(networkObjectId);
-        return;
-    }
-
     //añadimos los atributos del servidor al menú
-
-    $menu.querySelector("#form-dhcp-item-id").innerHTML = networkObjectId;
+    $menu.dataset.id = networkObjectId;
+    $menu.querySelector(".frame-title").innerHTML = networkObjectId;
     $menu.querySelector("#ip-dhcp").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
     $menu.querySelector("#netmask-dhcp").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
     $menu.querySelector("#gateway-dhcp").value = getDefaultGateway($networkObject.id);
@@ -165,8 +176,8 @@ function saveDhcpMenu(event) {
 
     event.preventDefault();
 
-    const $networkObject = document.getElementById(document.getElementById("form-dhcp-item-id").innerHTML);
     const $menu = document.querySelector(".dhcp-form");
+    const $networkObject = document.getElementById($menu.dataset.id);
     const availableInterfaces = getInterfaces($networkObject.id);
     const networkObjectInterface = availableInterfaces[0];
     const listenOnInterfaces = $menu.querySelector("#dhcp-listen-on-interfaces").value
@@ -214,7 +225,7 @@ function saveDhcpMenu(event) {
 function validateDHCPMenu() {
 
     const $menu = document.querySelector(".dhcp-form");
-    const $networkObject = document.getElementById(document.getElementById("form-dhcp-item-id").innerHTML);
+    const $networkObject = document.getElementById($menu.dataset.id);
     const availableInterfaces = getInterfaces($networkObject.id);
     const isDhcpServer = $networkObject.id.startsWith("dhcp-server-");
 
@@ -310,7 +321,7 @@ function addDhcpReservationHandler(event) {
     event.preventDefault();
     const $menu = document.querySelector(".dhcp-form");
     const $reservationsTable = $menu.querySelector("#reservations-table");
-    const networkObjectId = document.querySelector(".dhcp-form #form-dhcp-item-id").innerHTML;
+    const networkObjectId = $menu.dataset.id;
     const macForReservation = $menu.querySelector("#mac-for-reserve").value.toUpperCase();
     const ipToReserve = $menu.querySelector("#ip-to-reserve").value;
 

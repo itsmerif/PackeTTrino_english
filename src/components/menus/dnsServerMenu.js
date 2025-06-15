@@ -1,12 +1,12 @@
 function dns_server_menu() {
 
     const $menu = document.createElement("form");
-    
     $menu.classList.add("dns-form", "modal", "draggable-modal");
+    $menu.setAttribute("data-id", "");
 
     $menu.innerHTML = `
 
-        <div class="window-frame"> <p id="form-dns-item-id"> </p> </div>
+        <div class="window-frame"> <p class="frame-title"></p> </div>
 
         <div class="nav-panel">
             <button class="btn-modern-blue dark active" id="btn-basic-tab" data-tab="basic-section">Básico</button>
@@ -120,8 +120,7 @@ function dns_server_menu() {
 function showDnsServerMenu(event) {
 
     event.stopPropagation();
-    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
-
+    
     const $networkObject = event.target.closest(".item-dropped");
 
     if (quickPingToggle) { //<-- comprobamos si estamos en modo icmptryout
@@ -145,12 +144,14 @@ function showDnsServerMenu(event) {
     }
 
     //atributos del servicio
+    $menu.dataset.id = $networkObject.id;
     $menu.querySelector("#dns-recursive").checked = isRecursive === "true";
     $menu.querySelector("#dns-cache").checked = isCache === "true";
     $menu.querySelector("#records-table").innerHTML = $networkObject.querySelector(".dns-table").querySelector("table").innerHTML;
+    $menu.querySelector(".frame-title").innerHTML = $networkObject.id;
 
     //mostramos el menú
-    document.getElementById("form-dns-item-id").innerHTML = $networkObject.id;
+    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
     $menu.style.display = "flex";
 }
 
@@ -161,7 +162,7 @@ function saveDnsServerMenu(event) {
     event.stopPropagation();
 
     const $menu = document.querySelector(".dns-form");
-    const $serverObject = document.getElementById($menu.querySelector("#form-dns-item-id").innerHTML);
+    const $serverObject = document.getElementById($menu.dataset.id);
     const availableInterfaces = getInterfaces($serverObject.id);
     const networkObjectInterface = availableInterfaces[0];
     const ip = $menu.querySelector("#ip-dns").value;
@@ -234,7 +235,7 @@ function addDnsRecordHandler(event) {
     event.preventDefault();
 
     const $menu = document.querySelector(".dns-form");
-    const serverObjectId = document.getElementById("form-dns-item-id").innerHTML;
+    const serverObjectId = $menu.dataset.id;
     const $serverObject = document.getElementById(serverObjectId);   
     const domain = $menu.querySelector("#domain").value;
     const recordType = $menu.querySelector("#type").value;
@@ -277,7 +278,7 @@ function removeDnsRecordHandler(event) {
     event.stopPropagation();
     event.preventDefault();
     const $menu = document.querySelector(".dns-form");
-    const serverObjectId = document.getElementById("form-dns-item-id").innerHTML;
+    const serverObjectId = $menu.dataset.id;
     const $serverObject = document.getElementById(serverObjectId);
     const domain = $menu.querySelector("#domain").value;
     const recordType = $menu.querySelector("#type").value;

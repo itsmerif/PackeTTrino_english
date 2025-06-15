@@ -4,9 +4,11 @@ function pc_menu() {
 
     $menu.classList.add("pc-form", "modal", "draggable-modal");
 
+    $menu.setAttribute("data-id", "");
+
     $menu.innerHTML = `
 
-        <div class="window-frame"> <p id="form-item-id"></p> </div>
+        <div class="window-frame"> <p class="frame-title"></p> </div>
 
         <section class="basic-section">
 
@@ -95,6 +97,7 @@ function showPcMenu(networkObjectId) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const $menu = document.querySelector(".pc-form");
+    $menu.dataset.id = networkObjectId;
     const $textInputs = $menu.querySelectorAll("input[type='text']");
     const $buttonSection = $menu.querySelector(".button-container");
     const activeServices = getAvailableServices(networkObjectId);
@@ -118,7 +121,7 @@ function showPcMenu(networkObjectId) {
     $menu.querySelector("#netmask").value = $networkObject.getAttribute(`netmask-${networkInterface}`);
     $menu.querySelector("#gateway").value = getDefaultGateway($networkObject.id);
     $menu.querySelector("#dns-server").value = (getDnsServers(networkObjectId) ?? "").join(",");
-    $menu.querySelector("#form-item-id").innerHTML = networkObjectId;
+    $menu.querySelector(".frame-title").innerHTML = networkObjectId;
 
     //comprobamos los servicios activos
 
@@ -157,8 +160,8 @@ async function pcMenuButtonsHandler(event) {
     event.preventDefault();
 
     const buttonId = event.submitter.id;
-    const $networkObject = document.getElementById(document.getElementById("form-item-id").innerHTML);
     const $menu = document.querySelector(".pc-form");
+    const $networkObject = document.getElementById($menu.dataset.id);
     const $modules = $menu.querySelector(".modes-wrapper").querySelectorAll(".form-item");
     const $buttons = $menu.querySelector(".button-container").querySelectorAll("button");
     const $ifaceSelector = $menu.querySelector("#iface");
@@ -256,7 +259,7 @@ function dhcpHandler(event) {
     const $dhcpToggle = event.target;
     const $menu = document.querySelector(".pc-form");
     const $buttonSection = $menu.querySelector(".button-container");
-    const $networkObject = document.getElementById($menu.querySelector("#form-item-id").innerHTML);
+    const $networkObject = document.getElementById($menu.dataset.id);
     const $textInputs = $menu.querySelectorAll("input[type='text']");
     const hasIp = $menu.querySelector("#ip").value !== "";
 
@@ -288,7 +291,7 @@ function webServerHandler(event) {
 
     const $webServerToggle = event.target;
     const $menu = document.querySelector(".pc-form");
-    const $networkObject = document.getElementById($menu.querySelector("#form-item-id").innerHTML);
+    const $networkObject = document.getElementById($menu.dataset.id);
     const $networkObjectIcon = $networkObject.querySelector("img");
 
     if (!$webServerToggle.checked) {
@@ -303,7 +306,7 @@ function webServerHandler(event) {
 
 function interfaceHandler(event) {
     const $menu = document.querySelector(".pc-form");
-    const $networkObject = document.getElementById($menu.querySelector("#form-item-id").innerHTML);
+    const $networkObject = document.getElementById($menu.dataset.id);
     const $ifaceSelector = $menu.querySelector("#iface");
     const networkInterface = $ifaceSelector.value;
     $menu.querySelector("#ip").value = $networkObject.getAttribute(`ip-${networkInterface}`);

@@ -2,9 +2,10 @@ function dhcp_agent_menu() {
 
     const $menu = document.createElement("form");
     $menu.classList.add("dhcp-relay-form", "modal", "draggable-modal");
+    $menu.setAttribute("data-id", "");
 
     $menu.innerHTML = `
-        <div class="window-frame"> <p id="form-dhcp-relay-item-id"> </p> </div>
+        <div class="window-frame"> <p class="frame-title"></p> </div>
 
         <section class="basic-section">
 
@@ -69,22 +70,20 @@ function showDhcpRelayMenu(event) {
     const networkObjectInterface = getInterfaces($networkObject.id)[0];
     const isDhcpRelay = $networkObject.id.startsWith("dhcp-relay-server-");
 
-    //atributos del agente
-
+    //asignamos los valores del objeto al menú
+    $menu.dataset.id = $networkObject.id;
     $menu.querySelector("#ip-relay").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
     $menu.querySelector("#netmask-relay").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
     $menu.querySelector("#gateway-relay").value = getDefaultGateway($networkObject.id);
-
-    //atributos del servicio
-
     $menu.querySelector("#main-server").value = $networkObject.getAttribute("dhcrelay-main-server");;
     $menu.querySelector("#listen-on-interfaces").value = $networkObject.getAttribute("dhcrelay-listen-on-interfaces");
-    $menu.querySelector("#form-dhcp-relay-item-id").innerHTML = $networkObject.id;
+    $menu.querySelector(".frame-title").innerHTML = $networkObject.id;
 
-    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
-
+    //ocultamos la sección básica para no agentes de retransmisión
     if (!isDhcpRelay) $menu.querySelector(".basic-section").classList.add("hidden");
 
+    //mostramos el menú
+    $networkObject.querySelector(".advanced-options-modal").style.display = "none";
     $menu.style.display = "flex";
 }
 
@@ -93,15 +92,15 @@ function saveDhcpRelayMenu(event) {
     event.preventDefault();
     event.stopPropagation();
 
-    const $networkObject = document.getElementById(document.getElementById("form-dhcp-relay-item-id").innerHTML);
-    const $form = document.querySelector(".dhcp-relay-form");
+    const $menu = document.querySelector(".dhcp-relay-form");
+    const $networkObject = document.getElementById($menu.dataset.id);
     const availableInterfaces = getInterfaces($networkObject.id);
     const networkObjectInterface = availableInterfaces[0];
-    const newIp = $form.querySelector("#ip-relay").value;
-    const newNetmask = $form.querySelector("#netmask-relay").value;
-    const newGateway = $form.querySelector("#gateway-relay").value;
-    const newMainServer = $form.querySelector("#main-server").value;
-    const newListenOnInterfaces = ($form.querySelector("#listen-on-interfaces").value)
+    const newIp = $menu.querySelector("#ip-relay").value;
+    const newNetmask = $menu.querySelector("#netmask-relay").value;
+    const newGateway = $menu.querySelector("#gateway-relay").value;
+    const newMainServer = $menu.querySelector("#main-server").value;
+    const newListenOnInterfaces = ($menu.querySelector("#listen-on-interfaces").value)
     .split(",")
     .map(item => item.trim())
     .filter(item => item !== "");
@@ -112,7 +111,7 @@ function saveDhcpRelayMenu(event) {
         if (isDhcpRelay) { 
             if (!isValidIp(newIp)) throw new Error(`Error: La IP "${newIp}" no es válida.`);
             if (!isValidIp(newNetmask)) throw new Error(`Error: La máscara de red "${newNetmask}" no es válida.`);
-            if ( newGateway !== "" && !isValidIp(newGateway)) throw new Error(`Error: La puerta de enlace "${newGateway}" no es válida.`);
+            if (newGateway !== "" && !isValidIp(newGateway)) throw new Error(`Error: La puerta de enlace "${newGateway}" no es válida.`);
         }
 
         if (newMainServer !== "" && !isValidIp(newMainServer)) {
