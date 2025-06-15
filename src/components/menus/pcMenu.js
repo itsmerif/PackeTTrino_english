@@ -12,38 +12,30 @@ function pc_menu() {
 
         <section class="basic-section">
 
-            <section class="iface-section">
+            <div class="form-item">
+                <label for="iface">Interfaz:</label>
+                <select id="iface" name="iface"></select>
+            </div>
 
-                <div class="form-item">
-                    <label for="iface">Interfaz:</label>
-                    <select id="iface" name="iface"></select>
-                </div>
+            <div class="form-item">
+                <label for="ip">Dirección IP (ipv4):</label>
+                <input type="text" id="ip" name="ip">
+            </div>
 
-                <div class="form-item">
-                    <label for="ip">Dirección IP (ipv4):</label>
-                    <input type="text" id="ip" name="ip">
-                </div>
+            <div class="form-item">
+                <label for="netmask">Máscara de Red:</label>
+                <input type="text" id="netmask" name="netmask">
+            </div>
 
-                <div class="form-item">
-                    <label for="netmask">Máscara de Red:</label>
-                    <input type="text" id="netmask" name="netmask">
-                </div>
-
-            </section>
-            
-            <section class="general-section">
-
-                <div class="form-item">
-                    <label for="gateway">Puerta de enlace:</label>
-                    <input type="text" id="gateway" name="gateway">
-                </div>
-            
-                <div class="form-item">
-                    <label for="dns-server">Servidores DNS:</label>
-                    <input type="text" id="dns-server" name="dns-server">
-                </div>
-
-            </section>
+            <div class="form-item">
+                <label for="gateway">Puerta de enlace:</label>
+                <input type="text" id="gateway" name="gateway">
+            </div>
+    
+            <div class="form-item">
+                <label for="dns-server">Servidores DNS:</label>
+                <input type="text" id="dns-server" name="dns-server">
+            </div>
 
         </section>
 
@@ -82,7 +74,7 @@ function pc_menu() {
     $menu.querySelector("#dhcp-toggle").addEventListener("change", dhcpHandler);
     $menu.querySelector("#web-server-toggle").addEventListener("change", webServerHandler);
     $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
-    $menu.querySelector("#iface").addEventListener("change", interfaceHandler);
+    $menu.querySelector("#iface").addEventListener("change", (event) => interfaceHandler(event, "pc-form"));
 
     return $menu;
 
@@ -96,6 +88,7 @@ function showPcMenu(networkObjectId) {
     }
 
     const $networkObject = document.getElementById(networkObjectId);
+    const networkInterface = getInterfaces(networkObjectId)[0];
     const $menu = document.querySelector(".pc-form");
     $menu.dataset.id = networkObjectId;
     const $textInputs = $menu.querySelectorAll("input[type='text']");
@@ -104,16 +97,7 @@ function showPcMenu(networkObjectId) {
     
     //cargamos las interfaces disponibles
 
-    const availableInterfaces = getInterfaces(networkObjectId);
-
-    availableInterfaces.forEach(iface => {
-        const option = document.createElement("option");
-        option.value = iface;
-        option.innerHTML = iface;
-        $menu.querySelector("#iface").appendChild(option);
-    });
-
-    const networkInterface = availableInterfaces[0]; //<-- se selecciona la primera interfaz
+    loadInterfaces("pc-form");
 
     //configuracion basica de red
 
@@ -302,13 +286,4 @@ function webServerHandler(event) {
         $networkObjectIcon.src = "./assets/board/www-server.svg";
     }
 
-}
-
-function interfaceHandler(event) {
-    const $menu = document.querySelector(".pc-form");
-    const $networkObject = document.getElementById($menu.dataset.id);
-    const $ifaceSelector = $menu.querySelector("#iface");
-    const networkInterface = $ifaceSelector.value;
-    $menu.querySelector("#ip").value = $networkObject.getAttribute(`ip-${networkInterface}`);
-    $menu.querySelector("#netmask").value = $networkObject.getAttribute(`netmask-${networkInterface}`);
 }

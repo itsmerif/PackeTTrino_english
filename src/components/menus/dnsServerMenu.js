@@ -18,18 +18,23 @@ function dns_server_menu() {
             <section id="network-section" class="hidden">
 
                 <div class="form-item">
+                    <label for="iface">Interfaz:</label>
+                    <select id="iface" name="iface"></select>
+                </div>
+
+                <div class="form-item">
                     <label for="ip">Dirección IP (IPv4):</label>
-                    <input type="text" id="ip-dns" name="ip-dns">
+                    <input type="text" id="ip" name="ip">
                 </div>
 
                 <div class="form-item">
                     <label for="netmask">Máscara de Red:</label>
-                    <input type="text" id="netmask-dns" name="netmask-dns">
+                    <input type="text" id="netmask" name="netmask">
                 </div>
 
                 <div class="form-item">
                     <label for="gateway">Puerta de Enlace:</label>
-                    <input type="text" id="gateway-dns" name="gateway-dns">
+                    <input type="text" id="gateway" name="gateway">
                 </div>
 
             </section>
@@ -111,12 +116,12 @@ function dns_server_menu() {
     $menu.querySelector("#btn-add-record").addEventListener("click", addDnsRecordHandler);
     $menu.querySelector("#btn-del-record").addEventListener("click", removeDnsRecordHandler);
     $menu.querySelector("#type").addEventListener("change", recordTypeHandler);
+    $menu.querySelector("#iface").addEventListener("change", (event) => interfaceHandler(event, "dns-form"));
     
     return $menu;
 
 }
 
-/**ESTA FUNCION CREA MUESTRA EL MENU DE CONFIGURACION DE UN SERVIDOR DNS, RELLENANDO LOS CAMPOS CORRESPONDIENTES*/
 function showDnsServerMenu(event) {
 
     event.stopPropagation();
@@ -128,23 +133,26 @@ function showDnsServerMenu(event) {
         return;
     }
 
-    const availableInterfaces = getInterfaces($networkObject.id);
-    const networkObjectInterface = availableInterfaces[0];
+    const networkObjectInterface = getInterfaces($networkObject.id)[0];
     const $menu = document.querySelector(".dns-form");
+    $menu.dataset.id = $networkObject.id;
     const isDnsServer = $networkObject.id.startsWith("dns-server-");
     const isRecursive = $networkObject.getAttribute("recursion");
     const isCache = $networkObject.getAttribute("resolved");
     
+    //cargamos las interfaces disponibles
+
+    loadInterfaces("dns-form");
+    
     //atributos del equipo
     if (isDnsServer) {
-        $menu.querySelector("#ip-dns").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
-        $menu.querySelector("#netmask-dns").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
-        $menu.querySelector("#gateway-dns").value = getDefaultGateway($networkObject.id);
+        $menu.querySelector("#ip").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
+        $menu.querySelector("#netmask").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
+        $menu.querySelector("#gateway").value = getDefaultGateway($networkObject.id);
         $menu.querySelector("#network-section").classList.remove("hidden");
     }
 
     //atributos del servicio
-    $menu.dataset.id = $networkObject.id;
     $menu.querySelector("#dns-recursive").checked = isRecursive === "true";
     $menu.querySelector("#dns-cache").checked = isCache === "true";
     $menu.querySelector("#records-table").innerHTML = $networkObject.querySelector(".dns-table").querySelector("table").innerHTML;
@@ -165,9 +173,9 @@ function saveDnsServerMenu(event) {
     const $serverObject = document.getElementById($menu.dataset.id);
     const availableInterfaces = getInterfaces($serverObject.id);
     const networkObjectInterface = availableInterfaces[0];
-    const ip = $menu.querySelector("#ip-dns").value;
-    const netmask = $menu.querySelector("#netmask-dns").value;
-    const gateway = $menu.querySelector("#gateway-dns").value;
+    const ip = $menu.querySelector("#ip").value;
+    const netmask = $menu.querySelector("#netmask").value;
+    const gateway = $menu.querySelector("#gateway").value;
     const isRecursive = $menu.querySelector("#dns-recursive").checked;
     const isCache = $menu.querySelector("#dns-cache").checked;
     const isEmptyForm = ip === "" && netmask === "";

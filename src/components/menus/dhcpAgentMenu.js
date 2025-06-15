@@ -10,18 +10,23 @@ function dhcp_agent_menu() {
         <section class="basic-section">
 
             <div class="form-item">
-                <label for="ip-relay">Dirección IP (ipv4):</label>
-                <input type="text" id="ip-relay" name="ip-relay" placeholder="192.168.1.1">
+                <label for="iface">Interfaz:</label>
+                <select id="iface" name="iface"></select>
             </div>
 
             <div class="form-item">
-                <label for="netmask-relay">Máscara de Red:</label>
-                <input type="text" id="netmask-relay" name="netmask-relay" placeholder="255.255.255.0">
+                <label for="ip">Dirección IP (ipv4):</label>
+                <input type="text" id="ip" name="ip">
             </div>
 
             <div class="form-item">
-                <label for="gateway-relay">Puerta de enlace:</label>
-                <input type="text" id="gateway-relay" name="gateway-relay" placeholder="192.168.1.1">
+                <label for="netmask">Máscara de Red:</label>
+                <input type="text" id="netmask" name="netmask">
+            </div>
+
+            <div class="form-item">
+                <label for="gateway">Puerta de enlace:</label>
+                <input type="text" id="gateway" name="gateway">
             </div>
         
         </section>
@@ -30,12 +35,12 @@ function dhcp_agent_menu() {
 
             <div class="form-item">
                 <label for="main-server">Servidor DHCP Principal:</label>
-                <input type="text" id="main-server" name="main-server" placeholder="172.16.1.254">
+                <input type="text" id="main-server" name="main-server">
             </div>
 
             <div class="form-item">
                 <label for="listen-on-interfaces">Interfaces De Escucha:</label>
-                <input type="text" id="listen-on-interfaces" name="listen-on-interfaces" placeholder="enp0s3,enp0s8">
+                <input type="text" id="listen-on-interfaces" name="listen-on-interfaces">
             </div>
 
         </section>
@@ -49,6 +54,7 @@ function dhcp_agent_menu() {
     $menu.addEventListener("submit", saveDhcpRelayMenu);
     $menu.querySelector("#close-btn").addEventListener("click", closeDhcpRelayMenu);
     $menu.querySelector(".window-frame").addEventListener("mousedown", dragModal);
+    $menu.querySelector("#iface").addEventListener("change", (event) => interfaceHandler(event, "dhcp-relay-form"));
 
 
     return $menu;
@@ -60,24 +66,31 @@ function showDhcpRelayMenu(event) {
     event.stopPropagation();
 
     const $networkObject = event.target.closest(".item-dropped");
+    const networkObjectId = $networkObject.id;
 
     if (quickPingToggle) {
-        quickPing($networkObject.id);
+        quickPing(networkObjectId);
         return;
     }
 
+    //añadimos el identificador del equipo al menú
     const $menu = document.querySelector(".dhcp-relay-form");
-    const networkObjectInterface = getInterfaces($networkObject.id)[0];
-    const isDhcpRelay = $networkObject.id.startsWith("dhcp-relay-server-");
+    $menu.dataset.id = networkObjectId;
+
+    //obtenemos información del equipo
+    const networkObjectInterface = getInterfaces(networkObjectId)[0];
+    const isDhcpRelay = networkObjectId.startsWith("dhcp-relay-server-");
+
+    //cargamos las interfaces disponibles
+    loadInterfaces("dhcp-relay-form");
 
     //asignamos los valores del objeto al menú
-    $menu.dataset.id = $networkObject.id;
-    $menu.querySelector("#ip-relay").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
-    $menu.querySelector("#netmask-relay").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
-    $menu.querySelector("#gateway-relay").value = getDefaultGateway($networkObject.id);
+    $menu.querySelector("#ip").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
+    $menu.querySelector("#netmask").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
+    $menu.querySelector("#gateway").value = getDefaultGateway(networkObjectId);
     $menu.querySelector("#main-server").value = $networkObject.getAttribute("dhcrelay-main-server");;
     $menu.querySelector("#listen-on-interfaces").value = $networkObject.getAttribute("dhcrelay-listen-on-interfaces");
-    $menu.querySelector(".frame-title").innerHTML = $networkObject.id;
+    $menu.querySelector(".frame-title").innerHTML = networkObjectId;
 
     //ocultamos la sección básica para no agentes de retransmisión
     if (!isDhcpRelay) $menu.querySelector(".basic-section").classList.add("hidden");
@@ -95,10 +108,10 @@ function saveDhcpRelayMenu(event) {
     const $menu = document.querySelector(".dhcp-relay-form");
     const $networkObject = document.getElementById($menu.dataset.id);
     const availableInterfaces = getInterfaces($networkObject.id);
-    const networkObjectInterface = availableInterfaces[0];
-    const newIp = $menu.querySelector("#ip-relay").value;
-    const newNetmask = $menu.querySelector("#netmask-relay").value;
-    const newGateway = $menu.querySelector("#gateway-relay").value;
+    const networkObjectInterface = $menu.querySelector("#iface").value;
+    const newIp = $menu.querySelector("#ip").value;
+    const newNetmask = $menu.querySelector("#netmask").value;
+    const newGateway = $menu.querySelector("#gateway").value;
     const newMainServer = $menu.querySelector("#main-server").value;
     const newListenOnInterfaces = ($menu.querySelector("#listen-on-interfaces").value)
     .split(",")
