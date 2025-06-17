@@ -1,56 +1,62 @@
 # PackeTTrino
 
-## Simulador de Redes en JavaScript Puro
+## Web-Based Network Simulator in Pure JavaScript
 
-Desarrollado por Amín Pérez | Mayo 2025
+Developed by Amín Pérez | May 2025
 
 ---
 
-## Descripción
+## Description
 
-PackeTTrino es un simulador de redes interactivo desarrollado completamente con tecnologías web nativas (JavaScript, HTML y CSS) sin dependencias externas. Esta herramienta educativa permite la visualización, diseño y simulación de redes informáticas, ofreciendo una experiencia práctica para entender protocolos de red, enrutamiento y comunicación entre dispositivos.
+**PackeTTrino** is a fully interactive network simulator built entirely with native web technologies (JavaScript, HTML, and CSS) — no external libraries or frameworks required. This educational tool allows users to design, simulate, and analyze computer networks in real time. It provides a hands-on experience for learning networking protocols, routing, and device communication.
 
-## Características Principales
+## Key Features
 
-- **Simulación Completa de Redes**: Diseño y creación de topologías de red con múltiples dispositivos
-- **Protocolos Implementados**: DHCP, DNS, TCP/IP, ICMP, ARP y más
-- **Enrutamiento Dinámico**: Simulación de protocolos de enrutamiento en tiempo real
-- **Visualización de Paquetes**: Seguimiento visual del recorrido de los paquetes por la red
-- **Herramientas Integradas**: Terminal, navegador web y analizador de paquetes
-- **Firewall Configurable**: Configuración de reglas de firewall con visualización de bloqueos
-- **Interfaz Intuitiva**: Panel de control para gestionar dispositivos y servicios
+- **Complete Network Simulation**: Design custom topologies with various network devices  
+- **Implemented Protocols**: DHCP, DNS, TCP/IP, ICMP, ARP, and more  
+- **Dynamic Routing**: Real-time simulation of routing protocols  
+- **Packet Visualization**: Track packet flow through the network visually  
+- **Integrated Tools**: Linux-style terminal, web browser, and packet analyzer  
+- **Configurable Firewall**: Create and apply firewall rules with live feedback  
+- **Intuitive Interface**: Control panel for managing devices and services  
 
-## Componentes de Red Disponibles
+## Available Network Components
 
-- PCs y estaciones de trabajo
-- Switches
-- Routers
-- Servidores DHCP
-- Agentes de retransmisión DHCP
-- Servidores DNS
-- Servidores Web (Apache2)
+- PCs and workstations  
+- Switches  
+- Routers  
+- DHCP servers  
+- DHCP relay agents  
+- DNS servers  
+- Web servers (Apache2)  
 
-## Requisitos del Sistema
+## System Requirements
 
-- Navegador web moderno con soporte para JavaScript ES6+
-- No requiere instalación ni conexión a internet
+- Modern web browser with JavaScript ES6+ support  
+- No installation or internet connection required  
 
-## Cómo Usar
+## How to Use
 
-1. Abre el archivo `index.html` en tu navegador
-2. Utiliza el panel lateral para añadir dispositivos a la red
-3. Conecta los dispositivos mediante cables
-4. Configura las propiedades de cada dispositivo (direcciones IP, máscaras, etc.)
-5. Utiliza los controles de animación para visualizar el tráfico de red
-6. Consulta las tablas de enrutamiento, ARP, DHCP y DNS para analizar el estado de la red
+1. Open the `index.html` file in your browser  
+2. Use the side panel to drag and drop devices into the workspace  
+3. Connect devices with cables  
+4. Configure device properties (IP addresses, subnet masks, etc.)  
+5. Use animation controls to visualize packet traffic  
+6. Inspect routing, ARP, DNS, and DHCP tables to monitor the network state  
 
-## Características Avanzadas
+## Advanced Features
 
-- **Visualización de Paquetes por Tipo**: Diferenciación por colores según el tipo de paquete (broadcast, unicast, TCP, DNS, etc.)
-- **Tablas de Estado**: Visualización de tablas ARP, MAC, enrutamiento, caché DNS y DHCP
-- **Herramientas de Depuración**: Terminal con comandos Linux para diagnóstico de red (ping, traceroute, ip, arp, etc.)
-- **Modo Oscuro**: Interfaz adaptable con tema claro y oscuro
+- **Packet Type Visualization**: Color-coded display for different packet types (broadcast, unicast, TCP, DNS, etc.)  
+- **State Tables**: Live view of ARP, MAC, routing, DNS cache, and DHCP leases  
+- **Debugging Tools**: Built-in terminal with common Linux network commands (`ping`, `traceroute`, `ip`, `arp`, etc.)  
+- **Dark Mode**: Light and dark theme support  
 
-## Contribuciones y Desarrollo
+## About the Project
 
-Este proyecto fue desarrollado como Trabajo de Fin de Grado deAdministración de Sistemas Informáticos en Red. Todas las implementaciones son originales y no utilizan librerías externas.
+This project was developed as a final year thesis for the **Advanced Vocational Training in Network Systems Administration**. All features are self-implemented using native web technologies, without external libraries or dependencies.
+
+---
+
+## Keywords (for SEO)
+
+`network simulator`, `javascript networking`, `educational tool`, `packet tracer alternative`, `web-based network lab`, `DHCP DNS TCP IP simulator`, `HTML CSS JS`, `pure JavaScript network project`, `open source network simulator`, `firewall configuration`, `interactive network tool`
