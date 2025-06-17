@@ -1,12 +1,12 @@
 function dns_server_menu() {
 
     const $menu = document.createElement("form");
-    
     $menu.classList.add("dns-form", "modal", "draggable-modal");
+    $menu.setAttribute("data-id", "");
 
     $menu.innerHTML = `
 
-        <div class="window-frame"> <p id="form-dns-item-id"> </p> </div>
+        <div class="window-frame"> <p class="frame-title"></p> </div>
 
         <div class="nav-panel">
             <button class="btn-modern-blue dark active" id="btn-basic-tab" data-tab="basic-section">Básico</button>
@@ -18,22 +18,23 @@ function dns_server_menu() {
             <section id="network-section" class="hidden">
 
                 <div class="form-item">
+                    <label for="iface">Interfaz:</label>
+                    <select id="iface" name="iface"></select>
+                </div>
+
+                <div class="form-item">
                     <label for="ip">Dirección IP (IPv4):</label>
-                    <input type="text" id="ip-dns" name="ip-dns" 
-                    pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-                    placeholder="192.168.1.1">
+                    <input type="text" id="ip" name="ip">
                 </div>
 
                 <div class="form-item">
                     <label for="netmask">Máscara de Red:</label>
-                    <input type="text" id="netmask-dns" name="netmask-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-                    placeholder="255.255.255.0">
+                    <input type="text" id="netmask" name="netmask">
                 </div>
 
                 <div class="form-item">
                     <label for="gateway">Puerta de Enlace:</label>
-                    <input type="text" id="gateway-dns" name="gateway-dns" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-                    placeholder="192.168.1.1">
+                    <input type="text" id="gateway" name="gateway">
                 </div>
 
             </section>
@@ -115,98 +116,99 @@ function dns_server_menu() {
     $menu.querySelector("#btn-add-record").addEventListener("click", addDnsRecordHandler);
     $menu.querySelector("#btn-del-record").addEventListener("click", removeDnsRecordHandler);
     $menu.querySelector("#type").addEventListener("change", recordTypeHandler);
+    $menu.querySelector("#iface").addEventListener("change", (event) => interfaceHandler(event, "dns-form"));
     
     return $menu;
 
 }
 
-/**ESTA FUNCION CREA MUESTRA EL MENU DE CONFIGURACION DE UN SERVIDOR DNS, RELLENANDO LOS CAMPOS CORRESPONDIENTES*/
 function showDnsServerMenu(event) {
 
     event.stopPropagation();
-    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
-
-    const $serverObject = event.target.closest(".item-dropped");
-    const availableInterfaces = getInterfaces($serverObject.id);
-    const networkObjectInterface = availableInterfaces[0];
+    
+    const $networkObject = event.target.closest(".item-dropped");
 
     if (quickPingToggle) { //<-- comprobamos si estamos en modo icmptryout
-        quickPing($serverObject.id);
+        quickPing($networkObject.id);
         return;
     }
 
+    const networkObjectInterface = getInterfaces($networkObject.id)[0];
     const $menu = document.querySelector(".dns-form");
-    const isDnsServer = $serverObject.id.startsWith("dns-server-");
-    const isRecursive = $serverObject.getAttribute("recursion");
-    const isCache = $serverObject.getAttribute("resolved");
+    $menu.dataset.id = $networkObject.id;
+    const isDnsServer = $networkObject.id.startsWith("dns-server-");
+    const isRecursive = $networkObject.getAttribute("recursion");
+    const isCache = $networkObject.getAttribute("resolved");
     
-    //<-- seccion basica de red (solo para servidores dns nativos)
+    //cargamos las interfaces disponibles
+
+    loadInterfaces("dns-form");
+    
+    //atributos del equipo
     if (isDnsServer) {
-        $menu.querySelector("#ip-dns").value = $serverObject.getAttribute(`ip-${networkObjectInterface}`);
-        $menu.querySelector("#netmask-dns").value = $serverObject.getAttribute(`netmask-${networkObjectInterface}`);
-        $menu.querySelector("#gateway-dns").value = $serverObject.getAttribute("data-gateway");
+        $menu.querySelector("#ip").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
+        $menu.querySelector("#netmask").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
+        $menu.querySelector("#gateway").value = getDefaultGateway($networkObject.id);
         $menu.querySelector("#network-section").classList.remove("hidden");
     }
 
-    //<-- seccion de dns
+    //atributos del servicio
     $menu.querySelector("#dns-recursive").checked = isRecursive === "true";
     $menu.querySelector("#dns-cache").checked = isCache === "true";
+    $menu.querySelector("#records-table").innerHTML = $networkObject.querySelector(".dns-table").querySelector("table").innerHTML;
+    $menu.querySelector(".frame-title").innerHTML = $networkObject.id;
 
-    //<-- seccion de registros
-    $menu.querySelector("#records-table").innerHTML = $serverObject.querySelector(".dns-table").querySelector("table").innerHTML;
-
-    document.getElementById("form-dns-item-id").innerHTML = $serverObject.id;
+    //mostramos el menú
+    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
     $menu.style.display = "flex";
 }
 
-/**ESTA FUNCION ACTUALIZA LA INFORMACION DE UN SERVIDOR DNS*/
 function saveDnsServerMenu(event) {
 
     event.preventDefault();
     event.stopPropagation();
 
     const $menu = document.querySelector(".dns-form");
-    const $serverObject = document.getElementById($menu.querySelector("#form-dns-item-id").innerHTML);
-    const availableInterfaces = getInterfaces($serverObject.id);
-    const networkObjectInterface = availableInterfaces[0];
+    const $serverObject = document.getElementById($menu.dataset.id);
+    const networkObjectInterface = $menu.querySelector("#iface").value;
+    const ip = $menu.querySelector("#ip").value;
+    const netmask = $menu.querySelector("#netmask").value;
+    const gateway = $menu.querySelector("#gateway").value;
+    const isDnsServer = $serverObject.id.startsWith("dns-server");
     const isRecursive = $menu.querySelector("#dns-recursive").checked;
     const isCache = $menu.querySelector("#dns-cache").checked;
+    const isEmptyForm = ip === "" && netmask === "";
 
-    if ($serverObject.id.startsWith("dns-server")) { //<-- solo para servidores dns nativos
+    try {
 
-        const ip = $menu.querySelector("#ip-dns").value;
-        const netmask = $menu.querySelector("#netmask-dns").value;
-        const gateway = $menu.querySelector("#gateway-dns").value;
+        if (isDnsServer) {
 
-        if (ip !== "" && !isValidIp(ip)) {
-            bodyComponent.render(popupMessage(`<span>Error: </span>La IP "${ip}" no es válida.`));
-            return;
+            if (!isEmptyForm) {
+                if (!isValidIp(ip)) throw new Error(`Error: La IP "${ip}" no es válida.`);
+                if (!isValidIp(netmask)) throw new Error(`Error: La máscara de red "${netmask}" no es válida.`);
+            }
+
+            if (gateway !== "" && !isValidIp(gateway)) throw new Error(`Error: La puerta de enlace "${gateway}" no es válida.`);
+
+            configureInterface($serverObject.id, ip, netmask, networkObjectInterface);
+            setDefaultGateway($serverObject.id, gateway);
+
         }
 
-        if (netmask !== "" && !isValidIp(netmask)) {
-            bodyComponent.render(popupMessage(`<span>Error: </span>La máscara de red "${netmask}" no es válida.`));
-            return;
-        }
+        $serverObject.setAttribute("recursion", isRecursive);
+        $serverObject.setAttribute("resolved", isCache);
 
-        if (gateway !== "" && !isValidIp(gateway)) {
-            bodyComponent.render(popupMessage(`<span>Error: </span>El puerta de enlace "${gateway}" no es válida.`));
-            return;
-        }
+        bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
 
-        configureInterface($serverObject.id, ip, netmask, networkObjectInterface);
-        setDirectRoutingRule($serverObject.id, ip, netmask, networkObjectInterface);
-        $serverObject.setAttribute("data-gateway", gateway);
-        setRemoteRoutingRule($serverObject.id, "0.0.0.0", "0.0.0.0", ip, networkObjectInterface, gateway);
+    } catch (error) {
+
+        bodyComponent.render(popupMessage(error.message));
+        return;
+
     }
-
-    $serverObject.setAttribute("recursion", isRecursive);
-    $serverObject.setAttribute("resolved", isCache);
-
-    bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
 
 }
 
-/**ESTA FUNCION CIERRA EL MENU DE CONFIGURACION DE UN SERVIDOR DNS*/
 function closeDnsMenu(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -217,7 +219,6 @@ function closeDnsMenu(event) {
     $menu.style.display = "none";
 }
 
-/**ESTA FUNCION MUESTRA LA SECCION DE REGISTROS DE UN SERVIDOR DNS*/
 function showDnsGraphicTab(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -232,14 +233,13 @@ function showDnsGraphicTab(event) {
     $targetSection.classList.remove("hidden");
 }
 
-/**ESTA FUNCION GESTIONA EL AÑADIR UN REGISTRO*/
 function addDnsRecordHandler(event) {
 
     event.stopPropagation();
     event.preventDefault();
 
     const $menu = document.querySelector(".dns-form");
-    const serverObjectId = document.getElementById("form-dns-item-id").innerHTML;
+    const serverObjectId = $menu.dataset.id;
     const $serverObject = document.getElementById(serverObjectId);   
     const domain = $menu.querySelector("#domain").value;
     const recordType = $menu.querySelector("#type").value;
@@ -277,12 +277,11 @@ function addDnsRecordHandler(event) {
 
 }
 
-/**ESTA FUNCION GESTIONA EL ELIMINAR UN REGISTRO*/
 function removeDnsRecordHandler(event) {
     event.stopPropagation();
     event.preventDefault();
     const $menu = document.querySelector(".dns-form");
-    const serverObjectId = document.getElementById("form-dns-item-id").innerHTML;
+    const serverObjectId = $menu.dataset.id;
     const $serverObject = document.getElementById(serverObjectId);
     const domain = $menu.querySelector("#domain").value;
     const recordType = $menu.querySelector("#type").value;

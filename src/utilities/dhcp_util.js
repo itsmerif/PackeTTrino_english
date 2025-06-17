@@ -1,12 +1,13 @@
 /**ESTA FUNCION GESTIONA LA UTILIDAD DHCP DISCOVER DE UN EQUIPO CLIENTE */
 async function dhcpDiscoverHandler(networkObjectId, networkObjectInterface) {
 
+    console.log(networkObjectId, networkObjectInterface);
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
     const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
 
-    if (networkObjectIp !== "") {
-        terminalMessage(`dhclient: La interfaz ${networkObjectInterface} ya tiene una IP asignada.`, networkObjectId);
+    if ($networkObject.getAttribute("dhclient") !== "true") {
+        terminalMessage("dhclient: El servicio DHCP Client no está activado.", networkObjectId);
         return;
     }
 
@@ -21,6 +22,7 @@ async function dhcpDiscoverHandler(networkObjectId, networkObjectInterface) {
             
             dhcpDiscoverFlag[networkObjectId] = false;
             dhcpRequestFlag[networkObjectId] = false;
+            dhcpOfferBuffer[networkObjectId] = false;
 
             await dhcpDiscoverGenerator(networkObjectId, networkObjectInterface);
 
@@ -73,12 +75,7 @@ async function dhcpReleaseHandler(networkObjectId, networkObjectInterface) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
     const networkObjectNetmask = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
-    const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
-
-    if (!networkObjectIp || !networkObjectNetmask || !networkObjectDhcpServer) {
-        terminalMessage("dhcprelease: Error en la configuración de red.", networkObjectId);
-        return;
-    }
+    const networkObjectDhcpServer = $networkObject.getAttribute(`data-dhcp-server-${networkObjectInterface}`);
 
     terminalMessage(`DHCPRELEASE of ${networkObjectIp} on ${networkObjectInterface} to ${networkObjectDhcpServer} port 67`, networkObjectId);
 

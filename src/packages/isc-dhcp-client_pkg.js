@@ -3,17 +3,21 @@ function installDhclient($networkObject) {
     const networkObjectId = $networkObject.id;
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
 
-    if (networkObjectId.startsWith("router-")) throw new Error("Error: En esta versión no se puede instalar el paquete DHCP Client en un router.");
-
     terminalMessage("Instalando DHCP Client...", networkObjectId);
-          
-    attr("dhclient", "false");   
-    attr("data-dhcp-server", "");
-    attr("data-dhcp-lease-time", "");
-    attr("data-dhcp-current-lease-time", "");
-    attr("data-dhcp-flag-t1", "false");
-    attr("data-dhcp-flag-t2", "false");
-    
+        
+        attr("dhclient", "true");
+
+        const availableInterfaces = getInterfaces($networkObject);
+
+        for (let iface of availableInterfaces) {
+            attr(`data-dhclient-${iface}`, "false");
+            attr(`data-dhcp-server-${iface}`, "");
+            attr(`data-dhcp-lease-time-${iface}`, "");
+            attr(`data-dhcp-current-lease-time-${iface}`, "");
+            attr(`data-dhcp-flag-t1-${iface}`, "false");
+            attr(`data-dhcp-flag-t2-${iface}`, "false");
+        }
+
     terminalMessage("DHCP Client instalado correctamente.", networkObjectId);
 }
 
@@ -21,17 +25,22 @@ function uninstallDhclient(networkObjectId) {
 
     terminalMessage("Desinstalando DHCP Client...", networkObjectId);
 
-    const $networkObject = document.getElementById(networkObjectId);
-    const rattr = (...attributes) => attributes.forEach(attribute => $networkObject.removeAttribute(attribute));
+        const $networkObject = document.getElementById(networkObjectId);
+        const rattr = (...attributes) => attributes.forEach(attribute => $networkObject.removeAttribute(attribute));
+        const availableInterfaces = getInterfaces($networkObject);
 
-    rattr(
-        "dhclient",
-        "data-dhcp-server",
-        "data-dhcp-lease-time",
-        "data-dhcp-current-lease-time",
-        "data-dhcp-flag-t1",
-        "data-dhcp-flag-t2"
-    );
+        rattr("dhclient");
+
+        for (let iface of availableInterfaces) {
+            rattr(
+                `data-dhclient-${iface}`,
+                `data-dhcp-server-${iface}`,
+                `data-dhcp-lease-time-${iface}`,
+                `data-dhcp-current-lease-time-${iface}`,
+                `data-dhcp-flag-t1-${iface}`,
+                `data-dhcp-flag-t2-${iface}`
+            );
+        }
     
     terminalMessage("DHCP Client desinstalado correctamente.", networkObjectId);
 

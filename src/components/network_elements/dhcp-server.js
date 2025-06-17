@@ -37,8 +37,8 @@ function DhcpServerObject(x, y) {
     attr("ip-enp0s3", "");
     attr("netmask-enp0s3", "");
     attr("mac-enp0s3", getRandomMac());
-    attr("data-gateway", "");
     attr("data-switch-enp0s3", "");
+    attr("ipv4-forwarding", "false");
     attr("filesystem", JSON.stringify(filesystem));  
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");

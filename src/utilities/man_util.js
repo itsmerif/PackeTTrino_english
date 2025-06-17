@@ -24,6 +24,7 @@ function command_man(networkObjectId, topic) {
         "curl": manual_curl,
         "realnode": manual_realnode,
         "cp": manual_cp,
+        "iface": manual_iface,
     }
 
     topicsMapper[topic] 
@@ -651,6 +652,7 @@ function manual_man() {
     message += "    dns         - Configuración y gestión de registros DNS.\n";
     message += "    exit        - Salir de la terminal interactiva.\n";
     message += "    ip          - Configuración y gestión de direcciones IP.\n";
+    message += "    iface       - Gestiona las interfaces de red de un objeto dentro del simulador.\n";
     message += "    ifup        - Configura interfaces de red a partir del archivo de configuración.\n";
     message += "    ifdown      - Desconfigura interfaces de red.\n";
     message += "    iptables    - Configuración y gestión de reglas de firewall.\n";
@@ -793,6 +795,38 @@ function manual_cp(){
     message += 'ERRORES\n';
     message += '    En caso de error (por ejemplo, si el archivo no existe o no es accesible), se mostrará\n';
     message += '    un mensaje informativo en la terminal del objeto de red.\n';
+    message += '\n';
+    message += 'AUTOR\n';
+    message += '    Simulador de redes desarrollado por Amin Pérez (2025).\n';
+
+    return message;
+}
+
+function manual_iface() {
+    let message = '';
+    message += 'NOMBRE\n';
+    message += '    iface - Gestiona las interfaces de red de un objeto dentro del simulador\n';
+    message += '\n';
+    message += 'SINOPSIS\n';
+    message += '    iface [--add] [--del=&lt;interfaz|all&gt;]\n';
+    message += '\n';
+    message += 'DESCRIPCIÓN\n';
+    message += '    Permite agregar o eliminar interfaces de red en un objeto de red del simulador.\n';
+    message += '    Las interfaces siguen el formato enp0sX, siendo "enp0s3" la predeterminada y no\n';
+    message += '    eliminable. Si una interfaz está conectada, no puede eliminarse hasta desconectarla.\n';
+    message += '\n';
+    message += 'OPCIONES\n';
+    message += '    --add\n';
+    message += '        Agrega una nueva interfaz al objeto de red. El nombre se asigna automáticamente\n';
+    message += '        como enp0sX, siendo X el siguiente índice disponible según el esquema "Predictable Network Interface Names."\n';
+    message += '\n';
+    message += '    --del=&lt;interfaz|all&gt;\n';
+    message += '        Elimina una interfaz específica (ej. enp0s8) o todas las interfaces (excepto enp0s3).\n';
+    message += '        Las interfaces activas (conectadas) no pueden eliminarse.\n';
+    message += '\n';
+    message += 'ERRORES COMUNES\n';
+    message += '    - Intentar eliminar "enp0s3", que es la interfaz base no eliminable.\n';
+    message += '    - Eliminar una interfaz que no existe o está conectada.\n';
     message += '\n';
     message += 'AUTOR\n';
     message += '    Simulador de redes desarrollado por Amin Pérez (2025).\n';

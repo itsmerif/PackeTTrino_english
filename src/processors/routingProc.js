@@ -1,4 +1,4 @@
-async function routing(networkObjectId, packet, isNotForward = false) {
+async function routing(networkObjectId, packet, isNotForward = false, outInterface = "") {
 
     const $networkObject = document.getElementById(networkObjectId);
     const $routingTable = $networkObject.querySelector(".routing-table").querySelector("table");
@@ -7,7 +7,7 @@ async function routing(networkObjectId, packet, isNotForward = false) {
     if (packet.destination_ip === "255.255.255.255" || packet.destination_mac === "ff:ff:ff:ff:ff:ff") {
 
         if (isNotForward) {
-            const iface = getInterfaces($networkObject.id)[0];
+            const iface = outInterface || getInterfaces($networkObject.id)[0];
             const switchId = $networkObject.getAttribute(`data-switch-${iface}`);
             addPacketTraffic(packet);
             await switchProcessor(switchId, networkObjectId, packet);
