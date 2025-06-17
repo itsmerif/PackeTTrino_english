@@ -8,7 +8,7 @@
  * LAS REGLAS DE ENRUTAMIENTO SIEMPRE LLEVAN "add"
 */
 
-function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
+async function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
     
     const $networkObject = document.getElementById(networkObjectId);
     const availableInterfaces = getInterfaces(networkObjectId); //<-- obtenemos las interfaces disponibles del dispositivo
@@ -35,7 +35,7 @@ function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
     
     // <-- ejemplo de instruccion: iface enp0s3 inet static address 192.168.1.100 netmask 255.255.255.0 gateway 192.168.1.1
 
-    ifaceBlocks.forEach(ifaceBlock => { //<-- evaluamos cada instrucción
+    for (let ifaceBlock of ifaceBlocks) {
         
         const interfaceObject = { //<-- inicializamos el objeto de análisis
             "iface": "",
@@ -73,7 +73,7 @@ function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
             throw new Error(`Error: no se reconoce el tipo de red ${interfaceObject["inet"]}`); 
         }
         
-        if (interfaceInput !== "-a" && interfaceInput !== interfaceObject["iface"]) return; 
+        if (interfaceInput !== "-a" && interfaceInput !== interfaceObject["iface"]) continue;
 
         if (interfaceObject["inet"] === "static") {
 
@@ -101,15 +101,15 @@ function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
 
         if (interfaceObject["inet"] === "dhcp") {
 
-            if ($networkObject.getAttribute("dhclient") === null) {
+            if ($networkObject.getAttribute("dhclient") !== "true") {
                 throw new Error(`Error: el equipo no tiene instalado el servicio dhcp cliente`);
             }
 
-            $networkObject.setAttribute("dhclient", "true"); 
+            $networkObject.setAttribute(`data-dhclient-${interfaceObject["iface"]}`, "true");
         
-            dhcpDiscoverHandler(networkObjectId, interfaceObject["iface"]);
+            await dhcpDiscoverHandler(networkObjectId, interfaceObject["iface"]);
             
-            return;
+            continue;
 
         }
 
@@ -145,7 +145,7 @@ function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
 
         });
 
-    });
+    };
 
 }
  

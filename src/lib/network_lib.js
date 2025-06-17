@@ -386,9 +386,9 @@ function catchopts(options, args) {
 }
 
 /**ESTA FUNCION DEVUELVE LAS INTERFACES DE UN DISPOSITIVO COMO ARRAY [INTERFAZ1, INTERFAZ2, ...] */
-function getInterfaces(networkObjectId) {
-
-    const $networkObject = document.getElementById(networkObjectId);
+function getInterfaces(identifier) {
+    
+    const $networkObject = (typeof identifier === "string") ? document.getElementById(identifier) : identifier;
     let response = [];
     let index = 3;
     let networkInterface = $networkObject.getAttribute("ip-enp0s" + index);
@@ -746,6 +746,15 @@ function addInterface(networkObjectId) {
 
     //habilitamos el drag and drop para la nueva interfaz
     $networkObject.querySelector("img").draggable = true;
+
+    //si el servicio dhclient está activo, añadimos la configuración de la nueva interfaz
+    if ($networkObject.getAttribute("dhclient") === "true") {
+        $networkObject.setAttribute(`data-dhcp-server-${newInterface}`, "");
+        $networkObject.setAttribute(`data-dhcp-lease-time-${newInterface}`, "");
+        $networkObject.setAttribute(`data-dhcp-current-lease-time-${newInterface}`, "");
+        $networkObject.setAttribute(`data-dhcp-flag-t1-${newInterface}`, "false");
+        $networkObject.setAttribute(`data-dhcp-flag-t2-${newInterface}`, "false");
+    }
 
 }
 

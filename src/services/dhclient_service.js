@@ -1,4 +1,4 @@
-async function dhclient_service(networkObjectId, packet, networkObjectInterface = "enp0s3") {
+async function dhclient_service(networkObjectId, packet, networkObjectInterface) {
 
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
@@ -8,27 +8,29 @@ async function dhclient_service(networkObjectId, packet, networkObjectInterface 
 
     if (packet.type === "offer") {
 
-        if (dhcpOfferBuffer[networkObjectId]) return;
-        if ($networkObject.getAttribute(`ip-${networkObjectInterface}`) !== "") return;
-        if (packet.chaddr !== networkObjectMac) return;
-
-        dhcpDiscoverFlag[networkObjectId] = true;
-
         terminalMessage(`DHCPOFFER of ${packet.yiaddr} from ${packet.siaddr}`, networkObjectId);
 
-        dhcpOfferBuffer[networkObjectId] = true;
+            if (dhcpOfferBuffer[networkObjectId] === true) return; //existe una oferta en el buffer
 
-        let newPacket = new dhcpRequest(
-            networkObjectMac, //origin mac
-            packet.yiaddr, //requested ip
-            packet.siaddr, //server ip
-            networkObjectId //hostname
-        );
+            if ($networkObject.getAttribute(`ip-${networkObjectInterface}`) !== "") return; //ya tiene una ip asignada en esa interfaz
 
-        newPacket.destination_mac = packet.origin_mac;
-        newPacket.yiaddr = packet.yiaddr;
-        newPacket.giaddr = packet.giaddr;
-        newPacket.chaddr = packet.chaddr;
+            if (packet.chaddr !== networkObjectMac) return; //el mac de la oferta no es el del equipo
+
+            dhcpDiscoverFlag[networkObjectId] = true;
+
+            dhcpOfferBuffer[networkObjectId] = true; //señalizamos que el equipo ya tiene una oferta en el buffer
+
+            let newPacket = new dhcpRequest(
+                networkObjectMac, //origin mac
+                packet.yiaddr, //requested ip
+                packet.siaddr, //server ip
+                networkObjectId //hostname
+            );
+
+            newPacket.destination_mac = packet.origin_mac;
+            newPacket.yiaddr = packet.yiaddr;
+            newPacket.giaddr = packet.giaddr;
+            newPacket.chaddr = packet.chaddr;
 
         terminalMessage(`DHCPREQUEST for ${packet.yiaddr} on ${networkObjectInterface} to ${packet.siaddr} port 67`, networkObjectId);
 
@@ -110,10 +112,7 @@ async function dhcpReleaseGenerator(networkObjectId, networkObjectInterface) {
     const $networkObject = document.getElementById(networkObjectId);
     const networkObjectIp = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
     const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
-    const isDHCPOn = $networkObject.getAttribute("dhclient") === "true";
-    const dhcpServerIp = $networkObject.getAttribute("data-dhcp-server");
-
-    if (!isDHCPOn) return;
+    const dhcpServerIp = $networkObject.getAttribute(`data-dhcp-server-${networkObjectInterface}`);
 
     let packet = new dhcpRelease(
         networkObjectIp, //ip de origen

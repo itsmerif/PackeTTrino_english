@@ -43,7 +43,8 @@ async function packetProcessor_Host(switchId, networkObjectId, packet) {
 
         const promises = responses.map(response => {
             const replyPacket = response.packet;
-            return routing(networkObjectId, replyPacket, true);
+            const outInterface = response.outInterface;
+            return routing(networkObjectId, replyPacket, true, outInterface);
         });
 
         await Promise.all(promises);
