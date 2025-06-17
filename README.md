@@ -44,12 +44,16 @@ Developed by Amín Pérez | May 2025
 5. Use animation controls to visualize packet traffic  
 6. Inspect routing, ARP, DNS, and DHCP tables to monitor the network state  
 
+![image](https://github.com/user-attachments/assets/0876157d-8527-45b8-bf6f-0bfe4fe8b291)
+
 ## Advanced Features
 
 - **Packet Type Visualization**: Color-coded display for different packet types (broadcast, unicast, TCP, DNS, etc.)  
 - **State Tables**: Live view of ARP, MAC, routing, DNS cache, and DHCP leases  
 - **Debugging Tools**: Built-in terminal with common Linux network commands (`ping`, `traceroute`, `ip`, `arp`, etc.)  
 - **Dark Mode**: Light and dark theme support  
+
+![image](https://github.com/user-attachments/assets/c7e60ec2-6cd7-427c-97ef-9e28f68209d2)
 
 ## About the Project
 
