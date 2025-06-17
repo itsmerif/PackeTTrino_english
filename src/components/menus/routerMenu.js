@@ -16,7 +16,7 @@ function router_menu() {
         <section id="basic-section">
 
             <div class="interfaces-wrapper">
-                <select class="interfaces-container"></select>
+                <select id="iface"></select>
                 <button class="btn-modern-red" id="del-iface">Eliminar</button>
                 <button class="btn-modern-blue dark" id="add-iface">Añadir</button>
             </div>
@@ -67,7 +67,7 @@ function router_menu() {
     `;
 
     $menu.addEventListener("submit", saveRouterMenu);
-    $menu.querySelector(".interfaces-container").addEventListener("change", selectGraphicInterface);
+    $menu.querySelector("#iface").addEventListener("change", selectGraphicInterface);
     $menu.querySelectorAll("input").forEach(input => input.addEventListener("change", registerNetworkChanges));
     $menu.querySelector("#del-iface").addEventListener("click", deleteGraphicInterface);
     $menu.querySelector("#add-iface").addEventListener("click", addGraphicInterface);
@@ -98,8 +98,10 @@ function showRouterMenu(event) {
     $menu.querySelector(".frame-title").innerHTML = $networkObject.id;
 
     //cargamos las interfaces disponibles
-    const $interfacesContainer = $menu.querySelector(".interfaces-container");
+    
     const availableInterfaces = getInterfaces($networkObject.id);
+
+    loadInterfaces("router-form");
 
     availableInterfaces.forEach(iface => {
         
@@ -108,8 +110,12 @@ function showRouterMenu(event) {
             netmask: $networkObject.getAttribute("netmask-" + iface)
         };
 
-        $interfacesContainer.innerHTML += `<option value="${iface}">${iface}</option>`
     });
+
+    //cargamos la información de la primera interfaz
+
+    $menu.querySelector("#router-ip").value = routerChangesBuffer[availableInterfaces[0]].ip;
+    $menu.querySelector("#router-netmask").value = routerChangesBuffer[availableInterfaces[0]].netmask;
 
     //cargamos las reglas de enrutamiento
     $menu.querySelector("#routing-rules-table").innerHTML = $networkObject.querySelector(".routing-table").querySelector("table").innerHTML;
@@ -155,7 +161,7 @@ function closeRouterMenu(event) {
     event.stopPropagation();
     event.preventDefault();
     const $form = document.querySelector(".router-form");
-    $form.querySelector(".interfaces-container").innerHTML = "";
+    $form.querySelector("#iface").innerHTML = "";
     routerChangesBuffer = {};
     $form.style.display = "none";
 }
@@ -164,15 +170,15 @@ function selectGraphicInterface(event)  {
     const $select = event.target;
     const $menu = document.querySelector(".router-form");
     const $networkObject = document.getElementById($menu.dataset.id);
-    const ip = $networkObject.getAttribute("ip-" + $select.value);
-    const netmask = $networkObject.getAttribute("netmask-" + $select.value);
+    const ip = routerChangesBuffer[$select.value].ip;
+    const netmask = routerChangesBuffer[$select.value].netmask;
     $menu.querySelector("#router-ip").value = ip;
     $menu.querySelector("#router-netmask").value = netmask;
 }
 
 function registerNetworkChanges()  {
     const $form = document.querySelector(".router-form");
-    const iface = $form.querySelector(".interfaces-container").value;
+    const iface = $form.querySelector("#iface").value;
     const ip = $form.querySelector("#router-ip").value;
     const netmask = $form.querySelector("#router-netmask").value;
     routerChangesBuffer[iface] = { ip: ip, netmask: netmask };
@@ -184,7 +190,7 @@ function addGraphicInterface(event) {
 
     const $menu = document.querySelector(".router-form");
     const $networkObject = document.getElementById($menu.dataset.id);
-    const $interfacesContainer = $menu.querySelector(".interfaces-container");
+    const $interfacesContainer = $menu.querySelector("#iface");
     
     //añadimos la interfaz
     addInterface($networkObject.id);
@@ -206,7 +212,7 @@ function deleteGraphicInterface(event) {
 
     const $menu = document.querySelector(".router-form");
     const $networkObject = document.getElementById($menu.dataset.id);
-    const currentInterface = $menu.querySelector(".interfaces-container").value;
+    const currentInterface = $menu.querySelector("#iface").value;
     const fixedInterfaces = ["enp0s3"];
 
     if (fixedInterfaces.includes(currentInterface)) {
@@ -221,7 +227,7 @@ function deleteGraphicInterface(event) {
 
     deleteInterface($networkObject.id, currentInterface);
    
-    $menu.querySelector(".interfaces-container").querySelectorAll("option").forEach($option => {
+    $menu.querySelector("#iface").querySelectorAll("option").forEach($option => {
         if ($option.value === currentInterface) $option.remove();
     });
 

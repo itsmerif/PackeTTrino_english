@@ -1647,7 +1647,7 @@ circle:hover {
             width: fit-content;
         }
 
-        .interfaces-container {
+        #iface {
             padding: 8px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -1661,7 +1661,7 @@ circle:hover {
 
     .table-wrapper {
 
-        height: 300px;
+        max-height: 300px;
         overflow-y: auto;
         scroll-behavior: auto;
 

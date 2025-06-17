@@ -102,7 +102,7 @@ async function interfacesFileInterpreter(networkObjectId, content, interfaceInpu
         if (interfaceObject["inet"] === "dhcp") {
 
             if ($networkObject.getAttribute("dhclient") !== "true") {
-                throw new Error(`Error: el equipo no tiene instalado el servicio dhcp cliente`);
+                throw new Error(`Error: el equipo no tiene instalado el servicio DHCP cliente.\nPista -> apt install isc-dhcp-client`);
             }
 
             $networkObject.setAttribute(`data-dhclient-${interfaceObject["iface"]}`, "true");

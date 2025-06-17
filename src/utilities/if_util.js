@@ -1,5 +1,5 @@
 /**ESTE COMANDO CONFIGURA INTERFACES A PARTIR DEL ARCHIVO INTERFACES */
-function command_ifup(networkObjectId, interfaceInput)  {
+async function command_ifup(networkObjectId, interfaceInput)  {
 
     if (!interfaceInput) terminalMessage("Error: no se especificó una interfaz", networkObjectId);
     if (interfaceInput !== "-a" && !getInterfaces(networkObjectId).includes(interfaceInput)) terminalMessage(`Error: no se reconoce la interfaz ${interfaceInput}`, networkObjectId);
@@ -10,10 +10,10 @@ function command_ifup(networkObjectId, interfaceInput)  {
     let fileName = directoryPath.pop();
 
     try {
-        let interfacesContent = networkElementFileSystem.read(fileName, directoryPath); //<-- recuperamos el contenido del archivo interfaces
-        interfacesFileInterpreter(networkObjectId, interfacesContent, interfaceInput); //<-- parseamos e interpretamos el contenido del archivo
+        let interfacesContent = networkElementFileSystem.read(fileName, directoryPath); 
+        await interfacesFileInterpreter(networkObjectId, interfacesContent, interfaceInput);
     } catch (e) {
-        terminalMessage(e.message, networkObjectId);
+        terminalMessage(`ifup: ${e.message}`, networkObjectId);
     }
 
 }

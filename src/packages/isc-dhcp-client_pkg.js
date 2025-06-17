@@ -3,10 +3,6 @@ function installDhclient($networkObject) {
     const networkObjectId = $networkObject.id;
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
 
-    if (networkObjectId.startsWith("router-")) {
-        throw new Error("Error: En esta versión no se puede instalar el paquete DHCP Client en un router.");
-    }
-
     terminalMessage("Instalando DHCP Client...", networkObjectId);
         
         attr("dhclient", "true");

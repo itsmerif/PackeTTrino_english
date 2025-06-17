@@ -6,10 +6,6 @@ async function packetProcessor_Router(switchId, networkObjectId, packet) {
     const availableIps = getAvailableIps(networkObjectId); // <-- obtenemos la lista de IPs disponibles
     const activeServices = getAvailableServices(networkObjectId); // <-- obtenemos la lista de servicios activos
 
-    //si la interfaz no está correctamente configurada, no se procesa nada
-
-    if (!networkObjectIp || !networkObjectNetmask) return;
-
     //tratamiento del TTL del paquete
 
     if (packet.ttl) {
@@ -65,6 +61,7 @@ async function packetProcessor_Router(switchId, networkObjectId, packet) {
                 if (outputInterface !== "") {
                     addPacketTraffic(replyPacket);
                     await switchProcessor($networkObject.getAttribute(`data-switch-${outputInterface}`), networkObjectId, replyPacket);
+                    return;
                 }
 
                 await routing(networkObjectId, replyPacket);
