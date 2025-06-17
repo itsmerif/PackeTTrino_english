@@ -8,7 +8,7 @@ Developed by Amín Pérez | May 2025
 
 ## Description
 
-**PackeTTrino** is a fully interactive network simulator built entirely with native web technologies (JavaScript, HTML, and CSS) — no external libraries or frameworks required. This educational tool allows users to design, simulate, and analyze computer networks in real time. It provides a hands-on experience for learning networking protocols, routing, and device communication.
+**PackeTTrino** is a fully interactive network simulator built entirely with native web technologies (JavaScript, HTML, and CSS) — no external libraries or frameworks required. It allows you to design, simulate, and analyze computer networks in real time. It provides a hands-on experience for learning networking protocols, routing, and device communication.
 
 ## Key Features
 
