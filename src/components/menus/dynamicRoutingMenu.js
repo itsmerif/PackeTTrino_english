@@ -70,6 +70,7 @@ async function dynamicRoutingHandler() {
     try {
         dynamicRouting();
     }catch(error) {
+        console.log(error);
         bodyComponent.render(popupMessage(`<span>Error: </span>Ha ocurrido un error al activar la funcionalidad de Enrutamiento Automático.`));
     }
     

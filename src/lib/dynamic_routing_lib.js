@@ -4,9 +4,10 @@ function getNodes() {
     nodesIp = {};
     nodesNetmask = {};
 
-    const $routerElements = document.querySelectorAll('.router');
+    const $routerElements = Array.from(document.querySelectorAll(".item-dropped"))
+    .filter($networkObject => $networkObject.getAttribute("ipv4-forwarding") === "true");
 
-    for (let i = 0; i < $routerElements.length - 1; i++) {
+    for (let i = 0; i < $routerElements.length; i++) {
 
         const $router = $routerElements[i];
         const interfaces = getInterfaces($router.id);
@@ -383,9 +384,10 @@ function groupByDefaultRules(matrix) {
 
 function dynamicRouting() {
 
-    const $routers = document.querySelectorAll(".router");
+    const $routers = Array.from(document.querySelectorAll(".item-dropped"))
+    .filter($networkObject => $networkObject.getAttribute("ipv4-forwarding") === "true");
 
-    for (let i = 0; i < $routers.length - 1; i++) {
+    for (let i = 0; i < $routers.length; i++) {
         removeRemoteRules($routers[i].id);
         autoInputRules($routers[i].id);
     }

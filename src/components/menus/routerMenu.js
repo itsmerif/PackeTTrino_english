@@ -1,12 +1,12 @@
 function router_menu() {
 
     const $menu = document.createElement("form");
-    
     $menu.classList.add("router-form", "modal", "draggable-modal");
+    $menu.setAttribute("data-id", "");
 
     $menu.innerHTML = `
 
-        <div class="window-frame"> <p id="form-router-item-id"> </p></div>
+        <div class="window-frame"> <p class="frame-title"></p></div>
 
         <div class="nav-panel">
             <button class="btn-modern-blue dark active" id="btn-basic-tab" data-tab="basic-section">Básico</button>
@@ -16,7 +16,7 @@ function router_menu() {
         <section id="basic-section">
 
             <div class="interfaces-wrapper">
-                <select class="interfaces-container"></select>
+                <select id="iface"></select>
                 <button class="btn-modern-red" id="del-iface">Eliminar</button>
                 <button class="btn-modern-blue dark" id="add-iface">Añadir</button>
             </div>
@@ -67,7 +67,7 @@ function router_menu() {
     `;
 
     $menu.addEventListener("submit", saveRouterMenu);
-    $menu.querySelector(".interfaces-container").addEventListener("change", selectGraphicInterface);
+    $menu.querySelector("#iface").addEventListener("change", selectGraphicInterface);
     $menu.querySelectorAll("input").forEach(input => input.addEventListener("change", registerNetworkChanges));
     $menu.querySelector("#del-iface").addEventListener("click", deleteGraphicInterface);
     $menu.querySelector("#add-iface").addEventListener("click", addGraphicInterface);
@@ -84,52 +84,44 @@ function router_menu() {
 function showRouterMenu(event) {
 
     event.stopPropagation();
-    event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none"; //<-- ocultamos el modal de opciones avanzadas
 
     const $networkObject = event.target.closest(".item-dropped");
-    const $menu = document.querySelector(".router-form");
-    const $interfacesContainer = $menu.querySelector(".interfaces-container");
 
-    if (quickPingToggle) { //<-- si estamos en modo de simulacion de ping visual
+    if (quickPingToggle) {
         quickPing($networkObject.id);
         return;
     }
+
+    //añadimos el identificador del equipo al menú  
+    const $menu = document.querySelector(".router-form");
+    $menu.dataset.id = $networkObject.id;
+    $menu.querySelector(".frame-title").innerHTML = $networkObject.id;
+
+    //cargamos las interfaces disponibles
     
-    if (document.querySelector(".router-form").style.display === "flex") return; //<-- si el formulario ya esta abierto, no se hace nada
+    const availableInterfaces = getInterfaces($networkObject.id);
 
-    //<--- seccion basica de red
+    loadInterfaces("router-form");
 
-    let index = 3;
-    let ip = $networkObject.getAttribute("ip-enp0s" + index);
-    let netmask = $networkObject.getAttribute("netmask-enp0s" + index);
+    availableInterfaces.forEach(iface => {
+        
+        routerChangesBuffer[iface] = { 
+            ip: $networkObject.getAttribute("ip-" + iface),
+            netmask: $networkObject.getAttribute("netmask-" + iface)
+        };
 
-    while ( ip !== null && netmask !== null ) {
+    });
 
-        $interfacesContainer.innerHTML += `<option value="enp0s${index}">enp0s${index}</option>`;
+    //cargamos la información de la primera interfaz
 
-        routerChangesBuffer["enp0s" + index] = {
-            ip: ip,
-            netmask: netmask
-        }
+    $menu.querySelector("#router-ip").value = routerChangesBuffer[availableInterfaces[0]].ip;
+    $menu.querySelector("#router-netmask").value = routerChangesBuffer[availableInterfaces[0]].netmask;
 
-        if (index === 3) {
-
-            $menu.querySelector("#router-ip").value = ip;
-            $menu.querySelector("#router-netmask").value = netmask;
-            index = 8;
-
-        } else index++;
-
-        ip = $networkObject.getAttribute("ip-enp0s" + index);
-        netmask = $networkObject.getAttribute("netmask-enp0s" + index);
-
-    }
-
-    //<--- seccion de reglas de enrutamiento
-
+    //cargamos las reglas de enrutamiento
     $menu.querySelector("#routing-rules-table").innerHTML = $networkObject.querySelector(".routing-table").querySelector("table").innerHTML;
-    
-    document.getElementById("form-router-item-id").innerHTML = $networkObject.id; // <-- se guarda el id del equipo en el formulario
+
+    //mostramos el menú
+    $networkObject.querySelector(".advanced-options-modal").style.display = "none";
     $menu.style.display = "flex";
 }
 
@@ -138,30 +130,25 @@ function saveRouterMenu(event) {
     event.preventDefault();
 
     const $menu = document.querySelector(".router-form");
-    const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
+    const $networkObject = document.getElementById($menu.dataset.id);
 
     for (let networkObjectInterface in routerChangesBuffer){
 
-        let ip = routerChangesBuffer[networkObjectInterface].ip;
-        let netmask = routerChangesBuffer[networkObjectInterface].netmask;
+        const ip = routerChangesBuffer[networkObjectInterface].ip;
+        const netmask = routerChangesBuffer[networkObjectInterface].netmask;
 
-        if (!isValidIp(ip) && ip !== "") {
+        if (ip !== "" && !isValidIp(ip)) {
             bodyComponent.render(popupMessage(`<span>Error: </span>La IP "${ip}" no es válida.`));
             return;
         }
 
-        if (!isValidIp(netmask) && netmask !== "") {
+        if (netmask !== "" && !isValidIp(netmask)) {
             bodyComponent.render(popupMessage(`<span>Error: </span>La máscara de red "${netmask}" no es válida.`));
             return;
         }
 
-        if (ip === "") {
-            deconfigureInterface($networkObject.id, networkObjectInterface);
-            removeDirectRoutingRule($networkObject.id, networkObjectInterface);
-        } else {
-            configureInterface($networkObject.id, ip, netmask, networkObjectInterface);
-            setDirectRoutingRule($networkObject.id, ip, netmask, networkObjectInterface);
-        }
+        if (ip === "") deconfigureInterface($networkObject.id, networkObjectInterface);
+        else configureInterface($networkObject.id, ip, netmask, networkObjectInterface);
 
     }
     
@@ -174,59 +161,46 @@ function closeRouterMenu(event) {
     event.stopPropagation();
     event.preventDefault();
     const $form = document.querySelector(".router-form");
-    $form.querySelector(".interfaces-container").innerHTML = "";
+    $form.querySelector("#iface").innerHTML = "";
     routerChangesBuffer = {};
     $form.style.display = "none";
 }
 
 function selectGraphicInterface(event)  {
     const $select = event.target;
-    const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
-    const $form = document.querySelector(".router-form");
-    let ip = $networkObject.getAttribute("ip-" + $select.value);
-    let netmask = $networkObject.getAttribute("netmask-" + $select.value);
-    $form.querySelector("#router-ip").value = ip;
-    $form.querySelector("#router-netmask").value = netmask;
+    const $menu = document.querySelector(".router-form");
+    const $networkObject = document.getElementById($menu.dataset.id);
+    const ip = routerChangesBuffer[$select.value].ip;
+    const netmask = routerChangesBuffer[$select.value].netmask;
+    $menu.querySelector("#router-ip").value = ip;
+    $menu.querySelector("#router-netmask").value = netmask;
 }
 
 function registerNetworkChanges()  {
     const $form = document.querySelector(".router-form");
-    let ip = $form.querySelector("#router-ip").value;
-    let netmask = $form.querySelector("#router-netmask").value;
-    routerChangesBuffer[$form.querySelector(".interfaces-container").value] = {
-        ip: ip,
-        netmask: netmask
-    }
+    const iface = $form.querySelector("#iface").value;
+    const ip = $form.querySelector("#router-ip").value;
+    const netmask = $form.querySelector("#router-netmask").value;
+    routerChangesBuffer[iface] = { ip: ip, netmask: netmask };
 }
 
 function addGraphicInterface(event) {
 
     event.preventDefault();
 
-    const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
-    const $interfacesContainer = document.querySelector(".router-form").querySelector(".interfaces-container");
-
-    let index = 10;
-    let ip = $networkObject.getAttribute("ip-enp0s" + index);
-    let netmask = $networkObject.getAttribute("netmask-enp0s" + index);
-
-    while ( ip !== null && netmask !== null ) {
-        index++;
-        ip = $networkObject.getAttribute("ip-enp0s" + index);
-        netmask = $networkObject.getAttribute("netmask-enp0s" + index);
-    }
-
-    $networkObject.setAttribute("ip-enp0s" + index, "");
-    $networkObject.setAttribute("netmask-enp0s" + index, "");
-    $networkObject.setAttribute("mac-enp0s" + index, getRandomMac());
-    $networkObject.setAttribute("data-switch-enp0s" + index, "");
-    $networkObject.querySelector("img").draggable = true;
+    const $menu = document.querySelector(".router-form");
+    const $networkObject = document.getElementById($menu.dataset.id);
+    const $interfacesContainer = $menu.querySelector("#iface");
+    
+    //añadimos la interfaz
+    addInterface($networkObject.id);
+    const index = maxIfaceIndex($networkObject.id);
+    
+    //añadimos la opción de la nueva interfaz
     $interfacesContainer.innerHTML += `<option value="enp0s${index}">enp0s${index}</option>`;
     
-    routerChangesBuffer["enp0s" + index] = {
-        ip: "",
-        netmask: ""
-    }
+    //añadimos una nueva referencia a la interfaz
+    routerChangesBuffer[`enp0s${index}`] = { ip: "",netmask: "" };
 
     bodyComponent.render(popupMessage(`Interfaz enp0s${index} agregada con éxito.`));
   
@@ -236,10 +210,10 @@ function deleteGraphicInterface(event) {
 
     event.preventDefault();
 
-    const $routerForm = document.querySelector(".router-form");
-    const $networkObject = document.getElementById(document.getElementById("form-router-item-id").innerHTML);
-    const currentInterface = $routerForm.querySelector(".interfaces-container").value;
-    const fixedInterfaces = ["enp0s3", "enp0s8", "enp0s9"];
+    const $menu = document.querySelector(".router-form");
+    const $networkObject = document.getElementById($menu.dataset.id);
+    const currentInterface = $menu.querySelector("#iface").value;
+    const fixedInterfaces = ["enp0s3"];
 
     if (fixedInterfaces.includes(currentInterface)) {
         bodyComponent.render(popupMessage(`<span>Error: </span>La interfaz ${currentInterface} no se puede eliminar.`));
@@ -251,14 +225,9 @@ function deleteGraphicInterface(event) {
         return;
     }
 
-    $networkObject.removeAttribute("ip-" + currentInterface);
-    $networkObject.removeAttribute("netmask-" + currentInterface);
-    $networkObject.removeAttribute("mac-" + currentInterface);
-    $networkObject.removeAttribute("data-switch-" + currentInterface);
-    
-    removeDirectRoutingRule($networkObject.id, currentInterface);
-
-    $routerForm.querySelector(".interfaces-container").querySelectorAll("option").forEach($option => {
+    deleteInterface($networkObject.id, currentInterface);
+   
+    $menu.querySelector("#iface").querySelectorAll("option").forEach($option => {
         if ($option.value === currentInterface) $option.remove();
     });
 
@@ -287,7 +256,7 @@ function addRoutingRuleGraphicHandler(event) {
     event.preventDefault();
 
     const $menu = document.querySelector(".router-form");
-    const networkObjectId = document.querySelector(".router-form #form-router-item-id").innerHTML;
+    const networkObjectId = $menu.dataset.id;
     const $networkObject = document.getElementById(networkObjectId);
     const $routingSection = $menu.querySelector("#routing-rules-section");
 
@@ -314,7 +283,7 @@ function removeRoutingRuleGraphicHandler(event) {
     event.preventDefault();
 
     const $menu = document.querySelector(".router-form");
-    const networkObjectId = document.querySelector(".router-form #form-router-item-id").innerHTML;
+    const networkObjectId = $menu.dataset.id;
     const $networkObject = document.getElementById(networkObjectId);
     const $routingSection = $menu.querySelector("#routing-rules-section");
 
@@ -344,7 +313,7 @@ function addRoutingRuleGraphic(networkObjectId, destination, gatewayInterface, n
     //<-- validamos la interfaz de salida
     
     if (!(getInterfaces(networkObjectId)).includes(gatewayInterface)) throw new Error(`Error: no se reconoce la interfaz "${gatewayInterface}".`);
-    const [gatewayIp, gatewayNetmask, interfaceMac] = getInfoFromInterface(networkObjectId, gatewayInterface);
+    const [gatewayIp, gatewayNetmask, interfaceMac] = getIfaceData(networkObjectId, gatewayInterface);
     if (!gatewayIp) throw new Error(`Error: la interfaz "${gatewayInterface}" no está configurada.`);
 
     //<-- validamos el siguiente salto

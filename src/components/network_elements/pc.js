@@ -40,8 +40,8 @@ function PcObject(x, y) {
     attr("netmask-enp0s3", "");
     attr("mac-enp0s3", getRandomMac());
     attr("data-switch-enp0s3", "");
-    attr("data-gateway", "");
     attr("filesystem", JSON.stringify(filesystem));
+    attr("ipv4-forwarding", "false");
 
     //añadimos el resolver
     attr("resolved", "true");

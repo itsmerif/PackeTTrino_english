@@ -9,7 +9,7 @@ async function serviceProcessor(networkObjectId, packet, networkObjectInterface)
 
         if (availableServices.includes("dhclient")) {
 
-            const replyPacket = await dhclient_service(networkObjectId, packet);
+            const replyPacket = await dhclient_service(networkObjectId, packet, networkObjectInterface);
 
             if (replyPacket) {
 

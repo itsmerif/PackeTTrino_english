@@ -1,16 +1,10 @@
 async function packetProcessor_Router(switchId, networkObjectId, packet) {
 
-    if (visualToggle) await visualize(switchId, networkObjectId, packet); //<-- animacion del paquete
-
     const $networkObject = document.getElementById(networkObjectId);
     const [networkObjectIp, networkObjectNetmask, networkObjectMac] = getInterfaceSwitchInfo(networkObjectId, switchId);
     const networkObjectInterface = switchToInterface(networkObjectId, switchId); // <-- obtenemos la interfaz de entrada
     const availableIps = getAvailableIps(networkObjectId); // <-- obtenemos la lista de IPs disponibles
     const activeServices = getAvailableServices(networkObjectId); // <-- obtenemos la lista de servicios activos
-
-    //si la interfaz no está correctamente configurada, no se procesa nada
-
-    if (!networkObjectIp || !networkObjectNetmask) return;
 
     //tratamiento del TTL del paquete
 
@@ -67,6 +61,7 @@ async function packetProcessor_Router(switchId, networkObjectId, packet) {
                 if (outputInterface !== "") {
                     addPacketTraffic(replyPacket);
                     await switchProcessor($networkObject.getAttribute(`data-switch-${outputInterface}`), networkObjectId, replyPacket);
+                    return;
                 }
 
                 await routing(networkObjectId, replyPacket);
