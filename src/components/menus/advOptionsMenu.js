@@ -26,7 +26,7 @@ function advancedOptionsObject(...options) {
 function terminalOptionButton() {
     const $button = document.createElement("button");
     $button.id = "terminal-option";
-    $button.innerHTML = "Modo Terminal";
+    $button.innerHTML = "Terminal";
     $button.setAttribute("onclick", "showTerminal(event)");
     return $button;
 }
@@ -34,7 +34,7 @@ function terminalOptionButton() {
 function arpOptionButton() {
     const $button = document.createElement("button");
     $button.id = "arp-option";
-    $button.innerHTML = "Ver Tabla ARP";
+    $button.innerHTML = "See ARP Table";
     $button.setAttribute("onclick", "showObjectModalTable(event, '.arp-table')");
     return $button;
 }
@@ -42,7 +42,7 @@ function arpOptionButton() {
 function cacheDnsOptionButton() {
     const $button = document.createElement("button");
     $button.id = "cache-dns-option";
-    $button.innerHTML = "Ver Caché DNS";
+    $button.innerHTML = "View DNS Cache";
     $button.setAttribute("onclick", "showObjectModalTable(event, '.cache-dns-table')");
     return $button;
 }
@@ -50,7 +50,7 @@ function cacheDnsOptionButton() {
 function browserOptionButton() {
     const $button = document.createElement("button");
     $button.id = "browser-option";
-    $button.innerHTML = "Navegador";
+    $button.innerHTML = "Browser";
     $button.setAttribute("onclick", "openBrowser(event)");
     return $button;
 }
@@ -58,7 +58,7 @@ function browserOptionButton() {
 function deleteOptionButton() {
     const $button = document.createElement("button");
     $button.id = "delete-option";
-    $button.innerHTML = "Eliminar";
+    $button.innerHTML = "Delete";
     $button.setAttribute("onclick", "deleteItem(event)");
     return $button;
 }
@@ -66,7 +66,7 @@ function deleteOptionButton() {
 function firewallTableOptionButton() {
     const $button = document.createElement("button");
     $button.id = "firewall-option";
-    $button.innerHTML = "Ver Tabla Firewall";
+    $button.innerHTML = "View Firewall Table";
     $button.setAttribute("onclick", "showObjectModalTable(event, '.firewall-table')");
     return $button;
 }
@@ -74,7 +74,7 @@ function firewallTableOptionButton() {
 function routingTableOptionButton() {
     const $button = document.createElement("button");
     $button.id = "routing-option";
-    $button.innerHTML = "Ver Tabla de Enrutamiento";
+    $button.innerHTML = "View Routing Table";
     $button.setAttribute("onclick", "showObjectModalTable(event, '.routing-table')");
     return $button;
 }
@@ -82,7 +82,7 @@ function routingTableOptionButton() {
 function leasesTableOptionButton() {
     const $button = document.createElement("button");
     $button.id = "dhcp-option";
-    $button.innerHTML = "Ver Tabla de Alquileres";
+    $button.innerHTML = "View Leases Table";
     $button.setAttribute("onclick", "showObjectModalTable(event, '.dhcp-table')");
     return $button;
 }
@@ -90,7 +90,7 @@ function leasesTableOptionButton() {
 function dnsRecordsOptionButton() {
     const $button = document.createElement("button");
     $button.id = "dns-option";
-    $button.innerHTML = "Ver Tabla de Registros DNS";
+    $button.innerHTML = "View DNS Records Table";
     $button.setAttribute("onclick", "showObjectModalTable(event, '.dns-table')");
     return $button;
 }
@@ -98,7 +98,7 @@ function dnsRecordsOptionButton() {
 function dhcpServerConfig() {
     const $button = document.createElement("button");
     $button.id = "dhcp-server-config";
-    $button.innerHTML = "Configurar Servidor DHCP";
+    $button.innerHTML = "Configure DHCP Server";
     $button.setAttribute("onclick", "showDhcpMenu(event)");
     return $button;
 }
@@ -106,7 +106,7 @@ function dhcpServerConfig() {
 function dhcpRelayConfig() {
     const $button = document.createElement("button");
     $button.id = "dhcp-relay-config";
-    $button.innerHTML = "Configurar Relay DHCP";
+    $button.innerHTML = "Configure DHCP Relay";
     $button.setAttribute("onclick", "showDhcpRelayMenu(event)");
     return $button;
 }
@@ -114,7 +114,7 @@ function dhcpRelayConfig() {
 function dnsServerConfig() {
     const $button = document.createElement("button");
     $button.id = "dns-server-config";
-    $button.innerHTML = "Configurar Servidor DNS";
+    $button.innerHTML = "Configure DNS Server";
     $button.setAttribute("onclick", "showDnsServerMenu(event)");
     return $button;
 }
