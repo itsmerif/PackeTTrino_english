@@ -5,14 +5,14 @@ function packetTracer() {
 
     $packetTracer.innerHTML = `
 
-        <div class="window-frame"><p>Rastreador de Paquetes</p></div>
+        <div class="window-frame"><p>Packet Tracker</p></div>
 
         <div class="filter-traffic">
             <input type="text">
-            <button class="btn-blue" id="filter-traffic-button">Filtrar</button>
-            <button class="btn-blue" id="clean-traffic-button">Limpiar</button>
+            <button class="btn-blue" id="filter-traffic-button">Filter</button>
+            <button class="btn-blue" id="clean-traffic-button">Clear</button>
             <select id="filter-by-device">
-                <option value="all">Todos</option>
+                <option value="all">All</option>
             </select>
         </div>
 
@@ -84,7 +84,7 @@ function showPacketTraffic() {
     $packetTraffic.style.display = "flex";
 }
 
-/**ESTA FUNCION LIMPIA EL BUFFER GENERAL DE PAQUETES Y LA TABLA DE TRAFICO */
+/**THIS FUNCTION CLEARS THE OVERALL PACKET BUFFER AND TRAFFIC TABLE*/
 function cleanPacketTraffic() {
 
     trafficBuffer = [];
@@ -99,7 +99,7 @@ function cleanPacketTraffic() {
 
 }
 
-/**ESTA FUNCION FILTRA LA TABLA DE TRAFICO USANDO UNA BUSQUEDA */
+/**THIS FUNCTION FILTERS THE TRAFFIC TABLE USING A SEARCH*/
 function filterPacketTraffic() {
 
     const $packetTraffic = document.querySelector(".packet-traffic");
@@ -137,13 +137,13 @@ function filterPacketTraffic() {
 
 }
 
-/**ESTA FUNCION GENERA UN MODAL CON INFORMACION DETALLADA DE CADA PAQUETE DE LA TABLA DE TRAFICO */
+/**THIS FUNCTION GENERATES A MODAL WITH DETAILED INFORMATION ABOUT EACH PACKET IN THE TRAFFIC TABLE*/
 function showPacketFields(event) {
     //document.querySelector(".modal-overlay").style.display = "block";
     bodyComponent.render(packetInfo(event));
 }
+/**THIS FUNCTION DELETES THE DETAILED PACKET INFORMATION MODAL*/
 
-/**ESTA FUNCION ELIMINA EL MODAL DE INFORMACION DETALLADA DE PAQUETES */
 function closePacketFieldsModal() {
     const modalComponent = document.querySelector(".packet-fields-modal-container");
     document.querySelector(".modal-overlay").style.display = "none";
@@ -151,7 +151,7 @@ function closePacketFieldsModal() {
     modalComponent.remove();
 }
 
-/**ESTA FUNCION AGREGA LOS DISPOSITIVOS ACTUALES A LA TABLA DE TRAFICO PARA FILTRARLOS */
+/**THIS FUNCTION ADDS CURRENT DEVICES TO THE TRAFFIC TABLE FOR FILTERING*/
 function insertDevicesToTraffic() {
     const $packetTraffic = document.querySelector(".packet-traffic");
     const $packetTrafficSelect = $packetTraffic.querySelector("#filter-by-device");
@@ -163,14 +163,14 @@ function insertDevicesToTraffic() {
     });
 }
 
-/**ESTA FUNCION REESTABLECE EL SELECTOS DE DISPOSITIVOS DE LA TABLA DE TRAFICO */
+/**THIS FUNCTION RESETS THE DEVICE SELECT IN THE TRAFFIC TABLE*/
 function removeDevicesFromTraffic() {
     const $packetTraffic = document.querySelector(".packet-traffic");
     const $packetTrafficSelect = $packetTraffic.querySelector("#filter-by-device");
-    $packetTrafficSelect.innerHTML = `<option value="all">Todos</option>`;
+    $packetTrafficSelect.innerHTML = `<option value="all">All</option>`;
 }
 
-/**ESTA FUNCION FILTRA LA TABLA DE TRAFICO POR DISPOSITIVO */
+/**THIS FUNCTION FILTER TRAFFIC TABLE BY DEVICE */
 function filterPacketTrafficbyDevice() {
     const $packetTraffic = document.querySelector(".packet-traffic");
     const $packetTrafficTable = $packetTraffic.querySelector("table");
@@ -199,8 +199,10 @@ function filterPacketTrafficbyDevice() {
 
 }
 
-/**ESTA FUNCION OCULTA EL PANEL DE TRAFICO DE PAQUETES */
+/**This function hides the parcel traffic panel*/
 function closeTraffic() {
     const $traffic = document.querySelector(".packet-traffic");
     $traffic.style.display = "none";
 }
+
+//** translated by itsmeRiF **/
