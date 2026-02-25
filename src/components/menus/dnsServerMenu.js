@@ -9,8 +9,8 @@ function dns_server_menu() {
         <div class="window-frame"> <p class="frame-title"></p> </div>
 
         <div class="nav-panel">
-            <button class="btn-modern-blue dark active" id="btn-basic-tab" data-tab="basic-section">Básico</button>
-            <button class="btn-modern-blue dark" id="btn-records" data-tab="records-section">Registros</button>
+            <button class="btn-modern-blue dark active" id="btn-basic-tab" data-tab="basic-section">Basic</button>
+            <button class="btn-modern-blue dark" id="btn-records" data-tab="records-section">Records</button>
         </div>
 
         <section id="basic-section">
@@ -18,22 +18,22 @@ function dns_server_menu() {
             <section id="network-section" class="hidden">
 
                 <div class="form-item">
-                    <label for="iface">Interfaz:</label>
+                    <label for="iface">Interface:</label>
                     <select id="iface" name="iface"></select>
                 </div>
 
                 <div class="form-item">
-                    <label for="ip">Dirección IP (IPv4):</label>
+                    <label for="ip">IP Address (IPv4):</label>
                     <input type="text" id="ip" name="ip">
                 </div>
 
                 <div class="form-item">
-                    <label for="netmask">Máscara de Red:</label>
+                    <label for="netmask">Subnet Mask:</label>
                     <input type="text" id="netmask" name="netmask">
                 </div>
 
                 <div class="form-item">
-                    <label for="gateway">Puerta de Enlace:</label>
+                    <label for="gateway">Default Gateway:</label>
                     <input type="text" id="gateway" name="gateway">
                 </div>
 
@@ -42,20 +42,20 @@ function dns_server_menu() {
             <section id ="dns-server-section">
 
                 <div class="form-item">
-                    <label for="dns-recursive">Servidor DNS Recursivo:</label>
+                    <label for="dns-recursive">Recursive DNS Server:</label>
                     <input class="btn-toggle" type="checkbox" id="dns-recursive" name="dns-recursive">
                 </div>
 
                 <div class="form-item">
-                    <label for="dns-cache">Servidor DNS Caché:</label>
+                    <label for="dns-cache">Cache DNS Server:</label>
                     <input class="btn-toggle" type="checkbox" id="dns-cache" name="dns-cache">
                 </div>
 
             </section>
 
             <div class="button-wrapper">
-                <button class="btn-modern-blue dark" type="submit">Guardar</button>
-                <button class="btn-modern-red dark" id="close-btn">Cerrar</button>
+                <button class="btn-modern-blue dark" type="submit">Save</button>
+                <button class="btn-modern-red dark" id="close-btn">Close</button>
             </div>
 
         </section>
@@ -63,12 +63,12 @@ function dns_server_menu() {
         <section id="records-section" class="hidden">
 
             <div class="form-item">
-                <label for="domain">Dominio:</label>
+                <label for="domain">Domain:</label>
                 <input type="text" id="domain" name="domain">
             </div>
 
             <div class="form-item">
-                <label for="type">Tipo de Registro:</label>
+                <label for="type">Record Type:</label>
                 <select id="type" name="type">
                     <option value="A">A</option>
                     <option value="CNAME">CNAME</option>
@@ -78,27 +78,27 @@ function dns_server_menu() {
             </div>
 
             <div class="form-item">
-                <label for="value">Valor:</label>
+                <label for="value">Value:</label>
                 <input type="text" id="value" name="value">
             </div>
 
             <div class="soa-record-wrapper hidden">
 
                 <div class="form-item">
-                    <label for="serial">Número de Serie:</label>
+                    <label for="serial">Serial Number:</label>
                     <input type="text" id="serial" name="serial">
                 </div> 
 
                 <div class="form-item">
-                    <label for="cache-ttl">TTL de Caché:</label>
+                    <label for="cache-ttl">Cache TTL:</label>
                     <input type="text" id="cache-ttl" name="cache-ttl">
                 </div>
 
             </div>
 
             <div class="button-wrapper">
-                <button class="btn-modern-blue dark" id="btn-add-record" style="padding: 5px;">Añadir Registro</button>
-                <button class="btn-modern-red dark" id="btn-del-record" style="padding: 5px;">Eliminar Registro</button>
+                <button class="btn-modern-blue dark" id="btn-add-record" style="padding: 5px;">Add Record</button>
+                <button class="btn-modern-red dark" id="btn-del-record" style="padding: 5px;">Delete Record</button>
             </div>
             
             <div class="table-wrapper">
@@ -128,7 +128,7 @@ function showDnsServerMenu(event) {
     
     const $networkObject = event.target.closest(".item-dropped");
 
-    if (quickPingToggle) { //<-- comprobamos si estamos en modo icmptryout
+    if (quickPingToggle) { //<-- We check if we are in icmptryout mode
         quickPing($networkObject.id);
         return;
     }
@@ -140,11 +140,11 @@ function showDnsServerMenu(event) {
     const isRecursive = $networkObject.getAttribute("recursion");
     const isCache = $networkObject.getAttribute("resolved");
     
-    //cargamos las interfaces disponibles
+//Load the available interfaces
 
     loadInterfaces("dns-form");
     
-    //atributos del equipo
+    //device attributes
     if (isDnsServer) {
         $menu.querySelector("#ip").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
         $menu.querySelector("#netmask").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
@@ -152,13 +152,13 @@ function showDnsServerMenu(event) {
         $menu.querySelector("#network-section").classList.remove("hidden");
     }
 
-    //atributos del servicio
+    //service attributes
     $menu.querySelector("#dns-recursive").checked = isRecursive === "true";
     $menu.querySelector("#dns-cache").checked = isCache === "true";
     $menu.querySelector("#records-table").innerHTML = $networkObject.querySelector(".dns-table").querySelector("table").innerHTML;
     $menu.querySelector(".frame-title").innerHTML = $networkObject.id;
 
-    //mostramos el menú
+    //Display the menu
     event.target.closest(".item-dropped").querySelector(".advanced-options-modal").style.display = "none";
     $menu.style.display = "flex";
 }
@@ -184,11 +184,11 @@ function saveDnsServerMenu(event) {
         if (isDnsServer) {
 
             if (!isEmptyForm) {
-                if (!isValidIp(ip)) throw new Error(`Error: La IP "${ip}" no es válida.`);
-                if (!isValidIp(netmask)) throw new Error(`Error: La máscara de red "${netmask}" no es válida.`);
+                if (!isValidIp(ip)) throw new Error(`Error: The IP "${ip}" is not valid.`);
+                if (!isValidIp(netmask)) throw new Error(`Error: The netmask "${netmask}" is invalid.`);
             }
 
-            if (gateway !== "" && !isValidIp(gateway)) throw new Error(`Error: La puerta de enlace "${gateway}" no es válida.`);
+            if (gateway !== "" && !isValidIp(gateway)) throw new Error(`Error: The gateway "${gateway}" is invalid.`);
 
             configureInterface($serverObject.id, ip, netmask, networkObjectInterface);
             setDefaultGateway($serverObject.id, gateway);
@@ -198,7 +198,7 @@ function saveDnsServerMenu(event) {
         $serverObject.setAttribute("recursion", isRecursive);
         $serverObject.setAttribute("resolved", isCache);
 
-        bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
+        bodyComponent.render(popupMessage(`Changes were saved successfully.`));
 
     } catch (error) {
 
@@ -247,7 +247,7 @@ function addDnsRecordHandler(event) {
     const serial = $menu.querySelector("#serial").value;
     const cacheTTL = $menu.querySelector("#cache-ttl").value;
 
-    const dnsRecordTypes = { //<-- mapeo de los tipos de registros a las funciones de validacion
+    const dnsRecordTypes = { //<-- Mapping record types to validation functions
         "SOA": () => isValidSOARecord(serverObjectId, domain, value, serial, cacheTTL),
         "NS": () => isValidNSRecord(serverObjectId, domain, value),
         "A": () => isValidARecord(serverObjectId, domain, value),
@@ -256,7 +256,7 @@ function addDnsRecordHandler(event) {
 
     try {
 
-        dnsRecordTypes[recordType.toUpperCase()](); //<-- validamos el registro
+        dnsRecordTypes[recordType.toUpperCase()](); //<-- Validate the record
         
         let record = new dnsRecord(domain, recordType, value);
 
@@ -294,7 +294,7 @@ function recordTypeHandler(event) {
     const $recordType = $menu.querySelector("#type");
     const $serial = $menu.querySelector("#serial");
     const $soaRecordWrapper = $menu.querySelector(".soa-record-wrapper");
-    $serial.value = (new Date()).getTime(); //generamos un numero de serie 
+    $serial.value = (new Date()).getTime(); //Generate a serial number
     if ($recordType.value === "SOA") $soaRecordWrapper.classList.remove("hidden");
     else $soaRecordWrapper.classList.add("hidden");
 }
