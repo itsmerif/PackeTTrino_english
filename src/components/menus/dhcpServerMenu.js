@@ -86,18 +86,18 @@ function dhcp_server_menu() {
         <section class="reservations-section" style="display: none;">
 
             <div>
-                <label for="mac-for-reserve">Dirección MAC:</label>
+                <label for="mac-for-reserve">MAC Address:</label>
                 <input type="text" id="mac-for-reserve" name="mac-for-reserve" 
                 pattern="^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$" placeholder="00:00:00:00:00:00">
             </div>
 
             <div>
-                <label for="ip-to-reserve">Dirección IP (IPv4):</label>
+                <label for="ip-to-reserve">IP Address (IPv4):</label>
                 <input type="text" id="ip-to-reserve" name="ip-to-reserve" 
                 pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" placeholder="192.168.0.1">
             </div>
             
-            <button class="btn-modern-blue dark small" id="add-reservation">Agregar</button>
+            <button class="btn-modern-blue dark small" id="add-reservation">Add</button>
 
             <div class="reservations-table-wrapper">
                 <table id="reservations-table" class="inner-table">
@@ -140,15 +140,16 @@ function showDhcpMenu(event) {
     $menu.dataset.id = networkObjectId;
     const networkObjectInterface = getInterfaces(networkObjectId)[0];
 
-    //cargamos las interfaces disponibles
+
+	//Load available interfaces
     loadInterfaces("dhcp-form");
 
-    //atributos del servicio
+    //Service attributes
     const $reservationsTable = $menu.querySelector("#reservations-table");
     const isDhcpServer = networkObjectId.startsWith("dhcp-server-");
     const reservations = genDhcpReservationsRows(networkObjectId);
 
-    //añadimos los atributos del servidor al menú
+    // adding server attributes to the menu
     $menu.querySelector(".frame-title").innerHTML = networkObjectId;
     $menu.querySelector("#ip").value = $networkObject.getAttribute(`ip-${networkObjectInterface}`);
     $menu.querySelector("#netmask").value = $networkObject.getAttribute(`netmask-${networkObjectInterface}`);
@@ -206,7 +207,7 @@ function saveDhcpMenu(event) {
         $networkObject.setAttribute("dhcp-offer-lease-time", $menu.querySelector("#dhcp-offer-lease-time").value);
         $networkObject.setAttribute("dhcp-listen-on-interfaces", listenOnInterfaces.join(","));
 
-        bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
+        bodyComponent.render(popupMessage(`Changes saved successfully.`));
 
     }catch (error) {
 
@@ -224,7 +225,7 @@ function validateDHCPMenu() {
     const availableInterfaces = getInterfaces($networkObject.id);
     const isDhcpServer = $networkObject.id.startsWith("dhcp-server-");
 
-    //obtenemos todos los campos del formulario
+    // retrieving all form fields
 
     const ip = $menu.querySelector("#ip").value;
    
@@ -255,9 +256,9 @@ function validateDHCPMenu() {
     //validamos los campos
 
     if (isDhcpServer) {
-        if (!isValidIp(ip)) throw new Error(`Error: se esperaba una ip válida en vez de "${ip}".`);
-        if (!isValidIp(netmask)) throw new Error(`Error: se esperaba una máscara de red válida en vez de "${netmask}".`);
-        if (gateway !== "" && !isValidIp(gateway)) throw new Error(`Error: se esperaba una puerta de enlace válida en vez de "${gateway}".`);
+        if (!isValidIp(ip)) throw new Error(`Error: A valid IP address was expected instead of "${ip}".`);
+        if (!isValidIp(netmask)) throw new Error(`Error: A valid network mask was expected instead of "${netmask}".`);
+        if (gateway !== "" && !isValidIp(gateway)) throw new Error(`Error: A valid gateway was expected instead of "${gateway}".`);
     }
 
     if (!isDhcpModuleEmpty()) {
@@ -364,7 +365,7 @@ function genDhcpReservationsRows(networkObjectId) {
                 <button 
                 class="btn-modern-blue dark small no-animation" 
                 onclick="removeDhcpReservationHandler('${networkObjectId}', '${reservation}',event)">
-                    Eliminar
+                    Delete
                 </button>
             </td>
         `;
