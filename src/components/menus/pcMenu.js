@@ -13,27 +13,27 @@ function pc_menu() {
         <section class="basic-section">
 
             <div class="form-item">
-                <label for="iface">Interfaz:</label>
+                <label for="iface">Interface:</label>
                 <select id="iface" name="iface"></select>
             </div>
 
             <div class="form-item">
-                <label for="ip">Dirección IP (ipv4):</label>
+                <label for="ip">IP Address (ipv4):</label>
                 <input type="text" id="ip" name="ip">
             </div>
 
             <div class="form-item">
-                <label for="netmask">Máscara de Red:</label>
+                <label for="netmask">Subnet mask:</label>
                 <input type="text" id="netmask" name="netmask">
             </div>
 
             <div class="form-item">
-                <label for="gateway">Puerta de enlace:</label>
+                <label for="gateway">Default Gateway:</label>
                 <input type="text" id="gateway" name="gateway">
             </div>
     
             <div class="form-item">
-                <label for="dns-server">Servidores DNS:</label>
+                <label for="dns-server">DNS Server:</label>
                 <input type="text" id="dns-server" name="dns-server">
             </div>
 
@@ -42,12 +42,12 @@ function pc_menu() {
         <section class="modes-wrapper">
 
             <div class="form-item" id="dhcp-mode">
-                <label for="dhcp-toggle"> Modo DHCP: </label>
+                <label for="dhcp-toggle"> DHCP Mode: </label>
                 <input class="btn-toggle" type="checkbox" id="dhcp-toggle" name="dhcp-toggle">
             </div>
 
             <div class="form-item hidden" id="web-server-mode">
-                <label for="web-server-toggle"> Servidor Web: </label>
+                <label for="web-server-toggle"> Web Server: </label>
                 <input class="btn-toggle" type="checkbox" id="web-server-toggle" name="web-server-toggle">
             </div>
 
@@ -56,14 +56,14 @@ function pc_menu() {
         <section class="button-container">
 
             <div id="dhcp-buttons">
-                <button class="btn-modern-blue" type="submit" id="get-btn">Obtener IP</button>
-                <button class="btn-modern-blue" type="submit" id="renew-btn">Renovar IP</button>
-                <button class="btn-modern-blue" type="submit" id="release-btn">Liberar IP</button>
+                <button class="btn-modern-blue" type="submit" id="get-btn">Obtain IP Address/button>
+                <button class="btn-modern-blue" type="submit" id="renew-btn">Renew IP Address</button>
+                <button class="btn-modern-blue" type="submit" id="release-btn">Release IP</button>
             </div>
             
             <div id="basic-buttons">
-                <button class="btn-modern-blue" type="submit" id="save-btn">Guardar</button>
-                <button class="btn-modern-red"  type="submit" id="close-btn">Cerrar</button>
+                <button class="btn-modern-blue" type="submit" id="save-btn">Save</button>
+                <button class="btn-modern-red"  type="submit" id="close-btn">Close</button>
             </div>
 
         </section>
@@ -96,11 +96,11 @@ function showPcMenu(networkObjectId) {
     const $buttonSection = $menu.querySelector(".button-container");
     const activeServices = getAvailableServices(networkObjectId);
     
-    //cargamos las interfaces disponibles
+  //Load the available interfaces
 
     loadInterfaces("pc-form");
 
-    //configuracion basica de red
+  //Basic network configuration
 
     $menu.querySelector(".frame-title").innerHTML = networkObjectId;
     $menu.querySelector("#ip").value = $networkObject.getAttribute(`ip-${iface}`);
@@ -108,7 +108,7 @@ function showPcMenu(networkObjectId) {
     $menu.querySelector("#gateway").value = getDefaultGateway($networkObject.id);
     $menu.querySelector("#dns-server").value = (getDnsServers(networkObjectId) ?? "").join(",");
 
-    //comprobamos los servicios activos
+    //Check active services
 
     if (activeServices.includes("dhclient")) loadDhcpMenuConf();
 
@@ -117,7 +117,7 @@ function showPcMenu(networkObjectId) {
         if ($networkObject.getAttribute("apache2") === "true") $menu.querySelector("#web-server-toggle").checked = true;
     }
 
-    //mostramos el menú
+    //Display menu
     $menu.classList.remove("hidden");
 }
 
@@ -139,13 +139,13 @@ async function pcMenuButtonsHandler(event) {
     const newDnsServers = ($menu.querySelector("#dns-server").value).split(",").map(ip => ip.trim()).filter(ip => ip !== "");
     const isEmptyForm = newIp === "" && newNetmask === "" && newGateway === "" && newDnsServers.length === 0;
 
-    //funciones del menú
+    //menu functions
 
     const validateForm = () => {
-        if (!isValidIp(newIp)) throw new Error(`Error: La IP "${newIp}" no es valida.`);
-        if (!isValidIp(newNetmask)) throw new Error(`Error: La máscara de red "${newNetmask}" no es valida.`);
-        if (newGateway !== "" && !isValidIp(newGateway)) throw new Error(`Error: La puerta de enlace "${newGateway}" no es valida.`);
-        if (newDnsServers.length !== 0 && !newDnsServers.every(isValidIp)) throw new Error(`Error: Servidores DNS no válidos.`);
+        if (!isValidIp(newIp)) throw new Error(`Error: The IP address "${newIp}" is invalid.`);
+        if (!isValidIp(newNetmask)) throw new Error(`Error: The subnet mask "${newNetmask}" is invalid.`);
+        if (newGateway !== "" && !isValidIp(newGateway)) throw new Error(`Error: The defaulty gateway "${newGateway}" is invalid.`);
+        if (newDnsServers.length !== 0 && !newDnsServers.every(isValidIp)) throw new Error(`Error: Invalid DNS servers.`);
     }
 
     const updatePcFormFields = () => {
@@ -174,7 +174,7 @@ async function pcMenuButtonsHandler(event) {
             configureInterface($networkObject.id, newIp, newNetmask, networkInterface);
             setDefaultGateway($networkObject.id, newGateway);
             setDnsServers($networkObject.id, newDnsServers);
-            bodyComponent.render(popupMessage("Los cambios se han aplicado correctamente."));
+            bodyComponent.render(popupMessage("Changes have been applied successfully."));
         },
 
         "get-btn": async () => {
@@ -194,7 +194,7 @@ async function pcMenuButtonsHandler(event) {
 
     }
     
-    //ejecutamos la función correspondiente
+//execute the corresponding function
 
     try {
         if (buttonId in buttonFunctions) await buttonFunctions[buttonId]();
@@ -249,11 +249,11 @@ function loadDhcpMenuConf() {
     const $inputFields = $menu.querySelectorAll("input[type='text']");
     const iface = $menu.querySelector("#iface").value;
 
-    //mostramos el modo dhcp
+   // Display DHCP mode
 
     $menu.querySelector("#dhcp-mode").classList.remove("hidden");
     
-    //el dhcp client no está habilitado para esa interfaz
+    //The DHCP client is not enabled for this interface
 
     if ($networkObject.getAttribute(`data-dhclient-${iface}`) !== "true") {
         $dhcpButtons.classList.add("hidden");
@@ -262,13 +262,13 @@ function loadDhcpMenuConf() {
         return;
     }
 
-    //mostramos los botones
+    //display buttons
 
     $dhcpToggle.checked = true;
     $dhcpButtons.classList.remove("hidden");
     $inputFields.forEach(input => input.disabled = true);
 
-    //si tiene una ip asignada, se muestran los botones de renovación y liberación
+    //if an IP address is assigned, the renewal and release buttons are displayed
 
     if ($networkObject.getAttribute(`ip-${iface}`) !== "") {
         $dhcpButtons.querySelector("#renew-btn").classList.remove("hidden");
@@ -277,10 +277,12 @@ function loadDhcpMenuConf() {
         return;
     }
 
-    //si no tiene una ip asignada, se muestran los botones de obtención
+// if no IP address is assigned, the obtain buttons are displayed
 
     $dhcpButtons.querySelector("#get-btn").classList.remove("hidden");
     $dhcpButtons.querySelector("#renew-btn").classList.add("hidden");
     $dhcpButtons.querySelector("#release-btn").classList.add("hidden");
 
 }
+
+/** translated into English by itsmeRiF **/
