@@ -10,22 +10,22 @@ function dhcp_agent_menu() {
         <section class="basic-section">
 
             <div class="form-item">
-                <label for="iface">Interfaz:</label>
+                <label for="iface">Interface:</label>
                 <select id="iface" name="iface"></select>
             </div>
 
             <div class="form-item">
-                <label for="ip">Dirección IP (ipv4):</label>
+                <label for="ip">IP Address (ipv4):</label>
                 <input type="text" id="ip" name="ip">
             </div>
 
             <div class="form-item">
-                <label for="netmask">Máscara de Red:</label>
+                <label for="netmask">Subnet Mask:</label>
                 <input type="text" id="netmask" name="netmask">
             </div>
 
             <div class="form-item">
-                <label for="gateway">Puerta de enlace:</label>
+                <label for="gateway">Default Gateway:</label>
                 <input type="text" id="gateway" name="gateway">
             </div>
         
@@ -34,20 +34,20 @@ function dhcp_agent_menu() {
         <section class="dhcp-relay-section">
 
             <div class="form-item">
-                <label for="main-server">Servidor DHCP Principal:</label>
+                <label for="main-server">Primary DHCP Server:</label>
                 <input type="text" id="main-server" name="main-server">
             </div>
 
             <div class="form-item">
-                <label for="listen-on-interfaces">Interfaces De Escucha:</label>
+                <label for="listen-on-interfaces">Listening Interfaces::</label>
                 <input type="text" id="listen-on-interfaces" name="listen-on-interfaces">
             </div>
 
         </section>
         
         <div class="button-wrapper">
-            <button class="btn-modern-blue" type="submit">Guardar</button>
-            <button class="btn-modern-red"  id="close-btn">Cerrar</button>
+            <button class="btn-modern-blue" type="submit">Save</button>
+            <button class="btn-modern-red"  id="close-btn">Close</button>
         </div>
     `;
 
@@ -92,10 +92,10 @@ function showDhcpRelayMenu(event) {
     $menu.querySelector("#listen-on-interfaces").value = $networkObject.getAttribute("dhcrelay-listen-on-interfaces");
     $menu.querySelector(".frame-title").innerHTML = networkObjectId;
 
-    //ocultamos la sección básica para no agentes de retransmisión
+    //We hide the basic section for non-relay agents
     if (!isDhcpRelay) $menu.querySelector(".basic-section").classList.add("hidden");
 
-    //mostramos el menú
+  //We show the menu
     $networkObject.querySelector(".advanced-options-modal").style.display = "none";
     $menu.style.display = "flex";
 }
@@ -122,24 +122,24 @@ function saveDhcpRelayMenu(event) {
     try {
 
         if (isDhcpRelay) { 
-            if (!isValidIp(newIp)) throw new Error(`Error: La IP "${newIp}" no es válida.`);
-            if (!isValidIp(newNetmask)) throw new Error(`Error: La máscara de red "${newNetmask}" no es válida.`);
-            if (newGateway !== "" && !isValidIp(newGateway)) throw new Error(`Error: La puerta de enlace "${newGateway}" no es válida.`);
+            if (!isValidIp(newIp)) throw new Error(`Error: The IP "${newIp}" is not valid.`);
+            if (!isValidIp(newNetmask)) throw new Error(`Error: The netmask "${newNetmask}" is not valid.`);
+            if (newGateway !== "" && !isValidIp(newGateway)) throw new Error(`Error: The gateway "${newGateway}" is invalid.`);
         }
 
         if (newMainServer !== "" && !isValidIp(newMainServer)) {
-            throw new Error(`Error: La IP del Servidor DHCP principal "${newMainServer}" no es válida.`);
+            throw new Error(`Error: The IP of the main DHCP server "${newMainServer}" is invalid.`);
         }
 
         if (newListenOnInterfaces.length !== 0 && !newListenOnInterfaces.every(item => availableInterfaces.includes(item))) {
-            throw new Error(`Error: Algunas de las interfaces de escucha no son válidas.`);
+            throw new Error(`Error: Some of the listening interfaces are invalid.`);
         }
 
         configureInterface($networkObject.id, newIp, newNetmask, networkObjectInterface);
         setDefaultGateway($networkObject.id, newGateway);
         $networkObject.setAttribute("dhcrelay-main-server", newMainServer);
         $networkObject.setAttribute("dhcrelay-listen-on-interfaces", newListenOnInterfaces?.join(","));
-        bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
+        bodyComponent.render(popupMessage(`Changes have been saved successfully.`));
 
     }catch(error) {
 
