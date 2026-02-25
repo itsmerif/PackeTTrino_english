@@ -39,7 +39,7 @@ function dhcp_agent_menu() {
             </div>
 
             <div class="form-item">
-                <label for="listen-on-interfaces">Listening Interfaces::</label>
+                <label for="listen-on-interfaces">Listening Interfaces:</label>
                 <input type="text" id="listen-on-interfaces" name="listen-on-interfaces">
             </div>
 
