@@ -9,8 +9,8 @@ function dhcp_server_menu() {
         <div class="window-frame"> <p class="frame-title"></p> </div>
 
         <div class="nav-panel">
-            <button class="btn-modern-blue dark active" id="btn-basic-tab">Básico</button>
-            <button class="btn-modern-blue dark" id="btn-reservations">Reservas</button>
+            <button class="btn-modern-blue dark active" id="btn-basic-tab">Basic</button>
+            <button class="btn-modern-blue dark" id="btn-reservations">Reservations</button>
         </div>
 
         <section class="main-section">
@@ -18,22 +18,22 @@ function dhcp_server_menu() {
             <section class="basic-section">
                 
                 <div>
-                    <label for="iface">Interfaz:</label>
+                    <label for="iface">Interface:</label>
                     <select id="iface" name="iface"></select>
                 </div>
 
                 <div>
-                    <label for="ip">Dirección IP (ipv4):</label>
+                    <label for="ip">IP Address (ipv4):</label>
                     <input type="text" id="ip" name="ip">
                 </div>
 
                 <div >
-                    <label for="netmask">Máscara de Red:</label>
+                    <label for="netmask">Subnet mask:</label>
                     <input type="text" id="netmask" name="netmask">
                 </div>
 
                 <div >
-                    <label for="gateway">Puerta de enlace:</label>
+                    <label for="gateway">Default Gateway:</label>
                     <input type="text" id="gateway" name="gateway">
                 </div>
 
@@ -41,44 +41,44 @@ function dhcp_server_menu() {
 
             <section class="dhcp-options-section">
 
-                <p> Opciones de Servicio DHCP </p>
+                <p> DHCP Service Options </p>
 
                 <div>
-                    <label for="dhcp-listen-on-interfaces">Interfaces de escucha:</label>
+                    <label for="dhcp-listen-on-interfaces">Listening Interfaces:</label>
                     <input type="text" id="dhcp-listen-on-interfaces" name="dhcp-listen-on-interfaces" placeholder="enp0s3,enp0s8">
                 </div>
 
                 <div>
-                    <label for="range-start">Rango de IPs:</label>
+                    <label for="range-start">IP Range:</label>
                     <input type="text" id="range-start" name="range-start">
                     <input type="text" id="range-end" name="range-end">
                 </div>
 
                 <div>
-                    <label for="dhcp-offer-netmask">Máscara de Red:</label>	
+                    <label for="dhcp-offer-netmask">Subnet mask:</label>	
                     <input type="text" id="dhcp-offer-netmask" name="dhcp-offer-netmask">
                 </div>
 
                 <div>
-                    <label for="dhcp-offer-gateway">Puerta de Enlace:</label>
+                    <label for="dhcp-offer-gateway">Default Gateway:</label>
                     <input type="text" id="dhcp-offer-gateway" name="dhcp-offer-gateway">
                 </div>
 
                 <div>
-                    <label for="dhcp-offer-dns">Servidor DNS:</label>
+                    <label for="dhcp-offer-dns">DNS Server:</label>
                     <input type="text" id="dhcp-offer-dns" name="dhcp-offer-dns">
                 </div>
 
                 <div>
-                    <label for="dhcp-offer-lease-time">Tiempo de Alquiler:</label>
+                    <label for="dhcp-offer-lease-time">Lease time:</label>
                     <input type="text" id="dhcp-offer-lease-time" name="dhcp-offer-lease-time">
                 </div>
 
             </section>
             
             <div class="button-wrapper">
-                <button class="btn-modern-blue dark" type="submit" id="btn-save-form">Guardar</button>
-                <button class="btn-modern-red dark" id="close-btn">Cerrar</button>
+                <button class="btn-modern-blue dark" type="submit" id="btn-save-form">Save</button>
+                <button class="btn-modern-red dark" id="close-btn">Close</button>
             </div>
 
         </section>
