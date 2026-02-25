@@ -3,6 +3,7 @@
 
 /* PACKETTRINO */
 /* AMÍN PÉREZ 2025 */
+/* Translated to English by itsmeRiF 2026 */
 
 
 /*VARIABLES */
@@ -16,7 +17,7 @@
     --dark-mode-red: #c60300;
 }
 
-/*ESTILOS GENERALES */
+/*GENERAL STYLES */
 
 body {
     margin: 0px;
@@ -66,7 +67,7 @@ img {
     display: none !important;
 }
 
-/* BOTONES */
+/* BUTTONS */
 
 .btn-yellow {
     width: fit-content;
@@ -353,7 +354,7 @@ img {
 
 }
 
-/*** ANIMACIONES ***/
+/*** ANIMATIONS ***/
 
 @keyframes fadeIn {
     from {
@@ -714,7 +715,7 @@ img {
     }
 }
 
-/**PANTALLA DE CARGA*/
+/**LOADING SCREEN*/
 
 #loading-screen {
     position: fixed;
@@ -786,7 +787,7 @@ img {
 
 }
 
-/*CURSORES*/
+/*CURSORS*/
 
 .pack-cursor {
     position: absolute;
@@ -805,7 +806,7 @@ img {
     object-fit: contain;
 }
 
-/*** MODALES ***/
+/*** MODALS ***/
 
 .modal-overlay {
     position: fixed;
@@ -1070,7 +1071,7 @@ img {
 
 }
 
-/**ANOTACIONES DE TEXTO */
+/**TEXT ANNOTATIONS */
 
 .text-annotation {
     position: absolute;
@@ -1096,7 +1097,7 @@ img {
     }
 }
 
-/*ESPACIO DE TRABAJO*/
+/*WORKSPACE*/
 
 .board {
     width: 100dvw;
@@ -1185,7 +1186,7 @@ circle:hover {
     cursor: pointer;
 }
 
-/*NAVEGADOR DE INTERNET*/
+/*INTERNET BROWSER*/
 
 .browser-component {
     position: fixed;
@@ -2801,7 +2802,7 @@ circle:hover {
 
 }
 
-/*MENSAJES EMERGENTES*/
+/*POP-UP MESSAGES*/
 
 .popup-content {
     position: fixed;
@@ -2981,7 +2982,7 @@ circle:hover {
 
 }
 
-/*EDITOR DE TEXTO*/
+/*EDITOR TEXT*/
 
 .file-editor {
     position: absolute;
@@ -3081,7 +3082,7 @@ circle:hover {
 
 }
 
-/*ICONOS DEL PANEL*/
+/*ICONS of PANEL*/
 
 .dynrouting {
 
@@ -3173,7 +3174,7 @@ circle:hover {
 
 }
 
-/**GESTION DE ARCHIVOS*/
+/**ARCHIVE**/
 
 .file-upload-container {
     width: 40px;
@@ -3340,7 +3341,7 @@ circle:hover {
 }
 
 
-/*ESTILOS PARA EL TUTORIAL*/
+/*TUTORIAL*/
 
 .slide-presentation {
     position: fixed;
