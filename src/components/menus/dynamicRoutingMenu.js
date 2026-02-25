@@ -8,18 +8,18 @@ function DynamicRoutingMenu() {
 
         <div class="dynamic-routing-modal">
 
-            <h1> Herramienta de Enrutamiento Automático </h1>
+            <h1> Automatic Routing Tool </h1>
 
             <div class="default-network-routing-container">
-                <p>Enrutar por defecto a una red (Opcional):</p>
-                <input class="default-network-routing" type="text" placeholder="Por ejemplo, 8.0.0.0/8">
+                <p>Default routing to a network (Optional):</p>
+                <input class="default-network-routing" type="text" placeholder="For example, 8.0.0.0/8">
             </div>
 
-            <p>⚠︎ ¿Estás seguro de que quieres activar la funcionalidad de Enrutamiento Automático?</p>
+            <p>⚠︎ Are you sure you want to enable Automatic Routing?</p>
 
-            <button class="btn-accept btn-modern-blue dark no-animation">Sí, quiero enrutar de forma automática</button>
+            <button class="btn-accept btn-modern-blue dark no-animation">Yes, I want to route automatically</button>
 
-            <button class="btn-reject btn-modern-red no-animation" id="close-btn">No, volver al panel</button>
+            <button class="btn-reject btn-modern-red no-animation" id="close-btn">No, return to the panel</button>
 
         </div>
     `;
@@ -48,14 +48,14 @@ async function dynamicRoutingHandler() {
     if ( $inputComponentValue !== "") {
 
         if (!isValidCidrIp($inputComponentValue)) {
-            bodyComponent.render(popupMessage(`<span>Error: </span> Formato de red no válido.`));
+            bodyComponent.render(popupMessage(`<span>Error: </span> Invalid network format.`));
             return;
         }
     
         let [networkIp, networkNetmask] = parseCidr($inputComponentValue);
         
         if (getNetwork(networkIp, networkNetmask) !== networkIp) {
-            bodyComponent.render(popupMessage(`<span> Error: </span> No corresponde con una red válida.`));
+            bodyComponent.render(popupMessage(`<span> Error: </span> Does not correspond to a valid network.`));
             return;
         }
 
@@ -71,7 +71,8 @@ async function dynamicRoutingHandler() {
         dynamicRouting();
     }catch(error) {
         console.log(error);
-        bodyComponent.render(popupMessage(`<span>Error: </span>Ha ocurrido un error al activar la funcionalidad de Enrutamiento Automático.`));
+        bodyComponent.render(popupMessage(`<span>Error: </span>An error occurred while activating the Automatic Routing feature.
+`));
     }
     
     return new Promise(resolve => {
