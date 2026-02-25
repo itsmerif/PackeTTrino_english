@@ -3,6 +3,7 @@
 ## Web-Based Network Simulator in Pure JavaScript
 
 Developed by Amín Pérez | May 2025
+Translated to English (contextual) by itsmeRiF | Feb 2026
 
 ---
 
@@ -64,3 +65,4 @@ This project was developed as a final year thesis for the **Advanced Vocational 
 ## Keywords (for SEO)
 
 `network simulator`, `javascript networking`, `educational tool`, `packet tracer alternative`, `web-based network lab`, `DHCP DNS TCP IP simulator`, `HTML CSS JS`, `pure JavaScript network project`, `open source network simulator`, `firewall configuration`, `interactive network tool`
+
