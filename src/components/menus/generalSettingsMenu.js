@@ -6,20 +6,20 @@ function GeneralOptions() {
 
     $generalOptions.innerHTML = `
 
-        <div class="window-frame"> <p> Opciones Generales </p> </div>
+        <div class="window-frame"> <p> General options </p> </div>
 
         <div class="options-group">
-            <label for="dark-mode"> Modo Oscuro </label>
+            <label for="dark-mode"> Dark Mode </label>
             <input type="checkbox" class="btn-toggle" id="dark-mode" name="dark-mode">
         </div>
 
         <div class="options-group">
-            <label for="visual-toggle"> Modo Visual </label>
+            <label for="visual-toggle"> Visual Mode </label>
             <input type="checkbox" class="btn-toggle" id="visual-toggle" name="visual-toggle">
         </div>
 
         <div class="options-group">
-            <label for="ignore-arp-traffic"> Ocultar Tráfico ARP </label>
+            <label for="ignore-arp-traffic"> Hide ARP Traffic </label>
             <input type="checkbox" class="btn-toggle" id="ignore-arp-traffic" name="ignore-arp-traffic">
         </div>
 
@@ -31,10 +31,10 @@ function GeneralOptions() {
 
         <div class="options-group">
             <label for="start-tutorial"> Tutorial </label>
-            <button class="btn-modern-blue" id="start-tutorial">Empezar</button>
+            <button class="btn-modern-blue" id="start-tutorial">Get Started</button>
         </div>
 
-        <button class="btn-modern-blue" id="close-btn">Cerrar</button>
+        <button class="btn-modern-blue" id="close-btn">Close</button>
     `;
 
     $generalOptions.querySelector("#ignore-arp-traffic").addEventListener("change", function () { ignoreArpTraffic = this.checked; });
@@ -66,3 +66,6 @@ function generalOptionsHandler(event) {
     $generalOptions.querySelector("#dark-mode").checked = darkMode;
     (isVisible) ? $generalOptions.style.display = "none" : $generalOptions.style.display = "flex";
 }
+
+
+//translated by itsmeRiF
