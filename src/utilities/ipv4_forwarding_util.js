@@ -3,7 +3,7 @@ function command_ipv4_forwarding(networkObjectId, options) {
     const $networkObject = document.getElementById(networkObjectId);
 
     if (options.length === 0) {
-        const state = ($networkObject.getAttribute("ipv4-forwarding") === "true") ? "Activo (ON)" : "Desactivado (OFF)";
+        const state = ($networkObject.getAttribute("ipv4-forwarding") === "true") ? "Enable (ON)" : "Disable (OFF)";
         terminalMessage(`ipv4-forwarding: State: ${state}`, networkObjectId);
         return;
     }
@@ -13,7 +13,7 @@ function command_ipv4_forwarding(networkObjectId, options) {
             ? "true" 
             : (options[0] === "off") 
                 ? "false" 
-                : terminalMessage(`ipv4-forwarding: Error: opción no reconocida.`, networkObjectId)
+                : terminalMessage(`ipv4-forwarding: Error: Unrecognized option.`, networkObjectId)
     );
 
 }
