@@ -18,7 +18,7 @@ function terminal() {
 
         <div class="editor-wrapper" style="display: none;">
             <div class="editor-buttons">
-                <p><span>^S</span>Guardar y Salir</p>
+                <p><span>^S</span>Save and Exit</p>
             </div>
             <p class="file-editor-error"></p>
             <textarea class="file-editor" data-file=""></textarea>
@@ -156,23 +156,23 @@ function fileEditorKeyboard(event) {
     const $terminal = document.querySelector(".terminal-component");
     const $fileEditorContainer = $terminal.querySelector(".editor-wrapper");
     const $fileEditorArea = $fileEditorContainer.querySelector(".file-editor");
-    const fileContent = $fileEditorArea.value; //<-- obtenemos el contenido del editor
-    const networkObjectId = $terminal.dataset.id; //<-- obtenemos el id del objeto del dataset de la terminal
+    const fileContent = $fileEditorArea.value; //<-- we get the editor content
+    const networkObjectId = $terminal.dataset.id; //<-- we get the ID of the object from the terminal dataset
     const $networkObject = document.getElementById(networkObjectId);
-    const fileFullPath = $fileEditorArea.getAttribute("data-file"); //<-- obtenemos la ruta completa del archivo
+    const fileFullPath = $fileEditorArea.getAttribute("data-file"); //<-- we get the full file path
 
     if (event.ctrlKey && event.key === "s") {
 
         event.preventDefault();
 
-        const networkElementFileSystem = new FileSystem($networkObject); //<-- creamos un objeto de sistema de archivos
-        let directoryPath = pathBuilder(fileFullPath); //<-- creamos la ruta completa del archivo
-        let fileName = directoryPath.pop(); //<-- obtenemos el nombre del archivo
+        const networkElementFileSystem = new FileSystem($networkObject); //<-- we create a file system object
+        let directoryPath = pathBuilder(fileFullPath); //<-- we create the full file path
+        let fileName = directoryPath.pop(); //<-- we get the file name
 
         try {
-            networkElementFileSystem.write(fileName, directoryPath, fileContent); //<-- intentamos volcar el contenido del archivo sobre el sistema de archivos
-            $fileEditorContainer.style.display = "none"; //<-- ocultamos el editor
-            $terminal.querySelector("input").focus(); //<-- colocamos el cursor en el input del terminal al salir del editor
+            networkElementFileSystem.write(fileName, directoryPath, fileContent); //<-- we attempt to write the file content to the file system
+            $fileEditorContainer.style.display = "none"; //<-- we hide the editor
+            $terminal.querySelector("input").focus(); //<-- place the cursor in the terminal input when exiting the editor
         } catch (e) {
             terminalMessage(e.message, networkObjectId);
             console.log(e);
