@@ -10,10 +10,10 @@ function dhcpTable() {
                 <th>IP</th>
                 <th>MAC</th>
                 <th>Host</th>
-                <th>Tiempo de Alquiler</th>
+                <th>Lease time</th>
             </tr>
         </table>
-        <button onclick="closeObjectModalTable(event, '.dhcp-table')">Cerrar</button>
+        <button onclick="closeObjectModalTable(event, '.dhcp-table')">Close</button>
     `;
 
     $dhcpTable.setAttribute("onclick", "event.stopPropagation();");
