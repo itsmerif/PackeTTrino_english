@@ -1,4 +1,4 @@
-/**ESTA CLASE DEFINE UN TOKEN DE COMPONENTE A PARTIR DE UN NODO. TIENE MÉTODOS COMO RENDER, EVENT, ETC.*/
+/**This class defines a component token from a node. It has methods such as render, event, etc.*/
 class componentToken {
 
     constructor(element) {
@@ -20,7 +20,7 @@ class componentToken {
 
 }
 
-/**ESTA FUNCION RECIBE LA POSICIÓN DE UN OBJETO Y DEVUELVE NUEVAS POSICIONES SI EL OBJETO QUEDA CLIPEADO FUERA DE LA MESA DE TRABAJO */
+/**This function receives the position of an object and returns new positions if the object is clipped outside the artboard. */
 function checkObjectClip(x, y) { 
 
     const $board = document.querySelector(".board");
@@ -33,29 +33,29 @@ function checkObjectClip(x, y) {
     let newX = x;
     let newY = y;
 
-    //calculamos la posicion del objeto en funcion de su posicion en el tablero
+//calculate the object's position based on its position on the board
     
     let objectLeft = (x - objectWidth / 2);
     let objectRight = (x + objectWidth / 2);
     let objectTop = (y - objectHeight / 2);
     let objectBot = (y + objectHeight / 2);
 
-    if (objectLeft < 0) { //el objeto acaba oculto por la izquierda
+    if (objectLeft < 0) { //the object ends up hidden on the left
         let diffLeft = Math.abs(objectLeft);
         newX = x + diffLeft + spareSpace;
     }
 
-    if (objectRight > boardWidth) { //el objeto acaba oculto por la derecha
+    if (objectRight > boardWidth) { //The object ends up hidden on the right
         let diffRight = Math.abs(objectRight - boardWidth);
         newX = x - diffRight - spareSpace;
     }
 
-    if (objectTop < 0) { //el objeto acaba oculto por arriba
+    if (objectTop < 0) { //the object ends up hidden from above
         let diffTop = Math.abs(objectTop);
         newY = y + diffTop + spareSpace;
     }
 
-    if (objectBot > boardHeight) { //el objeto acaba oculto por abajo
+    if (objectBot > boardHeight) { //the object ends up hidden below
         let diffBot = Math.abs(objectBot - boardHeight);
         newY = y - diffBot - spareSpace;
     }
@@ -63,7 +63,7 @@ function checkObjectClip(x, y) {
     return [newX, newY];
 }
 
-/**ESTA FUNCION MUESTRA LAS OPCIONES AVANZADAS DE UN OBJETO */
+/**THIS FUNCTION DISPLAYS THE ADVANCED OPTIONS OF AN OBJECT*/
 function showAdvancedOptions(event) {
 
     event.preventDefault();
@@ -71,7 +71,7 @@ function showAdvancedOptions(event) {
 
     const $board = document.querySelector(".board");
     const boardProperties = window.getComputedStyle($board, null);
-    const boardHeight = parseInt(boardProperties.getPropertyValue("height")); //altura del tablero
+    const boardHeight = parseInt(boardProperties.getPropertyValue("height")); //board height
     const boardWidth = parseInt(boardProperties.getPropertyValue("width"));
     const boardRect = $board.getBoundingClientRect();
     const networkObject = event.target.closest(".item-dropped") || event.target.closest(".text-annotation");
@@ -113,7 +113,7 @@ function showAdvancedOptions(event) {
     $modal.style.display = "flex";
 }
 
-/**ESTA FUNCION MUESTRA UN MODAL DE UN OBJETO, RECALCULANDO LAS POSICIONES DEL MODAL EN FUNCION DE LA POSICION DEL OBJETO */
+/**THIS FUNCTION DISPLAYS A MODAL OF AN OBJECT, RECALCULATING THE MODAL'S POSITIONS BASED ON THE OBJECT'S POSITION*/
 function showObjectModalTable(event, selector) {
     
     event.preventDefault();
@@ -129,41 +129,42 @@ function showObjectModalTable(event, selector) {
     const objectX = parseInt($networkObject.style.left);
     const objectY = parseInt($networkObject.style.top);
 
-    //obtenemos el ancho y alto del elemento
+//We get the element's width and height
 
     $Table.style.display = "flex";
     let currentTableWidth = parseInt($Table.offsetWidth);
     let currentTableHeight = parseInt($Table.offsetHeight);
     $Table.style.display = "none";
 
-    //inicializamos la posicion del modal tabla arp
+    //Initialize the modal's position (table arp)
 
     $Table.style.left = "50%";
     $Table.style.top = "50%";
 
-    //dependiendo del diffX y diffY, cambiamos la posicion del modal
+//Depending on the diffX and diffY values, change the modal's position
+
 
     let tableLeftSide = objectX - currentTableWidth / 2;
     let tableRightSide = objectX + currentTableWidth / 2;
     let tableTopSide = objectY - currentTableHeight / 2;
     let tableBotSide = objectY + currentTableHeight / 2;
 
-    if ( tableLeftSide < 0) { //el modal acaba oculto por la izquierda
+    if ( tableLeftSide < 0) { //The modal ends up hidden on the left
         let diffLeftSide = parseInt(0 - tableLeftSide);
         $Table.style.left = `calc(50% + ${Math.abs(diffLeftSide)}px + 5px)`;
     }
 
-    if (tableRightSide > boardWidth) { //el modal acaba oculto por la derecha
+    if (tableRightSide > boardWidth) { //The modal ends up hidden on the right
         let diffRightSide = parseInt(tableRightSide - boardWidth);
         $Table.style.left = `calc(50% - ${Math.abs(diffRightSide)}px - 5px)`;
     }
 
-    if (tableTopSide < 0) { //el modal acaba oculto por arriba
+    if (tableTopSide < 0) { //The modal ends up hidden on the top
         let diffTopSide = parseInt(0 - tableTopSide);
         $Table.style.top = `calc(50% + ${Math.abs(diffTopSide)}px + 5px)`;
     }
 
-    if (tableBotSide > boardHeight) { //el modal acaba oculto por abajo
+    if (tableBotSide > boardHeight) { //The modal ends up hidden at the bottom
         let diffBotSide = parseInt(tableBotSide - boardHeight);
         $Table.style.top = `calc(50% - ${Math.abs(diffBotSide)}px - 5px)`;
     }
@@ -177,7 +178,7 @@ function showObjectModalTable(event, selector) {
 
 }
 
-/**ESTA FUNCION OCULTA UN MODAL DE UN OBJETO */
+/**THIS FUNCTION HIDES A MODAL OF AN OBJECT*/
 function closeObjectModalTable(event, selector) {
     event.stopPropagation();
     const $networkObject = event.target.closest(".item-dropped");
@@ -185,30 +186,30 @@ function closeObjectModalTable(event, selector) {
     $Table.style.display = "none";
 }
 
-/**ESTA FUNCION CREA UN INDICADOR DE PAQUETE SOBRE UN OBJETO */
+/**THIS FUNCTION CREATES A PACKAGE INDICATOR ON AN OBJECT*/
 function createPacketIndicator(id) {
 
     const $networkObject = document.getElementById(id)
     const $board = document.querySelector(".board");
 
-    //creamos el indicator
+   //Create the indicator
     const $indicator = document.createElement("article");
     const $indicatorIcon = document.createElement("img");
     $indicator.classList.add("pack-cursor");
     $indicatorIcon.src = "./assets/board/pack.svg";
     $indicator.appendChild($indicatorIcon);
 
-    //obtenermos las coordenadas del objeto
+    //Get the object's coordinates
     const x = parseInt($networkObject.style.left);
     const y = parseInt($networkObject.style.top);
     $indicator.style.left = `${x}px`;
     $indicator.style.top = `${y}px`;
     
-    //agregamos el indicator al tablero
+    //Add the indicator to the board
     $board.appendChild($indicator);
 }
 
-/**ESTA FUNCION DEVUELVE LOS ELEMENTOS SVGS QUE FORMAN LAS CONEXIONES DE UN OBJETO CON UN SWITCH*/
+/**THIS FUNCTION RETURNS THE SVG ELEMENTS THAT FORM THE CONNECTIONS OF A OBJECT WITH A SWITCH*/
 function getConns(networkObjectId) {
     const $lines = document.querySelectorAll("line");
     const $circles = document.querySelectorAll("circle");
@@ -232,7 +233,7 @@ function getConns(networkObjectId) {
     return [finalLines, finalCircles];
 }
 
-/**ESTA FUNCION PERMITE A LOS MODALES SER ARRASTRADOS  */
+/**THIS FUNCTION ALLOWS MODALS TO BE DRAGGED*/
 function dragModal(event) {
 
     event.preventDefault();
@@ -269,7 +270,7 @@ function dragModal(event) {
 
 }
 
-/**ESTA FUNCION PERMITE ARRASTAR LOS OBJETOS EN EL TABLERO DE FORMA SUAVE */
+/**THIS FUNCTION ALLOWS OBJECTS TO BE DRAGGED SMOOTHLY ON THE BOARD*/
 function startBoardItemMove(event) {
 
     const $networkObject = event.target.closest(".item-dropped");
@@ -291,27 +292,27 @@ function startBoardItemMove(event) {
 
 }
 
-/**ESTA FUNCION HACE SPLIT DE UNA CADENA DE TEXTO CON SOLO LA PRIMERA COINCIDENCIA CON UN SEPARADOR*/
+/**THIS FUNCTION SPLITS A TEXT STRING WITH ONLY THE FIRST MATCH USING A SEPARATOR*/
 function splitFirst(text, separator) {
     const index = text.indexOf(separator);
     if (index === -1) return [text];
     return [text.substring(0, index), text.substring(index + separator.length)];
 }
 
-/**ESTA FUNCION HACE SPLIT DE UNA CADENA DE TEXTO CON SOLO LA ÚLTIMA COINCIDENCIA DE UN TEXTO*/
+/**This function splits a string, keeping only the last match.*/
 function splitLast(text, separator) {
     const index = text.lastIndexOf(separator);
     if (index === -1) return [text];
     return [text.substring(0, index), text.substring(index + separator.length)];
 }
 
-/**ESTA FUNCION GESTIONA LA SUBIDA DE UN ARCHIVO EN EL PANEL */
+/**This function manages file uploads to the panel.*/
 function fileInputChangeHandler(event) {
     let fileName = event.target.files[0].name;
     bodyComponent.render(popupMessage(`Archivo <em>${fileName}</em> cargado con éxito. Para mostrar el contenido, haz click en:`, "/assets/panel/load.svg"));
 }
 
-/**ESTA FUNCION GESTIONA LA CARGA DE UN ARCHIVO EN EL PANEL */
+/**This function manages file uploads to the panel.*/
 function fileInputLoadHandler() {
 
     const archivoInput = document.getElementById("fileInput");
@@ -327,7 +328,7 @@ function fileInputLoadHandler() {
 
 }
 
-/**ESTA FUNCION GESTIONA LA DESCARGA DE UN ARCHIVO EN EL PANEL */
+/**This function manages file downloads to the panel.*/
 function downloadState() {
     const $workspace = document.querySelector(".board");
     const workspaceHTML = ($workspace.innerHTML).replace(/\s+/g, " ");
@@ -342,7 +343,7 @@ function downloadState() {
     URL.revokeObjectURL(url);
 }
 
-/**ESTA FUNCION GESTIONA LA CARGA DE UN ARCHIVO EN LA APLICACION */
+/**This function manages file uploads to the application.*/
 function loadState(files = undefined) {
 
     const $inputFile = (!files) 
@@ -399,7 +400,8 @@ function loadState(files = undefined) {
 
 }
 
-/**ESTA FUNCION GESTIONA EL DRAG START DE UN OBJETO EN EL PANEL */
+/**This function handles the drag-start of an object in the panel.*/
+
 function dragStart(event) {
     const networkObjectId = event.target.closest("img").alt;
     const itemType = "item";
@@ -411,7 +413,7 @@ function dragStart(event) {
 
 }
 
-/**ESTA FUNCION GESTIONA LA UTILIDAD DE CONEXIÓN RÁPIDA EN EL PANEL */
+/**THIS FUNCTION MANAGES THE QUICK CONNECT UTILITY ON THE PANEL*/
 function quickPingStart() {
 
     if (quickPingToggle) {
@@ -421,7 +423,7 @@ function quickPingStart() {
 
     quickPingToggle = true;
 
-    //creamos el cursor
+ //We create the cursor
     const $cursor = document.createElement("article");
     const $cursorIcon = document.createElement("img");
     $cursor.classList.add("pack-cursor");
@@ -429,10 +431,10 @@ function quickPingStart() {
     $cursor.appendChild($cursorIcon);
     document.body.appendChild($cursor);
 
-    //ocultamos el cursor por defecto
+  //We hide the cursor by default
     document.body.style.cursor = "none";
 
-    //eventos del mouse
+    //Mouse events
     document.addEventListener("mousemove", moveCursor);
 
     function moveCursor(event) {
@@ -450,14 +452,14 @@ function quickPingStart() {
 
 }
 
-/**ESTA FUNCION MUESTRA EL TOOLTIP DE UN OBJETO EN EL PANEL */
+/**THIS FUNCTION DISPLAYS THE TOOLTIP OF AN OBJECT IN THE PANEL*/
 function showTooltip(name, event) {
     const $panelItem = event.target.closest(".item");
     if ($panelItem.querySelector(".tooltip")) return;
     $panelItem.appendChild(tooltip(name));
 }
 
-/**ESTA FUNCION ELIMINA EL TOOLTIP DE UN OBJETO EN EL PANEL */
+/**THIS FUNCTION REMOVES THE TOOLTIP FROM AN OBJECT IN THE PANEL*/
 function deleteTooltip(event) {
     const $panelItem = event.target.closest(".item");
     if ($panelItem.querySelector(".tooltip")) {
@@ -465,17 +467,17 @@ function deleteTooltip(event) {
     }
 }
 
-/**ESTA FUNCIÓN DEVUELVE TRUE SI EL OBJETO ES UN OBJETO VACIO*/
+/**THIS FUNCTION RETURNS TRUE IF THE OBJECT IS AN EMPTY OBJECT*/
 function isEmptyObject(obj) {
   return obj && typeof obj === 'object' && !Array.isArray(obj) && Object.keys(obj).length === 0;
 }
 
-/**ESTA FUNCIÓN GENERA UN DELAY COMO PROMESA*/
+/**THIS FUNCTION GENERATES A DELAY AS A PROMISE*/
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/**ESTA FUNCIÓN LIMPIA TODOS LOS BUFFERS Y TEMPORIZADORES*/
+/**THIS FUNCTION CLEARS ALL BUFFERS AND TIMERS*/
 function cleanUpWorkspace() {
 
     for (let serverLeaseTime in serverLeaseTimers) {
@@ -500,7 +502,7 @@ function cleanUpWorkspace() {
 
 }
 
-/**ESTA FUNCION LIMPIA LA TABLA DE ARP DE TODOS LOS OBJETOS DE RED*/
+/**THIS FUNCTION CLEANSES THE ARP TABLE OF ALL NETWORK OBJECTS*/
 function resetArpTables() {
     const $droppedItems = document.querySelectorAll(".item-dropped");
     $droppedItems.forEach(item => {
@@ -512,7 +514,7 @@ function resetArpTables() {
     });
 }
 
-/**ESTA FUNCION LIMPIA LA TABLA DE CACHE DNS DE TODOS LOS OBJETOS DE RED*/
+/**THIS FUNCTION CLEARS THE DNS CACHE TABLE OF ALL NETWORK OBJECTS*/
 function resetDnsCacheTables() {
     const $droppedItems = document.querySelectorAll(".item-dropped");
     $droppedItems.forEach(item => {
