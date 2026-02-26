@@ -1,4 +1,4 @@
-//variables de control global
+//global control variables
 let itemIndex = 0;
 let darkMode = false;
 let visualToggle = false;
@@ -14,10 +14,10 @@ let servers = {};
 let $ARPENTRYTTL = 120;
 let $MACENTRYTTL = 120;
 
-//variables de la terminal
+//terminal variables
 let $PWD = [];
 
-//flags de control de paquetes
+//package control flags
 let arpFlag = {};
 let icmpFlag = {};
 let dhcpDiscoverFlag = {};
@@ -28,11 +28,11 @@ let traceFlag = {};
 let quickPingToggle = false;
 let quickPingObject =  "";
 
-//control de la traza de paquetes
+//Packet trace control
 let trace = {}; 
 let traceReturn = {};
 
-//procedimiento de enrutamiento automático
+//Automatic routing procedure
 let nodes = {};
 let nodesNetmask = {};
 let nodesIp = {};
@@ -45,9 +45,9 @@ let dhcpOfferBuffer = {};
 let tcpBuffer = {};
 let traceBuffer = {};
 let trafficBuffer = [];
-let routerChangesBuffer = {}; //este buffer guarda informacion por INTERFAZ, NO POR DISPOSITIVO
+let routerChangesBuffer = {}; //This buffer stores information per INTERFACE, NOT PER DEVICE
 
-//variables de procesos en segundo plano
+//Background process variables
 
 let serverLeaseTimers = {};
 let clientLeaseTimers = {};
@@ -55,6 +55,6 @@ let arpEntryTimers = {};
 let macEntryTimers = {};
 let dnsCacheTimers = {};
 
-//variables de gestion de SNAT Y DNAT
+//SNAT and DNAT management variables
 
 let connTrack = {};
