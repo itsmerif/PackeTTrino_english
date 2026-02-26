@@ -26,7 +26,7 @@ function command_Iptables(networkObjectId, args) {
 
     if (args[1] === "-D") {
         deleteFirewallRule(networkObjectId, args[2]);
-        terminalMessage("Se ha eliminado la regla correctamente.", networkObjectId);
+        terminalMessage("The rule was successfully removed.", networkObjectId);
         return;
     }
 
