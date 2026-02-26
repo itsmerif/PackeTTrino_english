@@ -14,19 +14,19 @@ async function itemPanel() {
             "name": "upload",
             "image": "./assets/panel/upload.svg",
             "draggable": false,
-            "tooltip": "Subir Archivo de Red"
+            "tooltip": "Upload Network file"
         },
         {
             "name": "load",
             "image": "./assets/panel/load.svg",
             "draggable": false,
-            "tooltip": "Cargar archivo"
+            "tooltip": "Upload file"
         },
         {
             "name": "download",
             "image": "./assets/panel/download.svg",
             "draggable": false,
-            "tooltip": "Descargar Archivo de Red"
+            "tooltip": "Download Network file"
         },
         {
             "name": "pc",
@@ -50,19 +50,19 @@ async function itemPanel() {
             "name": "dhcpserver",
             "image": "./assets/panel/dhcpserver.svg",
             "draggable": true,
-            "tooltip": "Servidor DHCP"
+            "tooltip": "DHCP Server"
         },
         {
             "name": "dhcprelay",
             "image": "./assets/panel/dhcprelay.svg",
             "draggable": true,
-            "tooltip": "Agente DHCP"
+            "tooltip": "DHCP Agent"
         },
         {
             "name": "dnsserver",
             "image": "./assets/panel/dnsserver.svg",
             "draggable": true,
-            "tooltip": "Servidor DNS"
+            "tooltip": "DNS Server"
         },
         {
             "name": "isc-dhcp-server",
@@ -98,42 +98,42 @@ async function itemPanel() {
             "name": "text",
             "image": "./assets/panel/annotation.svg",
             "draggable": true,
-            "tooltip": "Anotación"
+            "tooltip": "Annotation"
         },
         {
             "name": "traffic",
             "image": "./assets/panel/traffic.svg",
             "draggable": false,
-            "tooltip": "Tráfico de Red"
+            "tooltip": "Network Traffic"
         },
         {
             "name": "ping",
             "image": "./assets/panel/bus.svg",
             "draggable": false,
-            "tooltip": "Simulador de Ping"
+            "tooltip": "Ping Simulator"
         },
         {
             "name": "animation-controls",
             "image": "./assets/panel/animationControls.svg",
             "draggable": false,
-            "tooltip": "Controles de Animación"
+            "tooltip": "Animation Controls"
         },
         {
             "name": "settings",
             "image": "./assets/panel/settings.svg",
             "draggable": false,
-            "tooltip": "Opciones Avanzadas"
+            "tooltip": "Advanced options"
         },
         {
             "name": "hide-panel",
             "image": "./assets/panel/hide-panel.svg",
             "draggable": false,
-            "tooltip": "Ocultar el panel"
+            "tooltip": "Hide panel"
         }
     ]
 
 
-    //agregamos los items del panel
+    //We add the items from the panel
     panelItems.forEach(panelItem => {
         const $itemElement = document.createElement("article");
         $itemElement.classList.add("item", "hidden", panelItem.name);
@@ -149,7 +149,7 @@ async function itemPanel() {
         $itemsContainer.appendChild($itemElement);
     });
 
-    //agregamos eventos
+   //Add events
     $panel.querySelector("#fileInput").addEventListener("change", fileInputChangeHandler);
     $panel.querySelector(".ping").addEventListener("click", quickPingStart);
     $panel.querySelector(".dynrouting").addEventListener("click", () => bodyComponent.render(DynamicRoutingMenu()));
