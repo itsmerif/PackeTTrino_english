@@ -1,4 +1,4 @@
-/**ESTA FUNCION GENERA UN ELEMENTO NODO TABLERO */
+/**THIS FUNCTION GENERATES A BOARD NODE ELEMENT*/
 function itemBoard() {
 
     const $board = document.createElement("section");
@@ -17,13 +17,13 @@ function itemBoard() {
     return $board
 }
 
-/**ESTA FUNCION GESTIONA EL DRAG OVER DE EL ELEMENTO  */
+/**THIS FUNCTION MANAGES THE DRAG OVER OF THE ELEMENT*/
 function dragOverBoard(event) {
     event.preventDefault();
     event.dataTransfer.dropEffect = "copy";
 }
 
-/**ESTA FUNCION GESTIONA EL DRAG START DE UN ELEMENTO QUE ESTÉ SOBRE EL ELEMENTO TABLERO */
+/**THIS FUNCTION MANAGES THE DRAG START OF AN ELEMENT THAT IS ABOVE THE BOARD ELEMENT*/
 function BoardItemDragStart(event) {
 
     const $networkObject = event.target.closest(".item-dropped");
@@ -46,7 +46,7 @@ function BoardItemDragStart(event) {
     }));
 }
 
-/**ESTA FUNCION GESTIONA EL DROP DE UN ELEMENTO SOBRE EL ELEMENTO TABLERO */
+/**THIS FUNCTION MANAGES THE DROP OF AN ELEMENT ON THE BOARD ELEMENT*/
 function dropItemOverBoard(event) {
     
     event.preventDefault();
@@ -77,15 +77,15 @@ function dropItemOverBoard(event) {
         "text": () => TextObject(x, y),
     }
 
-    if (itemType === "item" && boardItemRender[itemId]) { //<-- es un item del panel y existe una función para renderizarlo
+    if (itemType === "item" && boardItemRender[itemId]) { //<-- This is a panel item and there is a function to render it
         let $newItem = boardItemRender[itemId]();
-        //se le añade el evento de arrastrar y soltar sobre un switch
+        //The drag event is added and release on a switch
         if (!itemId.startsWith("switch")) $newItem.setAttribute("ondrop", `dropPackageOverItem(event); dropSwitchOverItem(event);`);
         boardComponent.render($newItem);
-        itemIndex++; //<-- incrementamos el índice de items para generar un nuevo id único
+        itemIndex++; //<-- increment the item index to generate a new unique ID
     }
 
-    if (itemType === "item-dropped" && !isConnected(itemId)) { //<-- es un item que se ha arrastrado y no tiene ninguna conexión
+    if (itemType === "item-dropped" && !isConnected(itemId)) { //<-- This is an item that has been dragged and has no connection
         [x, y] = checkObjectClip(x, y);
         $networkObject.style.left = `${x}px`;
         $networkObject.style.top = `${y}px`;
@@ -93,7 +93,8 @@ function dropItemOverBoard(event) {
 
 }
 
-/**ESTA FUNCION ELIMINA UN ELEMENTO DE RED DEL TABLERO */
+/**THIS FUNCTION REMOVES A NETWORK ELEMENT FROM THE BOARD */
+
 function deleteItem(event) {
 
     event.stopPropagation();
@@ -101,25 +102,25 @@ function deleteItem(event) {
     const interfaces = getInterfaces($networkObject.id);
 
     if (!isConnected($networkObject.id)) {
-        //eliminamos la informacion del dispositivo guardada en los buffers
+        //Remove the device information stored in the buffers
         delete buffer[$networkObject.id];
         delete httpBuffer[$networkObject.id];
         delete dhcpOfferBuffer[$networkObject.id];
         delete tcpBuffer[$networkObject.id];
         delete traceBuffer[$networkObject.id];
-        //eliminamos los procesos en segundo plano asociados al dispositivo
+        //Remove the background processes associated with the device
         clearInterval(serverLeaseTimers[$networkObject.id]);
         clearInterval(clientLeaseTimers[`${$networkObject.id}-${interfaces[0]}`]);
         delete serverLeaseTimers[$networkObject.id];
         delete clientLeaseTimers[`${$networkObject.id}-${interfaces[0]}`];
         $networkObject.remove();
     }else {
-        boardComponent.render(popupMessage(`<span>Error: </span>No se puede eliminar un dispositivo con conexiones.`));
+        boardComponent.render(popupMessage(`<span>Error:</span>Cannot remove a device with connections.`));
     }
 
 }
 
-/**ESTA FUNCION GESTIONA EL DROP DE UN PAQUETE SOBRE UN ELEMENTO DE RED EN EL TABLERO */
+/**THIS FUNCTION MANAGES THE DROP OF A PACKET ON A NETWORK ELEMENT ON THE BOARD */
 function dropPackageOverItem(event) {
 
     const package = event.dataTransfer.getData("json");
@@ -129,19 +130,19 @@ function dropPackageOverItem(event) {
     const itemId = JSON.parse(package).itemId;
     const packages = ["isc-dhcp-server", "isc-dhcp-client", "isc-dhcp-relay", "bind9", "apache2"];
     
-    if (itemType !== "item") return; //<-- evitamos que se instalen paquetes que no son items
-    if (!packages.includes(itemId)) return; //<-- evitamos que se instalen paquetes que no sean los que nos interesan
+    if (itemType !== "item") return; //<-- We prevent the installation of packages that are not items
+    if (!packages.includes(itemId)) return; //<-- We prevent the installation of packages other than the ones we want
 
     try {
         dpkg(networkObjectId, "install", itemId);
-        boardComponent.render(popupMessage(`Se instaló el paquete ${itemId} con éxito.`));
+        boardComponent.render(popupMessage(`Package ${itemId} was successfully installed.`));
     }catch(error) {
         boardComponent.render(popupMessage(error.message));
     }
 
 }
 
-/**ESTA FUNCION GESTIONA EL DROP DE UN SWITCH SOBRE UN ELEMENTO DE RED EN EL TABLERO */
+/**THIS FUNCTION MANAGES THE DROP OF A SWITCH ONTO A NETWORK ELEMENT ON THE BOARD*/
 function dropSwitchOverItem(event) {
     
     const switchInfo = event.dataTransfer.getData("json");
