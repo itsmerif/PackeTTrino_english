@@ -5,16 +5,16 @@ async function http(networkObjectId, headers) {
 
     //comprobamos que el puerto y método sean válidos
 
-    if (isNaN(headers["dport"]) || headers["dport"] < 1 || headers["dport"] > 65535) throw new Error(`Error: Puerto ${headers["dport"]} no válido.`);
+    if (isNaN(headers["dport"]) || headers["dport"] < 1 || headers["dport"] > 65535) throw new Error(`Error: Port ${headers["dport"]} is invalid.`);
 
-    if (!["GET", "POST", "PUT", "DELETE"].includes(headers.method.toUpperCase())) throw new Error(`Error: Método ${headers.method} no válido.`);
+    if (!["GET", "POST", "PUT", "DELETE"].includes(headers.method.toUpperCase())) throw new Error(`Error: Method ${headers.method} is invalid.`);
 
     //comprobamos si es una IP o un dominio
 
     if (!isValidIp(headers["address"])) {
         domainName = headers["address"];
         headers["address"] = await domainNameResolution(networkObjectId, headers["address"]);
-        if (!headers["address"]) throw new Error(`Error: No se pudo resolver el dominio "${domainName}".`);
+        if (!headers["address"]) throw new Error(`Error: The domain "${domainName}" could not be resolved.`);
     }
 
     headers["host"] = domainName || headers["address"]; //guardamos el nombre de dominio que se utilizó
@@ -49,7 +49,7 @@ async function http(networkObjectId, headers) {
 
     await tcpSynPacketGenerator(networkObjectId, headers["address"], headers["sport"], headers["dport"]);
 
-    if (tcpSyncFlag[networkObjectId] === false) throw new Error(networkObjectId + ": No se pudo establecer la conexión TCP.");
+    if (tcpSyncFlag[networkObjectId] === false) throw new Error(networkObjectId + ": The TCP connection could not be established.");
 
     //realizamos la petición HTTP
 
@@ -59,7 +59,7 @@ async function http(networkObjectId, headers) {
 
     const newPacket = httpBuffer[networkObjectId];
     
-    if (!newPacket) throw new Error("Error: Conexión rechazada. No se ha recibido respuesta del servidor web.");
+    if (!newPacket) throw new Error("Error: Connection refused. No response was received from the web server.");
 
     return newPacket //devolvemos el objeto HTTPReply
 
