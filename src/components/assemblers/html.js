@@ -1,4 +1,4 @@
-/**ESTA FUNCION OCULTA TODOS LOS MODALES DE OPCIONES AVANZADAS */
+/**This function hides all advanced options*/
 function closeAllAdvOptsModals() {
     const modals = document.querySelectorAll(".advanced-options-modal");
     for (let i = 0; i < modals.length; i++) {
@@ -6,7 +6,7 @@ function closeAllAdvOptsModals() {
     }
 }
 
-/**ESTA FUNCION GESTIONA LOS EVENTOS DE TECLADO EN EL DOCUMENTO */
+/**This function manages keyboard events in the document*/
 function documentKeyboardHandler(event) {
 
     const keyboardActions = {
@@ -16,17 +16,17 @@ function documentKeyboardHandler(event) {
     keyboardActions[event.key] ? keyboardActions[event.key]() : null;
 }
 
-/**ESTA FUNCION OCULTA TODOS LOS MODALES */
+/**This function hides all modals*/
 function closeEveryThing(event) {
 
-    //cerramos todos los modales
+    //We close all modals
     document.querySelectorAll(".modal").forEach($modal => {
-        if (window.getComputedStyle($modal).display === "none") return; //parche, lo mejor es usar clases
+        if (window.getComputedStyle($modal).display === "none") return; //Patch; it's better to use classes
         const $closeBtn = $modal.querySelector("#close-btn");
         if ($closeBtn) $closeBtn.click();
     });
 
-    //cerramos todos los mensajes emergentes
+    //Close all pop-up messages
     document.querySelectorAll(".popup-content").forEach($popup => {
         const $closeBtn = $popup.querySelector("#btn-close");
         const $cancelBtn = $popup.querySelector("#btn-cancel");
@@ -34,13 +34,13 @@ function closeEveryThing(event) {
         if ($cancelBtn) $cancelBtn.click();
     });
 
-    //cerramos las herramientas
+    //Close the tools
     closeBrowser(event); 
     closeTraffic();
     closeTerminal(event);
 }
 
-/**ESTA FUNCION GESTIONA EL MODO OSCURO DE LA APLICACION */
+/**This function manages the application's dark mode*/
 function activateDarkMode() {
 
     const $checkbox = document.querySelector(".settings-modal").querySelector("#dark-mode");
