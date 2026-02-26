@@ -1,6 +1,6 @@
 function installBind9($networkObject) {
 
-    terminalMessage("Instalando Bind...", $networkObject.id);
+    terminalMessage("Installing Bind...", $networkObject.id);
 
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
@@ -17,13 +17,13 @@ function installBind9($networkObject) {
     attr("resolved", "false");
     addOption(dnsRecordsOptionButton(), dnsServerConfig(), cacheDnsOptionButton());
 
-    terminalMessage("Bind instalado correctamente.", $networkObject.id);
+    terminalMessage("Bind successfully installed", $networkObject.id);
 
 }
 
 function uninstallBind9(networkObjectId) {
 
-    terminalMessage("Desinstalando Bind...", networkObjectId);
+    terminalMessage("Uninstalling Bind...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -39,5 +39,5 @@ function uninstallBind9(networkObjectId) {
     remOption("dns-server-config");
     remOption("cache-dns-option");
     
-    terminalMessage("Bind desinstalado correctamente.", networkObjectId);
+    terminalMessage("Bind successfully uninstalled.", networkObjectId);
 }
