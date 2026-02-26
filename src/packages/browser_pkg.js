@@ -1,6 +1,6 @@
 function installBrowser($networkObject) {
 
-    terminalMessage("Instalando navegador Amin Search...", $networkObject.id);
+    terminalMessage("Installing Amin™ Search Browser...", $networkObject.id);
 
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
@@ -13,14 +13,14 @@ function installBrowser($networkObject) {
 
     addOption(browserOptionButton());
 
-    terminalMessage("Navegador Amin Search instalado correctamente.", $networkObject.id);
+    terminalMessage("Amin™ Search Browser successfully installed.", $networkObject.id);
     
 }
 
 
 function uninstallBrowser(networkObjectId) {
 
-    terminalMessage("Desinstalando navegador Amin Search...", networkObjectId);
+    terminalMessage("Uninstalling Amin™ Search Browser...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -34,5 +34,5 @@ function uninstallBrowser(networkObjectId) {
     //se eliminan opciones de la opciones avanzadas
     remOption("browser-option");
 
-    terminalMessage("Navegador Amin Search desinstalado correctamente.", networkObjectId);
+    terminalMessage("Amin™ Search Browser successfully uninstalled.", networkObjectId);
 }
