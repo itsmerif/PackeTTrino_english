@@ -60,43 +60,43 @@ function isValidFirewallRule(rule, networkObjectId) {
     const validNATActions = ["DNAT", "SNAT", "MASQUERADE"];
     const validInterfaces = getInterfaces(networkObjectId);
 
-    if (!validTables.includes(rule.t)) throw new Error(`Error: tabla ${rule.t} no reconocida`);
+    if (!validTables.includes(rule.t)) throw new Error(`Error: table ${rule.t} not recognized`);
 
     if (rule.t === "filter") {
 
-        if (!validFilterChains.includes(rule.A)) throw new Error(`Error: cadena ${rule.A} no permitida.`);
+        if (!validFilterChains.includes(rule.A)) throw new Error(`Error: String ${rule.A} not allowed.`);
 
-        if (!validFilterActions.includes(rule.j)) throw new Error(`Error: acción ${rule.j} no permitida.`);
+        if (!validFilterActions.includes(rule.j)) throw new Error(`Error: Action ${rule.j} not allowed.`);
 
     }
 
     if (rule.t === "nat") {
 
-        if (!validNATActions.includes(rule.j)) throw new Error(`Error: acción ${rule.j} no permitida.`);
+        if (!validNATActions.includes(rule.j)) throw new Error(`Error: Action ${rule.j} not allowed.`);
 
         if (rule.j === "DNAT") {
-            if (rule.A !== "PREROUTING") throw new Error(`Error: cadena ${rule.A} no permitida con DNAT.`);
-            if (!isValidIp(rule.to__destination)) throw new Error(`Error: destino ${rule.to__destination} no permitido para DNAT.`);
+            if (rule.A !== "PREROUTING") throw new Error(`Error: String ${rule.A} not allowed with DNAT.`);
+            if (!isValidIp(rule.to__destination)) throw new Error(`Error: Destination ${rule.to__destination} not allowed for DNAT.`);
         }
 
         if (rule.j === "SNAT") {
-            if (rule.A !== "POSTROUTING") throw new Error(`Error: cadena ${rule.A} no permitida con SNAT.`);
-            if (!isValidIp(rule.to__source)) throw new Error(`Error: origen ${rule.to__source} no permitido para SNAT.`);
+            if (rule.A !== "POSTROUTING") throw new Error(`Error: String ${rule.A} not allowed with SNAT.`);
+            if (!isValidIp(rule.to__source)) throw new Error(`Error: Source ${rule.to__source} not allowed for SNAT.`);
         }
 
     }
 
-    if (rule.p !== "*" && !validProtocols.includes(rule.p)) throw new Error(`Error: protocolo ${rule.p} no reconocido`); 
+    if (rule.p !== "*" && !validProtocols.includes(rule.p)) throw new Error(`Error: Protocol ${rule.p} not recognized`); 
 
-    if (rule.i !== "*" && !validInterfaces.includes(rule.i)) throw new Error(`Error: interfaz ${rule.i} no reconocida`);
+    if (rule.i !== "*" && !validInterfaces.includes(rule.i)) throw new Error(`Error: Unrecognized interface ${rule.i}`);
 
-    if (rule.s !== "*" && !isValidIp(rule.s) && !isValidCidrIp(rule.s)) throw new Error("Error: ip de origen no válida"); 
+    if (rule.s !== "*" && !isValidIp(rule.s) && !isValidCidrIp(rule.s)) throw new Error("Error: Invalid source IP address"); 
 
-    if (rule.d !== "*" && !isValidIp(rule.d) && !isValidCidrIp(rule.d)) throw new Error("Error: ip de destino no válida"); 
+    if (rule.d !== "*" && !isValidIp(rule.d) && !isValidCidrIp(rule.d)) throw new Error("Error: Invalid destination IP address"); 
 
-    if (rule.sport !== "*" && !rule.sport.match(/^\d+$/)) throw new Error("Error: puerto de origen no válido");
+    if (rule.sport !== "*" && !rule.sport.match(/^\d+$/)) throw new Error("Error: Invalid source port");
 
-    if (rule.dport !== "*" && !rule.dport.match(/^\d+$/)) throw new Error("Error: puerto de destino no válido"); 
+    if (rule.dport !== "*" && !rule.dport.match(/^\d+$/)) throw new Error("Error: Invalid destination port"); 
 
 }
 
