@@ -186,12 +186,12 @@ function addDhcpReservation(networkObjectId, mac, ip) {
     const offerNetmask = $networkObject.getAttribute("dhcp-offer-netmask");
     const reservations = JSON.parse($networkObject.getAttribute("dhcp-reservations"));
 
-    if (!isValidIp(ip)) throw new Error("Error: La IP introducida no es valida.");
+    if (!isValidIp(ip)) throw new Error("Error: The IP address entered is not valid.");
 
     if (getNetwork(ip, offerNetmask) !== getNetwork(rangeStart, offerNetmask)) 
-        throw new Error("Error: La IP introducida no pertenece al rango de servicio del servidor DHCP.");
+        throw new Error("Error: The IP address entered does not belong to the DHCP server's service range.");
 
-    if (!isValidMac(mac)) throw new Error("Error: La MAC introducida no es valida.");
+    if (!isValidMac(mac)) throw new Error("Error: The MAC address entered is not valid.");
 
     reservations[mac] = ip;
 
@@ -305,29 +305,29 @@ function validateDhpcConfiguration(networkObjectId, configObject) {
     //validamos los campos
 
     if (!dhcpListenOnInterfaces.every(item => availableInterfaces.includes(item))) {
-        throw new Error(`Error: alguna de las interfaces de escucha no son válidas.`);
+        throw new Error(`Error: One or more of the listening interfaces are invalid.`);
     }
 
-    if (!isValidIp(rangeStart)) throw new Error(`Error: se esperaba una ip inicial válida en vez de "${rangeStart}".`);
-    
-    if (!isValidIp(rangeEnd)) throw new Error(`Error: se esperaba una ip final válida en vez de "${rangeEnd}".`);
+    if (!isValidIp(rangeStart)) throw new Error(`Error: A valid starting IP address was expected instead of "${rangeStart}".`);
 
-    if (!isValidIp(dhcpOfferNetmask)) throw new Error(`Error: se esperaba una máscara de red válida en vez de "${dhcpOfferNetmask}".`);
+    if (!isValidIp(rangeEnd)) throw new Error(`Error: A valid ending IP address was expected instead of "${rangeEnd}".`);
 
-    if (getNetwork(rangeStart, dhcpOfferNetmask) !== getNetwork(rangeEnd, dhcpOfferNetmask)) throw new Error(`Error: el rango de IPs no es válido.`);
+    if (!isValidIp(dhcpOfferNetmask)) throw new Error(`Error: A valid network mask was expected instead of "${dhcpOfferNetmask}".`);
 
-    if (ipToBinary(rangeStart) >= ipToBinary(rangeEnd)) throw new Error(`Error: el rango de IPs no es válido.`);
+    if (getNetwork(rangeStart, dhcpOfferNetmask) !== getNetwork(rangeEnd, dhcpOfferNetmask)) throw new Error(`Error: The IP address range is invalid.`);
+
+    if (ipToBinary(rangeStart) >= ipToBinary(rangeEnd)) throw new Error(`Error: The IP range is invalid.`);
 
     if (dhcpOfferGateway !== "" && !isValidIp(dhcpOfferGateway)) {
-        throw new Error(`Error: se esperaba una puerta de enlace válida en vez de "${dhcpOfferGateway}".`);
-    }
+    throw new Error(`Error: A valid gateway was expected instead of "${dhcpOfferGateway}".`);
 
-    if (!dhcpOfferDnsServers.every(item => isValidIp(item))) throw new Error(`Error: alguna de los servidores DNS no son válidos.`);
 
-    if (isNaN(dhcpOfferLeaseTime)) throw new Error(`Error: se esperaba un tiempo de alquiler válido en vez de "${dhcpOfferLeaseTime}".`);
+    if (!dhcpOfferDnsServers.every(item => isValidIp(item))) throw new Error(`Error: Some of the DNS servers are invalid.`);
 
-    if (dhcpOfferLeaseTime < 120) throw new Error(`Error: el tiempo de alquiler debe ser mayor a 120 segundos.`);
+    if (isNaN(dhcpOfferLeaseTime)) throw new Error(`Error: A valid lease time was expected instead of "${dhcpOfferLeaseTime}".`);
 
-    if (dhcpOfferLeaseTime > 86400) throw new Error(`Error: el tiempo de alquiler debe ser menor a 86400 segundos.`);
+    if (dhcpOfferLeaseTime < 120) throw new Error(`Error: The rental time must be greater than 120 seconds.`);
+
+    if (dhcpOfferLeaseTime > 86400) throw new Error(`Error: The rental time must be less than 86400 seconds.`);
 
 }
