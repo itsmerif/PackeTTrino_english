@@ -5,38 +5,38 @@ function SwitchObject(x, y) {
     const networkObjectMacTable = macTable();
     const networkObjectAdvancedOptions = document.createElement("div");
 
-    //caracteristicas generales
+  // General characteristics
 
     $switchObject.id = `switch-${itemIndex}`;
     $switchObject.classList.add("item-dropped", "switch");
-    [x, y] = checkObjectClip(x, y); //comprobamos si el objeto queda clipeado fuera del tablero, y lo ajustamos
+    [x, y] = checkObjectClip(x, y); // Check if the object is clipped outside the board, and adjust it
     $switchObject.style.left = `${x}px`;
     $switchObject.style.top = `${y}px`;
     $switchObject.setAttribute("mac-enp0s3", getRandomMac());
     $switchObject.setAttribute("clusterized", "false");
-
-    //switch grafico con icono
+    
+// Graphical switch with icon
 
     networkObjectIcon.src = "./assets/board/switch.svg";
     networkObjectIcon.alt = "switch";
     networkObjectIcon.draggable = true;
 
-    //opciones avanzadas
+//Advanced options
 
     networkObjectAdvancedOptions.classList.add("advanced-options-modal");
     networkObjectAdvancedOptions.innerHTML = `
-        <button onclick="deleteItem(event)">Eliminar</button>
-        <button class="clusterize-button" onclick="clusterizeSwitch(event)">Clusterizar</button>
+        <button onclick="deleteItem(event)">Delete</button>
+        <button class="clusterize-button" onclick="clusterizeSwitch(event)">Clusterize</button>
         `;
     $switchObject.appendChild(networkObjectAdvancedOptions);
 
-    //construimos el objeto
+//Build object
 
     $switchObject.appendChild(networkObjectIcon);
     $switchObject.appendChild(networkObjectMacTable);
     $switchObject.appendChild(networkObjectAdvancedOptions);
 
-    //eventos
+    //events
 
     $switchObject.setAttribute("ondragstart", "BoardItemDragStart(event)");
     $switchObject.setAttribute("ondrop", "switchConn(event)");
@@ -57,7 +57,7 @@ function switchConn(event) {
     const isClusterized = $switchObject.getAttribute("clusterized");
 
     if (isClusterized === "true") {
-        bodyComponent.render(popupMessage(`<span>Error: </span>Debes des-clusterizar el switch antes de poder añadir dispositivos.`));
+        bodyComponent.render(popupMessage(`<span>Error: </span>You must decluster the switch before you can add devices.`));
         return;
     }
 
@@ -125,11 +125,11 @@ function desClusterizeSwitch(event) {
 
     $connectedDevices.forEach(deviceId => {
         if (!deviceId.startsWith("router-")) {
-            let $device = document.getElementById(deviceId); //nodo con el dispositivo
-            let [$connsLines, $connsCircles] = getConns(deviceId); //nodos con las conexiones que parten de ese dispositivo
-            Array.from($connsLines).forEach($conn => $conn.style.display = "block"); //oculto las conexiones 
-            Array.from($connsCircles).forEach($conn => $conn.style.display = "block"); //oculto las conexiones
-            $device.style.display = "block"; //oculto el dispositivo
+            let $device = document.getElementById(deviceId); //node with the device
+            let [$connsLines, $connsCircles] = getConns(deviceId); //nodes with the connections originating from that device
+            Array.from($connsLines).forEach($conn => $conn.style.display = "block"); //hide the connections
+            Array.from($connsCircles).forEach($conn => $conn.style.display = "block"); //hide the connections
+            $device.style.display = "block"; //hide the device
         }
     });
 
