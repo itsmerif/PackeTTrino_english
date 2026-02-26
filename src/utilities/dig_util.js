@@ -21,29 +21,29 @@ async function command_dig(networkObjectId, args) {
     args = args.slice($OPTS['IND'] + 1) //<-- saltamos a los argumentos que no son opciones
 
     if (args.length === 0) {
-        terminalMessage("Error: falta el argumento dominio o ip.", networkObjectId);
+        terminalMessage("Error: Missing domain or IP address argument.", networkObjectId);
         return;
     }
 
     domain = args[0]; //<-- el primer argumento es el dominio
 
     if (opt_t && !validRecordTypes.includes(query_type)) { //<-- si se especifica el tipo de consulta, se comprueba que sea un tipo válido
-        terminalMessage("Error: tipo de registro desconocido.", networkObjectId);
+        terminalMessage("Error: Unknown record type.", networkObjectId);
         return;
     }
 
     if (!opt_x && !isValidDomain(domain)) { //<-- si no se especifica el tipo de consulta, se asume que debe ser un dominio válido
-        terminalMessage("Error: el dominio no es válido.", networkObjectId);
+        terminalMessage("Error: Invalid domain.", networkObjectId);
         return;
     }
 
     if (opt_x && !isValidIp(domain)) { //<-- si se especifica el tipo de consulta como PTR, se comprueba que sea una ip válida
-        terminalMessage("Error: ip no válida para la consulta inversa.", networkObjectId);
+        terminalMessage("Error: Invalid IP address for reverse lookup.", networkObjectId);
         return;
     }
 
     if (opt_server && !isValidIp(dnsServer)) { //<-- si se especifica un servidor dns, se comprueba que sea una ip válida
-        terminalMessage("Error: ip del servidor no válida.", networkObjectId);
+        terminalMessage("Error: Invalid server IP.", networkObjectId);
         return;
     }
 
