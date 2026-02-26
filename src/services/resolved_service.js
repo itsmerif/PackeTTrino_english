@@ -26,7 +26,7 @@ async function domainNameResolution(networkObjectId, domain) {
                 "A", //tipo de registro
             );
 
-            if (!dnsReply.answer) throw new Error("Error: No se pudo resolver el nombre de dominio.");
+            if (!dnsReply.answer) throw new Error("Error: The domain name could not be resolved.");
             if (isResolvedOn) addDnsCacheEntry(networkObjectId, dnsReply);
 
             response = dnsReply.answer[0]; //se devuelve el primer valor
@@ -59,7 +59,7 @@ async function getDomainFromServer(networkObjectId, domain, dnsServer = "", quer
 
     const networkObjectDnsServers = getDnsServers(networkObjectId);
     const serversToTry = (dnsServer === "") ? networkObjectDnsServers : [dnsServer];
-    if (serversToTry.length === 0) throw new Error("Error: No hay servidores DNS configurados.");
+    if (serversToTry.length === 0) throw new Error("Error: No DNS servers are configured.");
 
     //intentamos resolver el dominio con cada uno de los servidores dns
 
@@ -99,7 +99,7 @@ async function getDomainFromServer(networkObjectId, domain, dnsServer = "", quer
         i++;
     }
 
-    if (!answered) throw new Error(`Error de comunicaciones con ${serversToTry[i-1]}#53: timeout`);
+    if (!answered) throw new Error(`Communication error with ${serversToTry[i-1]}#53: timeout`);
 
     //devolvemos el paquete de respuesta (en el buffer de paquetes del dispositivo)
     return buffer[networkObjectId];
