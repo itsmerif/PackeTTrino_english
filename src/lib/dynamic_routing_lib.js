@@ -147,7 +147,7 @@ function mapPathToIPs(pathNodes) {
         if (chosenIp) {
             pathIPs.push(chosenIp);
         } else {
-            console.warn(`No se encontró IP para la conexión ${currentNode} -> ${nextNode}`);
+            console.warn(`No IP address found for connection ${currentNode} -> ${nextNode}`);
         }
     }
 
