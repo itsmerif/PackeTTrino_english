@@ -9,31 +9,31 @@ function router_menu() {
         <div class="window-frame"> <p class="frame-title"></p></div>
 
         <div class="nav-panel">
-            <button class="btn-modern-blue dark active" id="btn-basic-tab" data-tab="basic-section">Básico</button>
-            <button class="btn-modern-blue dark" id="btn-routing-rules" data-tab="routing-rules-section">Reglas de Enrutamiento</button>
+            <button class="btn-modern-blue dark active" id="btn-basic-tab" data-tab="basic-section">Basic</button>
+            <button class="btn-modern-blue dark" id="btn-routing-rules" data-tab="routing-rules-section">Routing Rules</button>
         </div>
 
         <section id="basic-section">
 
             <div class="interfaces-wrapper">
                 <select id="iface"></select>
-                <button class="btn-modern-red" id="del-iface">Eliminar</button>
-                <button class="btn-modern-blue dark" id="add-iface">Añadir</button>
+                <button class="btn-modern-red" id="del-iface">Delete</button>
+                <button class="btn-modern-blue dark" id="add-iface">Add</button>
             </div>
 
             <div class="form-item">
-                <label for="router-ip">Dirección IP (ipv4):</label>
+                <label for="router-ip">IP Address (ipv4):</label>
                 <input type="text" id="router-ip" name="router-ip">
             </div>
 
             <div class="form-item"> 
-                <label for="router-netmask">Máscara de Red:</label>
+                <label for="router-netmask">Subnet mask:</label>
                 <input type="text" name="router-netmask" id="router-netmask">
             </div>
             
             <div class="form-item">
-                <button class="btn-modern-blue dark" style="padding: 10px;">Guardar</button>
-                <button class="btn-modern-red dark" style="padding: 10px;" id="close-btn">Cerrar</button>
+                <button class="btn-modern-blue dark" style="padding: 10px;">Save</button>
+                <button class="btn-modern-red dark" style="padding: 10px;" id="close-btn">Close</button>
             </div>
 
         </section>
@@ -41,23 +41,23 @@ function router_menu() {
         <section id="routing-rules-section" class="hidden">
 
             <div class="form-item">
-                <label for="destination-ip">IP de Destino (Ipv4/CIDR):</label>
+                <label for="destination-ip">Destination IP (Ipv4/CIDR):</label>
                 <input type="text" id="destination-ip" name="destination-ip" placeholder="192.168.0.0/24">
             </div>
 
             <div class="form-item">
-                <label for="gateway-interface">Interfaz de Salida:</label>
+                <label for="gateway-interface">Outgoing Interface:</label>
                 <input type="text" id="gateway-interface" name="gateway-interface" placeholder="enp0s3">
             </div>
 
             <div class="form-item">
-                <label for="nexthop">Siguiente Salto:</label>
+                <label for="nexthop">Next Hop:</label>
                 <input type="text" id="nexthop" name="nexthop" placeholder="0.0.0.0">
             </div>
 
             <div class="form-item">
-                <button class="btn-modern-blue dark" style="padding: 10px;" id="btn-add-rule">Añadir Regla</button>
-                <button class="btn-modern-red dark" style="padding: 10px;" id="btn-del-rule">Eliminar Regla</button>
+                <button class="btn-modern-blue dark" style="padding: 10px;" id="btn-add-rule">Add Rule</button>
+                <button class="btn-modern-red dark" style="padding: 10px;" id="btn-del-rule">Delete Rule</button>
             </div>
 
             <div class="table-wrapper"><table id="routing-rules-table" class="inner-table"></table></div>
@@ -92,12 +92,12 @@ function showRouterMenu(event) {
         return;
     }
 
-    //añadimos el identificador del equipo al menú  
+    //We add the device identifier to the menu
     const $menu = document.querySelector(".router-form");
     $menu.dataset.id = $networkObject.id;
     $menu.querySelector(".frame-title").innerHTML = $networkObject.id;
 
-    //cargamos las interfaces disponibles
+    //We load the available interfaces
     
     const availableInterfaces = getInterfaces($networkObject.id);
 
@@ -112,15 +112,15 @@ function showRouterMenu(event) {
 
     });
 
-    //cargamos la información de la primera interfaz
+    //load the information for the first interface
 
     $menu.querySelector("#router-ip").value = routerChangesBuffer[availableInterfaces[0]].ip;
     $menu.querySelector("#router-netmask").value = routerChangesBuffer[availableInterfaces[0]].netmask;
 
-    //cargamos las reglas de enrutamiento
+    //load the routing rules
     $menu.querySelector("#routing-rules-table").innerHTML = $networkObject.querySelector(".routing-table").querySelector("table").innerHTML;
 
-    //mostramos el menú
+    //display the menu
     $networkObject.querySelector(".advanced-options-modal").style.display = "none";
     $menu.style.display = "flex";
 }
@@ -138,12 +138,12 @@ function saveRouterMenu(event) {
         const netmask = routerChangesBuffer[networkObjectInterface].netmask;
 
         if (ip !== "" && !isValidIp(ip)) {
-            bodyComponent.render(popupMessage(`<span>Error: </span>La IP "${ip}" no es válida.`));
+            bodyComponent.render(popupMessage(`<span>Error: </span>The IP "${ip}" is invalid.`));
             return;
         }
 
         if (netmask !== "" && !isValidIp(netmask)) {
-            bodyComponent.render(popupMessage(`<span>Error: </span>La máscara de red "${netmask}" no es válida.`));
+            bodyComponent.render(popupMessage(`<span>Error: </span>The subnet mask "${netmask}" is invalid.`));
             return;
         }
 
@@ -153,7 +153,7 @@ function saveRouterMenu(event) {
     }
     
     $menu.querySelector("#routing-rules-table").innerHTML = $networkObject.querySelector(".routing-table").querySelector("table").innerHTML;
-    bodyComponent.render(popupMessage(`Los cambios se han guardado correctamente.`));
+    bodyComponent.render(popupMessage(`Changes have been saved successfully.`));
 
 }
 
@@ -192,17 +192,17 @@ function addGraphicInterface(event) {
     const $networkObject = document.getElementById($menu.dataset.id);
     const $interfacesContainer = $menu.querySelector("#iface");
     
-    //añadimos la interfaz
+    // We add the interface
     addInterface($networkObject.id);
     const index = maxIfaceIndex($networkObject.id);
     
-    //añadimos la opción de la nueva interfaz
+    // We add the option for the new interface
     $interfacesContainer.innerHTML += `<option value="enp0s${index}">enp0s${index}</option>`;
     
-    //añadimos una nueva referencia a la interfaz
+    // We add a new reference to the interface
     routerChangesBuffer[`enp0s${index}`] = { ip: "",netmask: "" };
 
-    bodyComponent.render(popupMessage(`Interfaz enp0s${index} agregada con éxito.`));
+    bodyComponent.render(popupMessage(`Interface enp0s${index} added successfully.`));
   
 }
 
@@ -216,12 +216,12 @@ function deleteGraphicInterface(event) {
     const fixedInterfaces = ["enp0s3"];
 
     if (fixedInterfaces.includes(currentInterface)) {
-        bodyComponent.render(popupMessage(`<span>Error: </span>La interfaz ${currentInterface} no se puede eliminar.`));
+        bodyComponent.render(popupMessage(`<span>Error: The interface ${currentInterface} cannot be deleted.`));
         return;
     }
 
     if ($networkObject.getAttribute("data-switch-" + currentInterface) !== "") {
-        bodyComponent.render(popupMessage(`<span>Error: </span>La interfaz ${currentInterface} tiene una conexión activa.`));
+        bodyComponent.render(popupMessage(`<span>Error: </span>The interface ${currentInterface} has an active connection.`));
         return;
     }
 
@@ -233,7 +233,7 @@ function deleteGraphicInterface(event) {
 
     delete routerChangesBuffer[currentInterface];
 
-    bodyComponent.render(popupMessage(`Interfaz ${currentInterface} eliminada con éxito.`));
+    bodyComponent.render(popupMessage(`Interface ${currentInterface} removed successfully.`));
 }
 
 function showRouterGraphicTab(event) {
@@ -266,7 +266,7 @@ function addRoutingRuleGraphicHandler(event) {
     const gatewayInterface = $routingSection.querySelector("#gateway-interface").value;
     const nexthop = $routingSection.querySelector("#nexthop").value;
 
-    //<-- intento añadir la regla
+    //<-- I try to add the rule
 
     try {
         addRoutingRuleGraphic(networkObjectId, destination, gatewayInterface, nexthop);
@@ -287,11 +287,11 @@ function removeRoutingRuleGraphicHandler(event) {
     const $networkObject = document.getElementById(networkObjectId);
     const $routingSection = $menu.querySelector("#routing-rules-section");
 
-    //<-- obtengo los parametros de la regla
+    //<-- I get the rule parameters
     
     const destination = $routingSection.querySelector("#destination-ip").value;
 
-    //<-- intento eliminar la regla
+    //<-- I try to delete the rule
 
     try {
         removeRoutingRuleGraphic(networkObjectId, destination);
@@ -304,45 +304,48 @@ function removeRoutingRuleGraphicHandler(event) {
 
 function addRoutingRuleGraphic(networkObjectId, destination, gatewayInterface, nexthop) {
 
-    //<-- validamos la ip de destino
-
-    if (!isValidCidrIp(destination)) throw new Error(`Error: se esperaba un prefijo válido en vez de "${destination}".`);
+    //<-- We validate the destination IP address
+	
+    if (!isValidCidrIp(destination)) throw new Error(`Error: A valid prefix was expected instead of "${destination}".`);
     const [destinationIP, destinationNetmask] = parseCidr(destination);
-    if (getNetwork(destinationIP, destinationNetmask) !== destinationIP) throw new Error(`Error: la ip de destino "${destination}" NO es una red.`);
+    if (getNetwork(destinationIP, destinationNetmask) !== destinationIP) throw new Error(`Error: The destination IP address "${destination}" is NOT a network.`);
     
-    //<-- validamos la interfaz de salida
+    //<-- We validate the outgoing interface
     
-    if (!(getInterfaces(networkObjectId)).includes(gatewayInterface)) throw new Error(`Error: no se reconoce la interfaz "${gatewayInterface}".`);
+    if (!(getInterfaces(networkObjectId)).includes(gatewayInterface)) throw new Error(`Error: The interface "${gatewayInterface}" is not recognized.`);
     const [gatewayIp, gatewayNetmask, interfaceMac] = getIfaceData(networkObjectId, gatewayInterface);
-    if (!gatewayIp) throw new Error(`Error: la interfaz "${gatewayInterface}" no está configurada.`);
+    if (!gatewayIp) throw new Error(`Error: The interface "${gatewayInterface}" is not configured.`);
 
-    //<-- validamos el siguiente salto
+    //<-- Validate the next hop
 
-    if (!isValidIp(nexthop)) throw new Error(`Error: se esperaba una ip válida en vez de "${nexthop}" en el siguiente salto.`);
-    if (getNetwork(gatewayIp, gatewayNetmask) !== getNetwork(nexthop, gatewayNetmask)) throw new Error(`Error: el siguiente salto "${nexthop}" es inaccesible.`);
-    if (nexthop === "0.0.0.0") throw new Error(`Error: el siguiente salto "${nexthop}" no es válido para una regla remota.`);
+    if (!isValidIp(nexthop)) throw new Error(`Error: A valid IP address was expected instead of "${nexthop}" at the next hop.`);
+    if (getNetwork(gatewayIp, gatewayNetmask) !== getNetwork(nexthop, gatewayNetmask)) throw new Error(`Error: The next hop "${nexthop}" is unreachable.`);
+    if (nexthop === "0.0.0.0") throw new Error(`Error: The next hop "${nexthop}" is not valid for a remote rule.`);
 
     setRemoteRoutingRule(networkObjectId,
-        destinationIP, //red de destino
-        destinationNetmask, //mascara de red
-        gatewayIp, //ip de salida
-        gatewayInterface, //interfaz
-        nexthop //ip del siguiente salto
+        destinationIP, //Destination IP address
+        destinationNetmask, //Subnet Mask
+        gatewayIp, //Gateway IP
+        gatewayInterface, //interface
+        nexthop //Next hop
     );
 
 }
 
 function removeRoutingRuleGraphic(networkObjectId, destination) {
 
-    //<-- validamos la ip de destino
+    //<-- We validate the destination IP address
 
-    if (!isValidCidrIp(destination)) throw new Error(`Error: se esperaba un prefijo válido en vez de "${destination}".`);
+    if (!isValidCidrIp(destination)) throw new Error(`Error: A valid prefix was expected instead of "${destination}".`);
     const [destinationIP, destinationNetmask] = parseCidr(destination);
-    if (getNetwork(destinationIP, destinationNetmask) !== destinationIP) throw new Error(`Error: la ip de destino "${destination}" NO es una red.`);
+    if (getNetwork(destinationIP, destinationNetmask) !== destinationIP) throw new Error(`Error: The destination IP address "${destination}" is NOT a network.`);
 
     removeRemoteRoutingRule(networkObjectId,
-        destinationIP, //red de destino
-        destinationNetmask //mascara de red
+        destinationIP, //Destination IP
+        destinationNetmask //Subnet mask
     );
 
 }
+
+
+/** translated by itsmeRiF **/
