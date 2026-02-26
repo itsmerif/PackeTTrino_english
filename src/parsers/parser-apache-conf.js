@@ -13,7 +13,7 @@ function apacheSitesParser(networkObjectId) {
         const parser = new DOMParser();
         const $apacheDOM = parser.parseFromString(filteredSiteContent, "application/xml");
 
-        if ($apacheDOM.querySelector("parsererror")) throw new Error("Error al analizar la configuración XML de Apache.");
+        if ($apacheDOM.querySelector("parsererror")) throw new Error("Error parsing Apache XML configuration.");
 
         const $apacheVirtualHost = $apacheDOM.querySelector("VirtualHost");
         const $documentRoot = $apacheVirtualHost.querySelector("DocumentRoot");
@@ -29,10 +29,10 @@ function apacheSitesParser(networkObjectId) {
         const indexesAllowed = $options?.getAttribute("Indexes") === "true";
         const followSymLinks = $options?.getAttribute("FollowSymLinks") === "true";
 
-        if (!ip) throw new Error("Error: No se ha especificado la dirección IP del servidor.");
-        if (!port) throw new Error("Error: No se ha especificado el puerto del servidor.");
-        if (!directoryValue) throw new Error("Error: No se ha especificado el directorio del servidor.");
-        if (!directoryIndexValue) throw new Error("Error: No se ha especificado el index del servidor.");
+        if (!ip) throw new Error("Error: The server IP address was not specified.");
+        if (!port) throw new Error("Error: Server port not specified.");
+        if (!directoryValue) throw new Error("Error: Server directory not specified.");
+        if (!directoryIndexValue) throw new Error("Error: Server index not specified.");
 
         response[siteFile] = {
             ip: ip,
