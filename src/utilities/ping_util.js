@@ -4,10 +4,10 @@ async function command_ping(networkObjectId, destination) {
 
     const stateHandler = {
         0: () => pingSuccess(destination),
-        1: () => terminalMessage(`ping: ${destination}: Nombre o servicio desconocido.`, networkObjectId),
-        2: () => terminalMessage(`ping: ${destination}: La dirección IP no es válida.`, networkObjectId),
+        1: () => terminalMessage(`ping: ${destination}: Unknown name or service.`, networkObjectId),
+        2: () => terminalMessage(`ping: ${destination}: Invalid IP address.`, networkObjectId),
         3: () => pingFailure(destination),
-        4: () => terminalMessage(`ping: ${destination}: La red es inaccesible.`, networkObjectId)
+        4: () => terminalMessage(`ping: ${destination}: Network unreachable.`, networkObjectId)
     }
 
     cleanPacketTraffic();
@@ -28,7 +28,7 @@ async function quickPing(id) {
     const networkObjectIp = getAvailableIps($networkObject.id)[0];
 
     if (!networkObjectIp) {
-        bodyComponent.render(popupMessage("<span>Error: </span> No se ha encontrado la IP del objeto " + id));
+        bodyComponent.render(popupMessage("<span>Error: </span> Object IP address not found " + id));
         return;
     }
 
