@@ -6,8 +6,8 @@ function command_systemctl(networkObjectId, args) {
     const validOptions = ["start", "restart", "stop", "status", "list-units"];
     
     if (!validOptions.includes(option)) {
-        terminalMessage("Error: Opción no reconocida.", networkObjectId);
-        terminalMessage("Sintaxis: systemctl [start|restart|stop|status] &lt;nombre del servicio&gt;", networkObjectId);
+        terminalMessage("Error: Unrecognized option.", networkObjectId);
+        terminalMessage("Syntax: systemctl [start|restart|stop|status] &lt;service name&gt;", networkObjectId);
         return;
     }
 
