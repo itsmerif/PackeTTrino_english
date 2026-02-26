@@ -11,7 +11,7 @@ function arpTable() {
                 <th>MAC</th>
             </tr>
         </table>
-        <button onclick="closeObjectModalTable(event, '.arp-table')">Cerrar</button>
+        <button onclick="closeObjectModalTable(event, '.arp-table')">Close</button>
     `;
 
     $arpTable.setAttribute("onclick", "event.stopPropagation();");
