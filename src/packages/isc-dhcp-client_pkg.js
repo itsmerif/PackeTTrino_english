@@ -3,7 +3,7 @@ function installDhclient($networkObject) {
     const networkObjectId = $networkObject.id;
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
 
-    terminalMessage("Instalando DHCP Client...", networkObjectId);
+    terminalMessage("Installing DHCP Client...", networkObjectId);
         
         attr("dhclient", "true");
 
@@ -18,12 +18,12 @@ function installDhclient($networkObject) {
             attr(`data-dhcp-flag-t2-${iface}`, "false");
         }
 
-    terminalMessage("DHCP Client instalado correctamente.", networkObjectId);
+    terminalMessage("DHCP Client successfully installed.", networkObjectId);
 }
 
 function uninstallDhclient(networkObjectId) {
 
-    terminalMessage("Desinstalando DHCP Client...", networkObjectId);
+    terminalMessage("Uninstalling DHCP Client...", networkObjectId);
 
         const $networkObject = document.getElementById(networkObjectId);
         const rattr = (...attributes) => attributes.forEach(attribute => $networkObject.removeAttribute(attribute));
@@ -42,6 +42,6 @@ function uninstallDhclient(networkObjectId) {
             );
         }
     
-    terminalMessage("DHCP Client desinstalado correctamente.", networkObjectId);
+    terminalMessage("DHCP Client successfully uninstalled..", networkObjectId);
 
 }
