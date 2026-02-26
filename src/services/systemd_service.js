@@ -4,8 +4,8 @@ function systemd(networkObjectId, service, option) {
     const currentServices = ["dhcpd", "apache2", "dhclient", "dhcrelay", "resolved", "named"];
     const isServiceInstalled = $networkObject.getAttribute(service) !== null;
 
-    if (!currentServices.includes(service)) throw new Error(`Error: Servicio "${service}" desconocido.`);
-    if (!isServiceInstalled) throw new Error(`Error: Servicio "${service}" no instalado.`);
+    if (!currentServices.includes(service)) throw new Error(`Error: Unknown Service "${service}".`);
+    if (!isServiceInstalled) throw new Error(`Error: Service "${service}" not installed.`);
 
     const stateFunctions = {
 
