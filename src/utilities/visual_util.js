@@ -12,8 +12,8 @@ function command_visual(networkObjectId, args) {
         "off": () => { newVisualMode = "OFF"; },
         "on": () => { newVisualMode = "ON"; },
         "config": () => { 
-            terminalMessage(`Velocidad de animación: ${visualSpeed} ms`, networkObjectId);
-            terminalMessage(`Modo de animación: ${(visualToggle ? "ON" : "OFF")}`, networkObjectId);
+            terminalMessage(`Animation speed: ${visualSpeed} ms`, networkObjectId);
+            terminalMessage(`Animation mode: ${(visualToggle ? "ON" : "OFF")}`, networkObjectId);
         },
     }
 
@@ -23,7 +23,7 @@ function command_visual(networkObjectId, args) {
     for (let option in $OPTS) if (optionsHandler[option]) optionsHandler[option]();
 
     if (isNaN(newVisualSpeed) || newVisualSpeed > 1000 || newVisualSpeed < 100) {
-        terminalMessage("Error: velocidad de animación no válida.", networkObjectId);
+        terminalMessage("Error: Invalid animation speed.", networkObjectId);
         return;
     }
 
