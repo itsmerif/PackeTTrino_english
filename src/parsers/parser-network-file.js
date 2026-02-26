@@ -1,11 +1,18 @@
 /***
- * DIFERENCIAS CON EL FUNCIONAMIENTO HABITUAL EN LINUX:
- * -a NO REPRESENTA LAS LINEAS "AUTO", REPRESENTA TODAS LAS INTERFACES (--all)
- * LOS BLOQUES DE INSTRUCCIONES COMIENZAN POR "iface" Y DEBEN SER EN LA FORMA "iface <INTERFAZ> inet <TIPO> address <IP> netmask <MASCARA> gateway <IP>"
- * NO SE USAN LAS INSTUCCIONES "AUTO <INTERFAZ>"
- * LAS REGLAS DE ENRUTAMIENTO DEBEN SER EN LA FORMA "ip route add <IP_DESTINO>/<MASCARA_DESTINO> via <IP_NEXTHOP>"
- * LAS REGLAS DE ENRUTAMIENTO NO COMIENZAN POR "up" o "down"
- * LAS REGLAS DE ENRUTAMIENTO SIEMPRE LLEVAN "add"
+
+* DIFFERENCES FROM NORMAL LINUX OPERATION:
+
+* -a DOES NOT REPRESENT THE "AUTO" LINES, IT REPRESENTS ALL INTERFACES (--all)
+
+* INSTRUCTION BLOCKS BEGIN WITH "iface" AND MUST BE IN THE FORM "iface <INTERFACE> inet <TYPE> address <IP> netmask <MASK> gateway <IP>"
+
+* THE "AUTO <INTERFACE>" INSTRUCTIONS ARE NOT USED
+
+* ROUTING RULES MUST BE IN THE FORM "ip route add <DESTINATION_IP>/<DESTINATION_MASK> via <NEXTHOP_IP>"
+
+* ROUTING RULES DO NOT BEGIN WITH "up" or "down"
+
+* ROUTING RULES ALWAYS INCLUDE "add"
 */
 
 async function interfacesFileInterpreter(networkObjectId, content, interfaceInput) {
@@ -86,7 +93,7 @@ async function interfacesFileInterpreter(networkObjectId, content, interfaceInpu
             }
 
             if (interfaceObject["gateway"] !== "" && !isValidIp(interfaceObject["gateway"])) {
-                throw new Error(`Error: la puerta de enlace ${interfaceObject["gateway"]} no es válida`);
+                throw new Error(`Error: The default gateway ${interfaceObject["gateway"]} is invalid`);
             }
 
             configureInterface(networkObjectId,
@@ -102,7 +109,7 @@ async function interfacesFileInterpreter(networkObjectId, content, interfaceInpu
         if (interfaceObject["inet"] === "dhcp") {
 
             if ($networkObject.getAttribute("dhclient") !== "true") {
-                throw new Error(`Error: el equipo no tiene instalado el servicio DHCP cliente.\nPista -> apt install isc-dhcp-client`);
+                throw new Error(`Error: The device does not have the DHCP client service installed.\nHint -> apt install isc-dhcp-client`);
             }
 
             $networkObject.setAttribute(`data-dhclient-${interfaceObject["iface"]}`, "true");
@@ -121,18 +128,18 @@ async function interfacesFileInterpreter(networkObjectId, content, interfaceInpu
             const destinationCIDR = tokens[3]; 
             const nexthop = tokens[5];
 
-            if (!isValidCidrIp(destinationCIDR)) throw new Error(`Error: direccion IP ${destinationCIDR} no válida`);
+            if (!isValidCidrIp(destinationCIDR)) throw new Error(`Error: IP Address ${destinationCIDR} is invalid`);
 
             const [destinationIp, netmaskIp] = parseCidr(destinationCIDR);
 
             if (getNetwork(destinationIp, netmaskIp) !== destinationIp) {
-                throw new Error(`Error: dirección IP ${destinationCIDR} no es una dirección de red`);
+                throw new Error(`Error: IP address ${destinationCIDR} is not a network address`);
             }
 
-            if (!isValidIp(nexthop)) throw new Error(`Error: dirección IP ${nexthop} no válida`);
+            if (!isValidIp(nexthop)) throw new Error(`Error: IP Address ${nexthop} is invalid`);
 
             if (getNetwork(nexthop, interfaceObject["netmask"]) !== getNetwork(interfaceObject["address"], interfaceObject["netmask"])) {
-                throw new Error(`Error: dirección IP ${nexthop} no es accesible`);
+                throw new Error(`Error: IP Address ${nexthop} is not reachable`);
             }
 
             setRemoteRoutingRule(networkObjectId,
