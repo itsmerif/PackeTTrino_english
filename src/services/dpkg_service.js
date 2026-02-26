@@ -13,13 +13,13 @@ function dpkg(networkObjectId, option, package) {
         "amin-search": "browser",
     }
 
-    if (!availablePackages.includes(package)) throw new Error(`Error: No se ha podido localizar el paquete ${package}.`);
+    if (!availablePackages.includes(package)) throw new Error(`Error: Unable to locate packet ${package}.`);
 
     const service = packagesToServices[package];
     const isServiceInstalled = $networkObject.getAttribute(service) !== null;
 
-    if (option === "install" && isServiceInstalled) throw new Error(`${package} ya está en su versión más reciente.`);
-    if (option === "remove" && !isServiceInstalled) throw new Error(`Error: El paquete ${package} no está instalado, no se eliminará.`);
+    if (option === "install" && isServiceInstalled) throw new Error(`${package} is already the latest version.`);
+    if (option === "remove" && !isServiceInstalled) throw new Error(`Error: The package ${package} is not installed; it will not be removed.`);
     if (option === "install") dpkgInstaller(package);
     if (option === "remove") dpkgUninstaller(package);
 
