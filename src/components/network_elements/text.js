@@ -4,15 +4,14 @@ function TextObject(x, y) {
     const $input = document.createElement("input");
     const $advancedOptions = document.createElement("div");
 
-    //caracteristicas generales
+//general characteristics
 
     $textObject.id = "text-" + itemIndex;
     $textObject.classList.add("text-annotation");
     $textObject.style.left = `${x}px`;
     $textObject.style.top = `${y}px`;
     $textObject.setAttribute("data-text", "");
-
-    //opciones avanzadas
+//advanced options
 
     $advancedOptions.classList.add("advanced-options-modal");
     $advancedOptions.innerHTML = `<button onclick="deleteItem(event)">Eliminar</button>`;
@@ -21,13 +20,13 @@ function TextObject(x, y) {
 
     $input.type = "text";
 
-    //eventos
+    //events
 
     $textObject.setAttribute("onmousedown", "dragText(event)");
     $input.setAttribute("oninput", "autoExtendText.call(this)");
     $textObject.setAttribute("oncontextmenu", "showAdvancedOptions(event)");
 
-    //construimos el objeto
+    //we construct the object
 
     $textObject.appendChild($advancedOptions);
     $textObject.appendChild($input);
