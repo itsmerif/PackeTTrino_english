@@ -85,27 +85,27 @@ class FileSystem {
         //verficamos el archivo origen
 
         for (let i = 0; i < directoryPath.length; i++) {
-            if (!currentDirectory[directoryPath[i]]) throw new Error(`El directorio ${directoryPath[i]} no existe`);
-            if (typeof currentDirectory[directoryPath[i]] !== "object") throw new Error(`El directorio ${directoryPath[i]} no es un directorio`);
+            if (!currentDirectory[directoryPath[i]]) throw new Error(`The directory ${directoryPath[i]} does not exist`);
+            if (typeof currentDirectory[directoryPath[i]] !== "object") throw new Error(`The directory ${directoryPath[i]} is not a directory`);
             currentDirectory = currentDirectory[directoryPath[i]];
         }
 
-        if (!Object.hasOwn(currentDirectory, fileName)) throw new Error(`El archivo o directorio ${fileName} no existe`);
+        if (!Object.hasOwn(currentDirectory, fileName)) throw new Error(`The file or directory ${fileName} does not exist`);
 
         const source = currentDirectory[fileName];
 
-        if (typeof source === "object" && !recursive) throw new Error(`-r no especificado; omitiendo el directorio ${fileName}`);
+        if (typeof source === "object" && !recursive) throw new Error(`-r unspecified; omitting directory ${fileName}`);
 
         //verficamos el directorio destino
 
         for (let i = 0; i < destinationPath.length; i++) {
-            if (!destinationDirectory[destinationPath[i]]) throw new Error(`El directorio ${destinationPath[i]} no existe`);
-            if (typeof destinationDirectory[destinationPath[i]] !== "object") throw new Error(`El directorio ${destinationPath[i]} no es un directorio`);
+            if (!destinationDirectory[destinationPath[i]]) throw new Error(`Directory ${destinationPath[i]} does not exist`);
+            if (typeof destinationDirectory[destinationPath[i]] !== "object") throw new Error(`Directory ${destinationPath[i]} is not a directory`);
             destinationDirectory = destinationDirectory[destinationPath[i]];
         }
 
         if (!recursive && typeof destinationDirectory[destinationFileName] === "object") {
-            throw new Error(`No se puede sobreescribir el archivo ${destinationFileName}: es un directorio`);
+            throw new Error(`Cannot overwrite file ${destinationFileName}: it is a directory`);
         }
 
         destinationDirectory[destinationFileName] = (typeof source === "object") ? this.deepCopy(source): source;
@@ -119,12 +119,12 @@ class FileSystem {
         let currentDirectory = this.structure["/"];
 
         for (let i = 0; i < directoryPath.length; i++) {
-            if (!currentDirectory[directoryPath[i]]) throw new Error(`El directorio ${directoryPath[i]} no existe`);
-            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`El directorio ${directoryPath[i]} no es un directorio`);
+            if (!currentDirectory[directoryPath[i]]) throw new Error(`Directory ${directoryPath[i]} does not exist`);
+            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`The directory ${directoryPath[i]} is not a directory`);
             currentDirectory = currentDirectory[directoryPath[i]];
         }
 
-        if (!Object.hasOwn(currentDirectory, fileName)) throw new Error(`El archivo ${fileName} no existe`);
+        if (!Object.hasOwn(currentDirectory, fileName)) throw new Error(`The file ${fileName} does not exist`);
         delete currentDirectory[fileName];
         this.compile();
 
@@ -135,12 +135,12 @@ class FileSystem {
         let currentDirectory = (this.structure)["/"];
 
         for (let i = 0; i < directoryPath.length; i++) {
-            if (!Object.hasOwn(currentDirectory, directoryPath[i])) throw new Error(`El directorio ${directoryPath[i]} no existe`);
-            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`El directorio ${directoryPath[i]} no es un directorio`);
+            if (!Object.hasOwn(currentDirectory, directoryPath[i])) throw new Error(`The directory ${directoryPath[i]} does not exist`);
+            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`The directory ${directoryPath[i]} is not a directory.`);
             currentDirectory = currentDirectory[directoryPath[i]];
         }
 
-        if (!Object.hasOwn(currentDirectory, folderName)) throw new Error(`El directorio ${folderName} no existe`);
+        if (!Object.hasOwn(currentDirectory, folderName)) throw new Error(`The directory ${folderName} does not exist.`);
         delete currentDirectory[folderName];
         this.compile();
 
@@ -154,7 +154,7 @@ class FileSystem {
             if (!Object.hasOwn(currentDirectory, directoryPath[i])) {
                 currentDirectory[directoryPath[i]] = {};
             } else if (!(currentDirectory[directoryPath[i]] instanceof Object)) {
-                throw new Error(`El directorio ${directoryPath[i]} no es un directorio`);
+                throw new Error(`The directory ${directoryPath[i]} is not a directory.`);
             }
             currentDirectory = currentDirectory[directoryPath[i]];
         }
@@ -172,8 +172,8 @@ class FileSystem {
 
         directoryPath.forEach(dir => {
             if (!dir) return;
-            if (!Object.hasOwn(currentDirectory, dir)) throw new Error(`El directorio ${dir} no existe`);
-            if (!(currentDirectory[dir] instanceof Object)) throw new Error(`${dir} no es un directorio`);
+            if (!Object.hasOwn(currentDirectory, dir)) throw new Error(`The directory ${dir} does not exist.`);
+            if (!(currentDirectory[dir] instanceof Object)) throw new Error(`${dir} is not a directory.`);
             currentDirectory = currentDirectory[dir];
             provisionalPWD.push(dir);
         });
@@ -189,13 +189,13 @@ class FileSystem {
         let currentDirectory = this.structure["/"];
 
         for (let i = 0; i < directoryPath.length; i++) {
-            if (!currentDirectory[directoryPath[i]]) throw new Error(`El directorio ${directoryPath[i]} no existe`);
-            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`El directorio ${directoryPath[i]} no es un directorio`);
+            if (!currentDirectory[directoryPath[i]]) throw new Error(`The directory ${directoryPath[i]} does not exist.`);
+            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`The directory ${directoryPath[i]} is not a directory.`);
             currentDirectory = currentDirectory[directoryPath[i]];
         }
 
-        if (!Object.hasOwn(currentDirectory, fileName)) throw new Error(`El archivo ${fileName} no existe`);
-        if (currentDirectory[fileName] instanceof Object) throw new Error(`No se puede abrir el archivo ${fileName}: es un directorio`);
+        if (!Object.hasOwn(currentDirectory, fileName)) throw new Error(`The file ${fileName} does not exist.`);
+        if (currentDirectory[fileName] instanceof Object) throw new Error(`Cannot open file ${fileName}: it is a directory.`);
 
         return currentDirectory[fileName];
 
@@ -207,13 +207,13 @@ class FileSystem {
         let currentDirectory = this.structure["/"];
 
         for (let i = 0; i < directoryPath.length; i++) {
-            if (!currentDirectory[directoryPath[i]]) throw new Error(`El directorio ${directoryPath[i]} no existe`);
-            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`El directorio ${directoryPath[i]} no es un directorio`);
+            if (!currentDirectory[directoryPath[i]]) throw new Error(`The directory ${directoryPath[i]} does not exist.`);
+            if (!(currentDirectory[directoryPath[i]] instanceof Object)) throw new Error(`The directory ${directoryPath[i]} is not a directory.`);
             currentDirectory = currentDirectory[directoryPath[i]];
         }
 
-        if (!Object.hasOwn(currentDirectory, fileName)) throw new Error(`El archivo ${fileName} no existe`);
-        if (currentDirectory[fileName] instanceof Object) throw new Error(`No se puede escribir sobre el archivo ${fileName}: es un directorio`);
+        if (!Object.hasOwn(currentDirectory, fileName)) throw new Error(`The file ${fileName} does not exist.`);
+        if (currentDirectory[fileName] instanceof Object) throw new Error(`Cannot write to the file ${fileName}: it is a directory.`);
 
         currentDirectory[fileName] = content;
 
