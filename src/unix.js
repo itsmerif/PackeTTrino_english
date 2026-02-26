@@ -5,9 +5,9 @@ function unixParser(event) {
 
     if (event.key === "Enter") {
 
-        const input = event.target.value.trim(); //obtenemos la entrada eliminando los espacios en blanco
-        const args = input.split(" "); //dividimos la entrada en argumentos separados por espacios
-        const command = args[0]; //el primer argumento es el comando
+        const input = event.target.value.trim(); // We get the input by removing the whitespace
+        const args = input.split(" ");  // We split the input into space-separated arguments
+        const command = args[0]; // The first argument is the command
 
         const commandFunctions = {
             "ping": () => command_ping(networkObjectId, args[1]),
@@ -39,12 +39,12 @@ function unixParser(event) {
             "ipv4-forwarding": () => command_ipv4_forwarding(networkObjectId, args.slice(1)),
         }
 
-        window.clearInterval(window.pingInterval); //limpiamos todos los procesos de terminal en funcionamiento
-        document.querySelector(".terminal-output").innerHTML = ""; //limpiamos la salida
-        terminalBuffer.push(input); //añadimos el comando en el buffer
-        currentCommandIndex++; //actualizamos el indice del cursor de comandos
-        $terminal.querySelector("input").value = ""; //limpiamos la entrada
-        commandFunctions[command] ? commandFunctions[command]() : terminalMessage(`Error: comando ${command} desconocido.`, networkObjectId); //ejecutamos la función correspondiente
+        window.clearInterval(window.pingInterval); // Clear all running terminal processes
+        document.querySelector(".terminal-output").innerHTML = ""; // Clear the output
+        terminalBuffer.push(input); // Add the command to the buffer
+        currentCommandIndex++; // Update the command cursor index
+        $terminal.querySelector("input").value = ""; // Clear the input
+        commandFunctions[command] ? commandFunctions[command]() : terminalMessage(`Error: unknown command ${command}.`, networkObjectId); //we execute the corresponding function
     }
 
 }
