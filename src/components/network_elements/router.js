@@ -34,7 +34,7 @@ function RouterObject(x, y) {
         }
     };
 
-    //por defecto tiene tres interfaces de red
+   // By default, it has three network interfaces
     attr("ip-enp0s3", "");
     attr("netmask-enp0s3", "");
     attr("mac-enp0s3", getRandomMac());
@@ -49,10 +49,10 @@ function RouterObject(x, y) {
     attr("data-switch-enp0s9", "");
     attr("ipv4-forwarding", "true");
 
-    //añadimos el sistema de archivos
+    // Add file system
     attr("filesystem", JSON.stringify(filesystem));
 
-    //añadimos eventos
+    //Add Events
     attr("ondragstart", "BoardItemDragStart(event)");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("onclick", "showRouterMenu(event)");
