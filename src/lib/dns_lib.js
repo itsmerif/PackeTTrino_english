@@ -59,41 +59,41 @@ function getARecord(dataId, name) {
 
 /**ESTA FUNCION VALIDA UN REGISTRO SOA */
 function isValidSOARecord(dataId, domain, authorityNameServer, serial, cacheTTL) {
-    if (!isValidDomain(domain)) throw new Error(`Error: dominio ${domain} inválido`);
-    if (!domain.endsWith(".")) throw new Error(`Error: el dominio ${domain} debe ser un FQDN`);
-    if (!isValidDomain(authorityNameServer)) throw new Error(`Error: servidor autoritario ${authorityNameServer} inválido`);
-    if (!authorityNameServer.endsWith(".")) throw new Error(`Error: el servidor autoritario ${authorityNameServer} debe ser un FQDN`);
-    if (isNaN(cacheTTL)) throw new Error(`Error: el TTL ${cacheTTL} no es válido.`);
-    if (cacheTTL < 0 || cacheTTL > 86400) throw new Error(`Error: el TTL ${cacheTTL} debe ser un numero entre 0 y 86400.`);
-    if (hasSoaRecord(dataId, domain)) throw new Error(`Error: Ya existe un registro de SOA para ${domain}.`);
+    if (!isValidDomain(domain)) throw new Error(`Error: Domain ${domain} invalid`);
+    if (!domain.endsWith(".")) throw new Error(`Error: The domain ${domain} must be a FQDN`);
+    if (!isValidDomain(authorityNameServer)) throw new Error(`Error: Invalid authoritative server ${authorityNameServer}`);
+    if (!authorityNameServer.endsWith(".")) throw new Error(`Error: The authoritative server ${authorityNameServer} must be a fully qualified domain name (FQDN).`);
+    if (isNaN(cacheTTL)) throw new Error(`Error: The TTL ${cacheTTL} is invalid.`);
+    if (cacheTTL < 0 || cacheTTL > 86400) throw new Error(`Error: TTL ${cacheTTL} must be a number between 0 and 86400.`);
+    if (hasSoaRecord(dataId, domain)) throw new Error(`Error: An SOA record already exists for ${domain}.`);
 }
 
 /**ESTA FUNCION VALIDA UN REGISTRO NS */
 function isValidNSRecord(dataId, domain, authorityNameServer) {
-    if (!hasSoaRecord(dataId, domain)) throw new Error(`Error: El dominio ${domain} debe tener primero un registro SOA.`);
-    if (!isValidDomain(domain)) throw new Error("Error: Dominio Invalido");
-    if (!domain.endsWith(".")) throw new Error("Error: Dominio Debe Ser UN FQDN");
-    if (!isValidDomain(authorityNameServer)) throw new Error("Error: Autoridad Invalida");
-    if (!authorityNameServer.endsWith(".")) throw new Error("Error: Autoridad Debe Ser UN FQDN");
+    if (!hasSoaRecord(dataId, domain)) throw new Error(`Error: The domain ${domain} must first have an SOA record.`);
+    if (!isValidDomain(domain)) throw new Error("Error: Invalid Domain");
+    if (!domain.endsWith(".")) throw new Error("Error: Domain Must Be a FQDN");
+    if (!isValidDomain(authorityNameServer)) throw new Error("Error: Invalid Authority");
+    if (!authorityNameServer.endsWith(".")) throw new Error("Error: Authority Must Be an FQDN");
 }
 
 /**ESTA FUNCION VALIDA UN REGISTRO A */
 function isValidARecord(serverObjectId, name, value) {
-    if (!isValidDomain(name)) throw new Error(`Error: Nombre ${name} Invalido`);
+    if (!isValidDomain(name)) throw new Error(`Error: Invalid Name ${name}`);
     let domain = name.split(".").slice(1).join("."); //<-- extraemos el dominio del nombre
-    if (!hasSoaRecord(serverObjectId, domain)) throw new Error(`Error: El dominio ${domain} debe tener primero un registro SOA.`);
-    if (!hasNsRecord(serverObjectId, domain)) throw new Error(`Error: El dominio ${domain} debe tener primero un registro NS.`);
-    if (!name.endsWith(".")) throw new Error(`Error: El nombre ${name} debe ser un FQDN`);
-    if (!isValidIp(value)) throw new Error(`Error: IP ${value} Invalida`);
+    if (!hasSoaRecord(serverObjectId, domain)) throw new Error(`Error: The domain ${domain} must first have an SOA record.`);
+    if (!hasNsRecord(serverObjectId, domain)) throw new Error(`Error: The domain ${domain} must first have an NS record.`);
+    if (!name.endsWith(".")) throw new Error(`Error: The name ${name} must be an FQDN`);
+    if (!isValidIp(value)) throw new Error(`Error: IP ${value} Invalid`);
 }
 
 /**ESTA FUNCION VALIDA UN REGISTRO CNAME */
 function isValidCNAMERecord(serverObjectId, alias, name) {
-    if (!isValidDomain(alias)) throw new Error(`Error: Dominio ${alias} inválido`);
-    if (!alias.endsWith(".")) throw new Error(`Error: el dominio ${alias} debe ser un FQDN`);
-    if (!isValidDomain(name)) throw new Error(`Error: Dominio ${name} inválido`);
-    if (!name.endsWith(".")) throw new Error(`Error: el dominio ${name} debe ser un FQDN`);
-    if (!getARecord(serverObjectId, name)) throw new Error(`Error: El dominio ${name} debe tener primero un registro A.`);
+    if (!isValidDomain(alias)) throw new Error(`Error: Domain ${alias} invalid`);
+    if (!alias.endsWith(".")) throw new Error(`Error: The domain ${alias} must be a FQDN`);
+    if (!isValidDomain(name)) throw new Error(`Error: Domain ${name} invalid`);
+    if (!name.endsWith(".")) throw new Error(`Error: The domain ${name} must be a FQDN`);
+    if (!getARecord(serverObjectId, name)) throw new Error(`Error: The domain ${name} must first have an A record.`);
 }
 
 /**ESTA FUNCIONA DEVUELVE LA IP DE UN NOMBRE DE DOMINIO QUE ESTÉ ALMACENADO EN /ETC/HOSTS, O DEVUELVE FALSO SI NO EXISTE */
@@ -459,9 +459,9 @@ function flushDnsCache(networkObjectId) {
     const $cacheDnsTable = $networkObject.querySelector(".cache-dns-table").querySelector("table");
     $cacheDnsTable.innerHTML = `
         <tr>
-            <th>Dominio</th>
-            <th>Tipo de Registro</th>
-            <th>Valor</th>
+           <th>Domain</th> 
+            <th>Record Type</th> 
+            <th>Value</th>
         </tr>
     `;
 }
