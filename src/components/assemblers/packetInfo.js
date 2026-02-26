@@ -92,39 +92,39 @@ function packetInfo(event) {
         <div class="packet-fields-modal">
             <table>
                 <tr>
-                    <th>Aplicación</th>
+                    <th>Application</th>
                     ${$packetPrint[6].map(field => `<td>${escapeHtml(field)}</td>`).join("")}
                 </tr>
                 <tr>
-                    <th>Presentación</th>
+                    <th>Presentation</th>
                     ${$packetPrint[5].map(field => `<td>${field}</td>`).join("")}
                 </tr>
                 <tr>
-                    <th>Sesión</th>
+                    <th>Session</th>
                     ${$packetPrint[4].map(field => `<td>${field}</td>`).join("")}
                 </tr>
                 <tr>
-                    <th>Transporte</th>
+                    <th>Transportation</th>
                     ${$packetPrint[3].map(field => `<td>${field}</td>`).join("")}
                 </tr>
                 <tr>
-                    <th>Red</th>
+                    <th>Network</th>
                     <td>IPv4</td>
                     ${$packetPrint[2].map(field => `<td>${field}</td>`).join("")}
                 </tr>
                 <tr>
-                    <th>Enlace de Datos</th>
+                    <th>Data Link</th>
                     <td>Ethernet (IEEE 802.3)</td>
                     ${$packetPrint[1].map(field => `<td>${field}</td>`).join("")}
                 </tr>
                 <tr>
-                    <th>Física</th>
+                    <th>Physical</th>
                     <td>Ethernet</td>
                     ${$packetPrint[0].map(field => `<td>${field}</td>`).join("")}
                 </tr>
             </table>
             
-            <button class="btn-close" onclick="closePacketFieldsModal()">Cerrar</button>
+            <button class="btn-close" onclick="closePacketFieldsModal()">Close</button>
 
         </div>
     `;
