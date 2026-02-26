@@ -62,3 +62,4 @@ async function movePacket(x1, y1, x2, y2, type) {
         requestAnimationFrame(animateMove);
     });
 }
+
