@@ -309,7 +309,7 @@ function splitLast(text, separator) {
 /**This function manages file uploads to the panel.*/
 function fileInputChangeHandler(event) {
     let fileName = event.target.files[0].name;
-    bodyComponent.render(popupMessage(`Archivo <em>${fileName}</em> cargado con éxito. Para mostrar el contenido, haz click en:`, "/assets/panel/load.svg"));
+    bodyComponent.render(popupMessage(`File <em>${fileName}</em> successfully loaded. To view the contents, click here:`, "/assets/panel/load.svg"));
 }
 
 /**This function manages file uploads to the panel.*/
@@ -318,13 +318,13 @@ function fileInputLoadHandler() {
     const archivoInput = document.getElementById("fileInput");
 
     if (archivoInput.files.length === 0) {
-        boardComponent.render(popupMessage("Por favor, sube un archivo primero."));
+        boardComponent.render(popupMessage("Please upload a file first."));
         return;
     }
 
     const fileName = archivoInput.files[0].name;
 
-    bodyComponent.render(confirmPopup(`¿Deseas cargar el archivo ${fileName}?`, loadState));
+    bodyComponent.render(confirmPopup(`Do you want to upload the file ${fileName}?`, loadState));
 
 }
 
