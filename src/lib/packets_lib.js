@@ -238,7 +238,7 @@ class httpRequest extends packet {
         this.host = host;
         this.contentType = "text/html";
         this.keepalive = true;
-        this.userAgent = "Amin-Search 1.0 - 2025";
+        this.userAgent = "Amin-Search 1.0 - 2026";
         this.body = "";
         this.resource = resource;
     }
@@ -258,7 +258,7 @@ class httpReply extends packet {
         this.host = host;
         this.keepalive = true;
         this.contentType = "text/html";
-        this.userAgent = "Amin-Search 1.0 - 2025";
+        this.userAgent = "Amin-Search 1.0 - 2026";
         this.body = "";
         this.statusCode = "";
     }
