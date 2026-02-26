@@ -24,7 +24,7 @@ async function command_curl(networkObjectId, args) {
     const url = args[0];
 
     if (!url) {
-        terminalMessage("Error: No se ha especificado la URL.", networkObjectId);
+        terminalMessage("Error: No URL specified.", networkObjectId);
         return;
     }
 
@@ -45,7 +45,7 @@ async function command_curl(networkObjectId, args) {
                 }
             };
 
-            if (!requestFunctions[search.protocol]) throw new Error(`Protocolo ${search.protocol} no válido.`); 
+            if (!requestFunctions[search.protocol]) throw new Error(`Invalid protocol ${search.protocol}.`); 
 
             const httpReply = await requestFunctions[search.protocol]();
             
