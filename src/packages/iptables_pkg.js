@@ -2,7 +2,7 @@ function installIptables($networkObject) {
 
     const networkObjectId = $networkObject.id;
     
-    terminalMessage("Instalando Iptables...", networkObjectId);
+    terminalMessage("Installing ipTables...", networkObjectId);
 
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
@@ -23,6 +23,6 @@ function installIptables($networkObject) {
     attr("firewall-default-policy", JSON.stringify(defaultPolicies));
     attr("firewall-rules", JSON.stringify(firewallRules));
 
-    terminalMessage("Apache instalado correctamente.", networkObjectId);
+    terminalMessage("Apache successfully installed.", networkObjectId);
     
 }
