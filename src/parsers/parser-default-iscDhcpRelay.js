@@ -27,7 +27,7 @@ function iscDhcpRelayInterpreter(networkObjectId, content) {
             const availableInterfaces = getInterfaces(networkObjectId);
 
             if (!fileInterfaces.every(fileInterface => availableInterfaces.includes(fileInterface))) {
-                throw new Error(`/default/isc-dhcp-server: no se reconocen las interfaces ${fileInterfaces.filter(fileInterface => !availableInterfaces.includes(fileInterface))}`);
+                throw new Error(`/default/isc-dhcp-server: Interfaces ${fileInterfaces.filter(fileInterface => !availableInterfaces.includes(fileInterface))} not recognized`);
             }
 
             $networkObject.setAttribute("dhcrelay-listen-on-interfaces", fileInterfaces.join(","));
@@ -39,7 +39,7 @@ function iscDhcpRelayInterpreter(networkObjectId, content) {
             const fileServer = (splitLast(splitFirst(splitFirst(line, "=")[1], '"')[1], '"')[0])
             .split(" ")[0].trim()
 
-            if (!isValidIp(fileServer)) throw new Error(`/default/isc-dhcp-server: no se reconoce el servidor ${fileServer}`);
+            if (!isValidIp(fileServer)) throw new Error(`/default/isc-dhcp-server: Server ${fileServer} not recognized`);
 
             $networkObject.setAttribute("dhcrelay-main-server", fileServer);
 
