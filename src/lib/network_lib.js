@@ -794,6 +794,6 @@ function setDefaultGateway(networkObjectId, newGateway) {
         }
     }
 
-    throw new Error("networkd: Error: Puerta de enlace inalcanzable.");
+    throw new Error("networkd: Error: Gateway unreachable.");
 
 }
