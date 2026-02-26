@@ -1,6 +1,6 @@
 function installApache2($networkObject) {
 
-    terminalMessage("Instalando Apache...", $networkObject.id);
+    terminalMessage("Installing Apache...", $networkObject.id);
 
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
 
@@ -25,13 +25,13 @@ function installApache2($networkObject) {
     //se añaden eventos
     if ($networkObject.id.startsWith("pc-")) $networkObject.querySelector("img").src = "./assets/board/www-server.svg";
 
-    terminalMessage("Apache instalado correctamente.", $networkObject.id);
+    terminalMessage("Apache successfully installed.", $networkObject.id);
     
 }
 
 function uninstallApache2(networkObjectId) {
 
-    terminalMessage("Desinstalando Apache...", networkObjectId);
+    terminalMessage("Uninstalling Apache...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const rattr = (...attributes) => attributes.forEach(attribute => $networkObject.removeAttribute(attribute));
@@ -44,5 +44,5 @@ function uninstallApache2(networkObjectId) {
     
     if ($networkObject.id.startsWith("pc-")) $networkObject.querySelector("img").src = "./assets/board/pc.svg";
 
-    terminalMessage("Apache desinstalado correctamente.", networkObjectId);
+    terminalMessage("Apache successfully uninstalled.", networkObjectId);
 }
