@@ -24,12 +24,12 @@ function iscDhcpServerInterpreter(networkObjectId, content)  {
             .map(iface => iface.trim())
             .filter(iface => iface !== "");
 
-            if (fileInterfaces.length === 0) throw new Error(`/default/isc-dhcp-server: no se reconocen las interfaces de escucha.`);
+            if (fileInterfaces.length === 0) throw new Error(`/default/isc-dhcp-server: Listening interfaces not recognized.`);
 
             const availableInterfaces = getInterfaces(networkObjectId);
 
             if (!fileInterfaces.every(fileInterface => availableInterfaces.includes(fileInterface))) {
-                throw new Error(`/default/isc-dhcp-server: no se reconocen las interfaces ${fileInterfaces.filter(fileInterface => !availableInterfaces.includes(fileInterface))}`);
+                throw new Error(`/default/isc-dhcp-server: Interfaces ${fileInterfaces.filter(fileInterface => !availableInterfaces.includes(fileInterface))} not recognised.`);
             }
 
             $networkObject.setAttribute("dhcp-listen-on-interfaces", fileInterfaces.join(","));
