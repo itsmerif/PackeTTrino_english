@@ -4,3 +4,4 @@ function tooltip(text) {
     $tooltip.innerHTML = text;  
     return $tooltip;
 }
+
