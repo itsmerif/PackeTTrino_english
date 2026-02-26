@@ -14,7 +14,7 @@ function command_iface(networkObjectId, args) {
         "--add": () => {
             selectedOptions["--add"] = true;
             addInterface(networkObjectId);
-            terminalMessage(`iface: Interfaz enp0s${maxIfaceIndex(networkObjectId)} agregada.`, networkObjectId);
+            terminalMessage(`iface: Interface enp0s${maxIfaceIndex(networkObjectId)} added.`, networkObjectId);
         },
 
         "--del": () => {
@@ -23,19 +23,19 @@ function command_iface(networkObjectId, args) {
 
             const iface = ($OPTS["--del"]);
 
-            if (!iface) throw new Error(`Error: Debes especificar una interfaz a eliminar.`);
+            if (!iface) throw new Error(`Error: You must specify an interface to delete.`);
 
             if (iface === "all") {
 
                 for (let iface of availableInterfaces.slice(1)) {
                     
                     if ($networkObject.getAttribute(`data-switch-${iface}`) !== "") {
-                        terminalMessage(`iface: No se pude eliminar la interfaz ${iface} porque tiene una conexión activa.`, networkObjectId);
+                        terminalMessage(`iface: The interface ${iface} cannot be deleted because it has an active connection.`, networkObjectId);
                         continue;
                     }
 
                     deleteInterface(networkObjectId, iface);
-                    terminalMessage(`iface: Interfaz ${iface} eliminada.`, networkObjectId);
+                    terminalMessage(`iface: Interface ${iface} deleted.`, networkObjectId);
 
                 }
 
@@ -44,19 +44,19 @@ function command_iface(networkObjectId, args) {
             }
 
             if (iface === "enp0s3") {
-                throw new Error(`Error: La interfaz ${iface} no se puede eliminar.`);
+                throw new Error(`Error: The interface ${iface} cannot be deleted.`);
             }
 
             if (!availableInterfaces.includes(iface)) {
-                throw new Error(`Error: La interfaz "${iface}" no existe.`);
+                throw new Error(`Error: The interface "${iface}" does not exist.`);
             }
 
             if ($networkObject.getAttribute(`data-switch-${iface}`) !== "") {
-                throw new Error(`Error: La interfaz ${iface} tiene una conexión activa.`);
+                throw new Error(`Error: The interface ${iface} has an active connection.`);
             }
 
             deleteInterface(networkObjectId, iface);
-            terminalMessage(`iface: Interfaz ${iface} eliminada.`, networkObjectId);
+            terminalMessage(`iface: Interface ${iface} deleted.`, networkObjectId);
 
         },
 
@@ -67,7 +67,7 @@ function command_iface(networkObjectId, args) {
 
         for (option in $OPTS) if (optionHandlers[option]) optionHandlers[option]();
 
-        if (isEmptyObject(selectedOptions)) throw new Error(`Error: Se debe especificar una opción valida.`);
+        if (isEmptyObject(selectedOptions)) throw new Error(`Error: A valid option must be specified.`);
 
     } catch (error) {
 
