@@ -35,23 +35,23 @@ function PcObject(x, y) {
         }
     };
 
-    //añadimos los atributos básicos
+    //Add the basic attributes
     attr("ip-enp0s3", "");
     attr("netmask-enp0s3", "");
     attr("mac-enp0s3", getRandomMac());
     attr("data-switch-enp0s3", "");
     attr("filesystem", JSON.stringify(filesystem));
     attr("ipv4-forwarding", "false");
-
-    //añadimos el resolver
+    
+    // Add the resolver
     attr("resolved", "true");
 
-    //instalamos paquetes
+    // Install packages
     installDhclient($networkObject);
     installIptables($networkObject);
     installBrowser($networkObject);
 
-    //añadimos eventos
+    // Add events
     attr("onclick", "showPcMenu('" + $networkObject.id + "')");
     attr("oncontextmenu", "showAdvancedOptions(event)");
     attr("ondragstart", "BoardItemDragStart(event)");
