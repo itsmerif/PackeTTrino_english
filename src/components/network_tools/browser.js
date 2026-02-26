@@ -9,28 +9,28 @@ function browser() {
         <div class="browser-header">
 
             <div class="browser-controls">
-                <button class="control close" aria-label="Cerrar"></button>
-                <button class="control minimize" aria-label="Minimizar"></button>
-                <button class="control maximize" aria-label="Maximizar"></button>
+                <button class="control close" aria-label="Close"></button>
+                <button class="control minimize" aria-label="Minimize"></button>
+                <button class="control maximize" aria-label="Maximize"></button>
             </div>
 
             <div class="browser-tabs">
-                <button class="tab active">Nueva pestaña</button>
+                <button class="tab active">New tab</button>
             </div>
 
             <div class="browser-address-bar">
 
                 <div class="address-bar-icons">
-                   <!-- <button class="icon back" aria-label="Atrás">◀</button>
-                    <button class="icon forward" aria-label="Adelante">▶</button> -->
-                    <button class="icon refresh" aria-label="Actualizar" id="btn-refresh">↻</button>
+                   <!-- <button class="icon back" aria-label="Back">◀</button>
+                    <button class="icon forward" aria-label="Forward">▶</button> -->
+                    <button class="icon refresh" aria-label="Refresh" id="btn-refresh">↻</button>
                 </div>
 
-                <input type="text" class="address-input" placeholder="https://www.ejemplo.com" aria-label="Barra de direcciones">
+                <input type="text" class="address-input" placeholder="https://www.ejemplo.com" aria-label="Address bar">
 
                <!-- <div class="address-bar-icons">
-                    <button class="icon star" aria-label="Marcar como favorito">★</button>
-                    <button class="icon menu" aria-label="Menú">⋮</button>
+                    <button class="icon star" aria-label="Mark as favorite">★</button>
+                    <button class="icon menu" aria-label="Menu">⋮</button>
                 </div> -->
 
             </div>
@@ -55,7 +55,7 @@ function browser() {
 
 }
 
-//constantes de navegador
+//browser constants
 
 const $BROWSERHOMEPAGE = `
     <title>Amin Search</title><meta charset=UTF-8><meta content="width=device-width,initial-scale=1"name=viewport>
@@ -66,7 +66,7 @@ const $BROWSERERRORPAGE = `
     <!DOCTYPE html>
     <html lang="es">
     <head>
-        <title>Amin Search</title>
+        <title>Amin™ Search</title>
         <meta charset="UTF-8">
         <meta content="width=device-width,initial-scale=1" name="viewport">
         <style>
@@ -180,13 +180,15 @@ function closeBrowser(event) {
     event.preventDefault();
     const browser = document.querySelector(".browser-component");
     if (browser.style.left !== "0px" && browser.style.left !== "0%") {
-        //recuperamos el contenido original del navegador
+        
+//we retrieve the original browser content
         document.querySelector(".browser-content").innerHTML = `<img src="./assets/browser/aminsearch.png" alt="logo"></img>`;
-        //limpiamos la entrada de direccion
+        
+//we clear the address input
         document.querySelector(".address-input").value = "";
-        //eliminamos la referencia al src
+        //we remove the reference to src
         document.querySelector(".browser-content").removeAttribute("src");
-        //ocultamos el navegador
+        //we hide the browser
         document.querySelector(".browser-component").style.display = "none";
     }
 }
