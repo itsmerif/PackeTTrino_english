@@ -57,3 +57,4 @@ function deleteCable(event) {
     circle.remove();
     cableObject.remove();
 }
+
