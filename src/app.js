@@ -1,4 +1,5 @@
-//PACKETTRINO DESARROLLADO POR AMÍN PÉREZ (2025)
+//PACKETTRINO DEVELOPED BY AMÍN PÉREZ (2025)
+// translated into English by itsmeRiF (2026)
 
 var htmlComponent = new componentToken("html");
 var bodyComponent = new componentToken("body");
