@@ -2,7 +2,7 @@ function installDhcprelay($networkObject) {
 
     const networkObjectId = $networkObject.id;
 
-    terminalMessage("Instalando DHCP Relay...", networkObjectId);
+    terminalMessage("Installing DHCP Relay...", networkObjectId);
 
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
     const attr = (attribute, value) => $networkObject.setAttribute(attribute, value);
@@ -18,7 +18,7 @@ function installDhcprelay($networkObject) {
     //directorios y archivos
 
     const iscDhcpRelayDefaultContent = `
-    #Este archivo configura los servidores e interfaces disponibles para el servidor DHCP Relay
+   #This file configures the servers and interfaces available for the DHCP Relay server.
     SERVERS=""
     INTERFACES=""
     `;
@@ -28,12 +28,12 @@ function installDhcprelay($networkObject) {
     networkObjectFileSystem.touch("isc-dhcp-relay", ["etc", "default"]);
     networkObjectFileSystem.write("isc-dhcp-relay", ["etc", "default"], iscDhcpRelayDefaultContent.split('\n').map(line => line.trimStart()).join('\n'));
 
-    terminalMessage("DHCP Relay instalado correctamente.", networkObjectId);
+    terminalMessage("DHCP Relay successfully installed.", networkObjectId);
 }
 
 function uninstallDhcprelay(networkObjectId) {
 
-    terminalMessage("Desinstalando DHCP Relay...", networkObjectId);
+    terminalMessage("Uninstalling DHCP Relay...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -48,6 +48,6 @@ function uninstallDhcprelay(networkObjectId) {
     const networkObjectFileSystem = new FileSystem($networkObject);
     networkObjectFileSystem.rmdir("default", ["etc"]);
 
-    terminalMessage("DHCP Relay desinstalado correctamente.", networkObjectId);
+    terminalMessage("DHCP Relay successfully uninstalled.", networkObjectId);
 
 }
