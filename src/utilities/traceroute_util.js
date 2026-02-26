@@ -9,7 +9,7 @@ async function command_traceroute(networkObjectId, args) {
     let useNumeric = false;
 
     if (!networkObjectIp || !networkObjectNetmask) {
-        terminalMessage("traceroute: Error en la configuración de red.", networkObjectId);
+        terminalMessage("traceroute: Network configuration failed.", networkObjectId);
         return;
     }
 
@@ -24,7 +24,7 @@ async function command_traceroute(networkObjectId, args) {
         
     }else  {
 
-        terminalMessage("Error: Sintaxis: traceroute [-n] destino", networkObjectId);
+        terminalMessage("Error: Syntaxt: traceroute [-n] destination", networkObjectId);
         return;
 
     }
