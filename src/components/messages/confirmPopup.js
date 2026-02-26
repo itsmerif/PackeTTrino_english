@@ -10,8 +10,8 @@ function confirmPopup(message, callback)  {
 
     $popup.innerHTML = `
         <p>${message}</p>
-        <button class="btn-modern-blue dark no-animation" id="btn-accept" style="padding: 5px;" >Aceptar</button>
-        <button class="btn-modern-red no-animation" id="btn-cancel" style="padding: 5px;">Cancelar</button>
+        <button class="btn-modern-blue dark no-animation" id="btn-accept" style="padding: 5px;" >Accept</button>
+        <button class="btn-modern-red no-animation" id="btn-cancel" style="padding: 5px;">Cancel</button>
     `;
 
     $popup.querySelector("#btn-accept").addEventListener("click", (event) => {
