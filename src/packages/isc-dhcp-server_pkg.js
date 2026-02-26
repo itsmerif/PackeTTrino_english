@@ -7,10 +7,10 @@ function installDhcpd($networkObject) {
     const addOption = (...nodes) => nodes.forEach(node => $advancedOptions.appendChild(node));
     const networkObjectFileSystem = new FileSystem($networkObject);
 
-    terminalMessage("Instalando DHCP Server...", networkObjectId);
+    terminalMessage("Installing DHCP Server...", networkObjectId);
 
     const dhcpdConfDefaultContent = `
-    # Ejemplo de archivo de configuración para DHCP
+    # Example configuration for DHCP
     #
     #   shared-network 192.168.0.0 255.255.255.0 {
     #        subnet 192.168.0.0 netmask 255.255.255.0 {
@@ -29,7 +29,7 @@ function installDhcpd($networkObject) {
     `;
 
     const iscDhcpServerDefaultContent = `
-    #Este archivo configura las interfaces disponibles para el servidor DHCP
+    #This file configures the interfaces available for the DHCP server.
     #Ejemplo: INTERFACESv4="enp0s3 enp0s8"
     INTERFACESv4=""
     `;
@@ -59,12 +59,12 @@ function installDhcpd($networkObject) {
     addOption(leasesTableOptionButton(), dhcpServerConfig()); //<-- se añaden opciones a las opciones avanzadas
     append(dhcpTable()); //<-- se añade la tabla de DHCP
 
-    terminalMessage("DHCP Server instalado correctamente.", networkObjectId);
+    terminalMessage("DHCP Server successfully installed.", networkObjectId);
 }
 
 function uninstallDhcpd(networkObjectId) {
 
-    terminalMessage("Desinstalando DHCP Server...", networkObjectId);
+    terminalMessage("Uninstalling DHCP Server...", networkObjectId);
 
     const $networkObject = document.getElementById(networkObjectId);
     const $advancedOptions = $networkObject.querySelector(".advanced-options-modal");
@@ -99,6 +99,6 @@ function uninstallDhcpd(networkObjectId) {
     clearInterval(serverLeaseTimers[networkObjectId]); 
     delete serverLeaseTimers[networkObjectId];
 
-    terminalMessage("DHCP Server desinstalado correctamente.", networkObjectId);
+    terminalMessage("DHCP Server successfully uninstalled.", networkObjectId);
 
 } 
