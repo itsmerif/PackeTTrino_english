@@ -7,7 +7,7 @@ async function dhcpDiscoverHandler(networkObjectId, networkObjectInterface) {
     const networkObjectMac = $networkObject.getAttribute(`mac-${networkObjectInterface}`);
 
     if ($networkObject.getAttribute("dhclient") !== "true") {
-        terminalMessage("dhclient: El servicio DHCP Client no está activado.", networkObjectId);
+        terminalMessage("dhclient: The DHCP Client service is not enabled.", networkObjectId);
         return;
     }
 
@@ -27,12 +27,12 @@ async function dhcpDiscoverHandler(networkObjectId, networkObjectInterface) {
             await dhcpDiscoverGenerator(networkObjectId, networkObjectInterface);
 
             if (dhcpDiscoverFlag[networkObjectId] === false || dhcpRequestFlag[networkObjectId] === false) {
-                terminalMessage("\ndhclient: No se ha podido conectar con ningún servidor DHCP.", networkObjectId);
+                terminalMessage("\ndhclient: Could not connect to any DHCP server.", networkObjectId);
             }
 
         }catch (error) {
 
-            terminalMessage("dhclient: No se ha podido ha podido conectar con ningún servidor DHCP.", networkObjectId);
+            terminalMessage("dhclient: It was not possible to connect to any DHCP server.", networkObjectId);
             console.log(error);
 
         }
@@ -50,7 +50,7 @@ async function dhcpRenewHandler(networkObjectId, renewPhase, networkObjectInterf
     const networkObjectDhcpServer = $networkObject.getAttribute("data-dhcp-server");
 
     if (!networkObjectIp || !networkObjectNetmask || !networkObjectDhcpServer) {
-        terminalMessage("dhclient: Error en la configuración de red.", networkObjectId);
+        terminalMessage("dhclient: Network configuration error.", networkObjectId);
         return;
     }
 
