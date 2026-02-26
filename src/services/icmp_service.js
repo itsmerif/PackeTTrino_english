@@ -45,7 +45,7 @@ async function traceroute(networkObjectId, destination, numeric = false) {
         const domainName = destination;
         destination = await domainNameResolution(networkObjectId, destination);
         if (!destination) {
-            terminalMessage(`traceroute: Nombre "${domainName}" o servicio desconocido.`, networkObjectId);
+            terminalMessage(`traceroute: Name "${domainName}" or service unknown.`, networkObjectId);
             return;
         }
     }
