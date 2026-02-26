@@ -7,12 +7,12 @@ function macTable() {
     $macTable.innerHTML = `
         <table>
             <tr>
-                <th>Dispositivo</th>
+                <th>Device</th>
                 <th>MAC</th>
-                <th>Puerto Físico</th>
+                <th>Physical Port</th>
             </tr>
         </table>
-        <button onclick="closeMacTable(event)">Cerrar</button>
+        <button onclick="closeMacTable(event)">Close</button>
     `;
 
     $macTable.setAttribute("onclick", "event.stopPropagation()");
